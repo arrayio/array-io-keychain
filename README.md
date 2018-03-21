@@ -1,5 +1,7 @@
 # array-io-keychain
 
+[![Join the chat at https://gitter.im/arrayio/array-io-keychain](https://badges.gitter.im/arrayio/array-io-keychain.svg)](https://gitter.im/arrayio/array-io-keychain?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 Array.io keychain repository. This is an app to create, manage keys and sign transactions.
 
 Keychain is not to be confused with the Wallet built-in Dapp, the keychain app, is a standalon commandline/ui interface to interact with private keys.

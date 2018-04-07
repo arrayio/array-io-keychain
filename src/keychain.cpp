@@ -4,6 +4,8 @@
 
 #include "keychain.hpp"
 
+#include <iostream>
+
 using namespace keychain_app;
 
 

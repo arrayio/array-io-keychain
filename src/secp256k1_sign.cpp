@@ -7,7 +7,21 @@
 
 using namespace keychain_app;
 
-signature_t secp256k1_ecdsa_sign_create::create_signature(const fc::ecc::private_key &key, const keychain_app::unit_list &list) {
+bool keychain_app::is_sign_canonical(const signature_t& c)
+{
+  return !(c.data[1] & 0x80)
+         && !(c.data[1] == 0 && !(c.data[2] & 0x80))
+         && !(c.data[33] & 0x80)
+         && !(c.data[33] == 0 && !(c.data[34] & 0x80));
+}
+
+const secp256k1_context_t* keychain_app::secp256k1_get_context()
+{
+  static secp256k1_context_t* ctx = secp256k1_context_create(SECP256K1_CONTEXT_VERIFY | SECP256K1_CONTEXT_SIGN | SECP256K1_CONTEXT_RANGEPROOF | SECP256K1_CONTEXT_COMMIT );
+  return ctx;
+}
+
+signature_t secp256k1_ecdsa_sign_create::create_signature(const fc::ecc::private_key &key, const keychain_app::unit_list_t &list) {
   assert(key.get_secret() != empty_secret);
 
   fc::sha256::encoder enc;
@@ -34,3 +48,4 @@ signature_t secp256k1_ecdsa_sign_create::create_signature(const fc::ecc::private
   return result;
 }
 
+const fc::ecc::private_key secp256k1_ecdsa_sign_create::empty_secret;

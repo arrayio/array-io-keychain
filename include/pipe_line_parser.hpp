@@ -8,43 +8,29 @@
 #include <vector>
 #include <cstddef>
 
+#include <json/json.hpp>
+
 namespace keychain_app
 {
 
-namespace json_parse
+namespace json_parser
 {
-  static const char* LBRACE = "{";
-  static const char* RBRACE = "}";
-
-  namespace json_keys
-  {
-    static const char* COMMAND = "command";
-    static const char* PARAMS = "params";
-    namespace command_params
-    {
-      static const char* CHAINID = "chainid";
-      static const char* HDPATH = "hdpath";
-      static const char* TRANSACTION_HASH = "transaction-hash";
-      static const char* KEYFILE = "keyfile";
-    }
-  }
-
+static const char LBRACE = '{';
+static const char RBRACE = '}';
 }
 
-class pipe_line_parser
+class pipeline_parser
 {
 public:
-    pipe_line_parser();
+    pipeline_parser();
     int run();
 private:
     using buf_type = std::vector<char>;
     using buf_iterator = buf_type::iterator;
     using iter_range = std::pair<buf_iterator, buf_iterator>;
-    buf_type m_buf;
-    iter_range сut_json_obj();//return pair<end, end> if no json detached, or pair<m_obj_begin, m_obj_end>
-    buf_type::value_type* m_current;
-    buf_iterator m_obj_begin;
-    size_t m_brace_count;
+    iter_range сut_json_obj(buf_iterator parse_begin, buf_iterator parse_end);//return pair(parse_end, parse_end)if no json detached, or pair<m_obj_begin, m_obj_end>
+
+    static nlohmann::json create_error_response(const char* errmsg);
 };
 
 }

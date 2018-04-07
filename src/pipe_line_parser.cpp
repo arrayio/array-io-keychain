@@ -3,6 +3,7 @@
 //
 
 #include "pipe_line_parser.hpp"
+#include "secp256k1_sign.hpp"
 #include "keychain.hpp"
 
 #include <stdio.h>
@@ -13,47 +14,104 @@
 using namespace nlohmann;
 using namespace keychain_app;
 
-pipe_line_parser::pipe_line_parser()
-  : m_buf(4096, 0x00)
-  , m_current(m_buf.data())
-  , m_obj_begin (m_buf.begin())
-  , m_brace_count(0)
+pipeline_parser::pipeline_parser()
 {
 }
 
-int pipe_line_parser::run()
+int pipeline_parser::run()
 {
+  buf_type read_buf(4096, 0x00);
+  buf_type::value_type *p_read_begin = read_buf.data();
+  buf_iterator it_read_end = read_buf.begin();
+  size_t bytes_remaining = read_buf.size();
   while (!feof(stdin)){
-    size_t bytes_remaining = m_buf.size();
-    size_t bytes_read = fread(m_current, sizeof(buf_type::value_type), 1, stdin);
+    size_t bytes_read = fread(p_read_begin, sizeof(buf_type::value_type), 1, stdin);
     if(ferror(stdin))
     {
       //TODO: add check errno
-      std::cerr << "error occured while reading stin" << std::endl;
+      std::cerr << "error occured while reading stdin" << std::endl;
       return -1;
     }
+    it_read_end += bytes_read;
+    p_read_begin += bytes_read;
     bytes_remaining -= bytes_read;
     do
     {
-      auto buf_range = сut_json_obj();
-      if( std::distance(buf_range.first, buf_range.second) > 0)
+      try
       {
-        keychain<secp256k1_sign_t> keychain_;
-        keychain_(json::parse(buf_range.first, buf_range.second));
-        auto current_it = std::copy(buf_range.second, m_buf.end(), m_buf.begin());
-        m_current = m_buf.data() + std::distance(m_buf.begin(), current_it);
-        continue;
+        auto buf_range = сut_json_obj(read_buf.begin(), it_read_end);
+        if( std::distance(buf_range.first, buf_range.second) > 0)
+        {
+          keychain<secp256k1_sign_t> keychain_;
+          keychain_(json::parse(buf_range.first, buf_range.second));
+
+          auto it = std::copy(buf_range.second, it_read_end, read_buf.begin());
+          std::for_each(it, it_read_end, [](buf_type::value_type &val) {
+              val = 0x00;
+          });
+          p_read_begin = read_buf.data() + std::distance(read_buf.begin(), it);
+          bytes_remaining = std::distance(it, read_buf.end());
+          it_read_end = it;
+          continue;//try to parse remaining data
+        }
+        else if(bytes_remaining < 256)
+          read_buf.resize(256, 0x00);
+        break;//goto fread()
       }
-      else if(bytes_remaining < 256)
+      catch(std::exception& exc)
       {
-        m_buf.resize(256, 0x00);
+        std::cout << create_error_response(exc.what()) << std::endl;
+        std::cerr << "Error: " << exc.what() << std::endl;
+        return -1;
       }
-      m_current += bytes_read;
-      break;
     } while (true);
   }
   return 0;
 }
 
+pipeline_parser::iter_range pipeline_parser::сut_json_obj(pipeline_parser::buf_iterator parse_begin, pipeline_parser::buf_iterator parse_end)
+{
+  size_t brace_count = 0;
+  auto start_obj = parse_end;
+  auto it = parse_begin;
+  bool found = false;
+  for (; it != parse_end && found == false; ++it)
+  {
+    switch (*it)
+    {
+      case json_parser::LBRACE:
+      {
+        if(brace_count == 0)
+          start_obj = it;
+        ++brace_count;
+      } break;
+      case json_parser::RBRACE:
+        assert(brace_count > 0);
+        if ( brace_count == 0 )//NOTE: we can inter to this case only, if RBRACE will detect before LBRACE
+          throw std::runtime_error("Parse error: common error while counting figure braces");
+        {
+          --brace_count;
+          if (brace_count == 0)
+            found = true;
+        }
+        break;
+    }
+  }
+  if(found)
+  {
+    return pipeline_parser::iter_range(start_obj, ++it);
+  }
+  else
+  {
+    return pipeline_parser::iter_range(parse_end, parse_end);
+  }
+}
 
-
+nlohmann::json pipeline_parser::create_error_response(const char* errmsg)
+{
+  using out_map = std::map<std::string, nlohmann::json>;
+  using out_map_val = out_map::value_type;
+  out_map result;
+  result.insert(out_map_val(json_parser::json_keys::ERROR, std::string(errmsg)));
+  return result;
+}

@@ -16,16 +16,8 @@ cmd_parser::cmd_parser()
 int cmd_parser::run(int argc, const char* const argv [])
 {
   //TODO: add boost program options call that will parse command line arguments
-
-  try {
-    pipe_line_parser pipe_line_parser_;
-    return pipe_line_parser_.run();
-  }
-  catch (std::exception &exc)
-  {
-    std::cerr << "Pipeline mode error: " << exc.what() << std::endl;
-    return -1;
-  }
+  pipeline_parser pipe_line_parser_;
+  return pipe_line_parser_.run();
 }
 
 

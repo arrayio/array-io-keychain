@@ -17,6 +17,12 @@ namespace json_parser
 {
 static const char LBRACE = '{';
 static const char RBRACE = '}';
+static const char SPACE = ' ';
+static const char LF = '\n';
+static const char CR = '\r';
+static const char TAB = '\t';
+static const char VTAB = '\v';
+static const char NP = '\f';
 }
 
 class pipeline_parser

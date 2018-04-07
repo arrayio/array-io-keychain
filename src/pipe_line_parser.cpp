@@ -64,6 +64,11 @@ int pipeline_parser::run()
         std::cerr << "Error: " << exc.what() << std::endl;
         return -1;
       }
+      catch(fc::exception& exc)
+      {
+        std::cerr << "Error: fc = " << exc.to_detail_string() << std::endl;
+        return -1;
+      }
     } while (true);
   }
   return 0;
@@ -80,21 +85,27 @@ pipeline_parser::iter_range pipeline_parser::сut_json_obj(pipeline_parser::buf_
     switch (*it)
     {
       case json_parser::LBRACE:
-      {
         if(brace_count == 0)
           start_obj = it;
         ++brace_count;
-      } break;
+        break;
       case json_parser::RBRACE:
-        assert(brace_count > 0);
         if ( brace_count == 0 )//NOTE: we can inter to this case only, if RBRACE will detect before LBRACE
           throw std::runtime_error("Parse error: common error while counting figure braces");
-        {
-          --brace_count;
-          if (brace_count == 0)
-            found = true;
-        }
+        --brace_count;
+        if (brace_count == 0)
+          found = true;
         break;
+      case json_parser::SPACE:
+      case json_parser::LF:
+      case json_parser::CR:
+      case json_parser::TAB:
+      case json_parser::NP:
+      case json_parser::VTAB:
+        break;
+      default:
+        if ( brace_count == 0 )//NOTE: symbols are not into figure braces
+          throw std::runtime_error("Parse error: common error while parsing command - unexpected symbols");
     }
   }
   if(found)

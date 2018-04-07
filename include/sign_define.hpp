@@ -5,6 +5,8 @@
 #ifndef KEYCHAINAPP_SIGN_DEFINE_HPP
 #define KEYCHAINAPP_SIGN_DEFINE_HPP
 
+#include <fc/crypto/elliptic.hpp>
+
 namespace keychain_app
 {
 

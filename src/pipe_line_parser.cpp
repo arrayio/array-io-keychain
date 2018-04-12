@@ -110,7 +110,7 @@ pipeline_parser::iter_range pipeline_parser::сut_json_obj(pipeline_parser::buf_
   }
   if(found)
   {
-    return pipeline_parser::iter_range(start_obj, ++it);
+    return pipeline_parser::iter_range(start_obj, it);
   }
   else
   {

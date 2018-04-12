@@ -1,5 +1,7 @@
 project( KeychainApp )
 
+#add_subdirectory(auxiliary)
+
 cmake_minimum_required( VERSION 3.0.2 )
 
 set(CMAKE_CXX_FLAGS "-std=c++14")
@@ -29,6 +31,7 @@ include_directories("./include" "/opt/openssllib/include" "./3rd-party-component
 
 find_library(FCLIB name fc HINTS "~/blockchain/3rd-party-components/lib")
 find_library(FCLIB name secp256k1 HINTS "~/blockchain/3rd-party-components/lib")
+find_library(FCLIB name graphene_utilities HINTS "~/blockchain/3rd-party-components/lib")
 find_library(FCLIB name crypto HINTS "/opt/openssllib/lib")
 find_library(FCLIB name boost_program_options HINTS "/opt/boostlib/lib")
 file(GLOB KEYCHAIN_SOURCES "./src/*.cpp")
@@ -36,4 +39,5 @@ file(GLOB KEYCHAIN_INCLUDE "./include/*.hpp")
 
 add_executable(keychain ${KEYCHAIN_SOURCES})
 
-target_link_libraries(keychain fc secp256k1 crypto ${Boost_LIBRARIES})
+target_link_libraries(keychain fc secp256k1 graphene_utilities crypto ${Boost_LIBRARIES})
+

@@ -1,8 +1,8 @@
+[![Logo](https://raw.githubusercontent.com/arrayio/array-io-keychain/master/img/keychain-logo.png)]()
+
 # array-io-keychain
 
 [![Join the chat at https://gitter.im/arrayio/array-io-keychain](https://badges.gitter.im/arrayio/array-io-keychain.svg)](https://gitter.im/arrayio/array-io-keychain?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
-
-[![Logo](https://raw.githubusercontent.com/arrayio/array-io-keychain/master/img/keychain-logo.png)]()
 
 Array.io keychain repository. This is an app to create, manage keys and sign transactions.
 

@@ -37,7 +37,7 @@ namespace params
 {
 static const char* CHAINID = "chainid";
 static const char* HDPATH = "hdpath";
-static const char* TRANSACTION_HASH = "transaction-hash";
+static const char* TRANSACTION = "transaction";
 static const char* KEYFILE = "keyfile";
 }
 }
@@ -67,7 +67,7 @@ public:
     {
       unit_list.push_back(fc::sha256(chainid_it->get<std::string>()));
     }
-    const auto& transaction_hex = j_params.at(json_parser::json_keys::sign_command::params::TRANSACTION_HASH).get<std::string>();
+    const auto& transaction_hex = j_params.at(json_parser::json_keys::sign_command::params::TRANSACTION).get<std::string>();
     std::vector<char> buf(1024);
     auto trans_len = fc::from_hex(transaction_hex, buf.data(), buf.size());
     buf.resize(trans_len);

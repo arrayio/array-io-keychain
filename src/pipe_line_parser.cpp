@@ -3,13 +3,14 @@
 //
 
 #include "pipe_line_parser.hpp"
-#include "secp256k1_sign.hpp"
 #include "keychain.hpp"
 
 #include <stdio.h>
 #include <iostream>
 #include <stdexcept>
 #include <json/json.hpp>
+
+using keychain_t = keychain_app::keychain;
 
 using namespace nlohmann;
 using namespace keychain_app;
@@ -28,8 +29,7 @@ int pipeline_parser::run()
     size_t bytes_read = fread(p_read_begin, sizeof(buf_type::value_type), 1, stdin);
     if(ferror(stdin))
     {
-      //TODO: add check errno
-      std::cerr << "error occured while reading stdin" << std::endl;
+      std::cerr << "Error: " << strerror(errno) << std::endl;
       return -1;
     }
     it_read_end += bytes_read;
@@ -42,8 +42,8 @@ int pipeline_parser::run()
         auto buf_range = сut_json_obj(read_buf.begin(), it_read_end);
         if( std::distance(buf_range.first, buf_range.second) > 0)
         {
-          keychain<secp256k1_sign_t> keychain_;
-          keychain_(json::parse(buf_range.first, buf_range.second));
+          keychain_t keychain;
+          keychain(json::parse(buf_range.first, buf_range.second));
 
           auto it = std::copy(buf_range.second, it_read_end, read_buf.begin());
           std::for_each(it, it_read_end, [](buf_type::value_type &val) {

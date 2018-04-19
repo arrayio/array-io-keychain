@@ -12,6 +12,7 @@
 
 #include <fc/crypto/elliptic.hpp>
 #include <fc/crypto/hex.hpp>
+#include <fc/variant.hpp>
 #include <graphene/utilities/key_conversion.hpp>
 #include <json/json.hpp>
 
@@ -86,7 +87,7 @@ private:
   secp256_private_key get_priv_key_from_str(const std::string& str);
   nlohmann::json create_response(const signature_t& signature);
   fc::sha256 get_hash(const keychain_app::unit_list_t &list);
-  static nlohmann::json open_keyfile(const char* filename);
+  static fc::variant open_keyfile(const char* filename);
 };
 
 }

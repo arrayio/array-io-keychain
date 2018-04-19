@@ -3,11 +3,19 @@
 //
 
 #include "keychain.hpp"
+#include "key_file_parser.hpp"
 #include <fc/crypto/sha256.hpp>
 #include <fc/crypto/elliptic.hpp>
+#include <fc/variant.hpp>
+#include <fc/io/json.hpp>
+
+//TODO: it is unclear
+//      why if we do not include this file we cannot compile reflect parser for keychain_app::keyfile_format::key_file
+#include <graphene/chain/protocol/transaction.hpp>
 
 #include <iostream>
 #include <errno.h>
+
 
 using namespace keychain_app;
 
@@ -99,58 +107,58 @@ void keychain::sign_command(const nlohmann::json& j_params)
   auto trans_len = fc::from_hex(transaction_hex, buf.data(), buf.size());
   buf.resize(trans_len);
 
-  auto check_keyfile_prop = [](const nlohmann::json& j_keyfile)
-  {
-    if(json_parser::json_file_keys::values::KEY != j_keyfile.at(json_parser::json_file_keys::TYPE).get<std::string>())
-      throw std::runtime_error("Error: invalid type of data");
-    if(json_parser::json_file_keys::values::SECP256 != j_keyfile.at(json_parser::json_file_keys::CURVE_TYPE).get<std::string>())
-      throw std::runtime_error("Error: unsupported curve type");
-    if(json_parser::json_file_keys::values::WIF_FORMAT != j_keyfile.at(json_parser::json_file_keys::KEY_DATA_FORMAT).get<std::string>())
-      throw std::runtime_error("Error: unsupported key data format");
-    if(false != j_keyfile.at(json_parser::json_file_keys::ENCRYPTED).get<bool>())
-      throw std::runtime_error("Error: unsupported encrypted keys");
-  };
-
   unit_list.push_back(buf);
   auto keyfile_it = j_params.find(json_parser::json_keys::sign_command::params::KEYFILE);
   if (keyfile_it != j_params.end())
   {
-    const auto& keyfile = j_params.at(json_parser::json_keys::sign_command::params::KEYFILE).get<std::string>();
-    auto j_keyfile = std::move(open_keyfile(keyfile.c_str()));
-    check_keyfile_prop(j_keyfile);
-    private_key = get_priv_key_from_str(j_keyfile.at(json_parser::json_file_keys::KEY_DATA).get<std::string>());
+    const auto& keyfilename = j_params.at(json_parser::json_keys::sign_command::params::KEYFILE).get<std::string>();
+    fc::variant j_keyfile = open_keyfile(keyfilename.c_str());
+    auto keyfile = j_keyfile.as<keyfile_format::key_file>();
+    private_key = get_priv_key_from_str(keyfile.keyinfo.data);
   }
   else
   {
     auto keyname_it = j_params.find(json_parser::json_keys::sign_command::params::KEYNAME);
     if (keyname_it == j_params.end())
       throw std::runtime_error("Error: neither keyfile nor keyname parameter was not found");
-    nlohmann::json j_keyfile;
+    keyfile_format::key_file keyfile;
     std::string keyname = keyname_it->get<std::string>();
-    auto it = std::find_if(bfs::directory_iterator(bfs::path("./")), bfs::directory_iterator(), [this, &j_keyfile, keyname](bfs::directory_entry& unit)->bool
+    auto it = std::find_if(bfs::directory_iterator(bfs::path("./")), bfs::directory_iterator(), [this, keyname, &keyfile](bfs::directory_entry& unit)->bool
     {
       if (!bfs::is_regular_file(unit.status()))
         return false;
       const auto& file_path = unit.path().filename();
-      j_keyfile = std::move(open_keyfile(file_path.c_str()));
-      return keyname == j_keyfile.at(json_parser::json_file_keys::USERNAME).get<std::string>();
+      auto j_keyfile = open_keyfile(file_path.c_str());
+      keyfile = j_keyfile.as<keyfile_format::key_file>();
+      return keyname == keyfile.username;
     });
     if (it == bfs::directory_iterator())
       throw std::runtime_error("Error: keyfile could not found by username");
-    check_keyfile_prop(j_keyfile);
-    private_key = get_priv_key_from_str(j_keyfile.at(json_parser::json_file_keys::KEY_DATA).get<std::string>());
+    private_key = get_priv_key_from_str(keyfile.keyinfo.data);
   }
 
   std::cout <<
             create_response(private_key.sign_compact(get_hash(unit_list)))<< std::endl;
 }
 
-nlohmann::json keychain::open_keyfile(const char* filename)
+fc::variant keychain::open_keyfile(const char* filename)
 {
   std::ifstream fin = std::ifstream(filename);
   if(!fin.is_open())
     throw std::runtime_error("Error: cannot open keyfile");
-  nlohmann::json j_keyfile;
-  fin >> j_keyfile;
-  return j_keyfile;
+  std::array<char, 1024> read_buf;
+  memset(read_buf.data(), 0x00, read_buf.size());
+  auto pbuf = read_buf.data();
+  auto it = read_buf.begin();
+  size_t read_count = 0;
+  while(!fin.eof()&&fin.good())
+  {
+    fin.getline(pbuf, std::distance(it, read_buf.end()));
+    pbuf += fin.gcount() - 1;
+    it += fin.gcount() - 1;
+    read_count += fin.gcount() - 1;
+  }
+  if(!fin.good()&&read_count==0)
+    throw std::runtime_error("Error: cannot read keyfile");
+  return fc::json::from_string(std::string(read_buf.begin(), read_buf.end()), fc::json::strict_parser);
 }

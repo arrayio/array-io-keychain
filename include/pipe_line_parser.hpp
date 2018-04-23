@@ -7,11 +7,19 @@
 
 #include <vector>
 #include <cstddef>
+#include <string>
 
 #include <json/json.hpp>
 
-namespace keychain_app
+#include <sign_define.hpp>
+
+namespace keychain_app {
+
+struct json_error
 {
+    json_error(const char* str): error(str){}
+    std::string error;
+};
 
 namespace json_parser
 {
@@ -35,10 +43,10 @@ private:
     using buf_iterator = buf_type::iterator;
     using iter_range = std::pair<buf_iterator, buf_iterator>;
     iter_range сut_json_obj(buf_iterator parse_begin, buf_iterator parse_end);//return pair(parse_end, parse_end)if no json detached, or pair<m_obj_begin, m_obj_end>
-
-    static nlohmann::json create_error_response(const char* errmsg);
 };
 
 }
+
+FC_REFLECT(keychain_app::json_error, (error))
 
 #endif //KEYCHAINAPP_PIPE_LINE_PARSER_HPP

@@ -3,7 +3,6 @@
 //
 
 #include "cmd_parser.hpp"
-#include <iostream>
 
 using namespace keychain_app;
 

@@ -8,7 +8,7 @@
 #include <stdio.h>
 #include <iostream>
 #include <stdexcept>
-#include <json/json.hpp>
+#include <fc/io/json.hpp>
 
 using keychain_t = keychain_app::keychain;
 
@@ -43,7 +43,7 @@ int pipeline_parser::run()
         if( std::distance(buf_range.first, buf_range.second) > 0)
         {
           keychain_t keychain;
-          keychain(json::parse(buf_range.first, buf_range.second));
+          keychain(fc::json::from_string(std::string(buf_range.first, buf_range.second)));
 
           auto it = std::copy(buf_range.second, it_read_end, read_buf.begin());
           std::for_each(it, it_read_end, [](buf_type::value_type &val) {
@@ -60,7 +60,7 @@ int pipeline_parser::run()
       }
       catch(std::exception& exc)
       {
-        std::cout << create_error_response(exc.what()) << std::endl;
+        std::cout << fc::json::to_pretty_string(fc::variant(json_error(exc.what()))) << std::endl;
         std::cerr << "Error: " << exc.what() << std::endl;
         return -1;
       }
@@ -116,13 +116,4 @@ pipeline_parser::iter_range pipeline_parser::сut_json_obj(pipeline_parser::buf_
   {
     return pipeline_parser::iter_range(parse_end, parse_end);
   }
-}
-
-nlohmann::json pipeline_parser::create_error_response(const char* errmsg)
-{
-  using out_map = std::map<std::string, nlohmann::json>;
-  using out_map_val = out_map::value_type;
-  out_map result;
-  result.insert(out_map_val(json_parser::json_keys::ERROR, std::string(errmsg)));
-  return result;
 }

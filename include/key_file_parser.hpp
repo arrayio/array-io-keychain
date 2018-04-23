@@ -7,8 +7,6 @@
 
 #include <fc/reflect/reflect.hpp>
 
-using namespace fc;
-
 namespace keychain_app {
 
 namespace keyfile_format

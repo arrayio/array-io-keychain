@@ -33,12 +33,15 @@ static const char VTAB = '\v';
 static const char NP = '\f';
 }
 
+using keychain_invoke_f = std::function<void(const fc::variant&)>;
+
 class pipeline_parser
 {
 public:
-    pipeline_parser();
+    pipeline_parser(keychain_invoke_f&& keychain_func);
     int run();
 private:
+    keychain_invoke_f m_keychain_func;
     using buf_type = std::vector<char>;
     using buf_iterator = buf_type::iterator;
     using iter_range = std::pair<buf_iterator, buf_iterator>;

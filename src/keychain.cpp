@@ -35,8 +35,9 @@ keychain_commands_singletone::keychain_commands_singletone()
   });
 }
 
-keychain::keychain(const char* default_key_dir)
-  :m_init_path(bfs::current_path())
+keychain::keychain(passwd_f&& get_passwd, const char* default_key_dir)
+  : keychain_base(std::move(get_passwd))
+  , m_init_path(bfs::current_path())
 {
   bfs::path path_(default_key_dir);
   if(!bfs::exists(path_))
@@ -57,7 +58,7 @@ void keychain::operator()(const fc::variant& command) {
   auto cmd = command.as<keychain_command_common>();
   auto cmd_map = keychain_commands_singletone::instance();
   auto p_func = cmd_map[cmd.command];
-  (*p_func)(cmd.params);
+  (*p_func)(this, cmd.params);
 }
 
 const keychain_commands_singletone& keychain_commands_singletone::instance()
@@ -73,3 +74,4 @@ const keychain_commands_singletone::command_ptr keychain_commands_singletone::op
     return m_command_list[0];
   return m_command_list[ind];
 }
+

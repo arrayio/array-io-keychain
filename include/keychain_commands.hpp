@@ -20,11 +20,24 @@
 #include <graphene/chain/protocol/transaction.hpp>
 
 #include "key_file_parser.hpp"
+#include "key_encryptor.hpp"
 #include "sign_define.hpp"
 
 namespace keychain_app {
 
+using passwd_f = std::function<std::string()>;
+
+class keychain_base
+{
+public:
+    keychain_base(passwd_f&& get_password);
+    virtual ~keychain_base();
+    virtual void operator()(const fc::variant& command) = 0;
+    passwd_f get_passwd_functor;
+};
+
 fc::variant open_keyfile(const char* filename);
+void create_keyfile(const char* filename, const fc::variant& keyfile_var);
 secp256_private_key get_priv_key_from_str(const std::string& str);
 fc::sha256 get_hash(const keychain_app::unit_list_t &list);
 void send_response(const signature_t& signature);
@@ -72,7 +85,7 @@ struct keychain_command_base {
     keychain_command_base(keychain_command_type type): e_type(type){}
     virtual ~keychain_command_base(){}
     keychain_command_type e_type;
-    virtual void operator()(const fc::variant& params_variant) const{};
+    virtual void operator()(keychain_base* keychain, const fc::variant& params_variant) const{};
 };
 
 template<keychain_command_type cmd>
@@ -84,10 +97,12 @@ struct keychain_command: keychain_command_base
 };
 
 template<>
-struct keychain_command<CMD_SIGN> : keychain_command_base {
+struct keychain_command<CMD_SIGN> : keychain_command_base
+{
     keychain_command():keychain_command_base(CMD_SIGN){}
     virtual ~keychain_command(){}
-    struct params {
+    struct params
+    {
         std::string chainid;
         std::string transaction;
         std::string keyname;
@@ -96,7 +111,8 @@ struct keychain_command<CMD_SIGN> : keychain_command_base {
 
     using params_t = params;
 
-    virtual void operator()(const fc::variant& params_variant) const override {
+    virtual void operator()(keychain_base* keychain, const fc::variant& params_variant) const override
+    {
       auto params = params_variant.as<params_t>();
       unit_list_t unit_list;
       fc::ecc::private_key private_key;
@@ -107,14 +123,17 @@ struct keychain_command<CMD_SIGN> : keychain_command_base {
       std::vector<char> buf(1024);
       auto trans_len = fc::from_hex(params.transaction, buf.data(), buf.size());
       buf.resize(trans_len);
+  
+      keyfile_format::key_file keyfile;
 
       unit_list.push_back(buf);
-      if (!params.keyfile.empty()) {
+      if (!params.keyfile.empty())
+      {
         fc::variant j_keyfile = open_keyfile(params.keyfile.c_str());
-        auto keyfile = j_keyfile.as<keyfile_format::key_file>();
-        private_key = get_priv_key_from_str(keyfile.keyinfo.data);
-      } else if (!params.keyname.empty()) {
-        keyfile_format::key_file keyfile;
+        keyfile = j_keyfile.as<keyfile_format::key_file>();
+      }
+      else if (!params.keyname.empty())
+      {
         auto first = bfs::directory_iterator(bfs::path("./"));
         auto it = std::find_if(first, bfs::directory_iterator(),[this, params, &keyfile](bfs::directory_entry &unit) -> bool {
                                    if (!bfs::is_regular_file(unit.status()))
@@ -126,9 +145,68 @@ struct keychain_command<CMD_SIGN> : keychain_command_base {
                                });
         if (it == bfs::directory_iterator())
           throw std::runtime_error("Error: keyfile could not found by username");
-        private_key = get_priv_key_from_str(keyfile.keyinfo.data);
       }
+  
+      std::string key_data;
+      if(keyfile.keyinfo.encrypted)
+      {
+        auto encrypted_data = std::move(keyfile.keyinfo.data.as<keyfile_format::encrypted_data>());
+        auto& encryptor = encryptor_singletone::instance();
+        auto passwd = std::move(keychain->get_passwd_functor());
+        key_data = std::move(encryptor.decrypt_keydata(passwd, encrypted_data));
+      }
+      else
+      {
+        key_data = std::move(keyfile.keyinfo.data.as<std::string>());
+      }
+      private_key = get_priv_key_from_str(key_data);
+      
       send_response(private_key.sign_compact(get_hash(unit_list)));
+    }
+};
+
+template <>
+struct keychain_command<CMD_CREATE>: keychain_command_base
+{
+    keychain_command():keychain_command_base(CMD_CREATE){}
+    ~keychain_command(){}
+    struct params
+    {
+      std::string username;
+      bool encrypted;
+      keyfile_format::cipher_etype algo;
+      keyfile_format::key_file::key_info::curve_etype curve;
+    };
+    using params_t = params;
+    virtual void operator()(keychain_base* keychain, const fc::variant& params_variant) const override
+    {
+      auto params = params_variant.as<params_t>();
+      keyfile_format::key_file keyfile;
+      std::string wif_key;
+      switch (params.curve)
+      {
+        case keyfile_format::key_file::key_info::CURVE_SECP256K1:
+        {
+          wif_key = std::move(graphene::utilities::key_to_wif(fc::ecc::private_key::generate()));
+        }
+        break;
+        default:
+        {
+          throw std::runtime_error("Error: unsupported curve format");
+        }
+      }
+      if (params.encrypted)
+      {
+        auto passwd = std::move(keychain->get_passwd_functor());
+        auto& encryptor = encryptor_singletone::instance();
+        auto enc_data = encryptor.encrypt_keydata(params.algo, passwd, wif_key);
+        keyfile.keyinfo.data = fc::variant(enc_data);
+      }
+      else
+        keyfile.keyinfo.data = std::move(wif_key);
+      std::string filename(keyfile.username);
+      filename += ".json";
+      create_keyfile(filename.c_str(), fc::variant(keyfile));
     }
 };
 
@@ -142,7 +220,8 @@ constexpr auto cmd_static_list =
 FC_REFLECT_ENUM(keychain_app::keychain_command_type,
                 (CMD_UNKNOWN)(CMD_HELP)(CMD_LIST)(CMD_SIGN)(CMD_CREATE)(CMD_IMPORT)(CMD_EXPORT)(CMD_REMOVE)(CMD_RESTORE)(CMD_SEED)(CMD_PUBLIC_KEY)(CMD_LAST))
 
-FC_REFLECT(typename keychain_app::keychain_command<keychain_app::CMD_SIGN>::params_t, (chainid)(transaction)(keyname)(keyfile))
+FC_REFLECT(keychain_app::keychain_command<keychain_app::CMD_SIGN>::params_t, (chainid)(transaction)(keyname)(keyfile))
+FC_REFLECT(keychain_app::keychain_command<keychain_app::CMD_CREATE>::params_t, (username)(algo)(curve))
 FC_REFLECT(keychain_app::keychain_command_common, (command)(params))
 FC_REFLECT(keychain_app::json_response, (result))
 

@@ -80,12 +80,12 @@ namespace bfs = keychain_app::bfs;
 
 void keychain_app::create_keyfile(const char* filename, const fc::variant& keyfile_var)
 {
-  auto path = bfs::current_path();
-  path += bfs::path(filename);
-  if(!path.has_filename())
-    throw std::runtime_error("Error: can not write keyfile, invalid filename");
-  if(bfs::exists(path))
+  bfs::path filepath(filename);
+  if(bfs::exists(filepath))
     throw std::runtime_error("Error: can not create keyfile, file is currently exist");
+  auto path = bfs::current_path();
+  path += bfs::path("/");
+  path += filepath;
   auto fout = std::ofstream(filename);
   if(!fout.is_open())
     throw std::runtime_error("Error: cannot open keyfile");
@@ -97,6 +97,12 @@ void keychain_app::send_response(const signature_t& signature)
   json_response response(to_hex(signature.begin(),signature.size()).c_str());
   fc::variant res(response);
   std::cout << fc::json::to_pretty_string(res) << std::endl;
+}
+
+void keychain_app::send_response(bool res)
+{
+  json_response response(res);
+  std::cout << fc::json::to_pretty_string(fc::variant(response)) << std::endl;
 }
 
 using namespace keychain_app;

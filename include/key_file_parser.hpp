@@ -35,11 +35,11 @@ struct encrypted_data
   std::string enc_data;
 };
 
-struct key_file
+struct keyfile_t
 {
   file_type filetype;
   std::string username;
-  struct key_info
+  struct keyinfo_t
   {
     enum key_format
     {
@@ -61,11 +61,11 @@ struct key_file
 }
 FC_REFLECT_ENUM(keychain_app::keyfile_format::cipher_etype, (CIPHER_UNKNOWN)(CIPHER_AES128)(CIPHER_AES192)(CIPHER_AES256))
 FC_REFLECT_ENUM(keychain_app::keyfile_format::file_type, (TYPE_UNKNOWN)(TYPE_KEY))
-FC_REFLECT_ENUM(keychain_app::keyfile_format::key_file::key_info::key_format, (FORMAT_UNKNOWN)(FORMAT_ARRAYIO))
-FC_REFLECT_ENUM(keychain_app::keyfile_format::key_file::key_info::curve_etype, (CURVE_UNKNOWN)(CURVE_SECP256K1))
+FC_REFLECT_ENUM(keychain_app::keyfile_format::keyfile_t::keyinfo_t::key_format, (FORMAT_UNKNOWN)(FORMAT_ARRAYIO))
+FC_REFLECT_ENUM(keychain_app::keyfile_format::keyfile_t::keyinfo_t::curve_etype, (CURVE_UNKNOWN)(CURVE_SECP256K1))
 FC_REFLECT(keychain_app::keyfile_format::encrypted_data, (cipher_type)(iv)(enc_data))
-FC_REFLECT(keychain_app::keyfile_format::key_file::key_info, (format)(encrypted)(curve_type)(data))
-FC_REFLECT(keychain_app::keyfile_format::key_file, (filetype)(username)(keyinfo))
+FC_REFLECT(keychain_app::keyfile_format::keyfile_t::keyinfo_t, (format)(encrypted)(curve_type)(data))
+FC_REFLECT(keychain_app::keyfile_format::keyfile_t, (filetype)(username)(keyinfo))
 
 
 #endif //KEYCHAINAPP_KEY_FILE_PARSER_HPP

@@ -19,6 +19,8 @@
 //      why if we do not include this file we cannot compile reflect parser for keychain_app::keyfile_format::key_file
 #include <graphene/chain/protocol/transaction.hpp>
 
+#include <graphene/utilities/key_conversion.hpp>
+
 #include "key_file_parser.hpp"
 #include "key_encryptor.hpp"
 #include "sign_define.hpp"
@@ -41,6 +43,7 @@ void create_keyfile(const char* filename, const fc::variant& keyfile_var);
 secp256_private_key get_priv_key_from_str(const std::string& str);
 fc::sha256 get_hash(const keychain_app::unit_list_t &list);
 void send_response(const signature_t& signature);
+void send_response(bool res);
 std::string to_hex(const uint8_t* data, size_t length);
 /*{
   using out_map = std::map<std::string, nlohmann::json>;
@@ -53,6 +56,7 @@ std::string to_hex(const uint8_t* data, size_t length);
 struct json_response
 {
     json_response(){}
+    json_response(const fc::variant& var):result(var){}
     json_response(const char* result_):result(result_){}
     fc::variant result;
 };
@@ -124,13 +128,13 @@ struct keychain_command<CMD_SIGN> : keychain_command_base
       auto trans_len = fc::from_hex(params.transaction, buf.data(), buf.size());
       buf.resize(trans_len);
   
-      keyfile_format::key_file keyfile;
+      keyfile_format::keyfile_t keyfile;
 
       unit_list.push_back(buf);
       if (!params.keyfile.empty())
       {
         fc::variant j_keyfile = open_keyfile(params.keyfile.c_str());
-        keyfile = j_keyfile.as<keyfile_format::key_file>();
+        keyfile = j_keyfile.as<keyfile_format::keyfile_t>();
       }
       else if (!params.keyname.empty())
       {
@@ -140,7 +144,7 @@ struct keychain_command<CMD_SIGN> : keychain_command_base
                                      return false;
                                    const auto &file_path = unit.path().filename();
                                    auto j_keyfile = open_keyfile(file_path.c_str());
-                                   keyfile = j_keyfile.as<keyfile_format::key_file>();
+                                   keyfile = j_keyfile.as<keyfile_format::keyfile_t>();
                                    return params.keyname == keyfile.username;
                                });
         if (it == bfs::directory_iterator())
@@ -160,7 +164,6 @@ struct keychain_command<CMD_SIGN> : keychain_command_base
         key_data = std::move(keyfile.keyinfo.data.as<std::string>());
       }
       private_key = get_priv_key_from_str(key_data);
-      
       send_response(private_key.sign_compact(get_hash(unit_list)));
     }
 };
@@ -175,17 +178,17 @@ struct keychain_command<CMD_CREATE>: keychain_command_base
       std::string username;
       bool encrypted;
       keyfile_format::cipher_etype algo;
-      keyfile_format::key_file::key_info::curve_etype curve;
+      keyfile_format::keyfile_t::keyinfo_t::curve_etype curve;
     };
     using params_t = params;
     virtual void operator()(keychain_base* keychain, const fc::variant& params_variant) const override
     {
       auto params = params_variant.as<params_t>();
-      keyfile_format::key_file keyfile;
+      keyfile_format::keyfile_t keyfile;
       std::string wif_key;
       switch (params.curve)
       {
-        case keyfile_format::key_file::key_info::CURVE_SECP256K1:
+        case keyfile_format::keyfile_t::keyinfo_t::CURVE_SECP256K1:
         {
           wif_key = std::move(graphene::utilities::key_to_wif(fc::ecc::private_key::generate()));
         }
@@ -204,9 +207,14 @@ struct keychain_command<CMD_CREATE>: keychain_command_base
       }
       else
         keyfile.keyinfo.data = std::move(wif_key);
+      keyfile.username = params.username;
+      keyfile.filetype = keyfile_format::TYPE_KEY;
+      keyfile.keyinfo.format = keyfile_format::keyfile_t::keyinfo_t::FORMAT_ARRAYIO;
+      keyfile.keyinfo.curve_type = params.curve;
       std::string filename(keyfile.username);
       filename += ".json";
       create_keyfile(filename.c_str(), fc::variant(keyfile));
+      send_response(true);
     }
 };
 
@@ -221,7 +229,7 @@ FC_REFLECT_ENUM(keychain_app::keychain_command_type,
                 (CMD_UNKNOWN)(CMD_HELP)(CMD_LIST)(CMD_SIGN)(CMD_CREATE)(CMD_IMPORT)(CMD_EXPORT)(CMD_REMOVE)(CMD_RESTORE)(CMD_SEED)(CMD_PUBLIC_KEY)(CMD_LAST))
 
 FC_REFLECT(keychain_app::keychain_command<keychain_app::CMD_SIGN>::params_t, (chainid)(transaction)(keyname)(keyfile))
-FC_REFLECT(keychain_app::keychain_command<keychain_app::CMD_CREATE>::params_t, (username)(algo)(curve))
+FC_REFLECT(keychain_app::keychain_command<keychain_app::CMD_CREATE>::params_t, (username)(encrypted)(algo)(curve))
 FC_REFLECT(keychain_app::keychain_command_common, (command)(params))
 FC_REFLECT(keychain_app::json_response, (result))
 

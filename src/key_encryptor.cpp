@@ -7,13 +7,14 @@
 #include <openssl/evp.h>
 #include <openssl/err.h>
 #include "key_encryptor.hpp"
+#include "keychain_commands.hpp"
 
 using namespace keychain_app;
 
 encryptor_singletone::encryptor_singletone()
   : m_ctx(EVP_CIPHER_CTX_new())
 {
-  if (m_ctx)
+  if (!m_ctx)
   {
     ERR_print_errors_fp(stderr);
     throw std::runtime_error("Error: can't create EVP cipher context");
@@ -61,7 +62,10 @@ keyfile_format::encrypted_data encryptor_singletone::encrypt_keydata(
   }
   enc_length += length;
   enc_byte_data.resize(enc_length);
-  enc_data.enc_data.assign(reinterpret_cast<const char*>(enc_byte_data.data()), enc_byte_data.size());
+  
+  auto data = to_hex(enc_byte_data.data(), enc_byte_data.size());
+  enc_data.enc_data.assign(std::move(data));
+  enc_data.cipher_type = etype;
   EVP_CIPHER_CTX_reset(m_ctx);
   return enc_data;
 }

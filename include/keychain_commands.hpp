@@ -44,6 +44,7 @@ secp256_private_key get_priv_key_from_str(const std::string& str);
 fc::sha256 get_hash(const keychain_app::unit_list_t &list);
 void send_response(const signature_t& signature);
 void send_response(bool res);
+size_t from_hex(const std::string& hex_str, unsigned char* out_data, size_t out_data_len );
 std::string to_hex(const uint8_t* data, size_t length);
 /*{
   using out_map = std::map<std::string, nlohmann::json>;
@@ -204,9 +205,12 @@ struct keychain_command<CMD_CREATE>: keychain_command_base
         auto& encryptor = encryptor_singletone::instance();
         auto enc_data = encryptor.encrypt_keydata(params.algo, passwd, wif_key);
         keyfile.keyinfo.data = fc::variant(enc_data);
+        keyfile.keyinfo.encrypted = true;
       }
-      else
+      else{
         keyfile.keyinfo.data = std::move(wif_key);
+        keyfile.keyinfo.encrypted = false;
+      }
       keyfile.username = params.username;
       keyfile.filetype = keyfile_format::TYPE_KEY;
       keyfile.keyinfo.format = keyfile_format::keyfile_t::keyinfo_t::FORMAT_ARRAYIO;

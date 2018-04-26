@@ -70,20 +70,24 @@ keyfile_format::encrypted_data encryptor_singletone::encrypt_keydata(
   return enc_data;
 }
 
-std::string encryptor_singletone::decrypt_keydata(const std::string& key, keyfile_format::encrypted_data& enc_data)
+std::string encryptor_singletone::decrypt_keydata(const std::string& key, keyfile_format::encrypted_data& data)
 {
   int decr_length = 0;
   int length = 0;
-  enc_data.iv = std::move(random_string());
+  assert( (data.enc_data.size()&0x01) == 0);//hex data must have even num of symbols
+  std::vector<uint8_t> enc_byte_data(data.enc_data.size()/2, 0x00);
+  auto len = from_hex(data.enc_data.data(), enc_byte_data.data(), enc_byte_data.size());
+  assert(len == enc_byte_data.size());
+  data.iv = std::move(random_string());
   std::vector<uint8_t > decr_byte_data(2048,0x00);//TODO: memory has been allocated with a stock
   //TODO: need to figure out how much memory need to allocate for encrypted data in dependence of cipher algo type
   
-  if(1 != EVP_DecryptInit_ex(m_ctx, get_cipher(enc_data.cipher_type), NULL, reinterpret_cast<const uint8_t*>(key.c_str()), reinterpret_cast<const uint8_t*>(enc_data.iv.c_str())))
+  if(1 != EVP_DecryptInit_ex(m_ctx, get_cipher(data.cipher_type), NULL, reinterpret_cast<const uint8_t*>(key.c_str()), reinterpret_cast<const uint8_t*>(data.iv.c_str())))
   {
     ERR_print_errors_fp(stderr);
     throw std::runtime_error("Error: EVP_EncryptInit_ex");
   }
-  if(1 != EVP_DecryptUpdate(m_ctx, decr_byte_data.data(), &length, reinterpret_cast<const uint8_t*>(enc_data.enc_data.c_str()), enc_data.enc_data.size()))
+  if(1 != EVP_DecryptUpdate(m_ctx, decr_byte_data.data(), &length, enc_byte_data.data(), enc_byte_data.size()))
   {
     ERR_print_errors_fp(stderr);
     throw std::runtime_error("Error: EVP_EncryptUpdate");

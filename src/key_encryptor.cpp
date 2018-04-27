@@ -44,7 +44,16 @@ keyfile_format::encrypted_data encryptor_singletone::encrypt_keydata(
   std::vector<uint8_t > enc_byte_data(2048,0x00);//TODO: memory has been allocated with a stock
   //TODO: need to figure out how much memory need to allocate for encrypted data in dependence of cipher algo type
   
-  if(1 != EVP_EncryptInit_ex(m_ctx, get_cipher(etype), NULL, reinterpret_cast<const uint8_t*>(key.c_str()), reinterpret_cast<const uint8_t*>(enc_data.iv.c_str())))
+  //NOTE: in certain cases, an error with EVP_DecryptInit_ex func may occur
+  //In different cases, the function handles raw C key strings differently
+  //depending on whether the string is allocated on the stack, heap or in the static memory area
+  //I cannot figure out the exact reason what exactly is wrong with the key (it is need to debug asm function
+  // to find out reason)
+  //The solution (from lib/fc) is to create hash from password string and encrypt data on hash key
+  auto key_hash = fc::sha512::hash(key);
+  
+  if(1 != EVP_EncryptInit_ex(m_ctx, get_cipher(etype), NULL, reinterpret_cast<const uint8_t*>(&
+    key_hash), reinterpret_cast<const uint8_t*>(enc_data.iv.c_str())))
   {
     ERR_print_errors_fp(stderr);
     throw std::runtime_error("Error: EVP_EncryptInit_ex");
@@ -76,13 +85,20 @@ std::string encryptor_singletone::decrypt_keydata(const std::string& key, keyfil
   int length = 0;
   assert( (data.enc_data.size()&0x01) == 0);//hex data must have even num of symbols
   std::vector<uint8_t> enc_byte_data(data.enc_data.size()/2, 0x00);
-  auto len = from_hex(data.enc_data.data(), enc_byte_data.data(), enc_byte_data.size());
+  auto len = from_hex(data.enc_data, enc_byte_data.data(), enc_byte_data.size());
   assert(len == enc_byte_data.size());
-  data.iv = std::move(random_string());
-  std::vector<uint8_t > decr_byte_data(2048,0x00);//TODO: memory has been allocated with a stock
   //TODO: need to figure out how much memory need to allocate for encrypted data in dependence of cipher algo type
+  std::vector<uint8_t > decr_byte_data(2048,0x00);//TODO: memory has been allocated with a stock
   
-  if(1 != EVP_DecryptInit_ex(m_ctx, get_cipher(data.cipher_type), NULL, reinterpret_cast<const uint8_t*>(key.c_str()), reinterpret_cast<const uint8_t*>(data.iv.c_str())))
+  //NOTE: in certain cases, an error with EVP_DecryptInit_ex func may occur
+  //In different cases, the function handles raw C key strings differently
+  //depending on whether the string is allocated on the stack, heap or in the static memory area
+  //I cannot figure out the exact reason what exactly is wrong with the key (it is need to debug asm function
+  // to find out reason)
+  //The solution (from lib/fc) is to create hash from password string and encrypt data on hash key
+  auto key_hash = fc::sha512::hash(key);
+  
+  if(1 != EVP_DecryptInit_ex(m_ctx, get_cipher(data.cipher_type), NULL, reinterpret_cast<const uint8_t*>(&key_hash), reinterpret_cast<const uint8_t*>(data.iv.c_str())))
   {
     ERR_print_errors_fp(stderr);
     throw std::runtime_error("Error: EVP_EncryptInit_ex");

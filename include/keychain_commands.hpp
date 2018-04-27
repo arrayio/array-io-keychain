@@ -157,8 +157,8 @@ struct keychain_command<CMD_SIGN> : keychain_command_base
       {
         auto encrypted_data = std::move(keyfile.keyinfo.data.as<keyfile_format::encrypted_data>());
         auto& encryptor = encryptor_singletone::instance();
-        auto passwd = std::move(keychain->get_passwd_functor());
-        key_data = std::move(encryptor.decrypt_keydata(passwd, encrypted_data));
+        std::string passwd = std::move(keychain->get_passwd_functor());
+        key_data = std::move(encryptor.decrypt_keydata(passwd.c_str(), encrypted_data));
       }
       else
       {

@@ -6,6 +6,7 @@
 #include <openssl/conf.h>
 #include <openssl/evp.h>
 #include <openssl/err.h>
+#include <chrono>
 #include "key_encryptor.hpp"
 #include "keychain_commands.hpp"
 
@@ -125,9 +126,11 @@ std::string encryptor_singletone::decrypt_keydata(const std::string& key, keyfil
 std::string encryptor_singletone::random_string(size_t length)
 {
   static const char* base_str = "0123456789qwertyuiopasfghjklzxcvbbnmQWERTYUIOPASDFGHJKLZXCVBNM";
+  static std::uniform_int_distribution<int> dist(0, 61);
+  static std::mt19937 rand_dev(
+    std::chrono::duration_cast<std::chrono::hours>(std::chrono::system_clock::now().time_since_epoch()).count());
+  
   std::string res(length, 0x00);
-  std::uniform_int_distribution<int> dist(0, 61);
-  std::mt19937 rand_dev;
   for (size_t i = 0; i < length; ++i) {
     res[i] = base_str[dist(rand_dev)];
   }

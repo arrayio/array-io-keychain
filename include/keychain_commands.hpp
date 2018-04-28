@@ -236,7 +236,7 @@ struct keychain_command<CMD_CREATE>: keychain_command_base
       auto first = bfs::directory_iterator(bfs::path("./"));
       auto it = std::find_if(first, bfs::directory_iterator(),find_keyfile_by_username(keyfile.username.c_str()));
       //TODO: need check not only filename but username field in key file
-      if(it != bfs::directory_iterator(bfs::path()))
+      if(it != bfs::directory_iterator())
         throw std::runtime_error("Error: keyfile for this user is already exist");
       create_keyfile(filename.c_str(), fc::variant(keyfile));
       send_response(true);

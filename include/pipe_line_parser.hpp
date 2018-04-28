@@ -9,17 +9,9 @@
 #include <cstddef>
 #include <string>
 
-#include <json/json.hpp>
-
 #include <sign_define.hpp>
 
 namespace keychain_app {
-
-struct json_error
-{
-    json_error(const char* str): error(str){}
-    std::string error;
-};
 
 namespace json_parser
 {
@@ -49,7 +41,5 @@ private:
 };
 
 }
-
-FC_REFLECT(keychain_app::json_error, (error))
 
 #endif //KEYCHAINAPP_PIPE_LINE_PARSER_HPP

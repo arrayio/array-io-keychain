@@ -55,10 +55,21 @@ keychain::~keychain()
 }
 
 void keychain::operator()(const fc::variant& command) {
-  auto cmd = command.as<keychain_command_common>();
-  auto cmd_map = keychain_commands_singletone::instance();
-  auto p_func = cmd_map[cmd.command];
-  (*p_func)(this, cmd.params);
+  try
+  {
+    auto cmd = command.as<keychain_command_common>();
+    auto cmd_map = keychain_commands_singletone::instance();
+    auto p_func = cmd_map[cmd.command];
+    (*p_func)(this, cmd.params);
+  }
+  catch (std::exception& exc)
+  {
+    std::cout << fc::json::to_pretty_string(fc::variant(json_error(exc.what()))) << std::endl;
+  }
+  catch(fc::exception& exc)
+  {
+    std::cerr << fc::json::to_pretty_string(fc::variant(json_error(exc.to_detail_string().c_str()))) << std::endl;
+  }
 }
 
 const keychain_commands_singletone& keychain_commands_singletone::instance()

@@ -23,6 +23,13 @@
 namespace keychain_app
 {
 
+struct json_error
+{
+  json_error(const char* str): error(str){}
+  std::string error;
+};
+
+
 namespace bfs = boost::filesystem;
 
 class keychain : public keychain_base
@@ -46,5 +53,7 @@ private:
 };
 
 }
+
+FC_REFLECT(keychain_app::json_error, (error))
 
 #endif //KEYCHAINAPP_KEYCHAIN_HPP

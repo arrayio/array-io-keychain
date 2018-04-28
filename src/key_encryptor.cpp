@@ -52,8 +52,8 @@ keyfile_format::encrypted_data encryptor_singletone::encrypt_keydata(
   //The solution (from lib/fc) is to create hash from password string and encrypt data on hash key
   auto key_hash = fc::sha512::hash(key);
   
-  if(1 != EVP_EncryptInit_ex(m_ctx, get_cipher(etype), NULL, reinterpret_cast<const uint8_t*>(&
-    key_hash), reinterpret_cast<const uint8_t*>(enc_data.iv.c_str())))
+  if(1 != EVP_EncryptInit_ex(m_ctx, get_cipher(etype), NULL, reinterpret_cast<const uint8_t*>(&key_hash),
+                             reinterpret_cast<const uint8_t*>(enc_data.iv.c_str())))
   {
     ERR_print_errors_fp(stderr);
     throw std::runtime_error("Error: EVP_EncryptInit_ex");
@@ -98,7 +98,8 @@ std::string encryptor_singletone::decrypt_keydata(const std::string& key, keyfil
   //The solution (from lib/fc) is to create hash from password string and encrypt data on hash key
   auto key_hash = fc::sha512::hash(key);
   
-  if(1 != EVP_DecryptInit_ex(m_ctx, get_cipher(data.cipher_type), NULL, reinterpret_cast<const uint8_t*>(&key_hash), reinterpret_cast<const uint8_t*>(data.iv.c_str())))
+  if(1 != EVP_DecryptInit_ex(m_ctx, get_cipher(data.cipher_type), NULL, reinterpret_cast<const uint8_t*>(&key_hash),
+                             reinterpret_cast<const uint8_t*>(data.iv.c_str())))
   {
     ERR_print_errors_fp(stderr);
     throw std::runtime_error("Error: EVP_EncryptInit_ex");

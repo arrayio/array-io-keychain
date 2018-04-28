@@ -5,6 +5,8 @@
 #ifndef KEYCHAINAPP_KEYCHAIN_COMMANDS_HPP
 #define KEYCHAINAPP_KEYCHAIN_COMMANDS_HPP
 
+#include <string.h>
+
 #include <type_traits>
 #include <string>
 #include <fc/reflect/reflect.hpp>
@@ -80,6 +82,27 @@ enum keychain_command_type {
     CMD_LAST
 };
 
+struct find_keyfile_by_username
+{
+  find_keyfile_by_username(const char* keyname, keyfile_format::keyfile_t* keyfile = nullptr)
+    : m_keyname(keyname)
+    , m_keyfile(keyfile)
+  {
+  }
+  bool operator()(bfs::directory_entry &unit)
+  {
+    if (!bfs::is_regular_file(unit.status()))
+      return false;
+    const auto &file_path = unit.path().filename();
+    auto j_keyfile = open_keyfile(file_path.c_str());
+    auto keyfile = j_keyfile.as<keyfile_format::keyfile_t>();
+    if(m_keyfile)
+      *m_keyfile = keyfile;//NOTE: move semantic is not implemented in fc::variant in fact
+    return strcmp(m_keyname, keyfile.username.c_str()) == 0;
+  }
+  const char* m_keyname;
+  keyfile_format::keyfile_t* m_keyfile;
+};
 
 struct keychain_command_common {
     keychain_command_type command;
@@ -140,14 +163,7 @@ struct keychain_command<CMD_SIGN> : keychain_command_base
       else if (!params.keyname.empty())
       {
         auto first = bfs::directory_iterator(bfs::path("./"));
-        auto it = std::find_if(first, bfs::directory_iterator(),[this, params, &keyfile](bfs::directory_entry &unit) -> bool {
-                                   if (!bfs::is_regular_file(unit.status()))
-                                     return false;
-                                   const auto &file_path = unit.path().filename();
-                                   auto j_keyfile = open_keyfile(file_path.c_str());
-                                   keyfile = j_keyfile.as<keyfile_format::keyfile_t>();
-                                   return params.keyname == keyfile.username;
-                               });
+        auto it = std::find_if(first, bfs::directory_iterator(),find_keyfile_by_username(params.keyname.c_str(), &keyfile));
         if (it == bfs::directory_iterator())
           throw std::runtime_error("Error: keyfile could not found by username");
       }
@@ -217,6 +233,11 @@ struct keychain_command<CMD_CREATE>: keychain_command_base
       keyfile.keyinfo.curve_type = params.curve;
       std::string filename(keyfile.username);
       filename += ".json";
+      auto first = bfs::directory_iterator(bfs::path("./"));
+      auto it = std::find_if(first, bfs::directory_iterator(),find_keyfile_by_username(keyfile.username.c_str()));
+      //TODO: need check not only filename but username field in key file
+      if(it != bfs::directory_iterator(bfs::path()))
+        throw std::runtime_error("Error: keyfile for this user is already exist");
       create_keyfile(filename.c_str(), fc::variant(keyfile));
       send_response(true);
     }

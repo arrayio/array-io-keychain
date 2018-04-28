@@ -15,7 +15,8 @@ using keychain_t = keychain_app::keychain;
 using namespace nlohmann;
 using namespace keychain_app;
 
-pipeline_parser::pipeline_parser()
+pipeline_parser::pipeline_parser(keychain_invoke_f&& keychain_f)
+  : m_keychain_func(keychain_f)
 {
 }
 
@@ -42,8 +43,7 @@ int pipeline_parser::run()
         auto buf_range = сut_json_obj(read_buf.begin(), it_read_end);
         if( std::distance(buf_range.first, buf_range.second) > 0)
         {
-          keychain_t keychain;
-          keychain(fc::json::from_string(std::string(buf_range.first, buf_range.second)));
+          m_keychain_func(fc::json::from_string(std::string(buf_range.first, buf_range.second)));
 
           auto it = std::copy(buf_range.second, it_read_end, read_buf.begin());
           std::for_each(it, it_read_end, [](buf_type::value_type &val) {

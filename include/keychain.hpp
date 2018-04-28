@@ -23,14 +23,21 @@
 namespace keychain_app
 {
 
+struct json_error
+{
+  json_error(const char* str): error(str){}
+  std::string error;
+};
+
+
 namespace bfs = boost::filesystem;
 
-class keychain
+class keychain : public keychain_base
 {
 public:
-  keychain(const char* default_key_dir = KEY_DEFAULT_PATH);
-  ~keychain();
-  void operator()(const fc::variant& command);
+  keychain(passwd_f&& get_password, const char* default_key_dir = KEY_DEFAULT_PATH);
+  virtual ~keychain();
+  virtual void operator()(const fc::variant& command) override;
 private:
   bfs::path m_init_path;
 };
@@ -46,5 +53,7 @@ private:
 };
 
 }
+
+FC_REFLECT(keychain_app::json_error, (error))
 
 #endif //KEYCHAINAPP_KEYCHAIN_HPP

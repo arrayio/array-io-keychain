@@ -20,6 +20,34 @@ std::string keychain_app::to_hex(const uint8_t* data, size_t length)
   return r;
 }
 
+uint8_t from_hex_symbol( char c )
+{
+  if( c >= '0' && c <= '9' )
+    return c - '0';
+  if( c >= 'a' && c <= 'f' )
+    return c - 'a' + 10;
+  if( c >= 'A' && c <= 'F' )
+    return c - 'A' + 10;
+  throw std::runtime_error("Error: Invalid hex character");
+}
+
+size_t keychain_app::from_hex( const std::string& hex_str, unsigned char* out_data, size_t out_data_len )
+{
+  auto it = hex_str.begin();
+  uint8_t* out_pos = out_data;
+  uint8_t* out_end = out_pos + out_data_len;
+  while( it != hex_str.end() && out_end != out_pos ) {
+    *out_pos = from_hex_symbol(*it) << 4;
+    ++it;
+    if( it != hex_str.end() )  {
+      *out_pos |= from_hex_symbol(*it);
+      ++it;
+    }
+    ++out_pos;
+  }
+  return out_pos - out_data;
+}
+
 fc::sha256 keychain_app::get_hash(const keychain_app::unit_list_t &list)
 {
   class unit_visitor: public boost::static_visitor<>
@@ -76,6 +104,22 @@ fc::variant keychain_app::open_keyfile(const char* filename){
   return fc::json::from_string(std::string(read_buf.begin(), read_buf.end()), fc::json::strict_parser);
 }
 
+namespace bfs = keychain_app::bfs;
+
+void keychain_app::create_keyfile(const char* filename, const fc::variant& keyfile_var)
+{
+  bfs::path filepath(filename);
+  if(bfs::exists(filepath))
+    throw std::runtime_error("Error: can not create keyfile, file is currently exist");
+  auto path = bfs::current_path();
+  path += bfs::path("/");
+  path += filepath;
+  auto fout = std::ofstream(filename);
+  if(!fout.is_open())
+    throw std::runtime_error("Error: cannot open keyfile");
+  fout << fc::json::to_pretty_string(keyfile_var) << std::endl;
+}
+
 void keychain_app::send_response(const signature_t& signature)
 {
   json_response response(to_hex(signature.begin(),signature.size()).c_str());
@@ -83,3 +127,16 @@ void keychain_app::send_response(const signature_t& signature)
   std::cout << fc::json::to_pretty_string(res) << std::endl;
 }
 
+void keychain_app::send_response(bool res)
+{
+  json_response response(res);
+  std::cout << fc::json::to_pretty_string(fc::variant(response)) << std::endl;
+}
+
+using namespace keychain_app;
+
+keychain_base::keychain_base(keychain_app::passwd_f &&get_password)
+    : get_passwd_functor (get_password)
+{}
+
+keychain_base::~keychain_base(){}

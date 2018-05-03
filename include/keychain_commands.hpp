@@ -196,7 +196,7 @@ struct keychain_command<CMD_CREATE>: keychain_command_base
     ~keychain_command(){}
     struct params
     {
-      std::string username;
+      std::string keyname;
       bool encrypted;
       keyfile_format::cipher_etype algo;
       keyfile_format::keyfile_t::keyinfo_t::curve_etype curve;
@@ -231,20 +231,48 @@ struct keychain_command<CMD_CREATE>: keychain_command_base
         keyfile.keyinfo.data = std::move(wif_key);
         keyfile.keyinfo.encrypted = false;
       }
-      keyfile.keyname = params.username;
+      keyfile.keyname = params.keyname;
+      keyfile.uid_hash = keychain->uid_hash;
       keyfile.filetype = keyfile_format::TYPE_KEY;
       keyfile.keyinfo.format = keyfile_format::keyfile_t::keyinfo_t::FORMAT_ARRAYIO;
       keyfile.keyinfo.curve_type = params.curve;
       std::string filename(keyfile.keyname);
+      if(filename.empty())
+        throw std::runtime_error("Error: keyname (filename) is empty");
       filename += ".json";
       auto first = bfs::directory_iterator(bfs::path("./"));
       auto it = std::find_if(first, bfs::directory_iterator(),find_keyfile_by_username(keyfile.keyname.c_str()));
-      //TODO: need check not only filename but username field in key file
       if(it != bfs::directory_iterator())
         throw std::runtime_error("Error: keyfile for this user is already exist");
       create_keyfile(filename.c_str(), fc::variant(keyfile));
       send_response(true);
     }
+};
+
+template <>
+struct keychain_command<CMD_REMOVE>: keychain_command_base
+{
+  keychain_command():keychain_command_base(CMD_REMOVE){}
+  ~keychain_command(){}
+  struct params
+  {
+    std::string keyname;
+  };
+  using params_t = params;
+  virtual void operator()(keychain_base* keychain, const fc::variant& params_variant) const override
+  {
+    auto params = params_variant.as<params_t>();
+    keyfile_format::keyfile_t keyfile;
+    auto first = bfs::directory_iterator(bfs::path("./"));
+    auto it = std::find_if(first, bfs::directory_iterator(),find_keyfile_by_username(params.keyname.c_str(), &keyfile));
+    if(it != bfs::directory_iterator())
+    {
+      if(keyfile.uid_hash != keychain->uid_hash)
+        throw std::runtime_error("Error: can't remove keyfile because of it is owned by different user");
+      bfs::remove(*it);
+    }
+    send_response(true);
+  }
 };
 
 constexpr auto cmd_static_list =
@@ -258,7 +286,8 @@ FC_REFLECT_ENUM(keychain_app::keychain_command_type,
                 (CMD_UNKNOWN)(CMD_HELP)(CMD_LIST)(CMD_SIGN)(CMD_CREATE)(CMD_IMPORT)(CMD_EXPORT)(CMD_REMOVE)(CMD_RESTORE)(CMD_SEED)(CMD_PUBLIC_KEY)(CMD_LAST))
 
 FC_REFLECT(keychain_app::keychain_command<keychain_app::CMD_SIGN>::params_t, (chainid)(transaction)(keyname)(keyfile))
-FC_REFLECT(keychain_app::keychain_command<keychain_app::CMD_CREATE>::params_t, (username)(encrypted)(algo)(curve))
+FC_REFLECT(keychain_app::keychain_command<keychain_app::CMD_CREATE>::params_t, (keyname)(encrypted)(algo)(curve))
+FC_REFLECT(keychain_app::keychain_command<keychain_app::CMD_REMOVE>::params_t, (keyname))
 FC_REFLECT(keychain_app::keychain_command_common, (command)(params))
 FC_REFLECT(keychain_app::json_response, (result))
 

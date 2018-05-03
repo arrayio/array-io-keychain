@@ -43,6 +43,7 @@ keychain::keychain(passwd_f&& get_passwd, const char* uid_hash, const char* defa
   strncpy(user_dir.data(), default_key_dir, user_dir.size());
   if(user_dir.size() >= strlen(default_key_dir) + strlen(uid_hash))
   {
+    strcat(user_dir.data(), "/");
     strcat(user_dir.data(), uid_hash);
   }
   bfs::path path_(user_dir.data());

@@ -34,10 +34,11 @@ using passwd_f = std::function<std::string()>;
 class keychain_base
 {
 public:
-    keychain_base(passwd_f&& get_password);
+    keychain_base(passwd_f&& get_password, std::string&& uid_hash_);
     virtual ~keychain_base();
     virtual void operator()(const fc::variant& command) = 0;
     passwd_f get_passwd_functor;
+    std::string uid_hash;
 };
 
 fc::variant open_keyfile(const char* filename);
@@ -98,9 +99,10 @@ struct find_keyfile_by_username
     auto keyfile = j_keyfile.as<keyfile_format::keyfile_t>();
     if(m_keyfile)
       *m_keyfile = keyfile;//NOTE: move semantic is not implemented in fc::variant in fact
-    return strcmp(m_keyname, keyfile.username.c_str()) == 0;
+    return strcmp(m_keyname, keyfile.keyname.c_str()) == 0;
   }
   const char* m_keyname;
+  keychain_base* m_pkeychain;
   keyfile_format::keyfile_t* m_keyfile;
 };
 
@@ -165,9 +167,11 @@ struct keychain_command<CMD_SIGN> : keychain_command_base
         auto first = bfs::directory_iterator(bfs::path("./"));
         auto it = std::find_if(first, bfs::directory_iterator(),find_keyfile_by_username(params.keyname.c_str(), &keyfile));
         if (it == bfs::directory_iterator())
-          throw std::runtime_error("Error: keyfile could not found by username");
+          throw std::runtime_error("Error: keyfile could not found by keyname");
       }
-  
+      if(keyfile.uid_hash != keychain->uid_hash)
+        std::runtime_error("Error: user is not keyfile owner");
+      
       std::string key_data;
       if(keyfile.keyinfo.encrypted)
       {
@@ -227,14 +231,14 @@ struct keychain_command<CMD_CREATE>: keychain_command_base
         keyfile.keyinfo.data = std::move(wif_key);
         keyfile.keyinfo.encrypted = false;
       }
-      keyfile.username = params.username;
+      keyfile.keyname = params.username;
       keyfile.filetype = keyfile_format::TYPE_KEY;
       keyfile.keyinfo.format = keyfile_format::keyfile_t::keyinfo_t::FORMAT_ARRAYIO;
       keyfile.keyinfo.curve_type = params.curve;
-      std::string filename(keyfile.username);
+      std::string filename(keyfile.keyname);
       filename += ".json";
       auto first = bfs::directory_iterator(bfs::path("./"));
-      auto it = std::find_if(first, bfs::directory_iterator(),find_keyfile_by_username(keyfile.username.c_str()));
+      auto it = std::find_if(first, bfs::directory_iterator(),find_keyfile_by_username(keyfile.keyname.c_str()));
       //TODO: need check not only filename but username field in key file
       if(it != bfs::directory_iterator())
         throw std::runtime_error("Error: keyfile for this user is already exist");

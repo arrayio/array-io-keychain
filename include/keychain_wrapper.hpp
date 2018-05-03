@@ -28,7 +28,7 @@ struct keychain_wrapper: get_password_f
     static void exec(const fc::variant& var)
     {
       get_password_functor f = std::bind(&get_password_f::get);
-      keychain keychain_(std::move(f));
+      keychain keychain_(std::move(f), "uid");//TODO: use proper function for getting uid
       keychain_(var);
     }
 };

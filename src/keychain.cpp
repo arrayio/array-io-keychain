@@ -35,11 +35,18 @@ keychain_commands_singletone::keychain_commands_singletone()
   });
 }
 
-keychain::keychain(passwd_f&& get_passwd, const char* default_key_dir)
-  : keychain_base(std::move(get_passwd))
+keychain::keychain(passwd_f&& get_passwd, const char* uid_hash, const char* default_key_dir)
+  : keychain_base(std::move(get_passwd), uid_hash)
   , m_init_path(bfs::current_path())
 {
-  bfs::path path_(default_key_dir);
+  std::array<char, 256> user_dir;
+  strncpy(user_dir.data(), default_key_dir, user_dir.size());
+  if(user_dir.size() >= strlen(default_key_dir) + strlen(uid_hash))
+  {
+    strcat(user_dir.data(), "/");
+    strcat(user_dir.data(), uid_hash);
+  }
+  bfs::path path_(user_dir.data());
   if(!bfs::exists(path_))
   {
     auto res = bfs::create_directory(path_);

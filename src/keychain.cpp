@@ -35,18 +35,13 @@ keychain_commands_singletone::keychain_commands_singletone()
   });
 }
 
-keychain::keychain(passwd_f&& get_passwd, const char* uid_hash, const char* default_key_dir)
-  : keychain_base(std::move(get_passwd), uid_hash)
+keychain::keychain(passwd_f&& get_passwd, std::string&& uid_hash, const char* default_key_dir)
+  : keychain_base(std::move(get_passwd), std::move(uid_hash))
   , m_init_path(bfs::current_path())
 {
-  std::array<char, 256> user_dir;
-  strncpy(user_dir.data(), default_key_dir, user_dir.size());
-  if(user_dir.size() >= strlen(default_key_dir) + strlen(uid_hash))
-  {
-    strcat(user_dir.data(), "/");
-    strcat(user_dir.data(), uid_hash);
-  }
-  bfs::path path_(user_dir.data());
+  std::string user_dir(default_key_dir);
+  user_dir += uid_hash;
+  bfs::path path_(user_dir);
   if(!bfs::exists(path_))
   {
     auto res = bfs::create_directory(path_);

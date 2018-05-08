@@ -18,6 +18,17 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\DummyBase.cpp" />
+    <ClCompile Include="src\DummyKeyChainService.cpp" />
+    <ClCompile Include="src\DummyService.cpp" />
+    <ClCompile Include="src\ServiceInstaller.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="include\DummyBase.h" />
+    <ClInclude Include="include\DummyService.h" />
+    <ClInclude Include="include\ServiceInstaller.h" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
     <ProjectGuid>{D3937070-49CE-43F0-8F75-C1CCA8079591}</ProjectGuid>
@@ -146,16 +157,6 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
   </ItemDefinitionGroup>
-  <ItemGroup>
-    <ClCompile Include="CDummyService.cpp" />
-    <ClCompile Include="DummyService.cpp" />
-    <ClCompile Include="ServiceBase.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="CDummyService.h" />
-    <ClInclude Include="ServiceBase.h" />
-    <ClInclude Include="ThreadPool.h" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

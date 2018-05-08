@@ -1,9 +1,8 @@
 #pragma once
-
 #include <windows.h> 
 
 
-class CServiceBase
+class CDummyBase
 {
 public:
 
@@ -11,19 +10,19 @@ public:
 	// (SCM). After you call Run(ServiceBase), the SCM issues a Start command,  
 	// which results in a call to the OnStart method in the service. This  
 	// method blocks until the service has stopped. 
-	static BOOL Run(CServiceBase &service);
+	static BOOL Run(CDummyBase &service);
 
 	// Service object constructor. The optional parameters (fCanStop,  
 	// fCanShutdown and fCanPauseContinue) allow you to specify whether the  
 	// service can be stopped, paused and continued, or be notified when  
 	// system shutdown occurs. 
-	CServiceBase(PWSTR pszServiceName,
+	CDummyBase(PWSTR pszServiceName,
 		BOOL fCanStop = TRUE,
 		BOOL fCanShutdown = TRUE,
 		BOOL fCanPauseContinue = FALSE);
 
 	// Service object destructor.  
-	virtual ~CServiceBase(void);
+	virtual ~CDummyBase(void);
 
 	// Stop the service. 
 	void Stop();
@@ -91,7 +90,7 @@ private:
 	void Shutdown();
 
 	// The singleton service instance. 
-	static CServiceBase *s_service;
+	static CDummyBase *s_service;
 
 	// The name of the service 
 	PWSTR m_name;
@@ -102,10 +101,3 @@ private:
 	// The service status handle 
 	SERVICE_STATUS_HANDLE m_statusHandle;
 };
-class ServiceBase
-{
-public:
-	ServiceBase();
-	~ServiceBase();
-};
-

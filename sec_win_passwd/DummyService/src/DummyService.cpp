@@ -1,14 +1,31 @@
-#pragma region Includes 
-#include "CDummyService.h" 
-#include "ThreadPool.h" 
-#pragma endregion 
+/****************************** Module Header ******************************\
+* Module Name:  SampleService.cpp
+* Project:      CppWindowsService
+* Copyright (c) Microsoft Corporation.
+*
+* Provides a sample service class that derives from the service base class -
+* CServiceBase. The sample service logs the service start and stop
+* information to the Application event log, and shows how to run the main
+* function of the service in a thread pool worker thread.
+*
+* This source is subject to the Microsoft Public License.
+* See http://www.microsoft.com/en-us/openness/resources/licenses.aspx#MPL.
+* All other rights reserved.
+*
+* THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY OF ANY KIND,
+* EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE IMPLIED
+* WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A PARTICULAR PURPOSE.
+\***************************************************************************/
+
+#include "..\include\DummyService.h" 
+//#include "..\include\ThreadPool.h" 
 
 
-CDummyService::CDummyService(PWSTR pszServiceName,
+DummyService::DummyService(PWSTR pszServiceName,
 	BOOL fCanStop,
 	BOOL fCanShutdown,
 	BOOL fCanPauseContinue)
-	: ServiceBase(pszServiceName, fCanStop, fCanShutdown, fCanPauseContinue)
+	: CDummyBase(pszServiceName, fCanStop, fCanShutdown, fCanPauseContinue)
 {
 	m_fStopping = FALSE;
 
@@ -22,7 +39,7 @@ CDummyService::CDummyService(PWSTR pszServiceName,
 }
 
 
-CDummyService::~CDummyService(void)
+DummyService::~DummyService(void)
 {
 	if (m_hStoppedEvent)
 	{
@@ -57,14 +74,14 @@ CDummyService::~CDummyService(void)
 //   other solution is to spawn a new thread to perform the main service  
 //   functions, which is demonstrated in this code sample. 
 // 
-void CDummyService::OnStart(DWORD dwArgc, LPWSTR *lpszArgv)
+void DummyService::OnStart(DWORD dwArgc, LPWSTR *lpszArgv)
 {
 	// Log a service start message to the Application log. 
-	WriteEventLogEntry(L"CppWindowsService in OnStart",
+	WriteEventLogEntry((PWSTR)"CppWindowsService in OnStart",
 		EVENTLOG_INFORMATION_TYPE);
 
 	// Queue the main service function for execution in a worker thread. 
-	CThreadPool::QueueUserWorkItem(&CSampleService::ServiceWorkerThread, this);
+	//CThreadPool::QueueUserWorkItem(&DummyService::ServiceWorkerThread, this);
 }
 
 
@@ -74,7 +91,7 @@ void CDummyService::OnStart(DWORD dwArgc, LPWSTR *lpszArgv)
 //   PURPOSE: The method performs the main function of the service. It runs  
 //   on a thread pool worker thread. 
 // 
-void CDummyService::ServiceWorkerThread(void)
+void DummyService::ServiceWorkerThread(void)
 {
 	// Periodically check if the service is stopping. 
 	while (!m_fStopping)
@@ -101,10 +118,10 @@ void CDummyService::ServiceWorkerThread(void)
 //   Be sure to periodically call ReportServiceStatus() with  
 //   SERVICE_STOP_PENDING if the procedure is going to take long time.  
 // 
-void CDummyService::OnStop()
+void DummyService::OnStop()
 {
 	// Log a service stop message to the Application log. 
-	WriteEventLogEntry(L"CppWindowsService in OnStop",
+	WriteEventLogEntry((PWSTR)"CppWindowsService in OnStop",
 		EVENTLOG_INFORMATION_TYPE);
 
 	// Indicate that the service is stopping and wait for the finish of the  

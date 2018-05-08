@@ -1,15 +1,16 @@
 #pragma once
-#include "ServiceBase.h"
-class CDummyService :
-	public ServiceBase
+#include "DummyBase.h" 
+
+
+class DummyService : public CDummyBase
 {
 public:
 
-	CDummyService(PWSTR pszServiceName,
+	DummyService(PWSTR pszServiceName,
 		BOOL fCanStop = TRUE,
 		BOOL fCanShutdown = TRUE,
 		BOOL fCanPauseContinue = FALSE);
-	virtual ~CDummyService(void);
+	virtual ~DummyService(void);
 
 protected:
 
@@ -23,4 +24,3 @@ private:
 	BOOL m_fStopping;
 	HANDLE m_hStoppedEvent;
 };
-

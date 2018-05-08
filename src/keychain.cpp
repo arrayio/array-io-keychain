@@ -7,8 +7,6 @@
 #include "keychain_commands.hpp"
 #include <fc/crypto/sha256.hpp>
 #include <fc/crypto/elliptic.hpp>
-#include <fc/variant.hpp>
-#include <fc/io/json.hpp>
 
 //TODO: it is unclear
 //      why if we do not include this file we cannot compile reflect parser for keychain_app::keyfile_format::key_file
@@ -40,6 +38,7 @@ keychain::keychain(passwd_f&& get_passwd, std::string&& uid_hash, const char* de
   , m_init_path(bfs::current_path())
 {
   std::string user_dir(default_key_dir);
+  user_dir += "/";
   user_dir += uid_hash;
   bfs::path path_(user_dir);
   if(!bfs::exists(path_))
@@ -62,15 +61,12 @@ void keychain::operator()(const fc::variant& command) {
     auto cmd = command.as<keychain_command_common>();
     auto cmd_map = keychain_commands_singletone::instance();
     auto p_func = cmd_map[cmd.command];
-    (*p_func)(this, cmd.params);
-  }
-  catch (std::exception& exc)
-  {
-    std::cout << fc::json::to_pretty_string(fc::variant(json_error(exc.what()))) << std::endl;
+    (*p_func)(this, cmd.params, cmd.id);
   }
   catch(fc::exception& exc)
   {
-    std::cerr << fc::json::to_pretty_string(fc::variant(json_error(exc.to_detail_string().c_str()))) << std::endl;
+    std::cout << fc::json::to_pretty_string(fc::variant(json_error(0, exc.what()))) << std::endl;
+    std::cerr << fc::json::to_pretty_string(fc::variant(json_error(0, exc.to_detail_string().c_str()))) << std::endl;
   }
 }
 

@@ -38,37 +38,29 @@ int pipeline_parser::run()
     bytes_remaining -= bytes_read;
     do
     {
-      try
+      auto buf_range = сut_json_obj(read_buf.begin(), it_read_end);
+      if( std::distance(buf_range.first, buf_range.second) > 0)
       {
-        auto buf_range = сut_json_obj(read_buf.begin(), it_read_end);
-        if( std::distance(buf_range.first, buf_range.second) > 0)
-        {
+        try {
           m_keychain_func(fc::json::from_string(std::string(buf_range.first, buf_range.second)));
-
-          auto it = std::copy(buf_range.second, it_read_end, read_buf.begin());
-          std::for_each(it, it_read_end, [](buf_type::value_type &val) {
-              val = 0x00;
-          });
-          p_read_begin = read_buf.data() + std::distance(read_buf.begin(), it);
-          bytes_remaining = std::distance(it, read_buf.end());
-          it_read_end = it;
-          continue;//try to parse remaining data
         }
-        else if(bytes_remaining < 256)
-          read_buf.resize(256, 0x00);
-        break;//goto fread()
+        catch(fc::exception& exc)
+        {
+          std::cout << fc::json::to_pretty_string(fc::variant(json_error(0, exc.what()))) << std::endl;
+          std::cerr << fc::json::to_pretty_string(fc::variant(json_error(0, exc.to_detail_string().c_str()))) << std::endl;
+        }
+        auto it = std::copy(buf_range.second, it_read_end, read_buf.begin());
+        std::for_each(it, it_read_end, [](buf_type::value_type &val) {
+            val = 0x00;
+        });
+        p_read_begin = read_buf.data() + std::distance(read_buf.begin(), it);
+        bytes_remaining = std::distance(it, read_buf.end());
+        it_read_end = it;
+        continue;//try to parse remaining data
       }
-      catch(std::exception& exc)
-      {
-        std::cout << fc::json::to_pretty_string(fc::variant(json_error(exc.what()))) << std::endl;
-        std::cerr << "Error: " << exc.what() << std::endl;
-        return -1;
-      }
-      catch(fc::exception& exc)
-      {
-        std::cerr << "Error: fc = " << exc.to_detail_string() << std::endl;
-        return -1;
-      }
+      else if(bytes_remaining < 256)
+        read_buf.resize(256, 0x00);
+      break;//goto fread()
     } while (true);
   }
   return 0;

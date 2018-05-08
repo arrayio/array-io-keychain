@@ -120,16 +120,16 @@ void keychain_app::create_keyfile(const char* filename, const fc::variant& keyfi
   fout << fc::json::to_pretty_string(keyfile_var) << std::endl;
 }
 
-void keychain_app::send_response(const signature_t& signature)
+void keychain_app::send_response(const signature_t& signature, int id)
 {
-  json_response response(to_hex(signature.begin(),signature.size()).c_str());
+  json_response response(to_hex(signature.begin(),signature.size()).c_str(), id);
   fc::variant res(response);
   std::cout << fc::json::to_pretty_string(res) << std::endl;
 }
 
-void keychain_app::send_response(bool res)
+void keychain_app::send_response(bool res, int id)
 {
-  json_response response(res);
+  json_response response(res, id);
   std::cout << fc::json::to_pretty_string(fc::variant(response)) << std::endl;
 }
 

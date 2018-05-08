@@ -39,7 +39,7 @@ struct keychain_wrapper: get_password_f, get_uid_functor
       // with get_password_functor get_uid_functor
       // to prevent difficultly analyze complile errors
       get_password_functor f = std::bind(&get_password_f::get);
-      keychain keychain_(std::move(f), get_uid_functor::get());//TODO: use proper function for getting uid
+      keychain keychain_(std::move(f), get_uid_functor::get());
       keychain_(var);
     }
 };

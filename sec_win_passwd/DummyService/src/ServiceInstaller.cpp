@@ -1,6 +1,6 @@
 #include <stdio.h> 
 #include <windows.h> 
-#include "..\include\ServiceInstaller.h" 
+#include "ServiceInstaller.h" 
 
 // 
 //   FUNCTION: InstallService 

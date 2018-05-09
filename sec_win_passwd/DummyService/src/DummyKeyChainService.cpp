@@ -1,15 +1,18 @@
 #include <wchar.h>
-#include "..\include\ServiceInstaller.h"
-#include "..\include\DummyService.h"
-#include "..\include\DummyBase.h"
+#include "ServiceInstaller.h"
+#include "DummyService.h"
+#include "DummyBase.h"
+#include "NamedPipeServer.h"
+#include "SecurityManager.h"
 
 // Internal name of the service 
 #define SERVICE_NAME             L"DummyKeyChainService" 
 
 
 // Displayed name of the service 
-#define SERVICE_DISPLAY_NAME     L"This service ask you to enter password to decrypt your token." 
+#define SERVICE_DISPLAY_NAME     L"DummyKeyChainService" 
 
+#define SERVICE_DESCRIPTION     L"This service shows window for enterance password" 
 
 // Service start options. 
 #define SERVICE_START_TYPE       SERVICE_DEMAND_START 
@@ -25,6 +28,9 @@
 
 // The password to the service account name 
 #define SERVICE_PASSWORD         NULL 
+
+NamedPipeServer _server;
+SecurityManager _secman;
 
 int wmain(int argc, wchar_t *argv[])
 {
@@ -51,6 +57,11 @@ int wmain(int argc, wchar_t *argv[])
 		}
 		else if (_wcsicmp(L"testpipe", argv[1] + 1) == 0)
 		{
+			_server.ListenChannel();
+		}
+		else if (_wcsicmp(L"testproc", argv[1] + 1) == 0)
+		{
+			_secman.CreateSecureDesktop();
 
 		}
 	}

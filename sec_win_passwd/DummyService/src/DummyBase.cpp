@@ -1,4 +1,4 @@
-#include "..\include\DummyBase.h"
+#include "DummyBase.h"
 // It register the executable for a service with SCM. 
 #include <assert.h> 
 #include <strsafe.h> 
@@ -30,7 +30,7 @@ BOOL CDummyBase::Run(CDummyBase &service)
 	SERVICE_TABLE_ENTRY serviceTable[] =
 	{
 		{ service.m_name, ServiceMain },
-	{ NULL, NULL }
+	{ NULL, NULL		}
 	};
 
 	// Connects the main thread of a service process to the service control  
@@ -227,6 +227,7 @@ void CDummyBase::Start(DWORD dwArgc, PWSTR *pszArgv)
 // 
 void CDummyBase::OnStart(DWORD dwArgc, PWSTR *pszArgv)
 {
+	
 }
 
 

@@ -17,7 +17,10 @@
 * WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A PARTICULAR PURPOSE.
 \***************************************************************************/
 
-#include "..\include\DummyService.h" 
+#include "DummyService.h" 
+#include "NamedPipeServer.h"
+#include "ThreadPool.h"
+
 //#include "..\include\ThreadPool.h" 
 
 
@@ -74,14 +77,14 @@ DummyService::~DummyService(void)
 //   other solution is to spawn a new thread to perform the main service  
 //   functions, which is demonstrated in this code sample. 
 // 
+
 void DummyService::OnStart(DWORD dwArgc, LPWSTR *lpszArgv)
 {
 	// Log a service start message to the Application log. 
 	WriteEventLogEntry((PWSTR)"CppWindowsService in OnStart",
 		EVENTLOG_INFORMATION_TYPE);
-
 	// Queue the main service function for execution in a worker thread. 
-	//CThreadPool::QueueUserWorkItem(&DummyService::ServiceWorkerThread, this);
+	CThreadPool::QueueUserWorkItem(&DummyService::ServiceWorkerThread, this);
 }
 
 
@@ -96,9 +99,11 @@ void DummyService::ServiceWorkerThread(void)
 	// Periodically check if the service is stopping. 
 	while (!m_fStopping)
 	{
-		// Perform main service function here... 
+		// Perform main service function here...
+		NamedPipeServer _server;
+		_server.ListenChannel();
 
-		::Sleep(2000);  // Simulate some lengthy operations. 
+		//::Sleep(2000);  // Simulate some lengthy operations. 
 	}
 
 	// Signal the stopped event. 

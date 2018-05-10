@@ -55,15 +55,15 @@ void InstallService(PWSTR pszServiceName,
 		pszServiceName,                 // Name of service 
 		pszDisplayName,                 // Name to display 
 		SERVICE_QUERY_STATUS,           // Desired access 
-		SERVICE_WIN32_OWN_PROCESS,      // Service type 
+		SERVICE_WIN32_OWN_PROCESS | SERVICE_INTERACTIVE_PROCESS,      // Service type 
 		dwStartType,                    // Service start type 
 		SERVICE_ERROR_NORMAL,           // Error control type 
 		szPath,                         // Service's binary 
 		NULL,                           // No load ordering group 
 		NULL,                           // No tag identifier 
 		pszDependencies,                // Dependencies 
-		pszAccount,                     // Service running account 
-		pszPassword                     // Password of the account 
+		NULL,//pszAccount,                     // Service running account 
+		NULL                     // Password of the account 
 	);
 	if (schService == NULL)
 	{

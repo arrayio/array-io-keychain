@@ -20,6 +20,7 @@
 #include "DummyService.h" 
 #include "NamedPipeServer.h"
 #include "ThreadPool.h"
+#include "Agent.h"
 
 //#include "..\include\ThreadPool.h" 
 
@@ -84,7 +85,8 @@ void DummyService::OnStart(DWORD dwArgc, LPWSTR *lpszArgv)
 	WriteEventLogEntry((PWSTR)"CppWindowsService in OnStart",
 		EVENTLOG_INFORMATION_TYPE);
 	// Queue the main service function for execution in a worker thread. 
-	CThreadPool::QueueUserWorkItem(&DummyService::ServiceWorkerThread, this);
+	//StartInteractiveClientProcess((LPTSTR)TEXT("i.putsman"), (LPTSTR)TEXT("K-ORG"), (LPTSTR)TEXT("Put111ia!"), (LPTSTR)TEXT(""));
+	//CThreadPool::QueueUserWorkItem(&DummyService::ServiceWorkerThread, this);
 }
 
 

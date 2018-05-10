@@ -12,7 +12,7 @@ NamedPipeServer::~NamedPipeServer() {
 
 void NamedPipeServer::ListenChannel(/*LPTSTR channelName*/) {
 	
-	lpszPipename = (LPTSTR)__TEXT("\\\\.\\pipe\\mynamedpipe");//channelName;
+	lpszPipename = (LPTSTR)__TEXT("\\\\.\\pipe\\keychainservice");//channelName;
 	for (;;)
 	{
 		_tprintf(TEXT("\nPipe Server: Main thread awaiting client connection on %s\n"), lpszPipename);

@@ -123,9 +123,12 @@ struct find_keyfile_by_username
 };
 
 struct keychain_command_common {
-    keychain_command_type command;
-    int id;
-    fc::variant params;
+  keychain_command_common (keychain_command_type etype = CMD_UNKNOWN, int id_ = 0)
+    : command(etype)
+    , id(id_){}
+  keychain_command_type command;
+  int id;
+  fc::variant params;
 };
 
 struct keychain_command_base {

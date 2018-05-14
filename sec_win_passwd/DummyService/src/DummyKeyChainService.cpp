@@ -33,34 +33,34 @@
 NamedPipeServer _server;
 SecurityManager _secman;
 
-//int wmain(int argc, wchar_t *argv[])
-int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
+int wmain(int argc, wchar_t *argv[])
+//int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
-	//if ((argc > 1) && ((*argv[1] == L'-' || (*argv[1] == L'/'))))
-	//{
-	//	if (_wcsicmp(L"install", argv[1] + 1) == 0)
-	//	{
-	//		// Install the service when the command is  
-	//		// "-install" or "/install". 
-	//		InstallService(
-	//			(PWSTR)SERVICE_NAME,               // Name of service 
-	//			(PWSTR)SERVICE_DISPLAY_NAME,       // Name to display 
-	//			SERVICE_START_TYPE,         // Service start type 
-	//			(PWSTR)SERVICE_DEPENDENCIES,       // Dependencies 
-	//			(PWSTR)SERVICE_ACCOUNT,            // Service running account 
-	//			SERVICE_PASSWORD            // Password of the account 
-	//		);
-	//	}
-	//	else if (_wcsicmp(L"remove", argv[1] + 1) == 0)
-	//	{
-	//		// Uninstall the service when the command is  
-	//		// "-remove" or "/remove". 
-	//		UninstallService((PWSTR)SERVICE_NAME);
-	//	}
-	//	else if (_wcsicmp(L"testpipe", argv[1] + 1) == 0)
-	//	{
+	if ((argc > 1) && ((*argv[1] == L'-' || (*argv[1] == L'/'))))
+	{
+		if (_wcsicmp(L"install", argv[1] + 1) == 0)
+		{
+			// Install the service when the command is  
+			// "-install" or "/install". 
+			InstallService(
+				(PWSTR)SERVICE_NAME,               // Name of service 
+				(PWSTR)SERVICE_DISPLAY_NAME,       // Name to display 
+				SERVICE_START_TYPE,         // Service start type 
+				(PWSTR)SERVICE_DEPENDENCIES,       // Dependencies 
+				(PWSTR)SERVICE_ACCOUNT,            // Service running account 
+				SERVICE_PASSWORD            // Password of the account 
+			);
+		}
+		else if (_wcsicmp(L"remove", argv[1] + 1) == 0)
+		{
+			// Uninstall the service when the command is  
+			// "-remove" or "/remove". 
+			UninstallService((PWSTR)SERVICE_NAME);
+		}
+		else if (_wcsicmp(L"testpipe", argv[1] + 1) == 0)
+		{
 			_server.ListenChannel();
-		/*}
+		}
 		else if (_wcsicmp(L"testproc", argv[1] + 1) == 0)
 		{
 			_secman.CreateSecureDesktop();
@@ -77,14 +77,14 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	else
 	{
 
-		StartInteractiveClientProcess((LPTSTR)TEXT("i.putsman"), (LPTSTR)TEXT("K-ORG"), (LPTSTR)TEXT("Put111ia!"), (LPTSTR)TEXT(""));
+		//StartInteractiveClientProcess((LPTSTR)TEXT("keychainuser"), (LPTSTR)TEXT("."), (LPTSTR)TEXT("T123456!"), (LPTSTR)TEXT("-testpipe"));
 		wprintf(L"Parameters:\n");
 		wprintf(L" -install  to install the service.\n");
 		wprintf(L" -remove   to remove the service.\n");
 
 
 		
-	}*/
+	}
 
 
 	return 0;

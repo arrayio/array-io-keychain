@@ -1,8 +1,16 @@
 #pragma once
+#ifndef __AGENT_H
+#define __AGENT_H
+#endif
 #include <windows.h>
+#include <UserEnv.h>
 #include <Tchar.h>
-#include <windows.h>
+#include <string>
+#include <cwchar>
+#include <WtsApi32.h>
 #pragma comment(lib, "advapi32.lib")
+#pragma comment(lib, "Userenv.lib")
+#pragma comment(lib, "Wtsapi32.lib")
 
 #define DESKTOP_ALL (DESKTOP_READOBJECTS | DESKTOP_CREATEWINDOW | \
 DESKTOP_CREATEMENU | DESKTOP_HOOKCONTROL | DESKTOP_JOURNALRECORD | \
@@ -27,9 +35,10 @@ BOOL GetLogonSID(HANDLE hToken, PSID *ppsid);
 VOID FreeLogonSID(PSID *ppsid);
 
 BOOL StartInteractiveClientProcess(
-	LPTSTR lpszUsername,    // client to log on
+	LPCWSTR lpAppStart,
+	/*LPTSTR lpszUsername,    // client to log on
 	LPTSTR lpszDomain,      // domain of client's account
-	LPTSTR lpszPassword,    // client's password
+	LPTSTR lpszPassword,    // client's password*/
 	LPTSTR lpCommandLine    // command line to execute
 )
 {
@@ -40,16 +49,23 @@ BOOL StartInteractiveClientProcess(
 	PSID pSid = NULL;
 	STARTUPINFO si;
 	BOOL bResult = FALSE;
+	LPVOID enviroment = NULL;
+	DWORD latError = NULL;
 
 	// Log the client on to the local computer.
 
-	if (!LogonUser(
+	/*if (!LogonUser(
 		lpszUsername,
 		lpszDomain,
 		lpszPassword,
 		LOGON32_LOGON_INTERACTIVE,
 		LOGON32_PROVIDER_DEFAULT,
 		&hToken))
+	{
+		goto Cleanup;
+	}*/
+
+	if (!WTSQueryUserToken(WTSGetActiveConsoleSessionId(), &hToken))
 	{
 		goto Cleanup;
 	}
@@ -74,7 +90,6 @@ BOOL StartInteractiveClientProcess(
 
 	if (!SetProcessWindowStation(hwinsta))
 		goto Cleanup;
-
 	// Get a handle to the interactive desktop.
 
 	hdesk = OpenDesktop(
@@ -116,34 +131,52 @@ BOOL StartInteractiveClientProcess(
 
 	// Initialize the STARTUPINFO structure.
 	// Specify that the process runs in the interactive desktop.
-
 	ZeroMemory(&si, sizeof(STARTUPINFO));
 	si.cb = sizeof(STARTUPINFO);
 	si.lpDesktop = (LPTSTR)TEXT("winsta0\\default");
+	si.dwX = 0;
+	si.dwY = 0;
+	si.wShowWindow = true;
+	si.hStdError = false;
+	si.hStdInput = false;
+	si.hStdOutput = false;
 
 	// Launch the process in the client's logon session.
+	if (!CreateEnvironmentBlock(&enviroment, hToken, FALSE))
+		goto Cleanup;
+	//commandLine = GetCommandLine();
+	/*found = wcsstr((wchar_t*)commandLine, L"DummyService.exe");
+	pathToExecute = new wchar_t[(found - (wchar_t*)commandLine)+wcslen(L"pass_ent_app.exe -transId jdlksjflfskdljfaldj")];
 
+	wmemcpy((wchar_t*)pathToExecute,
+		(wchar_t*)commandLine, 
+		(found - (wchar_t*)commandLine));
+	wmemcpy((wchar_t*)(pathToExecute + (found - (wchar_t*)commandLine)),
+		L"pass_ent_app.exe",
+		wcslen(pathToExecute));*/
 	bResult = CreateProcessAsUser(
 		hToken,            // client's access token
-		NULL,              // file to execute
+		lpAppStart,//L"C:\\MyProjects\\arrayiopasswin\\array-io-keychain\\sec_win_passwd\\DummyService\\Debug\\pass_ent_app.exe",//L"C:\\MyProjects\\Test1\\Test1\\bin\\Debug\\Test1.exe",              // file to execute (LPCWSTR)pathToExecute,//
 		lpCommandLine,     // command line
 		NULL,              // pointer to process SECURITY_ATTRIBUTES
 		NULL,              // pointer to thread SECURITY_ATTRIBUTES
 		FALSE,             // handles are not inheritable
-		NORMAL_PRIORITY_CLASS | CREATE_NEW_CONSOLE,   // creation flags
-		NULL,              // pointer to new environment block 
+		NORMAL_PRIORITY_CLASS | CREATE_UNICODE_ENVIRONMENT,   // creation flags
+		enviroment,              // pointer to new environment block 
 		NULL,              // name of current directory 
 		&si,               // pointer to STARTUPINFO structure
 		&pi                // receives information about new process
 	);
 
+	//SwitchDesktop(hdesk);
+	latError = GetLastError();
 	// End impersonation of client.
 
 	RevertToSelf();
 
 	if (bResult && pi.hProcess != INVALID_HANDLE_VALUE)
 	{
-		WaitForSingleObject(pi.hProcess, INFINITE);
+		//WaitForSingleObject(pi.hProcess, INFINITE);
 		CloseHandle(pi.hProcess);
 	}
 

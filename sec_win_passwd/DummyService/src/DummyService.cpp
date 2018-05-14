@@ -20,7 +20,7 @@
 #include "DummyService.h" 
 #include "NamedPipeServer.h"
 #include "ThreadPool.h"
-#include "Agent.h"
+//#include "Agent.h"
 
 //#include "..\include\ThreadPool.h" 
 
@@ -86,7 +86,7 @@ void DummyService::OnStart(DWORD dwArgc, LPWSTR *lpszArgv)
 		EVENTLOG_INFORMATION_TYPE);
 	// Queue the main service function for execution in a worker thread. 
 	//StartInteractiveClientProcess((LPTSTR)TEXT("i.putsman"), (LPTSTR)TEXT("K-ORG"), (LPTSTR)TEXT("Put111ia!"), (LPTSTR)TEXT(""));
-	//CThreadPool::QueueUserWorkItem(&DummyService::ServiceWorkerThread, this);
+	CThreadPool::QueueUserWorkItem(&DummyService::ServiceWorkerThread, this);
 }
 
 

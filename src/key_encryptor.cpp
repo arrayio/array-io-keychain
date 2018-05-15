@@ -7,6 +7,7 @@
 #include <openssl/evp.h>
 #include <openssl/err.h>
 #include <chrono>
+#include <random>
 #include "key_encryptor.hpp"
 #include "keychain_commands.hpp"
 

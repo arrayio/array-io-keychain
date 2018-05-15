@@ -33,8 +33,8 @@ keychain_commands_singletone::keychain_commands_singletone()
   });
 }
 
-keychain::keychain(passwd_f&& get_passwd, std::string&& uid_hash, const char* default_key_dir)
-  : keychain_base(std::move(get_passwd), std::move(uid_hash))
+keychain::keychain(std::string&& uid_hash, const char* default_key_dir)
+  : keychain_base(std::move(uid_hash))
   , m_init_path(bfs::current_path())
 {
   std::string user_dir(default_key_dir);

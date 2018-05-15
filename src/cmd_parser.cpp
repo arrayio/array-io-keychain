@@ -7,6 +7,8 @@
 #include "cmd_parser.hpp"
 #include "pipe_line_parser.hpp"
 #include "keychain_wrapper.hpp"
+#include "secure_module_singletone.hpp"
+#include "secure_module_dummy.hpp"
 
 using namespace keychain_app;
 
@@ -18,8 +20,10 @@ cmd_parser::cmd_parser()
 int cmd_parser::run(int argc, const char* const argv [])
 {
   //TODO: add boost program options call that will parse command line arguments
+  
+  const secure_dlg_mod_base* sec_mod = secure_module<sec_mod_dummy>::instance();
 
-  keychain_invoke_f f = std::bind(&keychain_dummy_wrapper::exec, std::placeholders::_1);
+  keychain_invoke_f f = std::bind(&keychain_wrapper, sec_mod, std::placeholders::_1);
   pipeline_parser pipe_line_parser_(std::move(f));
   return pipe_line_parser_.run();
 }

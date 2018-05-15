@@ -25,7 +25,7 @@ LIST(APPEND BOOST_COMPONENTS coroutine)
 SET(Boost_LIBRARIES ${BOOST_LIBRARIES_TEMP} ${Boost_LIBRARIES})
 
 
-include_directories("./include" "/opt/openssllib/include" "./3rd-party-components/include" ${Boost_INCLUDE_DIR})
+include_directories("./include" "/opt/openssllib/include" "./3rd-party-components/include" "/usr/include/libcxxabi" ${Boost_INCLUDE_DIR})
 
 find_library(FCLIB name fc HINTS "~/blockchain/3rd-party-components/lib")
 find_library(FCLIB name secp256k1 HINTS "~/blockchain/3rd-party-components/lib")

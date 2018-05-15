@@ -24,6 +24,7 @@
 #include <graphene/chain/protocol/transaction.hpp>
 
 #include <graphene/utilities/key_conversion.hpp>
+#include <boost/signals2.hpp>
 
 #include "key_file_parser.hpp"
 #include "key_encryptor.hpp"
@@ -42,10 +43,14 @@ struct keychain_error: std::runtime_error
 class keychain_base
 {
 public:
-    keychain_base(passwd_f&& get_password, std::string&& uid_hash_);
+    using string_list = std::list<std::string>;
+    keychain_base(std::string&& uid_hash_);
     virtual ~keychain_base();
     virtual void operator()(const fc::variant& command) = 0;
-    passwd_f get_passwd_functor;
+    boost::signals2::signal<std::string(const std::string&)> get_passwd_trx_raw;
+    boost::signals2::signal<std::string(const graphene::chain::transaction&)> get_passwd_trx;
+    boost::signals2::signal<std::string(const std::string&)> get_passwd;
+    boost::signals2::signal<void(const string_list&)> print_mnemonic;
     std::string uid_hash;
 };
 
@@ -198,7 +203,11 @@ struct keychain_command<CMD_SIGN> : keychain_command_base
         {
           auto encrypted_data = std::move(keyfile.keyinfo.data.as<keyfile_format::encrypted_data>());
           auto& encryptor = encryptor_singletone::instance();
-          std::string passwd = std::move(keychain->get_passwd_functor());
+          //TODO: need to try to parse transaction.
+          // If we can parse transaction we need to use get_passwd_trx function
+          // else use get_passwd_trx_raw()
+          // At this moment parsing of transaction is not implemented
+          std::string passwd = std::move(*(keychain->get_passwd_trx_raw(params.transaction)));
           key_data = std::move(encryptor.decrypt_keydata(passwd.c_str(), encrypted_data));
         }
         else
@@ -254,7 +263,7 @@ struct keychain_command<CMD_CREATE>: keychain_command_base
         }
         if (params.encrypted)
         {
-          auto passwd = std::move(keychain->get_passwd_functor());
+          auto passwd = std::move(*keychain->get_passwd(std::string("Please, enter password for your new key")));
           auto& encryptor = encryptor_singletone::instance();
           auto enc_data = encryptor.encrypt_keydata(params.algo, passwd, wif_key);
           keyfile.keyinfo.data = fc::variant(enc_data);

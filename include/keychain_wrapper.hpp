@@ -8,43 +8,23 @@
 #include <string>
 #include "keychain.hpp"
 
-namespace keychain_app
-{
+namespace keychain_app {
 
-//NOTE: for debug only
-struct get_password_dummy
+class secure_dlg_mod_base
 {
-    static std::string get(){
-      return std::string("blank_password");
-    }
+public:
+  using string_list = std::list<std::string>;
+  
+  virtual ~secure_dlg_mod_base(){}
+  virtual std::string get_passwd_trx_raw(const std::string& raw_trx) const = 0;
+  virtual std::string get_passwd_trx(const graphene::chain::transaction& trx) const = 0;
+  virtual std::string get_passwd(const std::string& str) const = 0;
+  virtual void print_mnemonic(const string_list& mnemonic) const = 0;
+  virtual std::string get_uid() const = 0;
 };
 
-struct get_uid_dummy {
-  static std::string get()
-  {
-    return std::string("uid");
-  }
-};
 
-using get_password_functor = std::function<std::string()>;
-using get_uid_functor = std::function<std::string()>;
-
-//TODO: put here platform specific implementation
-template <typename get_password_f, typename get_uid_functor>
-struct keychain_wrapper: get_password_f, get_uid_functor
-{
-    static void exec(const fc::variant& var)
-    {
-      //TODO: add static assert to compare get_password_f and get_uid_functor signature
-      // with get_password_functor get_uid_functor
-      // to prevent difficultly analyze complile errors
-      get_password_functor f = std::bind(&get_password_f::get);
-      keychain keychain_(std::move(f), get_uid_functor::get());
-      keychain_(var);
-    }
-};
-
-using keychain_dummy_wrapper = keychain_wrapper<get_password_dummy, get_uid_dummy>;
+void keychain_wrapper(const secure_dlg_mod_base* secure_dlg, const fc::variant& var);
 
 }
 

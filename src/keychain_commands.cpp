@@ -135,9 +135,8 @@ void keychain_app::send_response(bool res, int id)
 
 using namespace keychain_app;
 
-keychain_base::keychain_base(keychain_app::passwd_f &&get_password, std::string&& uid_hash_)
-  : get_passwd_functor (get_password)
-  , uid_hash(uid_hash_)
+keychain_base::keychain_base(std::string&& uid_hash_)
+  : uid_hash(std::move(uid_hash_))
 {}
 
 keychain_base::~keychain_base(){}

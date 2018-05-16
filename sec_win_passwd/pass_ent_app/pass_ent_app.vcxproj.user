@@ -4,4 +4,8 @@
     <LocalDebuggerCommandArguments>-transId jdlksjflfskdljfaldjkfsajf7f8f68as7dfhajsfhk</LocalDebuggerCommandArguments>
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <LocalDebuggerCommandArguments>-transId sdashjkdhasjdhjasdasdasd</LocalDebuggerCommandArguments>
+    <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
+  </PropertyGroup>
 </Project>

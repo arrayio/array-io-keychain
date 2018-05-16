@@ -92,6 +92,8 @@ BOOL StartInteractiveClientProcess(
 		goto Cleanup;
 	// Get a handle to the interactive desktop.
 
+	
+
 	hdesk = OpenDesktop(
 		_T("default"),     // the interactive window station 
 		0,             // no interaction with other desktop processes
@@ -161,7 +163,7 @@ BOOL StartInteractiveClientProcess(
 		NULL,              // pointer to process SECURITY_ATTRIBUTES
 		NULL,              // pointer to thread SECURITY_ATTRIBUTES
 		FALSE,             // handles are not inheritable
-		NORMAL_PRIORITY_CLASS | CREATE_UNICODE_ENVIRONMENT,   // creation flags
+		NORMAL_PRIORITY_CLASS | CREATE_UNICODE_ENVIRONMENT | 0x00400000,   // creation flags
 		enviroment,              // pointer to new environment block 
 		NULL,              // name of current directory 
 		&si,               // pointer to STARTUPINFO structure

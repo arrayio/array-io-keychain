@@ -40,6 +40,8 @@ void InstallService(PWSTR pszServiceName,
 		goto Cleanup;
 	}
 
+	wcscat_s(szPath, MAX_PATH, L" -r");
+
 	// Open the local default service control manager database 
 	schSCManager = OpenSCManager(NULL, NULL, SC_MANAGER_CONNECT |
 		SC_MANAGER_CREATE_SERVICE);
@@ -55,7 +57,7 @@ void InstallService(PWSTR pszServiceName,
 		pszServiceName,                 // Name of service 
 		pszDisplayName,                 // Name to display 
 		SERVICE_QUERY_STATUS,           // Desired access 
-		SERVICE_WIN32_OWN_PROCESS | SERVICE_INTERACTIVE_PROCESS,      // Service type 
+		SERVICE_WIN32_OWN_PROCESS  | SERVICE_INTERACTIVE_PROCESS,      // Service type 
 		dwStartType,                    // Service start type 
 		SERVICE_ERROR_NORMAL,           // Error control type 
 		szPath,                         // Service's binary 

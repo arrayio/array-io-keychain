@@ -3,6 +3,21 @@
 #include <string.h>
 #include <cstddef>
 #include <tchar.h>
+#include <windows.h>
+#include <UserEnv.h>
+#include <Tchar.h>
+#include <string>
+#include <cwchar>
+#include <WtsApi32.h>
+#pragma comment(lib, "advapi32.lib")
+#pragma comment(lib, "Userenv.lib")
+#pragma comment(lib, "Wtsapi32.lib")
+
+#define DESKTOP_ALL (DESKTOP_READOBJECTS | DESKTOP_CREATEWINDOW | \
+DESKTOP_CREATEMENU | DESKTOP_HOOKCONTROL | DESKTOP_JOURNALRECORD | \
+DESKTOP_JOURNALPLAYBACK | DESKTOP_ENUMERATE | DESKTOP_WRITEOBJECTS | \
+DESKTOP_SWITCHDESKTOP | STANDARD_RIGHTS_REQUIRED)
+
 #include <stdio.h>
 #include "..\resource.h"
 
@@ -12,6 +27,9 @@ INT_PTR CALLBACK PasswordProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lPa
 
 const char* TRANS_ID = "-transId";
 LPSTR transId;
+HDESK hOldDesktop, hNewDesktop;
+DWORD WINAPI DrawWindow(LPVOID);
+HINSTANCE _hInstance;
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
@@ -21,11 +39,35 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	transId = new char[(totalLen - transIdLen)];
 	strncpy_s(transId, (totalLen - transIdLen), (lpCmdLine + transIdLen+1), (totalLen - transIdLen));
 	
-	INT_PTR kl = DialogBoxW(hInstance,                   // application instance
+	hOldDesktop = GetThreadDesktop(GetCurrentThreadId());
+
+	// new desktop's handle, assigned automatically by CreateDesktop
+	hNewDesktop = CreateDesktop(L"secdesktop", NULL, NULL, 0, DESKTOP_ALL, NULL);
+
+	// switching to the new desktop
+	SwitchDesktop(hNewDesktop);
+
+	// Random login form: used for testing / not required
+	string passwd = "";
+
+	HANDLE thread = CreateThread(NULL, 0, DrawWindow, NULL, 0, NULL);
+	
+	WaitForSingleObject(thread, INFINITE);
+	SwitchDesktop(hOldDesktop);
+
+	// disposing the secure desktop since it's no longer needed
+	CloseDesktop(hNewDesktop);
+}
+
+static DWORD WINAPI DrawWindow(LPVOID t)
+{
+	SetThreadDesktop(hNewDesktop);
+	INT_PTR kl = DialogBoxW(_hInstance,                   // application instance
 		MAKEINTRESOURCE(IDD_PASSENTERANCE), // dialog box resource
 		NULL,                          // owner window
 		PasswordProc                   // dialog box window procedure
 	);
+	return 0;
 }
 
 static INT_PTR CALLBACK PasswordProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)

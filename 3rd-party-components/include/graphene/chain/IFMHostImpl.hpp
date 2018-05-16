@@ -33,8 +33,10 @@ struct IFMHostImpl: IFMHost
 
     // { IFMHost
     virtual bool stg_get(const TStgKey& key, TStgVal& val_out) override;
-    virtual std::vector<TStgVal> stg_get(const TStgKey& key, uint32_t num_of_keys) override;
-    virtual void stg_set(const TStgKey& key, const TStgVal& val) override;
+    virtual uint32_t stg_get(const IFMHost::TStgKey& key, uint32_t num_of_keys, std::vector<IFMHost::TStgVal>& data) override;
+    virtual bool stg_set(const TStgKey& key, const TStgVal& val) override;
+    virtual uint32_t stg_set(const TStgKey& key, const std::vector<TStgVal>& vals);
+    virtual uint32_t stg_del(const TStgKey& key, uint32_t num_of_keys);
     virtual TAccountID env_get_caller() override
     { return(get_caller().operator uint64_t()); }
     virtual TAccountID env_get_contract_id() override
@@ -59,6 +61,7 @@ struct IFMHostImpl: IFMHost
     virtual void block_hash (TNumberBlock& numberBlock, TBlockHash blockHash[5]) override;
     virtual const std::vector<char> env_get_contract_code(const TAccountID contract_id) override;
     virtual const std::vector<char> env_get_contract_code(const std::string& contract_name) override;
+    virtual bool env_map_address(const TAddr& addr, TAccountID& account, bool *create) override;
 
     virtual TPDAddr construct_address(TAssetID assetID, TAccountID accountID) override;
     virtual bool parse_address(const TPDAddr& address, TAssetID& assetID, TAccountID& accountID) override;

@@ -55,6 +55,7 @@ namespace graphene { namespace chain {
             call_order_update_operation,
             fill_order_operation,           // VIRTUAL
             account_create_operation,
+            account_auto_create_operation,  // VIRTUAL
             account_update_operation,
             account_whitelist_operation,
             account_upgrade_operation,

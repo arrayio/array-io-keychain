@@ -36,6 +36,17 @@ public:
    object_id_type do_apply( const account_create_operation& o ) ;
 };
 
+class account_auto_create_evaluator : public evaluator<account_create_evaluator>
+{
+public:
+   typedef account_auto_create_operation operation_type;
+
+   void_result do_evaluate( const account_auto_create_operation& o );
+   object_id_type do_apply( const account_auto_create_operation& o ) ;
+
+   string name;
+};
+
 class account_update_evaluator : public evaluator<account_update_evaluator>
 {
 public:

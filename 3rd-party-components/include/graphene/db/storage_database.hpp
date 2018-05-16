@@ -38,8 +38,10 @@ static constexpr unsigned VAL_SIZE      = 32;
 
     /// \returns true - OK; false - key not found, val_out filled with zeroes
     bool stg_get(object_id_type plane, const TStgKey& key, TStgVal& val_out);
-    std::vector<TStgVal> stg_get(object_id_type plane, const TStgKey& key, uint32_t num_of_keys);
-    void stg_set(object_id_type plane, const TStgKey& key, const TStgVal& val);
+    uint32_t stg_get(object_id_type plane, const TStgKey& key, uint32_t num_of_keys, std::vector<storage_database::TStgVal>& data);
+    bool stg_set(object_id_type plane, const TStgKey& key, const TStgVal& val);
+    uint32_t stg_set(object_id_type plane, const storage_database::TStgKey& key, const std::vector<storage_database::TStgVal>& vals);
+    uint32_t stg_del(object_id_type plane, const storage_database::TStgKey& key, uint32_t num_of_keys);
 
     struct nvs_attr
     {
@@ -87,9 +89,12 @@ static constexpr unsigned VAL_SIZE      = 32;
 private:
     struct undo_rec
     {
-        //enum EHint { EH_None, EH_Created, EH_Removed };
-        //EHint       hint = EH_None;
         TStgVal     val;
+        enum EHint { EH_None = 0, EH_Created = 1, EH_NowRemoved = 2, EH_Zero = 4 };
+        unsigned char hint = EH_None;
+
+        undo_rec(const TStgVal& val, unsigned char hint) : val(val), hint(hint)
+        {}
     };
     struct undo_rec_nvs
     {
@@ -119,8 +124,10 @@ private:
 
     MDB_txn *txn(); // top session or m_txn
     undo_state& head();
-    void stg_set_undo(const TStgFullKey& full_key, const TStgVal& val);
-    void stg_set_int(const TStgFullKey& full_key, const TStgVal& val);
+    bool stg_set_undo(const TStgFullKey& full_key, const TStgVal& val);
+    bool stg_set_int(const TStgFullKey& full_key, const TStgVal& val);
+    bool stg_del_undo(const TStgFullKey& full_key);
+    bool stg_del_int(const TStgFullKey& full_key);
 
     MDB_cursor_ptr cursor_open(MDB_dbi dbi);
     void nvs_undo_commit(undo_state::TTouchedNVSMap undoes_nvs);

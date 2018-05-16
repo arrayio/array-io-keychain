@@ -724,7 +724,7 @@ namespace fc { namespace json_relaxed
        FC_RETHROW_EXCEPTIONS( warn, "Atempting to use @fname for ${fname}", ("fname", fname ) );
    }
 
-   template<typename T, bool strict, bool cmdline = false>
+   template<typename T, bool strict, bool cmdline>
    variant variant_from_stream( T& in )
    {
       skip_white_space(in);

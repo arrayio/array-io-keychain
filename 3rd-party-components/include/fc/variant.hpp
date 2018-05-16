@@ -44,7 +44,7 @@ namespace fc
 
    struct blob { std::vector<char> data; };
 
-   void bto_variant( const blob& var,  variant& vo );
+   void to_variant( const blob& var,  variant& vo );
    void from_variant( const variant& var,  blob& vo );
 
 

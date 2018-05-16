@@ -137,6 +137,7 @@ namespace graphene { namespace chain {
 
       safe<uint32_t>                   gas_left = 0;
       asset                            gas_fee_used;
+      asset                            gas_fee_refund;
       share_type                       core_gas_fee_used;
       share_type                       core_gas_fee_refund;
 
@@ -203,7 +204,14 @@ namespace graphene { namespace chain {
          auto* eval = static_cast<DerivedEvaluator*>(this);
          const auto& op = o.get<typename DerivedEvaluator::operation_type>();
 
+         eval->pre_apply(op);
+
          convert_fee();
+         {
+             asset fee = (gas_limit_from_account == 0) ?
+                     fee_from_account : (fee_from_account + gas_fee_limit);
+             db_adjust_balance(op.fee_payer(), -fee);
+         }
 
          auto result = eval->do_apply(op);
 
@@ -211,17 +219,15 @@ namespace graphene { namespace chain {
          {
              prepare_gas_fee_refund();
              convert_gas_fee_refund();
+             db_adjust_balance(op.fee_payer(), gas_fee_refund);
          }
 
          pay_fee();
 
-         // XXX does it check that account can pay the fee before the very end of operation? (might matter for contract calls)
-         // XXX may be it should be taken before applying the operation?
-         asset fee = (gas_limit_from_account == 0) ?
-                 fee_from_account : (fee_from_account + gas_fee_used);
-         db_adjust_balance(op.fee_payer(), -fee);
-
          return result;
       }
+
+   protected:
+      void pre_apply(const base_operation& op) {}
    };
 } }

@@ -146,10 +146,14 @@ namespace graphene { namespace db {
 
          bool stg_get(object_id_type plane, const storage_database::TStgKey& key, storage_database::TStgVal& val_out)
          { return(_storage_db.stg_get(plane, key, val_out)); }
-         std::vector<storage_database::TStgVal> stg_get(object_id_type plane, const storage_database::TStgKey& key, uint32_t num_of_keys)
-         { return(_storage_db.stg_get(plane, key, num_of_keys)); }
-         void stg_set(object_id_type plane, const storage_database::TStgKey& key, const storage_database::TStgVal& val)
-         { _storage_db.stg_set(plane, key, val); }
+         uint32_t stg_get(object_id_type plane, const storage_database::TStgKey& key, uint32_t num_of_keys, std::vector<storage_database::TStgVal>& data)
+         { return(_storage_db.stg_get(plane, key, num_of_keys, data)); }
+         bool stg_set(object_id_type plane, const storage_database::TStgKey& key, const storage_database::TStgVal& val)
+         { return(_storage_db.stg_set(plane, key, val)); }
+         uint32_t stg_set(object_id_type plane, const storage_database::TStgKey& key, const std::vector<storage_database::TStgVal>& vals)
+         { return(_storage_db.stg_set(plane, key, vals)); }
+         uint32_t stg_del(object_id_type plane, const storage_database::TStgKey& key, uint32_t num_of_keys)
+         { return(_storage_db.stg_del(plane, key, num_of_keys)); }
 
          void nvs_create(const std::vector<char>& name, fc::time_point_sec now, const storage_database::nvs_attr& attr, const std::vector<char> *value)
          { _storage_db.nvs_create(name, now, attr, value); }

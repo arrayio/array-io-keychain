@@ -14,8 +14,9 @@ using keychain_t = keychain_app::keychain;
 
 using namespace keychain_app;
 
-pipeline_parser::pipeline_parser(keychain_invoke_f&& keychain_f)
+pipeline_parser::pipeline_parser(keychain_invoke_f&& keychain_f, FILE* pd)
   : m_keychain_func(keychain_f)
+  , m_pd(pd)
 {
 }
 
@@ -26,7 +27,7 @@ int pipeline_parser::run()
   buf_iterator it_read_end = read_buf.begin();
   size_t bytes_remaining = read_buf.size();
   while (!feof(stdin)){
-    size_t bytes_read = fread(p_read_begin, sizeof(buf_type::value_type), 1, stdin);
+    size_t bytes_read = fread(p_read_begin, sizeof(buf_type::value_type), 1, m_pd);
     if(ferror(stdin))
     {
       std::cerr << "Error: " << strerror(errno) << std::endl;

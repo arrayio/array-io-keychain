@@ -12,7 +12,6 @@
 
 using keychain_t = keychain_app::keychain;
 
-using namespace nlohmann;
 using namespace keychain_app;
 
 pipeline_parser::pipeline_parser(keychain_invoke_f&& keychain_f)

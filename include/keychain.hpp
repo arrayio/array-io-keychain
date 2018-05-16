@@ -14,7 +14,6 @@
 #include <fc/crypto/hex.hpp>
 #include <fc/variant.hpp>
 #include <graphene/utilities/key_conversion.hpp>
-#include <json/json.hpp>
 
 #include <boost/filesystem.hpp>
 #include <boost/signals2.hpp>

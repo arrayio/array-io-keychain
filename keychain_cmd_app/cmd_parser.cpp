@@ -4,10 +4,11 @@
 
 #include <iostream>
 
+#include <keychain_lib/pipeline_parser.hpp>
+#include <keychain_lib/keychain_wrapper.hpp>
+#include <keychain_lib/secure_module_singletone.hpp>
+
 #include "cmd_parser.hpp"
-#include "pipe_line_parser.hpp"
-#include "keychain_wrapper.hpp"
-#include "secure_module_singletone.hpp"
 #include "secure_module_dummy.hpp"
 
 using namespace keychain_app;

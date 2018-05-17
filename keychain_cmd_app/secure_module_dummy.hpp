@@ -5,7 +5,7 @@
 #ifndef KEYCHAINAPP_SECURE_MODULE_DUMMY_HPP
 #define KEYCHAINAPP_SECURE_MODULE_DUMMY_HPP
 
-#include <keychain_wrapper.hpp>
+#include <keychain_lib/keychain_wrapper.hpp>
 
 namespace keychain_app
 {

@@ -25,6 +25,7 @@
 #include <graphene/chain/protocol/operations.hpp>
 #include <graphene/db/generic_index.hpp>
 #include <boost/multi_index/composite_key.hpp>
+#include <boost/multi_index/hashed_index.hpp>
 
 namespace graphene { namespace chain {
    class database;
@@ -154,6 +155,9 @@ namespace graphene { namespace chain {
 
          /// The account's name. This name must be unique among all account names on the graph. May not be empty.
          string name;
+
+         /// The account's address. Must be unique among all account addresses if valid. Allows for Etherium-compatible account addressing.
+         optional<address> addr;
 
          /**
           * The owner authority represents absolute control over the account. Usually the keys in this authority will
@@ -316,6 +320,23 @@ namespace graphene { namespace chain {
          map< account_id_type, set<account_id_type> > referred_by;
    };
 
+   /**
+    *  @brief This secondary index will allow a reverse lookup of accounts by their address.
+    *  (To provide Etherium compatibility)
+    */
+   class account_address_index : public secondary_index
+   {
+      public:
+         virtual void object_inserted( const object& obj ) override;
+         virtual void object_removed( const object& obj ) override;
+         virtual void about_to_modify( const object& before ) override;
+         virtual void object_modified( const object& after  ) override;
+
+         typedef unordered_map< address, account_id_type > TAddressesCont;
+         /** maps the address to the account */
+         TAddressesCont addresses;
+   };
+
    struct by_account_asset;
    struct by_asset_balance;
    /**
@@ -379,7 +400,7 @@ FC_REFLECT_DERIVED( graphene::chain::account_object,
                     (graphene::db::object),
                     (membership_expiration_date)(registrar)(referrer)(lifetime_referrer)
                     (network_fee_percentage)(lifetime_referrer_fee_percentage)(referrer_rewards_percentage)
-                    (name)(owner)(active)(options)(contract_opts)(statistics)(whitelisting_accounts)(blacklisting_accounts)
+                    (name)(addr)(owner)(active)(options)(contract_opts)(statistics)(whitelisting_accounts)(blacklisting_accounts)
                     (whitelisted_accounts)(blacklisted_accounts)
                     (cashback_vb)
                     (owner_special_authority)(active_special_authority)

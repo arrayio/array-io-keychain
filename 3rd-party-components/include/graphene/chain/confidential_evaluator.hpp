@@ -47,6 +47,7 @@ class transfer_from_blind_evaluator : public evaluator<transfer_from_blind_evalu
       typedef transfer_from_blind_operation operation_type;
 
       void_result do_evaluate( const transfer_from_blind_operation& o );
+      void        pre_apply( const transfer_from_blind_operation& op );
       void_result do_apply( const transfer_from_blind_operation& o ) ;
 
       virtual void pay_fee() override;
@@ -58,6 +59,7 @@ class blind_transfer_evaluator : public evaluator<blind_transfer_evaluator>
       typedef blind_transfer_operation operation_type;
 
       void_result do_evaluate( const blind_transfer_operation& o );
+      void        pre_apply( const blind_transfer_operation& op );
       void_result do_apply( const blind_transfer_operation& o ) ;
 
       virtual void pay_fee() override;

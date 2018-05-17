@@ -111,6 +111,42 @@ namespace graphene { namespace chain {
    };
 
    /**
+    *  @ingroup operations
+    */
+   struct account_auto_create_operation : public base_operation
+   {
+      struct fee_parameters_type
+      {
+         uint64_t fee      = 5*GRAPHENE_BLOCKCHAIN_PRECISION; ///< the cost to register the cheapest non-free account
+      };
+
+      asset           fee;
+      account_id_type caller;
+      /// Must be a lifetime member.
+      account_id_type registrar;
+      /// This account receives a portion of the fee split between registrar and referrer. Must be a member.
+      account_id_type referrer;
+      /// Of the fee split between registrar and referrer, this percentage goes to the referrer. The rest goes to the
+      /// registrar.
+      uint16_t        referrer_percent = 0;
+
+      address         addr;
+
+      extensions_type extensions;
+
+      account_id_type fee_payer()const { FC_ASSERT( !"virtual operation" ); return account_id_type(); /*return caller;*/ }
+      void            validate()const;
+      //share_type      calculate_fee(const fee_parameters_type& )const;
+
+      // void get_required_authorities( vector<authority>& auth)const { auth.emplace_back(1, addr, 1); }
+      /*void get_required_active_authorities( flat_set<account_id_type>& a )const
+      {
+         // caller should be required anyway as it is the fee_payer(), but we insert it here just to be sure
+         a.insert( caller );
+      }*/
+   };
+
+   /**
     * @ingroup operations
     * @brief Update an existing account
     *
@@ -274,6 +310,12 @@ FC_REFLECT( graphene::chain::account_create_operation,
             (name)(owner)(active)(options)(extensions)
           )
 
+FC_REFLECT( graphene::chain::account_auto_create_operation,
+            (fee)(caller)(registrar)
+            (referrer)(referrer_percent)
+            (addr)(extensions)
+          )
+
 FC_REFLECT(graphene::chain::account_update_operation::ext, (null_ext)(owner_special_authority)(active_special_authority) )
 FC_REFLECT( graphene::chain::account_update_operation,
             (fee)(account)(owner)(active)(new_options)(extensions)
@@ -285,6 +327,7 @@ FC_REFLECT( graphene::chain::account_upgrade_operation,
 FC_REFLECT( graphene::chain::account_whitelist_operation, (fee)(authorizing_account)(account_to_list)(new_listing)(extensions))
 
 FC_REFLECT( graphene::chain::account_create_operation::fee_parameters_type, (basic_fee)(premium_fee)(price_per_kbyte) )
+FC_REFLECT( graphene::chain::account_auto_create_operation::fee_parameters_type, (fee) )
 FC_REFLECT( graphene::chain::account_whitelist_operation::fee_parameters_type, (fee) )
 FC_REFLECT( graphene::chain::account_update_operation::fee_parameters_type, (fee)(price_per_kbyte) )
 FC_REFLECT( graphene::chain::account_upgrade_operation::fee_parameters_type, (membership_annual_fee)(membership_lifetime_fee) )

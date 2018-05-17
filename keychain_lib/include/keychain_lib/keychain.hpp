@@ -14,28 +14,21 @@
 #include <fc/crypto/hex.hpp>
 #include <fc/variant.hpp>
 #include <graphene/utilities/key_conversion.hpp>
-#include <json/json.hpp>
 
 #include <boost/filesystem.hpp>
+#include <boost/signals2.hpp>
 
 #include "keychain_commands.hpp"
 
 namespace keychain_app
 {
 
-struct json_error
-{
-  json_error(const char* str): error(str){}
-  std::string error;
-};
-
-
 namespace bfs = boost::filesystem;
 
 class keychain : public keychain_base
 {
 public:
-  keychain(passwd_f&& get_password, const char* default_key_dir = KEY_DEFAULT_PATH);
+  keychain(std::string&& uid_hash, const char* default_key_dir = KEY_DEFAULT_PATH);
   virtual ~keychain();
   virtual void operator()(const fc::variant& command) override;
 private:
@@ -53,7 +46,5 @@ private:
 };
 
 }
-
-FC_REFLECT(keychain_app::json_error, (error))
 
 #endif //KEYCHAINAPP_KEYCHAIN_HPP

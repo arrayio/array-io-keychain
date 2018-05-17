@@ -1,8 +1,11 @@
-DummyWindowsService
+To use KeychainService you need to follow this steps.
 
-First you nedd simply start application bin\DummyService.exe. Then you have to start netpipeclient and initiate connection to \\.\pipe\keychainservice. Application shows you window for entering password.
-
-First you need to build DummyService project.
-To install it, please start command line in administrtor mode and type path to DummyKeychainService.exe with argument /install or -install.
-
-After above steps you can check if it is running with command sc queryex DummyKeyChainService.
+1. First install KeychainService on PC. For it, start cmd with Administrator's priveligies. In cmd:
+	cd <path_to_DummyService.exe>
+	<path_to_DummyService.exe>DummyService.exe -install
+2. To start service write sc start KeychainService.
+3. To check if it's runing sc queryex KeychainService.
+4. To check its' work you need to download from folder /bin NamedPipesClient.exe and NamedPipesClient.exe.config.
+5. Start NamedPipesClient.exe as Administrator .
+6. You will be switched to secure desktop for password enterance.
+7. After you will have entered password you will return to you primary desktop.

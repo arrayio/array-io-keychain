@@ -15,7 +15,6 @@ void NamedPipeServer::ListenChannel(/*LPTSTR channelName*/) {
 	lpszPipename = (LPTSTR)__TEXT("\\\\.\\pipe\\keychainservice");//channelName;
 	for (;;)
 	{
-		_tprintf(TEXT("\nPipe Server: Main thread awaiting client connection on %s\n"), lpszPipename);
 		hPipe = CreateNamedPipe(
 			lpszPipename,             // pipe name 
 			PIPE_ACCESS_DUPLEX,       // read/write access 
@@ -28,10 +27,6 @@ void NamedPipeServer::ListenChannel(/*LPTSTR channelName*/) {
 			0,                        // client time-out 
 			NULL);                    // default security attribute 
 
-		if (hPipe == INVALID_HANDLE_VALUE)
-		{
-			_tprintf(TEXT("CreateNamedPipe failed, GLE=%d.\n"), GetLastError());
-		}
 
 		// Wait for the client to connect; if it succeeds, 
 		// the function returns a nonzero value. If the function

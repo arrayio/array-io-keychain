@@ -1,4 +1,5 @@
-#pragma once
+#ifndef DUMMY_BASE_H
+#define DUMMY_BASE_H
 #include <windows.h> 
 
 
@@ -101,3 +102,5 @@ private:
 	// The service status handle 
 	SERVICE_STATUS_HANDLE m_statusHandle;
 };
+
+#endif

@@ -99,10 +99,10 @@ void DummyService::OnStart(DWORD dwArgc, LPWSTR *lpszArgv)
 void DummyService::ServiceWorkerThread(void)
 {
 	// Periodically check if the service is stopping. 
+	NamedPipeServer _server;
 	while (!m_fStopping)
 	{
 		// Perform main service function here...
-		NamedPipeServer _server;
 		_server.ListenChannel();
 
 		//::Sleep(2000);  // Simulate some lengthy operations. 
@@ -110,6 +110,7 @@ void DummyService::ServiceWorkerThread(void)
 
 	// Signal the stopped event. 
 	SetEvent(m_hStoppedEvent);
+	_server.~NamedPipeServer();
 }
 
 
@@ -128,7 +129,7 @@ void DummyService::ServiceWorkerThread(void)
 void DummyService::OnStop()
 {
 	// Log a service stop message to the Application log. 
-	WriteEventLogEntry((PWSTR)"CppWindowsService in OnStop",
+	WriteEventLogEntry((PWSTR)"KeychainService in OnStop",
 		EVENTLOG_INFORMATION_TYPE);
 
 	// Indicate that the service is stopping and wait for the finish of the  

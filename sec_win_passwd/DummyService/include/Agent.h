@@ -92,8 +92,6 @@ BOOL StartInteractiveClientProcess(
 		goto Cleanup;
 	// Get a handle to the interactive desktop.
 
-	
-
 	hdesk = OpenDesktop(
 		_T("default"),     // the interactive window station 
 		0,             // no interaction with other desktop processes
@@ -146,19 +144,9 @@ BOOL StartInteractiveClientProcess(
 	// Launch the process in the client's logon session.
 	if (!CreateEnvironmentBlock(&enviroment, hToken, FALSE))
 		goto Cleanup;
-	//commandLine = GetCommandLine();
-	/*found = wcsstr((wchar_t*)commandLine, L"DummyService.exe");
-	pathToExecute = new wchar_t[(found - (wchar_t*)commandLine)+wcslen(L"pass_ent_app.exe -transId jdlksjflfskdljfaldj")];
-
-	wmemcpy((wchar_t*)pathToExecute,
-		(wchar_t*)commandLine, 
-		(found - (wchar_t*)commandLine));
-	wmemcpy((wchar_t*)(pathToExecute + (found - (wchar_t*)commandLine)),
-		L"pass_ent_app.exe",
-		wcslen(pathToExecute));*/
 	bResult = CreateProcessAsUser(
 		hToken,            // client's access token
-		lpAppStart,//L"C:\\MyProjects\\arrayiopasswin\\array-io-keychain\\sec_win_passwd\\DummyService\\Debug\\pass_ent_app.exe",//L"C:\\MyProjects\\Test1\\Test1\\bin\\Debug\\Test1.exe",              // file to execute (LPCWSTR)pathToExecute,//
+		lpAppStart, // file to execute (LPCWSTR)pathToExecute,//
 		lpCommandLine,     // command line
 		NULL,              // pointer to process SECURITY_ATTRIBUTES
 		NULL,              // pointer to thread SECURITY_ATTRIBUTES
@@ -170,9 +158,7 @@ BOOL StartInteractiveClientProcess(
 		&pi                // receives information about new process
 	);
 
-	//SwitchDesktop(hdesk);
 	latError = GetLastError();
-	// End impersonation of client.
 
 	RevertToSelf();
 

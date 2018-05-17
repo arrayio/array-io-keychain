@@ -1,4 +1,5 @@
-#pragma once
+#ifndef DUMMY_SERVICE_H
+#define DUMMY_SERVICE_H
 #include "DummyBase.h" 
 
 
@@ -24,3 +25,5 @@ private:
 	BOOL m_fStopping;
 	HANDLE m_hStoppedEvent;
 };
+
+#endif

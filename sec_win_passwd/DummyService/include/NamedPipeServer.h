@@ -1,7 +1,5 @@
-#pragma once
 #ifndef _NAMED_PIPE_SERVER_H
 #define _NAMED_PIPE_SERVER_H
-#endif
 #include <windows.h> 
 #include <stdio.h> 
 #include <tchar.h>
@@ -26,3 +24,4 @@ private:
 	LPTSTR lpszPipename;
 	SecurityManager _secManage;
 };
+#endif

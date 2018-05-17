@@ -7,11 +7,11 @@
 //#include "Agent.h"
 
 // Internal name of the service 
-#define SERVICE_NAME             L"DummyKeyChainService" 
+#define SERVICE_NAME             L"KeyChainService" 
 
 
 // Displayed name of the service 
-#define SERVICE_DISPLAY_NAME     L"DummyKeyChainService" 
+#define SERVICE_DISPLAY_NAME     L"KeyChainService" 
 
 #define SERVICE_DESCRIPTION     L"This service shows window for enterance password" 
 

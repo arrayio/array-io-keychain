@@ -1,4 +1,5 @@
-#pragma once
+#ifndef THREAD_POOL_H
+#define THREAD_POOL_H
 #include <Windows.h>
 #include <stdlib.h>
 #include <memory>
@@ -40,3 +41,4 @@ private:
 		return 0;
 	}
 };
+#endif

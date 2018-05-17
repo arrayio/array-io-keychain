@@ -1,4 +1,5 @@
-#pragma once
+#ifndef SERVICE_INST_H
+#define SERVICE_INST_H
 #include <windows.h>
 // 
 //   FUNCTION: InstallService 
@@ -42,3 +43,4 @@ void InstallService(PWSTR pszServiceName,
 //   error in the standard output stream for users to diagnose the problem. 
 // 
 void UninstallService(PWSTR pszServiceName);
+#endif

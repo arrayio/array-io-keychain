@@ -4,10 +4,10 @@
 
 [![Join the chat at https://gitter.im/arrayio/array-io-keychain](https://badges.gitter.im/arrayio/array-io-keychain.svg)](https://gitter.im/arrayio/array-io-keychain?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
-Array.io keychain repository. This is an app to create, manage keys and sign transactions.
+Public Array.io keychain repository. Keychain is an app to create, manage private keys, sign transactions, and encrypt data with the keys.
 
-Keychain is not to be confused with the Wallet built-in Dapp, the keychain app, is a standalon commandline/ui interface to interact with private keys.
+Keychain may manage private keys in different formats. Most popular ECDSA (bitcoin, ethereum etc) and RSA supported. Everything a modern OpenSSL release supports.
 
-The keychain creates, stores, accesses private keys. A private key may be stored in a file in encrypted or unecrypted form. It can be kept in a hardware wallet like trezor or ledger nano.
+Keychain is not to be confused with the Wallet built-in Dapp, the keychain app, is a standalone commandline/ui interface to interact with private keys.
 
-Array.io keychain may be used by a node, a frontend or dapp's nodejs server to sign transactions.
+Array.io keychain may be used by a node, a frontend or dapp's nodejs server to sign transactions. It may be used by a web application too, keeping keys in a separate environment from browser.

@@ -83,27 +83,6 @@ keychain_app::secp256_private_key keychain_app::get_priv_key_from_str(const std:
   return *result;
 }
 
-fc::variant keychain_app::open_keyfile(const char* filename){
-  std::ifstream fin = std::ifstream(filename);
-  if(!fin.is_open())
-    throw std::runtime_error("Error: cannot open keyfile");
-  std::array<char, 1024> read_buf;
-  memset(read_buf.data(), 0x00, read_buf.size());
-  auto pbuf = read_buf.data();
-  auto it = read_buf.begin();
-  size_t read_count = 0;
-  while(!fin.eof()&&fin.good())
-  {
-    fin.getline(pbuf, std::distance(it, read_buf.end()));
-    pbuf += fin.gcount() - 1;
-    it += fin.gcount() - 1;
-    read_count += fin.gcount() - 1;
-  }
-  if(!fin.good()&&read_count==0)
-    throw std::runtime_error("Error: cannot read keyfile");
-  return fc::json::from_string(std::string(read_buf.begin(), read_buf.end()), fc::json::strict_parser);
-}
-
 namespace bfs = keychain_app::bfs;
 
 void keychain_app::create_keyfile(const char* filename, const fc::variant& keyfile_var)

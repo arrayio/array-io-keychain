@@ -54,7 +54,29 @@ public:
     std::string uid_hash;
 };
 
-fc::variant open_keyfile(const char* filename);
+template <typename char_t>
+fc::variant open_keyfile(const char_t* filename)
+{
+  std::ifstream fin = std::ifstream(filename);
+  if(!fin.is_open())
+    throw std::runtime_error("Error: cannot open keyfile");
+  std::array<char, 1024> read_buf;
+  memset(read_buf.data(), 0x00, read_buf.size());
+  auto pbuf = read_buf.data();
+  auto it = read_buf.begin();
+  size_t read_count = 0;
+  while(!fin.eof()&&fin.good())
+  {
+    fin.getline(pbuf, std::distance(it, read_buf.end()));
+    pbuf += fin.gcount() - 1;
+    it += fin.gcount() - 1;
+    read_count += fin.gcount() - 1;
+  }
+  if(!fin.good()&&read_count==0)
+    throw std::runtime_error("Error: cannot read keyfile");
+  return fc::json::from_string(std::string(read_buf.begin(), read_buf.end()), fc::json::strict_parser);
+}
+
 void create_keyfile(const char* filename, const fc::variant& keyfile_var);
 secp256_private_key get_priv_key_from_str(const std::string& str);
 fc::sha256 get_hash(const keychain_app::unit_list_t &list);
@@ -111,11 +133,13 @@ struct find_keyfile_by_username
     , m_keyfile(keyfile)
   {
   }
+
   bool operator()(bfs::directory_entry &unit)
   {
     if (!bfs::is_regular_file(unit.status()))
       return false;
     const auto &file_path = unit.path().filename();
+    
     auto j_keyfile = open_keyfile(file_path.c_str());
     auto keyfile = j_keyfile.as<keyfile_format::keyfile_t>();
     if(m_keyfile)

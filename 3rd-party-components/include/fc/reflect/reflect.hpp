@@ -73,7 +73,9 @@ void throw_bad_enum_cast( const char* k, const char* e );
 #define FC_REFLECT_VISIT_BASE(r, visitor, base) \
   fc::reflector<base>::visit( visitor );
 
-
+#define TEMPLATE template  
+  
+/*
 #ifndef _MSC_VER
   #define TEMPLATE template
 #else
@@ -81,6 +83,7 @@ void throw_bad_enum_cast( const char* k, const char* e );
   #pragma warning( disable: 4482 )
   #define TEMPLATE
 #endif
+*/
 
 #define FC_REFLECT_VISIT_MEMBER( r, visitor, elem ) \
 { typedef decltype(((type*)nullptr)->elem) member_type;  \

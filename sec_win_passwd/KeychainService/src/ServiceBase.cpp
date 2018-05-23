@@ -5,7 +5,7 @@
 
 
 // Initialize the singleton service instance. 
-CDummyBase *CDummyBase::s_service = NULL;
+CServiceBase *CServiceBase::s_service = NULL;
 
 // 
 //   FUNCTION: CServiceBase::Run(CServiceBase &) 
@@ -23,7 +23,7 @@ CDummyBase *CDummyBase::s_service = NULL;
 //   function fails, the return value is FALSE. To get extended error  
 //   information, call GetLastError. 
 // 
-BOOL CDummyBase::Run(CDummyBase &service)
+BOOL CServiceBase::Run(CServiceBase &service)
 {
 	s_service = &service;
 
@@ -51,7 +51,7 @@ BOOL CDummyBase::Run(CDummyBase &service)
 //   * dwArgc   - number of command line arguments 
 //   * lpszArgv - array of command line arguments 
 // 
-void WINAPI CDummyBase::ServiceMain(DWORD dwArgc, PWSTR *pszArgv)
+void WINAPI CServiceBase::ServiceMain(DWORD dwArgc, PWSTR *pszArgv)
 {
 	assert(s_service != NULL);
 
@@ -91,7 +91,7 @@ void WINAPI CDummyBase::ServiceMain(DWORD dwArgc, PWSTR *pszArgv)
 //   This parameter can also be a user-defined control code ranges from 128  
 //   to 255. 
 // 
-void WINAPI CDummyBase::ServiceCtrlHandler(DWORD dwCtrl)
+void WINAPI CServiceBase::ServiceCtrlHandler(DWORD dwCtrl)
 {
 	switch (dwCtrl)
 	{
@@ -124,7 +124,7 @@ void WINAPI CDummyBase::ServiceCtrlHandler(DWORD dwCtrl)
 //   * fCanShutdown - the service is notified when system shutdown occurs 
 //   * fCanPauseContinue - the service can be paused and continued 
 // 
-CDummyBase::CDummyBase(PWSTR pszServiceName,
+CServiceBase::CServiceBase(PWSTR pszServiceName,
 	BOOL fCanStop,
 	BOOL fCanShutdown,
 	BOOL fCanPauseContinue)
@@ -162,7 +162,7 @@ CDummyBase::CDummyBase(PWSTR pszServiceName,
 // 
 //   PURPOSE: The virtual destructor of CServiceBase.  
 // 
-CDummyBase::~CDummyBase(void)
+CServiceBase::~CServiceBase(void)
 {
 }
 
@@ -178,7 +178,7 @@ CDummyBase::~CDummyBase(void)
 //   * dwArgc   - number of command line arguments 
 //   * lpszArgv - array of command line arguments 
 // 
-void CDummyBase::Start(DWORD dwArgc, PWSTR *pszArgv)
+void CServiceBase::Start(DWORD dwArgc, PWSTR *pszArgv)
 {
 	try
 	{
@@ -225,7 +225,7 @@ void CDummyBase::Start(DWORD dwArgc, PWSTR *pszArgv)
 //   * dwArgc   - number of command line arguments 
 //   * lpszArgv - array of command line arguments 
 // 
-void CDummyBase::OnStart(DWORD dwArgc, PWSTR *pszArgv)
+void CServiceBase::OnStart(DWORD dwArgc, PWSTR *pszArgv)
 {
 	
 }
@@ -239,7 +239,7 @@ void CDummyBase::OnStart(DWORD dwArgc, PWSTR *pszArgv)
 //   stops. If an error occurs, the error will be logged in the Application  
 //   event log, and the service will be restored to the original state. 
 // 
-void CDummyBase::Stop()
+void CServiceBase::Stop()
 {
 	DWORD dwOriginalState = m_status.dwCurrentState;
 	try
@@ -281,7 +281,7 @@ void CDummyBase::Stop()
 //   CServiceBase::SetServiceStatus() with SERVICE_STOP_PENDING if the  
 //   procedure is going to take long time.  
 // 
-void CDummyBase::OnStop()
+void CServiceBase::OnStop()
 {
 }
 
@@ -295,7 +295,7 @@ void CDummyBase::OnStop()
 //   the error will be logged in the Application event log, and the service  
 //   will become running. 
 // 
-void CDummyBase::Pause()
+void CServiceBase::Pause()
 {
 	try
 	{
@@ -334,7 +334,7 @@ void CDummyBase::Pause()
 //   command is sent to the service by the SCM. Specifies actions to take  
 //   when a service pauses. 
 // 
-void CDummyBase::OnPause()
+void CServiceBase::OnPause()
 {
 }
 
@@ -348,7 +348,7 @@ void CDummyBase::OnPause()
 //   continues. If an error occurs, the error will be logged in the  
 //   Application event log, and the service will still be paused. 
 // 
-void CDummyBase::Continue()
+void CServiceBase::Continue()
 {
 	try
 	{
@@ -387,7 +387,7 @@ void CDummyBase::Continue()
 //   Continue command is sent to the service by the SCM. Specifies actions to  
 //   take when a service resumes normal functioning after being paused. 
 // 
-void CDummyBase::OnContinue()
+void CServiceBase::OnContinue()
 {
 }
 
@@ -400,7 +400,7 @@ void CDummyBase::OnContinue()
 //   should occur immediately prior to the system shutting down. If an error  
 //   occurs, the error will be logged in the Application event log. 
 // 
-void CDummyBase::Shutdown()
+void CServiceBase::Shutdown()
 {
 	try
 	{
@@ -430,7 +430,7 @@ void CDummyBase::Shutdown()
 //   is shutting down. Specifies what should occur immediately prior to the  
 //   system shutting down. 
 // 
-void CDummyBase::OnShutdown()
+void CServiceBase::OnShutdown()
 {
 }
 
@@ -449,7 +449,7 @@ void CDummyBase::OnShutdown()
 //   * dwWin32ExitCode - error code to report 
 //   * dwWaitHint - estimated time for pending operation, in milliseconds 
 // 
-void CDummyBase::SetServiceStatus(DWORD dwCurrentState,
+void CServiceBase::SetServiceStatus(DWORD dwCurrentState,
 	DWORD dwWin32ExitCode,
 	DWORD dwWaitHint)
 {
@@ -488,7 +488,7 @@ void CDummyBase::SetServiceStatus(DWORD dwCurrentState,
 //     EVENTLOG_INFORMATION_TYPE 
 //     EVENTLOG_WARNING_TYPE 
 // 
-void CDummyBase::WriteEventLogEntry(PWSTR pszMessage, WORD wType)
+void CServiceBase::WriteEventLogEntry(PWSTR pszMessage, WORD wType)
 {
 	HANDLE hEventSource = NULL;
 	LPCWSTR lpszStrings[2] = { NULL, NULL };
@@ -524,7 +524,7 @@ void CDummyBase::WriteEventLogEntry(PWSTR pszMessage, WORD wType)
 //   * pszFunction - the function that gives the error 
 //   * dwError - the error code 
 // 
-void CDummyBase::WriteErrorLogEntry(PWSTR pszFunction, DWORD dwError)
+void CServiceBase::WriteErrorLogEntry(PWSTR pszFunction, DWORD dwError)
 {
 	wchar_t szMessage[260];
 	StringCchPrintf(szMessage, ARRAYSIZE(szMessage),

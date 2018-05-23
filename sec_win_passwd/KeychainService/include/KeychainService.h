@@ -3,15 +3,15 @@
 #include "ServiceBase.h" 
 
 
-class DummyService : public CDummyBase
+class KeychainService : public CServiceBase
 {
 public:
 
-	DummyService(PWSTR pszServiceName,
+	KeychainService(PWSTR pszServiceName,
 		BOOL fCanStop = TRUE,
 		BOOL fCanShutdown = TRUE,
 		BOOL fCanPauseContinue = FALSE);
-	virtual ~DummyService(void);
+	virtual ~KeychainService(void);
 
 protected:
 

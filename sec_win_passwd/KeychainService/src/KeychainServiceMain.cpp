@@ -67,8 +67,8 @@ int wmain(int argc, wchar_t *argv[])
 
 		}
 		else if (_wcsicmp(L"r", argv[1] + 1) == 0) {
-			DummyService service((PWSTR)SERVICE_NAME);
-			if (!CDummyBase::Run(service))
+			KeychainService service((PWSTR)SERVICE_NAME);
+			if (!CServiceBase::Run(service))
 			{
 				wprintf(L"Service failed to run w/err 0x%08lx\n", GetLastError());
 			}

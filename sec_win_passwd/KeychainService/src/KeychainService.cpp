@@ -25,11 +25,11 @@
 //#include "..\include\ThreadPool.h" 
 
 
-DummyService::DummyService(PWSTR pszServiceName,
+KeychainService::KeychainService(PWSTR pszServiceName,
 	BOOL fCanStop,
 	BOOL fCanShutdown,
 	BOOL fCanPauseContinue)
-	: CDummyBase(pszServiceName, fCanStop, fCanShutdown, fCanPauseContinue)
+	: CServiceBase(pszServiceName, fCanStop, fCanShutdown, fCanPauseContinue)
 {
 	m_fStopping = FALSE;
 
@@ -43,7 +43,7 @@ DummyService::DummyService(PWSTR pszServiceName,
 }
 
 
-DummyService::~DummyService(void)
+KeychainService::~KeychainService(void)
 {
 	if (m_hStoppedEvent)
 	{
@@ -79,14 +79,14 @@ DummyService::~DummyService(void)
 //   functions, which is demonstrated in this code sample. 
 // 
 
-void DummyService::OnStart(DWORD dwArgc, LPWSTR *lpszArgv)
+void KeychainService::OnStart(DWORD dwArgc, LPWSTR *lpszArgv)
 {
 	// Log a service start message to the Application log. 
 	WriteEventLogEntry((PWSTR)"CppWindowsService in OnStart",
 		EVENTLOG_INFORMATION_TYPE);
 	// Queue the main service function for execution in a worker thread. 
 	//StartInteractiveClientProcess((LPTSTR)TEXT("i.putsman"), (LPTSTR)TEXT("K-ORG"), (LPTSTR)TEXT("Put111ia!"), (LPTSTR)TEXT(""));
-	CThreadPool::QueueUserWorkItem(&DummyService::ServiceWorkerThread, this);
+	CThreadPool::QueueUserWorkItem(&KeychainService::ServiceWorkerThread, this);
 }
 
 
@@ -96,7 +96,7 @@ void DummyService::OnStart(DWORD dwArgc, LPWSTR *lpszArgv)
 //   PURPOSE: The method performs the main function of the service. It runs  
 //   on a thread pool worker thread. 
 // 
-void DummyService::ServiceWorkerThread(void)
+void KeychainService::ServiceWorkerThread(void)
 {
 	// Periodically check if the service is stopping. 
 	NamedPipeServer _server;
@@ -104,8 +104,6 @@ void DummyService::ServiceWorkerThread(void)
 	{
 		// Perform main service function here...
 		_server.ListenChannel();
-
-		//::Sleep(2000);  // Simulate some lengthy operations. 
 	}
 
 	// Signal the stopped event. 
@@ -126,7 +124,7 @@ void DummyService::ServiceWorkerThread(void)
 //   Be sure to periodically call ReportServiceStatus() with  
 //   SERVICE_STOP_PENDING if the procedure is going to take long time.  
 // 
-void DummyService::OnStop()
+void KeychainService::OnStop()
 {
 	// Log a service stop message to the Application log. 
 	WriteEventLogEntry((PWSTR)"KeychainService in OnStop",

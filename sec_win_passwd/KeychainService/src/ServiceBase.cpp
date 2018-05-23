@@ -1,4 +1,4 @@
-#include "DummyBase.h"
+#include "ServiceBase.h"
 // It register the executable for a service with SCM. 
 #include <assert.h> 
 #include <strsafe.h> 

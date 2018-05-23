@@ -1,7 +1,7 @@
 #include <wchar.h>
 #include "ServiceInstaller.h"
-#include "DummyService.h"
-#include "DummyBase.h"
+#include "KeychainService.h"
+#include "ServiceBase.h"
 #include "NamedPipeServer.h"
 #include "SecurityManager.h"
 //#include "Agent.h"

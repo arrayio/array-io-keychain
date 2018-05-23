@@ -27,7 +27,7 @@ find_library(LIB_FC NAME fc HINTS "./3rd-party-components/lib")
 find_library(LIB_SECP256 NAME secp256k1 HINTS "./3rd-party-components/lib")
 find_library(LIB_GRAPHENE graphene_utilities HINTS "./3rd-party-components/lib")
 
-find_library(LIB_OPENSSL NAME crypto  HINTS "/opt/openssllib/lib")
+find_library(LIB_OPENSSL NAME crypto  HINTS "C:/openssl-lib/lib")
 
 file(GLOB KEYCHAIN_SOURCES "./keychain_cmd_app/*.cpp")
 file(GLOB KEYCHAIN_INCLUDE "./keychain_cmd_app/*.hpp")

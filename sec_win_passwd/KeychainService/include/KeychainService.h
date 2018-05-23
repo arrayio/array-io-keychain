@@ -1,6 +1,6 @@
 #ifndef DUMMY_SERVICE_H
 #define DUMMY_SERVICE_H
-#include "DummyBase.h" 
+#include "ServiceBase.h" 
 
 
 class DummyService : public CDummyBase

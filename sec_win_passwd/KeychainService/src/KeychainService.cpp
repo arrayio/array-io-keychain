@@ -17,7 +17,7 @@
 * WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A PARTICULAR PURPOSE.
 \***************************************************************************/
 
-#include "DummyService.h" 
+#include "KeychainService.h" 
 #include "NamedPipeServer.h"
 #include "ThreadPool.h"
 //#include "Agent.h"

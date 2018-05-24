@@ -57,11 +57,15 @@ void NamedPipeServer::ListenChannel(/*LPTSTR channelName*/) {
 	FILE* fd = _fdopen(fd_c, "a+");
 		
 	std::cout << "Client connected, creating a processing thread." << std::endl;
-	auto res = std::async(std::launch::async, [](FILE* fd_)->int {
+	auto res = std::async(std::launch::async, [this](FILE* fd_)->int {
 		SecureModuleWrapper secureModuleWrapper;
 		keychain_invoke_f f = std::bind(&keychain_wrapper, &secureModuleWrapper, std::placeholders::_1);
 		pipeline_parser pipe_line_parser_(std::move(f), fd_);
-		return pipe_line_parser_.run();
+		int res = pipe_line_parser_.run();
+		FlushFileBuffers(hPipe);
+		DisconnectNamedPipe(hPipe);
+		CloseHandle(hPipe);
+		return res;
 	}, fd);
 	try
 	{
@@ -71,9 +75,7 @@ void NamedPipeServer::ListenChannel(/*LPTSTR channelName*/) {
 	catch (const std::exception& e)
 	{
 		std::cerr << e.what() << std::endl;
-	}
-	DisconnectNamedPipe(hPipe);
-	CloseHandle(hPipe);
+	}	
 }
 
 /*

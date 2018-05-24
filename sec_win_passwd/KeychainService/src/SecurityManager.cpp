@@ -19,6 +19,6 @@ void SecurityManager::CreateSecureDesktop() {
 	wcsncpy_s(dst, 400, commandLine, (found - (wchar_t*)commandLine));
 	wcscat_s(dst, 400, L"pass_ent_app.exe");
 	LPCWSTR appToStart = dst;
-	//L"C:\\MyProjects\\arrayiopasswin\\array-io-keychain\\sec_win_passwd\\DummyService\\Debug\\pass_ent_app.exe"
+	//L"C:\\MyProjects\\arrayiopasswin\\array-io-keychain\\sec_win_passwd\\SDummyService\\Debug\\pass_ent_app.exe"
 	StartInteractiveClientProcess(appToStart, (LPTSTR)TEXT("-transId jdlksjflfskdljfaldjkfsajf7f8f68as7dfhajsfhk"));
 }

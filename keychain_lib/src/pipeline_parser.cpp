@@ -63,6 +63,7 @@ int pipeline_parser::run()
       break;//goto fread()
     } while (true);
   }
+  std::cout.flush();
   return 0;
 }
 

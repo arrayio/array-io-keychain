@@ -2,6 +2,60 @@
 #include "NamedPipeServer.h"
 #include "SecurityManager.h"
 
+#include <keychain_lib/keychain_wrapper.hpp>
+#include <keychain_lib/secure_module_singletone.hpp>
+#include <keychain_lib/pipeline_parser.hpp>
+
+#include <fcntl.h>
+#include <io.h>
+
+#include <iostream>
+#include <future>
+
+class sec_mod_dummy : public keychain_app::secure_dlg_mod_base
+{
+public:
+	sec_mod_dummy();
+	virtual ~sec_mod_dummy();
+	virtual std::string get_passwd_trx_raw(const std::string& raw_trx) const override;
+	virtual std::string get_passwd_trx(const graphene::chain::transaction& trx) const override;
+	virtual std::string get_passwd(const std::string& str) const override;
+	virtual void print_mnemonic(const string_list& mnemonic) const override;
+	virtual std::string get_uid() const override;
+
+};
+
+sec_mod_dummy::sec_mod_dummy()
+{}
+
+sec_mod_dummy::~sec_mod_dummy()
+{}
+
+std::string sec_mod_dummy::get_passwd_trx(const graphene::chain::transaction& trx) const
+{
+	return std::string("blank_password");
+}
+
+std::string sec_mod_dummy::get_uid() const
+{
+	return std::string("uid");
+}
+
+void sec_mod_dummy::print_mnemonic(const string_list& mnemonic) const
+{
+
+}
+
+std::string sec_mod_dummy::get_passwd_trx_raw(const std::string& raw_trx) const
+{
+	return std::string("blank_password");
+}
+
+std::string sec_mod_dummy::get_passwd(const std::string& str) const
+{
+	return std::string("blank_password");
+}
+
 NamedPipeServer::NamedPipeServer() {
 	//_secManage = new SecurityManager();
 }
@@ -10,56 +64,62 @@ NamedPipeServer::~NamedPipeServer() {
 
 }
 
+using namespace keychain_app;
+
 void NamedPipeServer::ListenChannel(/*LPTSTR channelName*/) {
 	
 	lpszPipename = (LPTSTR)__TEXT("\\\\.\\pipe\\keychainservice");//channelName;
-	for (;;)
+	
+	hPipe = CreateNamedPipe(
+		lpszPipename,             // pipe name 
+		PIPE_ACCESS_DUPLEX,       // read/write access 
+		PIPE_TYPE_MESSAGE |       // message type pipe 
+		PIPE_READMODE_MESSAGE |   // message-read mode 
+		PIPE_WAIT,                // blocking mode 
+		PIPE_UNLIMITED_INSTANCES, // max. instances  
+		BUFSIZE,                  // output buffer size 
+		BUFSIZE,                  // input buffer size 
+		0,                        // client time-out 
+		NULL);                    // default security attribute 
+
+
+	// Wait for the client to connect; if it succeeds, 
+	// the function returns a nonzero value. If the function
+	// returns zero, GetLastError returns ERROR_PIPE_CONNECTED. 
+
+	fConnected = ConnectNamedPipe(hPipe, NULL) ?
+		TRUE : (GetLastError() == ERROR_PIPE_CONNECTED);
+	if (!fConnected)
 	{
-		hPipe = CreateNamedPipe(
-			lpszPipename,             // pipe name 
-			PIPE_ACCESS_DUPLEX,       // read/write access 
-			PIPE_TYPE_MESSAGE |       // message type pipe 
-			PIPE_READMODE_MESSAGE |   // message-read mode 
-			PIPE_WAIT,                // blocking mode 
-			PIPE_UNLIMITED_INSTANCES, // max. instances  
-			BUFSIZE,                  // output buffer size 
-			BUFSIZE,                  // input buffer size 
-			0,                        // client time-out 
-			NULL);                    // default security attribute 
-
-
-		// Wait for the client to connect; if it succeeds, 
-		// the function returns a nonzero value. If the function
-		// returns zero, GetLastError returns ERROR_PIPE_CONNECTED. 
-
-		fConnected = ConnectNamedPipe(hPipe, NULL) ?
-			TRUE : (GetLastError() == ERROR_PIPE_CONNECTED);
-		if (fConnected)
-		{
-			printf("Client connected, creating a processing thread.\n");
-
-			// Create a thread for this client. 
-			hThread = CreateThread(
-				NULL,              // no security attribute 
-				0,                 // default stack size 
-				InstanceThread,    // thread proc
-				(LPVOID)hPipe,    // thread parameter 
-				0,                 // not suspended 
-				&dwThreadId);      // returns thread ID 
-
-			if (hThread == NULL)
-			{
-				_tprintf(TEXT("CreateThread failed, GLE=%d.\n"), GetLastError());
-			}
-			else CloseHandle(hThread);
-		}
-		else
-			// The client could not connect, so close the pipe. 
-			CloseHandle(hPipe);
+		// The client could not connect, so close the pipe. 
+		CloseHandle(hPipe);
+		return;
+	}			
+		
+	auto fd_c = _open_osfhandle(reinterpret_cast<intptr_t>(hPipe), _O_APPEND | _O_RDWR);
+	FILE* fd = _fdopen(fd_c, "a+");
+		
+	std::cout << "Client connected, creating a processing thread." << std::endl;
+	auto res = std::async(std::launch::async, [](FILE* fd_)->int {
+		const secure_dlg_mod_base* sec_mod = secure_module<sec_mod_dummy>::instance();
+		keychain_invoke_f f = std::bind(&keychain_wrapper, sec_mod, std::placeholders::_1);
+		pipeline_parser pipe_line_parser_(std::move(f), fd_);
+		return pipe_line_parser_.run();
+	}, fd);
+	try
+	{
+		if (res.get() == -1)
+			std::cerr << "Error: cannot read from pipe" << std::endl;
 	}
-
+	catch (const std::exception& e)
+	{
+		std::cerr << e.what() << std::endl;
+	}
+	DisconnectNamedPipe(hPipe);
+	CloseHandle(hPipe);
 }
 
+/*
 static DWORD WINAPI InstanceThread(LPVOID lpvParam) 
 {
 	HANDLE hHeap = GetProcessHeap();
@@ -168,6 +228,7 @@ static DWORD WINAPI InstanceThread(LPVOID lpvParam)
 	return 1;
 }
 
+
 static VOID GetAnswerToRequest(LPTSTR pchRequest, LPTSTR pchReply, LPDWORD pchBytes)
 {
 	_tprintf(TEXT("Client Request String:\"%s\"\n"), pchRequest);
@@ -182,3 +243,4 @@ static VOID GetAnswerToRequest(LPTSTR pchRequest, LPTSTR pchReply, LPDWORD pchBy
 	}
 	*pchBytes = (lstrlen(pchReply) + 1) * sizeof(TCHAR);
 }
+*/

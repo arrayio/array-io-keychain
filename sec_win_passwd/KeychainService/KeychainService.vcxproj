@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\SecureModuleWrapper.cpp" />
     <ClCompile Include="src\ServiceBase.cpp" />
     <ClCompile Include="src\KeychainServiceMain.cpp" />
     <ClCompile Include="src\KeychainService.cpp" />
@@ -31,6 +32,7 @@
     <ClInclude Include="include\KeychainBase.h" />
     <ClInclude Include="include\KeychainService.h" />
     <ClInclude Include="include\NamedPipeServer.h" />
+    <ClInclude Include="include\SecureModuleWrapper.h" />
     <ClInclude Include="include\SecurityManager.h" />
     <ClInclude Include="include\ServiceInstaller.h" />
     <ClInclude Include="include\ThreadPool.h" />

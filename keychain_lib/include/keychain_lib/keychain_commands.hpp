@@ -43,13 +43,13 @@ struct keychain_error: std::runtime_error
 class keychain_base
 {
 public:
-    using string_list = std::list<std::string>;
+    using string_list = std::list<std::wstring>;
     keychain_base(std::string&& uid_hash_);
     virtual ~keychain_base();
     virtual void operator()(const fc::variant& command) = 0;
-    boost::signals2::signal<std::string(const std::string&)> get_passwd_trx_raw;
-    boost::signals2::signal<std::string(const graphene::chain::transaction&)> get_passwd_trx;
-    boost::signals2::signal<std::string(const std::string&)> get_passwd;
+    boost::signals2::signal<std::wstring(const std::string&)> get_passwd_trx_raw;
+    boost::signals2::signal<std::wstring(const graphene::chain::transaction&)> get_passwd_trx;
+    boost::signals2::signal<std::wstring(const std::string&)> get_passwd;
     boost::signals2::signal<void(const string_list&)> print_mnemonic;
     std::string uid_hash;
 };
@@ -231,7 +231,7 @@ struct keychain_command<CMD_SIGN> : keychain_command_base
           // If we can parse transaction we need to use get_passwd_trx function
           // else use get_passwd_trx_raw()
           // At this moment parsing of transaction is not implemented
-          std::string passwd = std::move(*(keychain->get_passwd_trx_raw(params.transaction)));
+          std::wstring passwd = std::move(*(keychain->get_passwd_trx_raw(params.transaction)));
           key_data = std::move(encryptor.decrypt_keydata(passwd.c_str(), encrypted_data));
         }
         else

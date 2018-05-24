@@ -3,7 +3,6 @@
 #include "SecurityManager.h"
 
 #include <keychain_lib/keychain_wrapper.hpp>
-#include <keychain_lib/secure_module_singletone.hpp>
 #include <keychain_lib/pipeline_parser.hpp>
 
 #include <fcntl.h>
@@ -12,49 +11,7 @@
 #include <iostream>
 #include <future>
 
-class sec_mod_dummy : public keychain_app::secure_dlg_mod_base
-{
-public:
-	sec_mod_dummy();
-	virtual ~sec_mod_dummy();
-	virtual std::string get_passwd_trx_raw(const std::string& raw_trx) const override;
-	virtual std::string get_passwd_trx(const graphene::chain::transaction& trx) const override;
-	virtual std::string get_passwd(const std::string& str) const override;
-	virtual void print_mnemonic(const string_list& mnemonic) const override;
-	virtual std::string get_uid() const override;
-
-};
-
-sec_mod_dummy::sec_mod_dummy()
-{}
-
-sec_mod_dummy::~sec_mod_dummy()
-{}
-
-std::string sec_mod_dummy::get_passwd_trx(const graphene::chain::transaction& trx) const
-{
-	return std::string("blank_password");
-}
-
-std::string sec_mod_dummy::get_uid() const
-{
-	return std::string("uid");
-}
-
-void sec_mod_dummy::print_mnemonic(const string_list& mnemonic) const
-{
-
-}
-
-std::string sec_mod_dummy::get_passwd_trx_raw(const std::string& raw_trx) const
-{
-	return std::string("blank_password");
-}
-
-std::string sec_mod_dummy::get_passwd(const std::string& str) const
-{
-	return std::string("blank_password");
-}
+#include "SecureModuleWrapper.h"
 
 NamedPipeServer::NamedPipeServer() {
 	//_secManage = new SecurityManager();
@@ -101,8 +58,8 @@ void NamedPipeServer::ListenChannel(/*LPTSTR channelName*/) {
 		
 	std::cout << "Client connected, creating a processing thread." << std::endl;
 	auto res = std::async(std::launch::async, [](FILE* fd_)->int {
-		const secure_dlg_mod_base* sec_mod = secure_module<sec_mod_dummy>::instance();
-		keychain_invoke_f f = std::bind(&keychain_wrapper, sec_mod, std::placeholders::_1);
+		SecureModuleWrapper secureModuleWrapper;
+		keychain_invoke_f f = std::bind(&keychain_wrapper, &secureModuleWrapper, std::placeholders::_1);
 		pipeline_parser pipe_line_parser_(std::move(f), fd_);
 		return pipe_line_parser_.run();
 	}, fd);

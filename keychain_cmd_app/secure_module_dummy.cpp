@@ -32,7 +32,7 @@ std::wstring sec_mod_dummy::get_passwd_trx_raw(const std::string& raw_trx) const
   return std::wstring(L"blank_password");
 }
 
-std::string sec_mod_dummy::get_passwd(const std::string& str) const
+std::wstring sec_mod_dummy::get_passwd(const std::string& str) const
 {
-  return std::string("blank_password");
+  return std::wstring(L"blank_password");
 }

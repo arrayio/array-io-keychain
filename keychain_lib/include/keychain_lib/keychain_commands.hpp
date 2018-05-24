@@ -214,6 +214,8 @@ struct keychain_command<CMD_SIGN> : keychain_command_base
         }
         else if (!params.keyname.empty())
         {
+          auto curdir = bfs::current_path();
+          
           auto first = bfs::directory_iterator(bfs::path("./"));
           auto it = std::find_if(first, bfs::directory_iterator(),find_keyfile_by_username(params.keyname.c_str(), &keyfile));
           if (it == bfs::directory_iterator())

@@ -22,10 +22,10 @@ public:
   
   keyfile_format::encrypted_data encrypt_keydata(
     keyfile_format::cipher_etype etype,
-    const std::string& key,
+    const std::wstring& key,
     const std::string& keydata);
   
-  std::string decrypt_keydata(const std::string& key, keyfile_format::encrypted_data& enc_data);
+  std::string decrypt_keydata(const std::wstring& key, keyfile_format::encrypted_data& enc_data);
 
 private:
   EVP_CIPHER_CTX* m_ctx;

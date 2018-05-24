@@ -17,9 +17,9 @@ std::wstring sec_mod_dummy::get_passwd_trx(const graphene::chain::transaction& t
   return std::wstring(L"blank_password");
 }
 
-std::wstring sec_mod_dummy::get_uid() const
+std::string sec_mod_dummy::get_uid() const
 {
-  return std::wstring(L"uid");
+  return std::string("uid");
 }
 
 void sec_mod_dummy::print_mnemonic(const string_list& mnemonic) const

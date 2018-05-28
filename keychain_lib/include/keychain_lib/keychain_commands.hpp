@@ -95,8 +95,8 @@ std::string to_hex(const uint8_t* data, size_t length);
 struct json_response
 {
     json_response(){}
-    json_response(const fc::variant& var, int id_):result(var), id(id_){}
-    json_response(const char* result_, int id_):result(result_), id(id_){}
+    json_response(const fc::variant& var, int id_): id(id_), result(var){}
+    json_response(const char* result_, int id_): id(id_), result(result_){}
     int id;
     fc::variant result;
 };

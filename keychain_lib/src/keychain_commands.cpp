@@ -112,6 +112,12 @@ void keychain_app::send_response(bool res, int id)
   std::cout << fc::json::to_pretty_string(fc::variant(response)) << std::endl;
 }
 
+void keychain_app::send_response(const fc::variants& res, int id)
+{
+  json_response response(res, id);
+  std::cout << fc::json::to_pretty_string(fc::variant(response)) << std::endl;
+}
+
 using namespace keychain_app;
 
 keychain_base::keychain_base(std::string&& uid_hash_)

@@ -233,12 +233,12 @@ struct keychain_command<CMD_SIGN> : keychain_command_base
           // If we can parse transaction we need to use get_passwd_trx function
           // else use get_passwd_trx_raw()
           // At this moment parsing of transaction is not implemented
-          std::wstring passwd = std::move(*(keychain->get_passwd_trx_raw(params.transaction)));
-          key_data = encryptor.decrypt_keydata(passwd.c_str(), encrypted_data);
+          std::wstring passwd = *(keychain->get_passwd_trx_raw(params.transaction));
+          key_data = std::move(encryptor.decrypt_keydata(passwd.c_str(), encrypted_data));
         }
         else
         {
-          key_data = keyfile.keyinfo.data.as<std::string>();
+          key_data = std::move(keyfile.keyinfo.data.as<std::string>());
         }
         private_key = get_priv_key_from_str(key_data);
         send_response(private_key.sign_compact(get_hash(unit_list)), id);
@@ -279,7 +279,7 @@ struct keychain_command<CMD_CREATE>: keychain_command_base
         {
           case keyfile_format::keyfile_t::keyinfo_t::CURVE_SECP256K1:
           {
-            wif_key = graphene::utilities::key_to_wif(fc::ecc::private_key::generate());
+            wif_key = std::move(graphene::utilities::key_to_wif(fc::ecc::private_key::generate()));
           }
             break;
           default:
@@ -289,7 +289,7 @@ struct keychain_command<CMD_CREATE>: keychain_command_base
         }
         if (params.encrypted)
         {
-          auto passwd = std::move(*keychain->get_passwd(std::string("Please, enter password for your new key")));
+          auto passwd = *keychain->get_passwd(std::string("Please, enter password for your new key"));
           auto& encryptor = encryptor_singletone::instance();
           auto enc_data = encryptor.encrypt_keydata(params.algo, passwd, wif_key);
           keyfile.keyinfo.data = fc::variant(enc_data);

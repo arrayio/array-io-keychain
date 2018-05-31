@@ -82,6 +82,7 @@ secp256_private_key get_priv_key_from_str(const std::string& str);
 fc::sha256 get_hash(const keychain_app::unit_list_t &list);
 void send_response(const signature_t& signature, int id);
 void send_response(bool res, int id);
+void send_response(const fc::variants& res, int id);
 size_t from_hex(const std::string& hex_str, unsigned char* out_data, size_t out_data_len );
 std::string to_hex(const uint8_t* data, size_t length);
 /*{
@@ -97,6 +98,7 @@ struct json_response
     json_response(){}
     json_response(const fc::variant& var, int id_): id(id_), result(var){}
     json_response(const char* result_, int id_): id(id_), result(result_){}
+    json_response(const fc::variants& var, int id_): id(id_), result(var){}
     int id;
     fc::variant result;
 };
@@ -325,6 +327,44 @@ struct keychain_command<CMD_CREATE>: keychain_command_base
         std::cerr << fc::json::to_pretty_string(fc::variant(json_error(0, exc.to_detail_string().c_str()))) << std::endl;
       }
     }
+};
+
+template <>
+struct keychain_command<CMD_LIST>: keychain_command_base {
+  keychain_command() : keychain_command_base(CMD_REMOVE) {}
+  
+  ~keychain_command() {}
+  
+  using params_t = void;
+  
+  virtual void operator()(keychain_base *keychain, const fc::variant &params_variant, int id) const override
+  {
+    try {
+      fc::variants keyname_list;
+      keyname_list.reserve(128);
+      auto first = bfs::directory_iterator(bfs::path("./"));
+      std::for_each(first, bfs::directory_iterator(), [&keyname_list](bfs::directory_entry &unit){
+        if (!bfs::is_regular_file(unit.status()))
+          return;
+        const auto &file_path = unit.path().filename();
+  
+        auto j_keyfile = open_keyfile(file_path.c_str());
+        auto keyfile = j_keyfile.as<keyfile_format::keyfile_t>();
+        keyname_list.push_back(fc::variant(std::move(keyfile.keyname)));
+        return;
+      });
+      send_response(keyname_list, id);
+    }
+    catch (const std::exception &exc)
+    {
+      std::cout << fc::json::to_pretty_string(fc::variant(json_error(id, exc.what()))) << std::endl;
+    }
+    catch (const fc::exception& exc)
+    {
+      std::cout << fc::json::to_pretty_string(fc::variant(json_error(0, exc.what()))) << std::endl;
+      std::cerr << fc::json::to_pretty_string(fc::variant(json_error(0, exc.to_detail_string().c_str()))) << std::endl;
+    }
+  }
 };
 
 template <>

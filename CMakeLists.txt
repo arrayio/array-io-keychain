@@ -5,7 +5,7 @@ add_subdirectory(./keychain_lib)
 cmake_minimum_required( VERSION 3.0.2 )
 
 set(CMAKE_CXX_FLAGS "-std=c++14")
-set(CMAKE_EXE_LINKER_FLAGS "-lpthread -ldl -v")
+set(CMAKE_EXE_LINKER_FLAGS "-ldl -v")
 
 SET(BOOST_COMPONENTS)
 LIST(APPEND BOOST_COMPONENTS thread date_time system filesystem program_options signals serialization chrono unit_test_framework context locale iostreams)
@@ -28,11 +28,12 @@ find_library(LIB_SECP256 NAME secp256k1 HINTS "./3rd-party-components/lib")
 find_library(LIB_GRAPHENE graphene_utilities HINTS "./3rd-party-components/lib")
 
 find_library(LIB_OPENSSL NAME crypto  HINTS "C:/openssl-lib/lib")
+find_library(LIB_PTHREAD NAME pthread HINTS "/usr/lib/x86_64-linux-gnu")
 
 file(GLOB KEYCHAIN_SOURCES "./keychain_cmd_app/*.cpp")
 file(GLOB KEYCHAIN_INCLUDE "./keychain_cmd_app/*.hpp")
 
 add_executable(keychain ${KEYCHAIN_SOURCES} ${KEYCHAIN_INCLUDE})
 
-target_link_libraries(keychain keychain_common ${LIB_FC} ${LIB_SECP256} ${LIB_GRAPHENE} ${LIB_OPENSSL} ${Boost_LIBRARIES})
+target_link_libraries(keychain keychain_common ${LIB_PTHREAD} ${LIB_FC} ${LIB_SECP256} ${LIB_GRAPHENE} ${LIB_OPENSSL} ${Boost_LIBRARIES})
 

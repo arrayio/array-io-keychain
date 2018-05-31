@@ -345,12 +345,13 @@ struct keychain_command<CMD_LIST>: keychain_command_base {
       auto first = bfs::directory_iterator(bfs::path("./"));
       std::for_each(first, bfs::directory_iterator(), [&keyname_list](bfs::directory_entry &unit){
         if (!bfs::is_regular_file(unit.status()))
-          return false;
+          return;
         const auto &file_path = unit.path().filename();
   
         auto j_keyfile = open_keyfile(file_path.c_str());
         auto keyfile = j_keyfile.as<keyfile_format::keyfile_t>();
         keyname_list.push_back(fc::variant(std::move(keyfile.keyname)));
+        return;
       });
       send_response(keyname_list, id);
     }

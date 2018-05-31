@@ -38,7 +38,7 @@ private:
     using buf_type = std::vector<char>;
     using buf_iterator = buf_type::iterator;
     using iter_range = std::pair<buf_iterator, buf_iterator>;
-    iter_range сut_json_obj(buf_iterator parse_begin, buf_iterator parse_end);//return pair(parse_end, parse_end)if no json detached, or pair<m_obj_begin, m_obj_end>
+    iter_range cut_json_obj(buf_iterator parse_begin, buf_iterator parse_end);//return pair(parse_end, parse_end)if no json detached, or pair<m_obj_begin, m_obj_end>
 };
 
 }

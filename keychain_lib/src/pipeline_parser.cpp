@@ -38,7 +38,7 @@ int pipeline_parser::run()
     bytes_remaining -= bytes_read;
     do
     {
-      auto buf_range = сut_json_obj(read_buf.begin(), it_read_end);
+      auto buf_range = cut_json_obj(read_buf.begin(), it_read_end);
       if( std::distance(buf_range.first, buf_range.second) > 0)
       {
         try {
@@ -66,7 +66,7 @@ int pipeline_parser::run()
   return 0;
 }
 
-pipeline_parser::iter_range pipeline_parser::сut_json_obj(pipeline_parser::buf_iterator parse_begin, pipeline_parser::buf_iterator parse_end)
+pipeline_parser::iter_range pipeline_parser::cut_json_obj(pipeline_parser::buf_iterator parse_begin, pipeline_parser::buf_iterator parse_end)
 {
   size_t brace_count = 0;
   auto start_obj = parse_end;

@@ -38,9 +38,16 @@ keychain::keychain(std::string&& uid_hash_, const char* default_key_dir)
   , m_init_path(bfs::current_path())
 {
   std::string user_dir(default_key_dir);
+  bfs::path path_(user_dir);
+  if(!bfs::exists(path_))
+  {
+    auto res = bfs::create_directory(path_);
+    if(res == false)
+      throw std::runtime_error("Error: can not create default key directory");
+  }
   user_dir += "/";
   user_dir += uid_hash;
-  bfs::path path_(user_dir);
+  path_ = bfs::path(user_dir);
   if(!bfs::exists(path_))
   {
     auto res = bfs::create_directory(path_);

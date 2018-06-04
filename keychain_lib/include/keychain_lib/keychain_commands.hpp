@@ -261,7 +261,7 @@ template <>
 struct keychain_command<CMD_CREATE>: keychain_command_base
 {
     keychain_command():keychain_command_base(CMD_CREATE){}
-    ~keychain_command(){}
+    virtual ~keychain_command(){}
     struct params
     {
       std::string keyname;
@@ -332,8 +332,7 @@ struct keychain_command<CMD_CREATE>: keychain_command_base
 template <>
 struct keychain_command<CMD_LIST>: keychain_command_base {
   keychain_command() : keychain_command_base(CMD_REMOVE) {}
-  
-  ~keychain_command() {}
+  virtual ~keychain_command() {}
   
   using params_t = void;
   
@@ -371,7 +370,7 @@ template <>
 struct keychain_command<CMD_REMOVE>: keychain_command_base
 {
   keychain_command():keychain_command_base(CMD_REMOVE){}
-  ~keychain_command(){}
+  virtual ~keychain_command(){}
   struct params
   {
     std::string keyname;

@@ -11,3 +11,11 @@ Keychain may manage private keys in different formats. Most popular ECDSA (bitco
 Keychain is not to be confused with the Wallet built-in Dapp, the keychain app, is a standalone commandline/ui interface to interact with private keys.
 
 Array.io keychain may be used by a node, a frontend or dapp's nodejs server to sign transactions. It may be used by a web application too, keeping keys in a separate environment from browser.
+
+# Installation
+
+## Windows
+
+## Linux
+
+## OSX

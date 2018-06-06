@@ -30,12 +30,15 @@ Dependences:
  These files are built in the project https://github.com/arrayio/array-io-core.git
 
 
-Installation
+Installing from source
  - run terminal
  - git clone https://github.com/arrayio/array-io-keychain.git
  - put lib files into ../array-io-keychain/3rd-party-components/lib
  - cd array-io-keychain/
- - $ cmake -DCMAKE_BUILD_TYPE=Debug  -DOPENSSL_ROOT_DIR="/usr/local/lib" -G  "Unix Makefiles" ../
+ - $ cmake -DBOOST_ROOT="/opt/boostlib" -DOPENSSL_ROOT_DIR="/opt/openssllib" CMakeLists.txt
 
+Insalling from binary
+ - go to web-page https://github.com/arrayio/array-io-keychain/releases 
+ - download release
 
 ## OSX

@@ -31,8 +31,9 @@ Dependencies:
  - libsecp256k1.a
   These files are built in the project https://github.com/arrayio/array-io-core.git
 
-Installing from source
- - run terminal
+*Compiling and Installing from Source*
+
+```
  - $ git clone https://github.com/arrayio/array-io-keychain.git
  - put dependency files into ../array-io-keychain/3rd-party-components/lib
  - $ cd array-io-keychain/
@@ -40,7 +41,7 @@ Installing from source
  - $ cd build 
  - $ cmake -DBOOST_ROOT="/opt/boostlib" -DOPENSSL_ROOT_DIR="/opt/openssllib" -G "Unix Makefiles" ../CMakeLists.txt
  - $ make
-
+```
 
 Installing from binary
  - go to web-page https://github.com/arrayio/array-io-keychain/releases 

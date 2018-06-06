@@ -24,7 +24,7 @@ Requirements
  - openssl-1.1.0g
  For building all libraries and project to use gcc are required.
  
-Dependences:
+Dependencies:
  You must have libraries:
  - libfc.a
  - libgraphene_utilities.a

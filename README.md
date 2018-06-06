@@ -32,7 +32,7 @@ Array.io keychain may be used by a node, a frontend or dapp's nodejs server to s
  - libsecp256k1.a
   These files are built in the project https://github.com/arrayio/array-io-core.git
 
-put theese libraries into directory of cloned source *./3rd-party-components/lib*
+put these libraries into directory of cloned source *./3rd-party-components/lib*
 
 **Compiling and Installing from Source**
 ```

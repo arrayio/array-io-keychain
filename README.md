@@ -42,7 +42,7 @@ Installing from source
  - $ make
 
 
-Insalling from binary
+Installing from binary
  - go to web-page https://github.com/arrayio/array-io-keychain/releases 
  - download release
 

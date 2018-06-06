@@ -20,12 +20,12 @@ Array.io keychain may be used by a node, a frontend or dapp's nodejs server to s
 
 **Requirements**
  - gcc minimum version 6
- - CMake (minimum required VERSION 3.0.2)
- - BOOST lib minimum required 1.67
+ - cmake minimum version 3.0.2
+ - BOOST lib minimum version 1.67
  - openssl-1.1.0g
  For building all libraries and project to use gcc are required.
  
-Dependencies:
+**Dependencies:**
  You must have libraries:
  - libfc.a
  - libgraphene_utilities.a

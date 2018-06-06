@@ -25,10 +25,12 @@ Requirements
  For building all libraries and project to use gcc are required.
  
 Dependencies:
+
  You must have libraries:
  - libfc.a
  - libgraphene_utilities.a
  - libsecp256k1.a
+ 
  These files are built in the project https://github.com/arrayio/array-io-core.git
 
 Installing from source

@@ -18,10 +18,12 @@ Array.io keychain may be used by a node, a frontend or dapp's nodejs server to s
 
 ## Linux
 Requirements
+ - gcc minimum version 6
  - CMake (minimum required VERSION 3.0.2)
  - BOOST lib minimum required 1.67
  - openssl-1.1.0g
-
+ For building all libraries and project to use gcc are required.
+ 
 Dependences:
  You must have libraries:
  - libfc.a
@@ -29,16 +31,23 @@ Dependences:
  - libsecp256k1.a
  These files are built in the project https://github.com/arrayio/array-io-core.git
 
-
 Installing from source
  - run terminal
- - git clone https://github.com/arrayio/array-io-keychain.git
- - put lib files into ../array-io-keychain/3rd-party-components/lib
- - cd array-io-keychain/
- - $ cmake -DBOOST_ROOT="/opt/boostlib" -DOPENSSL_ROOT_DIR="/opt/openssllib" CMakeLists.txt
+ - $ git clone https://github.com/arrayio/array-io-keychain.git
+ - put dependency files into ../array-io-keychain/3rd-party-components/lib
+ - $ cd array-io-keychain/
+ - $ mkdir build
+ - $ cd build 
+ - $ cmake -DBOOST_ROOT="/opt/boostlib" -DOPENSSL_ROOT_DIR="/opt/openssllib" -G "Unix Makefiles" ../CMakeLists.txt
+ - $ make
+
 
 Insalling from binary
  - go to web-page https://github.com/arrayio/array-io-keychain/releases 
  - download release
+
+
+Description of commands
+ https://github.com/arrayio/array-io-keychain/wiki/keychain-sample-commands
 
 ## OSX

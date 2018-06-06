@@ -30,9 +30,9 @@ Array.io keychain may be used by a node, a frontend or dapp's nodejs server to s
  - libfc.a
  - libgraphene_utilities.a
  - libsecp256k1.a
-  These files are built in the project https://github.com/arrayio/array-io-core.git
-
-put these libraries into directory of cloned source *./3rd-party-components/lib*
+ 
+ These files are built in the project https://github.com/arrayio/array-io-core.git
+ Put these libraries into directory of cloned source *./3rd-party-components/lib*
 
 **Compiling and Installing from Source**
 ```
@@ -50,6 +50,7 @@ put these libraries into directory of cloned source *./3rd-party-components/lib*
 
 
 **How to use**
+
 See corresponding wiki
 https://github.com/arrayio/array-io-keychain/wiki/
 

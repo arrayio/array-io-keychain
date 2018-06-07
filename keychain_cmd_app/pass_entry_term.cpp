@@ -9,15 +9,9 @@ pass_entry_term::pass_entry_term()
     _display = XOpenDisplay (_displayName);
     if (!_display)
         throw std::runtime_error("ERR Unable to open X display");
-
-    if (!map_translate())
-        throw std::runtime_error("ERR Unable translate KeyCode to KeySym");
-
     dev_info            = XListInputDevices( _display, &dev_cnt);
     kbd_atom            = XInternAtom(_display, XI_KEYBOARD, true);
     device_enabled_prop = XInternAtom(_display, "Device Enabled", false);
-
-    ChangeKbProperty(dev_info, kbd_atom, device_enabled_prop, dev_cnt, 0);
 }
 
 pass_entry_term::~pass_entry_term()
@@ -29,31 +23,6 @@ pass_entry_term::~pass_entry_term()
         XCloseDisplay (_display);
     _display = NULL;
 }
-
-bool pass_entry_term::map_translate() // translate map keycode(Xorg)->keysym(Xorg)
-{
-    int  min_Xcode = 0, max_Xcode=0;
-    XkbStateRec state[1];
-
-    memset(state, 0, sizeof(state));
-    XkbGetState(_display, XkbUseCoreKbd, state);
-    XDisplayKeycodes(_display, &min_Xcode, &max_Xcode);
-
-    if (max_Xcode > MAX_KEYCODE_XORG )  // на всякий случай. такого быть не должно
-    {
-        std::cout<<" Maximum keycode must be less 255. Current value: "<<max_Xcode <<std::endl;
-        throw std::runtime_error("Maximum keycode must be less 255.");
-    }
-
-    for (int i=min_Xcode; i<=max_Xcode; i++ )
-    {
-        for (int shft=0; shft<2; shft++)
-            keysym[(i-+min_Xcode)*2+shft]= XkbKeycodeToKeysym(_display, i, state->group, shft);
-    }
-
-    return true;
-}
-
 
 void pass_entry_term::ChangeKbProperty(
         XDeviceInfo * p_dev_info,
@@ -82,7 +51,7 @@ void pass_entry_term::ChangeKbProperty(
 }
 
 
-bool pass_entry_term::OnKey (unsigned short scancode, int shft, int cpslock, int nmlock, std::wstring& pass)
+bool pass_entry_term::OnKey (unsigned short scancode, int shft, int cpslock, int nmlock, std::wstring& pass, const KeySym * keysym)
 {
     // HACK: manual NumPad processing (It is right only for English keyboard layout)
     switch (scancode)
@@ -113,14 +82,20 @@ bool pass_entry_term::OnKey (unsigned short scancode, int shft, int cpslock, int
     else if (scancode == KEY_ESC) { pass.clear(); return true; }
     else if (scancode == KEY_BACKSPACE || scancode == KEY_DELETE) { pass.pop_back();}
     else   {
-        KeySym  sym = keysym[(scancode)*2 +(cpslock xor shft)];
-        long unicode = keysym2ucs( sym);
-
-        if ( unicode !=-1)
+        int code = (scancode)*2 +(cpslock xor shft);
+        if (code < MAP_SIZE)
         {
-            wchar_t w = static_cast<wchar_t>(unicode);
-            pass += w;
+            KeySym  sym = keysym[code];
+            long unicode = keysym2ucs( sym);
+
+            if ( unicode !=-1)
+            {
+                wchar_t w = static_cast<wchar_t>(unicode);
+                pass += w;
+            }
         }
+        else
+            throw std::runtime_error("OnKey: map size exceeded");
     }
     return false;
 }
@@ -174,7 +149,7 @@ std::list<std::string> pass_entry_term::parse_device_file()
     return std::move( devices);
 }
 
-std::wstring pass_entry_term::input_password()
+std::wstring pass_entry_term::input_password(const KeySym * keysym)
 {
     std::wstring password;
 
@@ -188,6 +163,8 @@ std::wstring pass_entry_term::input_password()
     struct timeval to ={0, 0};
     char name[256] = "Unknown";
     bool first_key = true;
+
+    ChangeKbProperty(dev_info, kbd_atom, device_enabled_prop, dev_cnt, 0);
 
     capslock = keyState(XK_Caps_Lock);
     numlock = keyState(XK_Num_Lock);
@@ -257,7 +234,7 @@ std::wstring pass_entry_term::input_password()
                         numlock ^= 0x1;
                     else
                     {
-                        if (OnKey (ev[1].code, shift, capslock, numlock, password) )
+                        if (OnKey (ev[1].code, shift, capslock, numlock, password, keysym) )
                             break;
                     }
                 }else if (ev[1].value == 0)
@@ -274,3 +251,43 @@ std::wstring pass_entry_term::input_password()
     for (auto dev : fd_list)  close(dev);
     return password;
 }
+
+
+const map_translate_singletone& map_translate_singletone::instance(Display * d)
+{
+    static const map_translate_singletone instance(d);
+    return instance;
+}
+
+
+map_translate_singletone::map_translate_singletone(Display * _display) // translate map keycode(Xorg)->keysym(Xorg)
+{
+    int  min_Xcode = 0, max_Xcode=0;
+    XkbStateRec state[1];
+
+    memset(state, 0, sizeof(state));
+    XkbGetState(_display, XkbUseCoreKbd, state);
+    XDisplayKeycodes(_display, &min_Xcode, &max_Xcode);
+
+    if (max_Xcode > MAX_KEYCODE_XORG )  // на всякий случай. такого быть не должно
+    {
+        std::cout<<" Maximum keycode must be less 255. Current value: "<<max_Xcode <<std::endl;
+        throw std::runtime_error("Maximum keycode must be less 255.");
+    }
+
+    for (int i=min_Xcode; i<=max_Xcode; i++ )
+    {
+        for (int shft=0; shft<2; shft++)
+        {
+            int code = (i-+min_Xcode)*2+shft;
+            if (code < MAP_SIZE)
+                keysym[code]= XkbKeycodeToKeysym(_display, i, state->group, shft);
+            else
+                throw std::runtime_error("Key map translate: map size exceeded");
+        }
+
+    }
+    map = keysym;
+}
+
+

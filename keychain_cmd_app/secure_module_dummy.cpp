@@ -24,15 +24,17 @@ std::string sec_mod_dummy::get_uid() const
 
 void sec_mod_dummy::print_mnemonic(const string_list& mnemonic) const
 {
-
 }
 
 std::wstring sec_mod_dummy::get_passwd_trx_raw(const std::string& raw_trx) const
 {
-  return std::wstring(L"blank_password");
+ return std::wstring(L"blank_password");
 }
 
 std::wstring sec_mod_dummy::get_passwd(const std::string& str) const
 {
+  auto pass_entry = pass_entry_term();
+  auto pass = pass_entry.input_password();
+  std::wcout << pass << std::endl;
   return std::wstring(L"blank_password");
 }

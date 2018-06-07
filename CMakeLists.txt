@@ -4,7 +4,7 @@ add_subdirectory(./keychain_lib)
 
 cmake_minimum_required( VERSION 3.0.2 )
 
-set(CMAKE_CXX_FLAGS "-std=c++14")
+set(CMAKE_CXX_FLAGS "-std=c++14 --verbose")
 set(CMAKE_EXE_LINKER_FLAGS "-ldl -v")
 
 SET(BOOST_COMPONENTS)
@@ -33,7 +33,19 @@ find_library(LIB_PTHREAD NAME pthread HINTS "/usr/lib/x86_64-linux-gnu")
 file(GLOB KEYCHAIN_SOURCES "./keychain_cmd_app/*.cpp")
 file(GLOB KEYCHAIN_INCLUDE "./keychain_cmd_app/*.hpp")
 
+find_package(X11 REQUIRED)
+if(NOT X11_FOUND)
+    message(SEND_ERROR "Failed to find X11")
+    return()
+else()
+    include_directories(${X11_INCLUDE_DIR})
+endif()
+
+find_library(LIB_XI NAME Xi HINTS "/usr/lib/x86_64-linux-gnu/")
+
+set(SOURCE_LIB "./keysym2ucs.cpp")
+
 add_executable(keychain ${KEYCHAIN_SOURCES} ${KEYCHAIN_INCLUDE})
 
-target_link_libraries(keychain keychain_common ${LIB_PTHREAD} ${LIB_FC} ${LIB_SECP256} ${LIB_GRAPHENE} ${LIB_OPENSSL} ${Boost_LIBRARIES})
+target_link_libraries(keychain keychain_common ${LIB_PTHREAD} ${LIB_FC} ${LIB_SECP256} ${LIB_GRAPHENE} ${LIB_OPENSSL} ${Boost_LIBRARIES} ${X11_LIBRARIES} ${LIB_XI})
 

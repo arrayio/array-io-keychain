@@ -6,6 +6,7 @@
 #define KEYCHAINAPP_SECURE_MODULE_DUMMY_HPP
 
 #include <keychain_lib/keychain_wrapper.hpp>
+#include "pass_entry_term.hpp"
 
 namespace keychain_app
 {

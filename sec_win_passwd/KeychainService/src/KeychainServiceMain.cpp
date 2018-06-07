@@ -3,7 +3,7 @@
 #include "KeychainService.h"
 #include "ServiceBase.h"
 #include "NamedPipeServer.h"
-#include "SecurityManager.h"
+//#include "SecurityManager.h"
 //#include "Agent.h"
 
 // Internal name of the service 
@@ -31,7 +31,7 @@
 #define SERVICE_PASSWORD         NULL 
 
 NamedPipeServer _server;
-SecurityManager _secman;
+//SecurityManager _secman;
 
 int wmain(int argc, wchar_t *argv[])
 //int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
@@ -63,7 +63,7 @@ int wmain(int argc, wchar_t *argv[])
 		}
 		else if (_wcsicmp(L"testproc", argv[1] + 1) == 0)
 		{
-			_secman.CreateSecureDesktop();
+			//_secman.CreateSecureDesktop();
 
 		}
 		else if (_wcsicmp(L"r", argv[1] + 1) == 0) {

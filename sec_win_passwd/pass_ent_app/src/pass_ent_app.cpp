@@ -2,6 +2,10 @@
 #include <stdlib.h>
 #include <string.h>
 #include <cstddef>
+#include <clocale>
+#include <locale>
+#include <codecvt>
+#include <vector>
 #include <tchar.h>
 #include <windows.h>
 #include <UserEnv.h>
@@ -25,27 +29,28 @@ using namespace std;
 
 INT_PTR CALLBACK PasswordProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
 
-const char* TRANS_ID = "-transId";
-LPSTR transId;
+std::wstring TRANS_ID = TEXT("-transId");
+std::wstring TransId;
 HDESK hOldDesktop, hNewDesktop;
 DWORD WINAPI DrawWindow(LPVOID);
 HINSTANCE _hInstance;
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
-	std::size_t transIdLen = strlen(TRANS_ID);
+	std::size_t transIdLen = TRANS_ID.length();
 	std::size_t totalLen = strlen(lpCmdLine);
-	char* found = strstr(lpCmdLine, TRANS_ID);
-	transId = new char[(totalLen - transIdLen)];
-	strncpy_s(transId, (totalLen - transIdLen), (lpCmdLine + transIdLen+1), (totalLen - transIdLen));
-	
+	std::wstring wc(200, L'#');
+	size_t outSize;
+	mbstowcs_s(&outSize, &wc[0], 200, lpCmdLine, 200);
+	TransId = wc.substr(transIdLen, totalLen - transIdLen);
+
 	hOldDesktop = GetThreadDesktop(GetCurrentThreadId());
 
 	// new desktop's handle, assigned automatically by CreateDesktop
-	hNewDesktop = CreateDesktop(L"secdesktop", NULL, NULL, 0, DESKTOP_ALL, NULL);
+	//hNewDesktop = CreateDesktop(L"secdesktop", NULL, NULL, 0, DESKTOP_ALL, NULL);
 
 	// switching to the new desktop
-	SwitchDesktop(hNewDesktop);
+	//SwitchDesktop(hNewDesktop);
 
 	// Random login form: used for testing / not required
 	string passwd = "";
@@ -53,10 +58,10 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	HANDLE thread = CreateThread(NULL, 0, DrawWindow, NULL, 0, NULL);
 	
 	WaitForSingleObject(thread, INFINITE);
-	SwitchDesktop(hOldDesktop);
+	//SwitchDesktop(hOldDesktop);
 
 	// disposing the secure desktop since it's no longer needed
-	CloseDesktop(hNewDesktop);
+	//CloseDesktop(hNewDesktop);
 }
 
 static DWORD WINAPI DrawWindow(LPVOID t)
@@ -72,8 +77,8 @@ static DWORD WINAPI DrawWindow(LPVOID t)
 
 static INT_PTR CALLBACK PasswordProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
-	TCHAR lpszPassword[16];
 	WORD cchPassword;
+	std::wstring read_password;
 
 	switch (message)
 	{
@@ -82,7 +87,7 @@ static INT_PTR CALLBACK PasswordProc(HWND hDlg, UINT message, WPARAM wParam, LPA
 			IDC_TRANSACTIONID,
 			WM_SETTEXT,
 			NULL,
-			(LPARAM)transId
+			(LPARAM)TransId.c_str()
 		);
 		// Set password character to a plus sign (+) 
 		SendDlgItemMessage(hDlg,
@@ -111,7 +116,7 @@ static INT_PTR CALLBACK PasswordProc(HWND hDlg, UINT message, WPARAM wParam, LPA
 		}
 		switch (wParam)
 		{
-		case IDOK:
+		case IDOK: {
 			// Get number of characters. 
 			cchPassword = (WORD)SendDlgItemMessage(hDlg,
 				IDC_PASSWORD,
@@ -139,30 +144,46 @@ static INT_PTR CALLBACK PasswordProc(HWND hDlg, UINT message, WPARAM wParam, LPA
 				return FALSE;
 			}
 
-			// Put the number of characters into first word of buffer. 
-			*((LPWORD)lpszPassword) = cchPassword;
 
 			// Get the characters. 
 			SendDlgItemMessage(hDlg,
 				IDC_PASSWORD,
 				EM_GETLINE,
 				(WPARAM)0,       // line 0 
-				(LPARAM)lpszPassword);
+				(LPARAM)&read_password);
 
 			// Null-terminate the string. 
-			lpszPassword[cchPassword] = 0;
+			
 
-			MessageBox(hDlg,
-				lpszPassword,
-				L"Did it work?",
-				MB_OK);
+			HANDLE hPipe;
+			DWORD dwWritten;
+			hPipe = CreateFile(TEXT("\\\\.\\pipe\\Pipe"),
+				GENERIC_READ | GENERIC_WRITE,
+				0,
+				NULL,
+				OPEN_EXISTING,
+				0,
+				NULL);
+			int len;
+			len = WideCharToMultiByte(CP_ACP, 0, read_password.c_str(), cchPassword, 0, 0, 0, 0);
+			std::string testStr(len, '\0');
+			WideCharToMultiByte(CP_ACP, 0, read_password.c_str(), cchPassword, &testStr[0], len, 0, 0);
+			if (hPipe != INVALID_HANDLE_VALUE)
+			{
+				WriteFile(hPipe,
+					testStr.c_str(),
+					(cchPassword+1),   // = length of string + terminating '\0' !!!
+					&dwWritten,
+					NULL);
 
+				CloseHandle(hPipe);
+			}
 			// Call a local password-parsing function. 
 			//ParsePassword(lpszPassword);
 
 			EndDialog(hDlg, TRUE);
 			return TRUE;
-
+		}
 		case IDCANCEL:
 			EndDialog(hDlg, TRUE);
 			return TRUE;

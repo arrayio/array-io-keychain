@@ -4,7 +4,6 @@
 #include <stdio.h> 
 #include <tchar.h>
 #include <strsafe.h>
-#include "SecurityManager.h"
 
 #define BUFSIZE 512
 
@@ -22,6 +21,5 @@ private:
 	HANDLE hPipe = INVALID_HANDLE_VALUE;
 	HANDLE hThread = NULL;
 	LPTSTR lpszPipename;
-	SecurityManager _secManage;
 };
 #endif

@@ -1,6 +1,6 @@
 #pragma once
 #include "NamedPipeServer.h"
-#include "SecurityManager.h"
+//#include "SecurityManager.h"
 
 #include <keychain_lib/keychain_wrapper.hpp>
 #include <keychain_lib/pipeline_parser.hpp>

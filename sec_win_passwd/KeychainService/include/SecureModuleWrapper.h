@@ -1,6 +1,7 @@
 #pragma once
 
 #include <keychain_lib/keychain_wrapper.hpp>
+#include "SecurityManager.h"
 
 class SecureModuleWrapper : public keychain_app::secure_dlg_mod_base
 {

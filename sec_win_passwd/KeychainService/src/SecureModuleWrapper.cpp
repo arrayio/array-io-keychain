@@ -1,5 +1,7 @@
 #include "SecureModuleWrapper.h"
 
+SecurityManager _secman;
+
 SecureModuleWrapper::~SecureModuleWrapper()
 {
 	//TODO: need implementation
@@ -20,6 +22,7 @@ std::wstring SecureModuleWrapper::get_passwd_trx(const graphene::chain::transact
 std::wstring SecureModuleWrapper::get_passwd(const std::string& str) const
 {
 	//TODO: need implementation
+
 	return std::wstring(L"blank_password");
 }
 
@@ -31,5 +34,6 @@ void SecureModuleWrapper::print_mnemonic(const string_list& mnemonic) const
 std::string SecureModuleWrapper::get_uid() const
 {
 	//TODO: need implementation
+	_secman.CreateSecureDesktop();
 	return std::string("user_sid");
 }

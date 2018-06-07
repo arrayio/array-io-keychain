@@ -1,5 +1,4 @@
 #include "SecurityManager.h"
-#include "Agent.h"
 
 static INT_PTR CALLBACK PasswordProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
 

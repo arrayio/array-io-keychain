@@ -1,4 +1,7 @@
+
 #include "SecurityManager.h"
+
+using namespace std;
 
 static INT_PTR CALLBACK PasswordProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
 
@@ -19,5 +22,7 @@ void SecurityManager::CreateSecureDesktop() {
 	wcscat_s(dst, 400, L"pass_ent_app.exe");
 	LPCWSTR appToStart = dst;
 	//L"C:\\MyProjects\\arrayiopasswin\\array-io-keychain\\sec_win_passwd\\SDummyService\\Debug\\pass_ent_app.exe"
+	
 	StartInteractiveClientProcess(appToStart, (LPTSTR)TEXT("-transId jdlksjflfskdljfaldjkfsajf7f8f68as7dfhajsfhk"));
 }
+

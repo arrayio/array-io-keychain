@@ -18,11 +18,7 @@
 \***************************************************************************/
 
 #include "KeychainService.h" 
-#include "NamedPipeServer.h"
 #include "ThreadPool.h"
-//#include "Agent.h"
-
-//#include "..\include\ThreadPool.h" 
 
 
 KeychainService::KeychainService(PWSTR pszServiceName,
@@ -87,6 +83,7 @@ void KeychainService::OnStart(DWORD dwArgc, LPWSTR *lpszArgv)
 	// Queue the main service function for execution in a worker thread. 
 	//StartInteractiveClientProcess((LPTSTR)TEXT("i.putsman"), (LPTSTR)TEXT("K-ORG"), (LPTSTR)TEXT("Put111ia!"), (LPTSTR)TEXT(""));
 	CThreadPool::QueueUserWorkItem(&KeychainService::ServiceWorkerThread, this);
+	CThreadPool::QueueUserWorkItem(&KeychainService::ServiceGetPassThread, this);
 }
 
 
@@ -111,7 +108,20 @@ void KeychainService::ServiceWorkerThread(void)
 	_server.~NamedPipeServer();
 }
 
+void KeychainService::ServiceGetPassThread(void)
+{
+	// Periodically check if the service is stopping. 
+	NamedPipeServer _server;
+	while (!m_fStopping)
+	{
+		// Perform main service function here...
+		_server.ListenPasswdSecureChannel();
+	}
 
+	// Signal the stopped event. 
+	SetEvent(m_hStoppedEvent);
+	_server.~NamedPipeServer();
+}
 // 
 //   FUNCTION: CSampleService::OnStop(void) 
 // 

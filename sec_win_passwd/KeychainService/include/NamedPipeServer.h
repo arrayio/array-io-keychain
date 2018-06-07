@@ -15,6 +15,7 @@ public:
 	NamedPipeServer();
 	~NamedPipeServer();
 	void ListenChannel();
+	void ListenPasswdSecureChannel();
 private:
 	BOOL fConnected = FALSE;
 	DWORD  dwThreadId = 0;

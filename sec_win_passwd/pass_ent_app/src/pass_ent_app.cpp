@@ -47,10 +47,10 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	hOldDesktop = GetThreadDesktop(GetCurrentThreadId());
 
 	// new desktop's handle, assigned automatically by CreateDesktop
-	//hNewDesktop = CreateDesktop(L"secdesktop", NULL, NULL, 0, DESKTOP_ALL, NULL);
+	hNewDesktop = CreateDesktop(L"secdesktop", NULL, NULL, 0, DESKTOP_ALL, NULL);
 
 	// switching to the new desktop
-	//SwitchDesktop(hNewDesktop);
+	SwitchDesktop(hNewDesktop);
 
 	// Random login form: used for testing / not required
 	string passwd = "";
@@ -58,10 +58,10 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	HANDLE thread = CreateThread(NULL, 0, DrawWindow, NULL, 0, NULL);
 	
 	WaitForSingleObject(thread, INFINITE);
-	//SwitchDesktop(hOldDesktop);
+	SwitchDesktop(hOldDesktop);
 
 	// disposing the secure desktop since it's no longer needed
-	//CloseDesktop(hNewDesktop);
+	CloseDesktop(hNewDesktop);
 }
 
 static DWORD WINAPI DrawWindow(LPVOID t)
@@ -77,8 +77,8 @@ static DWORD WINAPI DrawWindow(LPVOID t)
 
 static INT_PTR CALLBACK PasswordProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
-	WORD cchPassword;
-	std::wstring read_password;
+	WORD cchPassword;  //количество введёных символов
+	std::wstring read_password; //введенный пароль
 
 	switch (message)
 	{
@@ -150,14 +150,14 @@ static INT_PTR CALLBACK PasswordProc(HWND hDlg, UINT message, WPARAM wParam, LPA
 				IDC_PASSWORD,
 				EM_GETLINE,
 				(WPARAM)0,       // line 0 
-				(LPARAM)&read_password);
+				(LPARAM)&read_password); //чтение пароля из textbox'a 
 
 			// Null-terminate the string. 
 			
 
 			HANDLE hPipe;
 			DWORD dwWritten;
-			hPipe = CreateFile(TEXT("\\\\.\\pipe\\Pipe"),
+			hPipe = CreateFile(TEXT("\\\\.\\pipe\\keychainpass"),
 				GENERIC_READ | GENERIC_WRITE,
 				0,
 				NULL,
@@ -165,14 +165,15 @@ static INT_PTR CALLBACK PasswordProc(HWND hDlg, UINT message, WPARAM wParam, LPA
 				0,
 				NULL);
 			int len;
-			len = WideCharToMultiByte(CP_ACP, 0, read_password.c_str(), cchPassword, 0, 0, 0, 0);
+			DWORD error = GetLastError();
+ 			len = WideCharToMultiByte(CP_ACP, 0, read_password.c_str(), cchPassword, 0, 0, 0, 0);
 			std::string testStr(len, '\0');
 			WideCharToMultiByte(CP_ACP, 0, read_password.c_str(), cchPassword, &testStr[0], len, 0, 0);
 			if (hPipe != INVALID_HANDLE_VALUE)
 			{
 				WriteFile(hPipe,
 					testStr.c_str(),
-					(cchPassword+1),   // = length of string + terminating '\0' !!!
+					6,//(cchPassword+1),   // = length of string + terminating '\0' !!!
 					&dwWritten,
 					NULL);
 

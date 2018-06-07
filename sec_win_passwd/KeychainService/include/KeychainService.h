@@ -1,6 +1,7 @@
 #ifndef DUMMY_SERVICE_H
 #define DUMMY_SERVICE_H
 #include "ServiceBase.h" 
+#include "NamedPipeServer.h" 
 
 
 class KeychainService : public CServiceBase
@@ -19,10 +20,11 @@ protected:
 	virtual void OnStop();
 
 	void ServiceWorkerThread(void);
+	void KeychainService::ServiceGetPassThread(void);
 
 private:
 
-	BOOL m_fStopping;
+	volatile BOOL m_fStopping;
 	HANDLE m_hStoppedEvent;
 };
 

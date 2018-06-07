@@ -1,5 +1,5 @@
-#ifndef _SECURITY_MANG
-#define _SECURITY_MANG
+#ifndef _SECURITY_MANG_H
+#define _SECURITY_MANG_H
 #include "Agent.h"
 #include <Windows.h>
 

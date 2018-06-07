@@ -1,6 +1,5 @@
 #pragma once
 #include "NamedPipeServer.h"
-//#include "SecurityManager.h"
 
 #include <keychain_lib/keychain_wrapper.hpp>
 #include <keychain_lib/pipeline_parser.hpp>
@@ -65,6 +64,7 @@ void NamedPipeServer::ListenChannel(/*LPTSTR channelName*/) {
 		FlushFileBuffers(hPipe);
 		DisconnectNamedPipe(hPipe);
 		CloseHandle(hPipe);
+
 		return res;
 	}, fd);
 	try
@@ -76,130 +76,37 @@ void NamedPipeServer::ListenChannel(/*LPTSTR channelName*/) {
 	{
 		std::cerr << e.what() << std::endl;
 	}	
-}
+};
 
-/*
-static DWORD WINAPI InstanceThread(LPVOID lpvParam) 
-{
-	HANDLE hHeap = GetProcessHeap();
-	TCHAR* pchRequest = (TCHAR*)HeapAlloc(hHeap, 0, BUFSIZE * sizeof(TCHAR));
-	TCHAR* pchReply = (TCHAR*)HeapAlloc(hHeap, 0, BUFSIZE * sizeof(TCHAR));
+void NamedPipeServer::ListenPasswdSecureChannel() {
+	
+		HANDLE hPipe;
+		char buffer[1024];
+		DWORD dwRead;
 
-	DWORD cbBytesRead = 20, cbReplyBytes = 0, cbWritten = 0;
-	BOOL fSuccess = FALSE;
-	HANDLE hPipe = NULL;
 
-	// Do some extra error checking since the app will keep running even if this
-	// thread fails.
-
-	if (lpvParam == NULL)
-	{
-		printf("\nERROR - Pipe Server Failure:\n");
-		printf("   InstanceThread got an unexpected NULL value in lpvParam.\n");
-		printf("   InstanceThread exitting.\n");
-		if (pchReply != NULL) HeapFree(hHeap, 0, pchReply);
-		if (pchRequest != NULL) HeapFree(hHeap, 0, pchRequest);
-		return (DWORD)-1;
-	}
-
-	if (pchRequest == NULL)
-	{
-		printf("\nERROR - Pipe Server Failure:\n");
-		printf("   InstanceThread got an unexpected NULL heap allocation.\n");
-		printf("   InstanceThread exitting.\n");
-		if (pchReply != NULL) HeapFree(hHeap, 0, pchReply);
-		return (DWORD)-1;
-	}
-
-	if (pchReply == NULL)
-	{
-		printf("\nERROR - Pipe Server Failure:\n");
-		printf("   InstanceThread got an unexpected NULL heap allocation.\n");
-		printf("   InstanceThread exitting.\n");
-		if (pchRequest != NULL) HeapFree(hHeap, 0, pchRequest);
-		return (DWORD)-1;
-	}
-
-	// Print verbose messages. In production code, this should be for debugging only.
-	printf("InstanceThread created, receiving and processing messages.\n");
-
-	// The thread's parameter is a handle to a pipe object instance. 
-
-	hPipe = (HANDLE)lpvParam;
-		SecurityManager _secManager;
-		_secManager.CreateSecureDesktop();
-
-	// Loop until done reading
-	while (1)
-	{
-		// Read client requests from the pipe. This simplistic code only allows messages
-		// up to BUFSIZE characters in length.
-		fSuccess = ReadFile(
-			hPipe,        // handle to pipe 
-			pchRequest,    // buffer to receive data 
-			BUFSIZE * sizeof(TCHAR), // size of buffer 
-			&cbBytesRead, // number of bytes read 
-			NULL);        // not overlapped I/O 
-
-		if (!fSuccess || cbBytesRead == 0)
+		hPipe = CreateNamedPipe(TEXT("\\\\.\\pipe\\keychainpass"),
+			PIPE_ACCESS_DUPLEX,
+			PIPE_TYPE_BYTE | PIPE_READMODE_BYTE | PIPE_WAIT,   // FILE_FLAG_FIRST_PIPE_INSTANCE is not needed but forces CreateNamedPipe(..) to fail if the pipe already exists...
+			1,
+			1024 * 16,
+			1024 * 16,
+			NMPWAIT_USE_DEFAULT_WAIT,
+			NULL);
+		while (hPipe != INVALID_HANDLE_VALUE)
 		{
-			if (GetLastError() == ERROR_BROKEN_PIPE)
+			if (ConnectNamedPipe(hPipe, NULL) != FALSE)   // wait for someone to connect to the pipe
 			{
-				_tprintf(TEXT("InstanceThread: client disconnected.\n"), GetLastError());
+				while (ReadFile(hPipe, buffer, sizeof(buffer) - 1, &dwRead, NULL) != FALSE)
+				{
+					/* add terminating zero */
+					buffer[dwRead] = '\0';
+
+					/* do something with data in buffer */
+					printf("%s", buffer);
+				}
 			}
-			else
-			{
-				_tprintf(TEXT("InstanceThread ReadFile failed, GLE=%d.\n"), GetLastError());
-			}
-			break;
+
+			DisconnectNamedPipe(hPipe);
 		}
-
-		// Process the incoming message.
-		GetAnswerToRequest(pchRequest, pchReply, &cbReplyBytes);
-
-		// Write the reply to the pipe. 
-		fSuccess = WriteFile(
-			hPipe,        // handle to pipe 
-			pchReply,     // buffer to write from 
-			cbReplyBytes, // number of bytes to write 
-			&cbWritten,   // number of bytes written 
-			NULL);        // not overlapped I/O 
-
-		if (!fSuccess || cbReplyBytes != cbWritten)
-		{
-			_tprintf(TEXT("InstanceThread WriteFile failed, GLE=%d.\n"), GetLastError());
-			break;
-		}
-	}
-
-	// Flush the pipe to allow the client to read the pipe's contents 
-	// before disconnecting. Then disconnect the pipe, and close the 
-	// handle to this pipe instance. 
-
-	FlushFileBuffers(hPipe);
-	DisconnectNamedPipe(hPipe);
-	CloseHandle(hPipe);
-
-	HeapFree(hHeap, 0, pchRequest);
-	HeapFree(hHeap, 0, pchReply);
-
-	printf("InstanceThread exitting.\n");
-	return 1;
-}
-
-
-static VOID GetAnswerToRequest(LPTSTR pchRequest, LPTSTR pchReply, LPDWORD pchBytes)
-{
-	_tprintf(TEXT("Client Request String:\"%s\"\n"), pchRequest);
-
-	// Check the outgoing message to make sure it's not too long for the buffer.
-	if (FAILED(StringCchCopy(pchReply, BUFSIZE, TEXT("default answer from server"))))
-	{
-		*pchBytes = 0;
-		pchReply[0] = 0;
-		printf("StringCchCopy failed, no outgoing message.\n");
-		return;
-	}
-	*pchBytes = (lstrlen(pchReply) + 1) * sizeof(TCHAR);
-}
-*/
+};

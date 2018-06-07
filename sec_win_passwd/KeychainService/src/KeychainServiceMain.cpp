@@ -2,9 +2,6 @@
 #include "ServiceInstaller.h"
 #include "KeychainService.h"
 #include "ServiceBase.h"
-#include "NamedPipeServer.h"
-//#include "SecurityManager.h"
-//#include "Agent.h"
 
 // Internal name of the service 
 #define SERVICE_NAME             L"KeyChainService" 
@@ -30,9 +27,6 @@
 // The password to the service account name 
 #define SERVICE_PASSWORD         NULL 
 
-NamedPipeServer _server;
-//SecurityManager _secman;
-
 int wmain(int argc, wchar_t *argv[])
 //int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
@@ -56,15 +50,6 @@ int wmain(int argc, wchar_t *argv[])
 			// Uninstall the service when the command is  
 			// "-remove" or "/remove". 
 			UninstallService((PWSTR)SERVICE_NAME);
-		}
-		else if (_wcsicmp(L"testpipe", argv[1] + 1) == 0)
-		{
-			_server.ListenChannel();
-		}
-		else if (_wcsicmp(L"testproc", argv[1] + 1) == 0)
-		{
-			//_secman.CreateSecureDesktop();
-
 		}
 		else if (_wcsicmp(L"r", argv[1] + 1) == 0) {
 			KeychainService service((PWSTR)SERVICE_NAME);

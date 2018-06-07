@@ -21,13 +21,13 @@ FIND_PACKAGE(Boost 1.65 REQUIRED COMPONENTS coroutine)
 LIST(APPEND BOOST_COMPONENTS coroutine)
 SET(Boost_LIBRARIES ${BOOST_LIBRARIES_TEMP} ${Boost_LIBRARIES})
 
-include_directories("./keychain_lib/include" "/opt/openssllib/include" "./3rd-party-components/include" "/usr/include/libcxxabi" ${Boost_INCLUDE_DIR})
+include_directories("./keychain_lib/include" "${OPENSSL_ROOT_DIR}/include" "./3rd-party-components/include" "/usr/include/libcxxabi" ${Boost_INCLUDE_DIR})
 
 find_library(LIB_FC NAME fc HINTS "./3rd-party-components/lib")
 find_library(LIB_SECP256 NAME secp256k1 HINTS "./3rd-party-components/lib")
 find_library(LIB_GRAPHENE graphene_utilities HINTS "./3rd-party-components/lib")
 
-find_library(LIB_OPENSSL NAME crypto  HINTS "C:/openssl-lib/lib")
+find_library(LIB_OPENSSL NAME crypto  HINTS "${OPENSSL_ROOT_DIR}/lib")
 find_library(LIB_PTHREAD NAME pthread HINTS "/usr/lib/x86_64-linux-gnu")
 
 file(GLOB KEYCHAIN_SOURCES "./keychain_cmd_app/*.cpp")

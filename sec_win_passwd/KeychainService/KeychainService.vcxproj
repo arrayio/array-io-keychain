@@ -139,7 +139,7 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>K:\msvc\boost_67\lib;K:\openssl-lib\lib;F:\secwinpath\array-io-keychain\3rd-party-components</AdditionalLibraryDirectories>
-      <AdditionalDependencies>libboost_system-vc141-mt-gd-x64-1_67.lib;libboost_chrono-vc141-mt-gd-x64-1_67.lib;libboost_date_time-vc141-mt-gd-x64-1_67.lib;libboost_locale-vc141-mt-gd-x64-1_67.lib;libboost_coroutine-vc141-mt-gd-x64-1_67.lib;libboost_thread-vc141-mt-gd-x64-1_67.lib;libboost_context-vc141-mt-gd-x64-1_67.lib;secp256k1.lib;graphene_utilities.lib;fc.lib;crypto.lib;F:\secwinpath\array-io-keychain\build\keychain_lib\Debug\keychain_common.lib;advapi32.lib;Userenv.lib;Wtsapi32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>libboost_system-vc141-mt-gd-x64-1_67.lib;libboost_chrono-vc141-mt-gd-x64-1_67.lib;libboost_date_time-vc141-mt-gd-x64-1_67.lib;libboost_locale-vc141-mt-gd-x64-1_67.lib;libboost_coroutine-vc141-mt-gd-x64-1_67.lib;libboost_thread-vc141-mt-gd-x64-1_67.lib;libboost_context-vc141-mt-gd-x64-1_67.lib;secp256k1.lib;graphene_utilities.lib;fc.lib;crypto.lib;F:\secwinpath\array-io-keychain\build\keychain_lib\Debug\keychain_common.lib;advapi32.lib;Userenv.lib;Wtsapi32.lib;Crypt32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">

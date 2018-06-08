@@ -45,22 +45,16 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	TransId = wc.substr(transIdLen, totalLen - transIdLen);
 
 	hOldDesktop = GetThreadDesktop(GetCurrentThreadId());
-
-	// new desktop's handle, assigned automatically by CreateDesktop
 	hNewDesktop = CreateDesktop(L"secdesktop", NULL, NULL, 0, DESKTOP_ALL, NULL);
 
-	// switching to the new desktop
 	SwitchDesktop(hNewDesktop);
 
-	// Random login form: used for testing / not required
 	string passwd = "";
-
 	HANDLE thread = CreateThread(NULL, 0, DrawWindow, NULL, 0, NULL);
 	
 	WaitForSingleObject(thread, INFINITE);
 	SwitchDesktop(hOldDesktop);
 
-	// disposing the secure desktop since it's no longer needed
 	CloseDesktop(hNewDesktop);
 }
 
@@ -78,7 +72,7 @@ static DWORD WINAPI DrawWindow(LPVOID t)
 static INT_PTR CALLBACK PasswordProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	WORD cchPassword;  //количество введёных символов
-	std::wstring read_password; //введенный пароль
+	wchar_t read_password[36];
 
 	switch (message)
 	{
@@ -123,7 +117,7 @@ static INT_PTR CALLBACK PasswordProc(HWND hDlg, UINT message, WPARAM wParam, LPA
 				EM_LINELENGTH,
 				(WPARAM)0,
 				(LPARAM)0);
-			if (cchPassword >= 16)
+			if (cchPassword > 16)
 			{
 				MessageBox(hDlg,
 					L"Too many characters.",
@@ -144,7 +138,7 @@ static INT_PTR CALLBACK PasswordProc(HWND hDlg, UINT message, WPARAM wParam, LPA
 				return FALSE;
 			}
 
-
+			//read_password[0] = cchPassword;
 			// Get the characters. 
 			SendDlgItemMessage(hDlg,
 				IDC_PASSWORD,
@@ -166,19 +160,44 @@ static INT_PTR CALLBACK PasswordProc(HWND hDlg, UINT message, WPARAM wParam, LPA
 				NULL);
 			int len;
 			DWORD error = GetLastError();
- 			len = WideCharToMultiByte(CP_ACP, 0, read_password.c_str(), cchPassword, 0, 0, 0, 0);
+ 			len = WideCharToMultiByte(CP_ACP, 0, read_password, cchPassword, 0, 0, 0, 0);
 			std::string testStr(len, '\0');
-			WideCharToMultiByte(CP_ACP, 0, read_password.c_str(), cchPassword, &testStr[0], len, 0, 0);
+			WideCharToMultiByte(CP_ACP, 0, read_password, cchPassword, &testStr[0], len, 0, 0);
+			DATA_BLOB DataIn;
+			DATA_BLOB DataOut;
+			
+
+			DataIn.pbData = (BYTE*)testStr.c_str();
+			DataIn.cbData = len;
+
+			if (CryptProtectData(
+				&DataIn,
+				L"This is the description string.", // A description string to be included with the encrypted data. 
+				NULL,                               // Optional entropy not used.
+				NULL,                               // Reserved.
+				NULL,                               // Pass NULL for the prompt structure.
+				CRYPTPROTECT_LOCAL_MACHINE,
+				&DataOut))
+			{
+				printf("The encryption phase worked.\n");
+			}
+			else
+			{
+				printf("Encryption error using CryptProtectData.\n");
+			}
+			
+			
 			if (hPipe != INVALID_HANDLE_VALUE)
 			{
 				WriteFile(hPipe,
-					testStr.c_str(),
-					6,//(cchPassword+1),   // = length of string + terminating '\0' !!!
+					DataOut.pbData,//testStr.c_str(),
+					DataOut.cbData+1,//len+1,   // = length of string + terminating '\0' !!!
 					&dwWritten,
 					NULL);
-
-				CloseHandle(hPipe);
 			}
+			CloseHandle(hPipe);
+			testStr.~basic_string();
+			//LocalFree(read_password);
 			// Call a local password-parsing function. 
 			//ParsePassword(lpszPassword);
 

@@ -101,9 +101,27 @@ void NamedPipeServer::ListenPasswdSecureChannel() {
 				{
 					/* add terminating zero */
 					buffer[dwRead] = '\0';
-
-					/* do something with data in buffer */
-					printf("%s", buffer);
+					LPWSTR pDescrOut = NULL;
+					DATA_BLOB DataOut;
+					DataOut.cbData = sizeof(buffer) - 1;
+					DataOut.pbData = (BYTE*)buffer;
+					DATA_BLOB DataVerify;
+					if (CryptUnprotectData(
+						&DataOut,
+						&pDescrOut,
+						NULL,                 // Optional entropy
+						NULL,                 // Reserved
+						NULL,        // Optional PromptStruct
+						CRYPTPROTECT_LOCAL_MACHINE,
+						&DataVerify))
+					{
+						//here is decrypted password
+						printf("The decrypted data is: %s\n", DataVerify.pbData);
+						//printf("The description of the data was: %S\n", pDescrOut);
+					}
+					else {
+						DWORD lastError = GetLastError();
+					}
 				}
 			}
 

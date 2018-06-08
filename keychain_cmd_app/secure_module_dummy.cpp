@@ -33,9 +33,10 @@ std::wstring sec_mod_dummy::get_passwd_trx_raw(const std::string& raw_trx) const
 
 std::wstring sec_mod_dummy::get_passwd(const std::string& str) const
 {
-  auto pass_entry = pass_entry_term();
-  auto map_instance = map_translate_singletone::instance(pass_entry._display);
-  auto pass = pass_entry.input_password(map_instance.map);
-  std::wcout << pass << std::endl;
+  //std::system("../../passentry_gui &");
+  //auto pass_entry = pass_entry_term();
+  //auto map_instance = map_translate_singletone::instance(pass_entry._display);
+  //auto pass = pass_entry.input_password(map_instance.map);
+//  std::wcout << pass << std::endl;
   return std::wstring(L"blank_password");
 }

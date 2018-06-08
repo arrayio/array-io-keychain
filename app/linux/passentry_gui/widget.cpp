@@ -35,7 +35,7 @@ void Widget::CreateFormInterior()
     {
         QTextEdit * pte = new QTextEdit(this);
         grid->addWidget(pte, 1, 1, 2, 3);
-        pte->setText("всякаяхернявсякаяхернявсякаяхернявсякаяхернявсякаяхернявсякаяхернявсякаяхерня");
+        pte->setText("");
         pte->setReadOnly(true);
     }
     {

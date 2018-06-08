@@ -166,7 +166,7 @@ struct keychain_command_base {
     keychain_command_base(keychain_command_type type): e_type(type){}
     virtual ~keychain_command_base(){}
     keychain_command_type e_type;
-    virtual void operator()(keychain_base* keychain, const fc::variant& params_variant, int id) const{};
+    virtual void operator()(keychain_base* keychain, const fc::variant& params_variant, int id) const = 0;
 };
 
 template<keychain_command_type cmd>
@@ -174,6 +174,10 @@ struct keychain_command: keychain_command_base
 {
     keychain_command():keychain_command_base(cmd){}
     virtual ~keychain_command(){}
+    virtual void operator()(keychain_base* keychain, const fc::variant& params_variant, int id) const
+    {
+      std::cout << fc::json::to_pretty_string(fc::variant(json_error(id, "method is not implemented"))) << std::endl;
+    }
     using params_t = void;
 };
 

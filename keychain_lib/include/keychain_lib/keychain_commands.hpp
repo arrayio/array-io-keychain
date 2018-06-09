@@ -233,13 +233,13 @@ struct keychain_command<CMD_SIGN> : keychain_command_base
         std::string key_data;
         if(keyfile.keyinfo.encrypted)
         {
-          auto encrypted_data = std::move(keyfile.keyinfo.data.as<keyfile_format::encrypted_data>());
+          auto encrypted_data = keyfile.keyinfo.data.as<keyfile_format::encrypted_data>();
           auto& encryptor = encryptor_singletone::instance();
           //TODO: need to try to parse transaction.
           // If we can parse transaction we need to use get_passwd_trx function
           // else use get_passwd_trx_raw()
           // At this moment parsing of transaction is not implemented
-          std::wstring passwd = std::move(*(keychain->get_passwd_trx_raw(params.transaction)));
+          std::wstring passwd = *(keychain->get_passwd_trx_raw(params.transaction));
           key_data = std::move(encryptor.decrypt_keydata(passwd.c_str(), encrypted_data));
         }
         else
@@ -295,7 +295,7 @@ struct keychain_command<CMD_CREATE>: keychain_command_base
         }
         if (params.encrypted)
         {
-          auto passwd = std::move(*keychain->get_passwd(std::string("Please, enter password for your new key")));
+          auto passwd = *keychain->get_passwd(std::string("Please, enter password for your new key"));
           auto& encryptor = encryptor_singletone::instance();
           auto enc_data = encryptor.encrypt_keydata(params.algo, passwd, wif_key);
           keyfile.keyinfo.data = fc::variant(enc_data);

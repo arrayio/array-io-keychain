@@ -19,7 +19,7 @@ LIST(APPEND BOOST_COMPONENTS coroutine)
 SET(Boost_LIBRARIES ${BOOST_LIBRARIES_TEMP} ${Boost_LIBRARIES})
 
 
-include_directories("./include/keychain_lib" "/opt/openssllib/include" "../3rd-party-components/include" "/usr/include/libcxxabi" ${Boost_INCLUDE_DIR})
+include_directories("./include/keychain_lib" "${OPENSSL_ROOT_DIR}/include" "../3rd-party-components/include" "/usr/include/libcxxabi" ${Boost_INCLUDE_DIR})
 
 file(GLOB KEYCHAIN_LIB_SOURCES "./src/*.cpp")
 file(GLOB KEYCHAIN_LIB_INCLUDE "./include/keychain_lib/*.hpp")

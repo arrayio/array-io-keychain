@@ -1,0 +1,5 @@
+Debug
+.vs
+*.ipch
+*.filters
+*.user

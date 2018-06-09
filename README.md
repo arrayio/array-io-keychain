@@ -52,8 +52,7 @@ Array.io keychain may be used by a node, a frontend or dapp's nodejs server to s
 
 **How to use**
 
- See corresponding wiki
- - https://github.com/arrayio/array-io-keychain/wiki/
+ See corresponding wiki https://github.com/arrayio/array-io-keychain/wiki/
  
 ## OSX
 

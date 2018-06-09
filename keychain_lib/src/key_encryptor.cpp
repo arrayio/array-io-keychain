@@ -42,7 +42,7 @@ keyfile_format::encrypted_data encryptor_singletone::encrypt_keydata(
   keyfile_format::encrypted_data enc_data;
   int enc_length = 0;
   int length = 0;
-  enc_data.iv = random_string();
+  enc_data.iv = std::move(random_string());
   std::vector<uint8_t > enc_byte_data(2048,0x00);//TODO: memory has been allocated with a stock
   //TODO: need to figure out how much memory need to allocate for encrypted data in dependence of cipher algo type
   

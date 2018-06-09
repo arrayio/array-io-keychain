@@ -8,3 +8,6 @@
 /nmake-build/*
 /3rd-party-components/lib/*
 /3rd-party-components
+/cmake-build-debug/*
+/cmake-build-release/*
+.idea/*

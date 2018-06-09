@@ -6,8 +6,10 @@ add_subdirectory(./array-io-core)
 cmake_minimum_required( VERSION 3.0.2 )
 
 set(CMAKE_CXX_FLAGS "-std=c++14")
-set(CMAKE_EXE_LINKER_FLAGS "-ldl")
-
+if( NOT MSVC )
+  set(CMAKE_EXE_LINKER_FLAGS "-ldl")
+endif ( NOT MSVC )
+  
 SET(BOOST_COMPONENTS)
 LIST(APPEND BOOST_COMPONENTS thread date_time system filesystem program_options signals serialization chrono unit_test_framework context locale iostreams)
 SET( Boost_USE_STATIC_LIBS ON CACHE STRING "ON or OFF" )

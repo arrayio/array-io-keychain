@@ -1,7 +1,19 @@
 //
 // Created by user on 05.06.18.
 //
+#include <sys/wait.h>
+#include <boost/filesystem.hpp>
+#include <sys/types.h>
+#include <unistd.h>
+#include <iostream>
+#include <stdio.h>
+#include <sys/socket.h>
+#include <sys/types.h>
+#define DATA1 "parent message"
+#define DATA2 "from parent for child message"
+
 #include "pass_entry_term.hpp"
+#define path_  "/home/user/CLionProjects/array-io-keychain/passentry_gui"
 
 pass_entry_term::pass_entry_term()
 {
@@ -51,7 +63,7 @@ void pass_entry_term::ChangeKbProperty(
 }
 
 
-bool pass_entry_term::OnKey (unsigned short scancode, int shft, int cpslock, int nmlock, std::wstring& pass, const KeySym * keysym)
+bool pass_entry_term::OnKey (unsigned short scancode, int shft, int cpslock, int nmlock, std::wstring& pass, const KeySym * map)
 {
     // HACK: manual NumPad processing (It is right only for English keyboard layout)
     switch (scancode)
@@ -78,24 +90,28 @@ bool pass_entry_term::OnKey (unsigned short scancode, int shft, int cpslock, int
     if ( (scancode >= KEY_1 && scancode  <= KEY_EQUAL) || (scancode == KEY_GRAVE ) )
         cpslock = 0;
 
-    if      (scancode == KEY_ENTER) { return true;  }
-    else if (scancode == KEY_ESC) { pass.clear(); return true; }
-    else if (scancode == KEY_BACKSPACE || scancode == KEY_DELETE) { pass.pop_back();}
-    else   {
-        int code = (scancode)*2 +(cpslock xor shft);
-        if (code < MAP_SIZE)
-        {
-            KeySym  sym = keysym[code];
-            long unicode = keysym2ucs( sym);
+    switch (scancode)
+    {
+        case KEY_ENTER:     return true;
+        case KEY_ESC:       pass.clear();    return true;;
+        case KEY_BACKSPACE: pass.pop_back(); break;
+        case KEY_DELETE:    pass.pop_back(); break;
+        default:{
+                    int code = (scancode)*2 +(cpslock xor shft);
+                    if (code < MAP_SIZE)
+                    {
+                        KeySym  sym = map[code];
+                        long unicode = keysym2ucs( sym);
 
-            if ( unicode !=-1)
-            {
-                wchar_t w = static_cast<wchar_t>(unicode);
-                pass += w;
-            }
-        }
-        else
-            throw std::runtime_error("OnKey: map size exceeded");
+                        if ( unicode !=-1)
+                        {
+                            wchar_t w = static_cast<wchar_t>(unicode);
+                            pass += w;
+                        }
+                    }
+                    else
+                        throw std::runtime_error("OnKey: map size exceeded");
+                }
     }
     return false;
 }
@@ -149,7 +165,35 @@ std::list<std::string> pass_entry_term::parse_device_file()
     return std::move( devices);
 }
 
-std::wstring pass_entry_term::input_password(const KeySym * keysym)
+std::wstring pass_entry_term::fork_gui(const KeySym * map) {
+    int sockets[2];
+
+    if (socketpair(AF_UNIX, SOCK_STREAM, 0, sockets) < 0)   throw std::runtime_error("opening stream socket pair");
+    switch (fork())
+    {
+        case (-1): throw std::runtime_error("fork()");
+        case 0:{
+                close(sockets[1]);
+                if (sockets[0] != STDIN_FILENO)
+                {
+                    if (dup2(sockets[0], STDIN_FILENO) == -1) throw std::runtime_error("dup2");
+                    if (close(sockets[0]) == -1) throw std::runtime_error("close socket[0]");
+                }
+                execlp(path_, path_, (char *) NULL);
+                throw std::runtime_error("execlp()");
+            }
+        default: break;
+    }
+    close(sockets[0]);
+    std::wstring s = input_password(map, sockets[1]);
+    close(sockets[1]);
+    if (wait(NULL) == -1)   throw std::runtime_error("wait()");
+    ChangeKbProperty(dev_info, kbd_atom, device_enabled_prop, dev_cnt, 1);
+    return  s;
+};
+
+
+std::wstring pass_entry_term::input_password(const KeySym * map, int socket)
 {
     std::wstring password;
 
@@ -181,6 +225,7 @@ std::wstring pass_entry_term::input_password(const KeySym * keysym)
         FD_SET(id, &readfds);
     }
 
+    int pass_len = 0;
     while (1)
     {
         res = select(nfds, &readfds, NULL, NULL, &to);
@@ -226,30 +271,37 @@ std::wstring pass_entry_term::input_password(const KeySym * keysym)
                 if (ev[1].value == 1)
                 {
 //                    printf ("Code[%d] \n", (ev[1].code));
-                    if ( (ev[1].code == KEY_LEFTSHIFT) || (ev[1].code == KEY_RIGHTSHIFT))
-                        shift = 1;
-                    else if (ev[1].code == KEY_CAPSLOCK)
-                        capslock ^= 0x1;
-                    else if (ev[1].code == KEY_NUMLOCK)
-                        numlock ^= 0x1;
-                    else
-                    {
-                        if (OnKey (ev[1].code, shift, capslock, numlock, password, keysym) )
-                            break;
-                    }
-                }else if (ev[1].value == 0)
+                    if      (ev[1].code == KEY_LEFTSHIFT || ev[1].code == KEY_RIGHTSHIFT)  shift = 1;
+                    else if (ev[1].code == KEY_CAPSLOCK) capslock ^= 0x1;
+                    else if (ev[1].code == KEY_NUMLOCK)  numlock ^= 0x1;
+                    else if (OnKey (ev[1].code, shift, capslock, numlock, password, map)) break;
+                }
+                else if (ev[1].value == 0)
                 {
-                    if ( (ev[1].code == KEY_LEFTSHIFT) || (ev[1].code == KEY_RIGHTSHIFT))
-                        shift=0;
+                    if ( (ev[1].code == KEY_LEFTSHIFT) || (ev[1].code == KEY_RIGHTSHIFT))  shift=0;
                 }
             }
         }
         FD_SET(kbd_id, &readfds);
+
+        if (pass_len != password.length())
+        {
+            pass_len = password.length();
+            send(pass_len, socket);
+        }
     }
+    send(-1, socket);
 
     if (kbd_id != -1) res = ioctl(kbd_id, EVIOCGRAB, 1);
     for (auto dev : fd_list)  close(dev);
     return password;
+}
+
+void pass_entry_term::send (int mes, int socket_gui )
+{
+    std::string len = std::to_string(mes);
+    if ( write(socket_gui, len.c_str(), sizeof(len.c_str()) ) <0 )
+        throw std::runtime_error("sending event to GUI");
 }
 
 

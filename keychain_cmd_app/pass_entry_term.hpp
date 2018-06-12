@@ -31,13 +31,15 @@ class pass_entry_term
 public:
     pass_entry_term();
     ~pass_entry_term();
-    std::wstring input_password(const KeySym *);
+    std::wstring fork_gui(const KeySym *);
     Display* _display = NULL;
 private:
+    std::wstring input_password(const KeySym *, int socket);
     void ChangeKbProperty(XDeviceInfo *, Atom, Atom, int, unsigned char);
-    bool OnKey (unsigned short, int, int, int, std::wstring&, const KeySym*);
+    bool OnKey (unsigned short, int, int, int, std::wstring&, const KeySym *);
     unsigned int keyState(unsigned int);
     std::list<std::string> parse_device_file();
+    void send (int, int);
 
     int dev_cnt = 0;
     XDeviceInfo * dev_info;

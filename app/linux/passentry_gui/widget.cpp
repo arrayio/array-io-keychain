@@ -7,16 +7,33 @@
 
 
 Widget::Widget(QWidget *parent)
-    : QWidget(parent)
+    :QWidget(parent)
 {
     setWindowTitle(tr("Promt for password"));
-    CreateFormInterior();
+    Interior();
+
+    Polling *polling = new Polling;
+    polling->moveToThread(&pollingThread);
+    connect(&pollingThread, &QThread::finished, polling, &QObject::deleteLater);
+
+    connect(this,    &Widget::poll,  polling, &Polling::Select, Qt::QueuedConnection);
+    connect(polling, &Polling::poll, polling, &Polling::Select, Qt::QueuedConnection);
+
+    connect(polling, &Polling::rx, this, &Widget::cmd);
+    connect(polling, &Polling::err, this, &Widget::close);
+
+    pollingThread.start();
+    emit Widget::poll();
+
 }
 
 Widget::~Widget()
-{}
+{
+    pollingThread.quit();
+    pollingThread.wait();
+}
 
-void Widget::CreateFormInterior()
+void Widget::Interior()
 {
     QGridLayout * grid = new QGridLayout(this);
     {
@@ -24,7 +41,7 @@ void Widget::CreateFormInterior()
         grid->addWidget(plb, 0, 0);
     }
     {
-        QLineEdit *ple = new QLineEdit(this);
+        ple = new QLineEdit(this);
         ple->setEchoMode(QLineEdit::Password);
         grid->addWidget(ple, 0, 1, 1, 3);
     }
@@ -49,3 +66,16 @@ void Widget::CreateFormInterior()
         connect(ppb, SIGNAL(clicked()), this, SLOT(close()));
     }
 }
+
+void Widget::cmd(const QString& result)
+{
+   int i =  result.toInt();
+   if (i == -1)   close();
+   if (i>=0)
+   {
+       QString s (i, '*');
+       ple->setText(s);
+   }
+}
+
+

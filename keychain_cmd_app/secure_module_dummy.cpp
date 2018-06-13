@@ -33,21 +33,9 @@ std::wstring sec_mod_dummy::get_passwd_trx_raw(const std::string& raw_trx) const
 
 std::wstring sec_mod_dummy::get_passwd(const std::string& str) const
 {
-    uid_t ruid, euid, suid;
-    //int ruid, euid, suid;
-/*    if (getresuid(&ruid, &euid, &suid) == 0)
-    {
-        std::cout<<"real: "<< ruid <<" eff: "<<euid<<" saved: "<<suid<< std::endl;
-    }
-*/
-
-//  std::system(".. /../passentry_gui &");
   auto pass_entry = pass_entry_term();
   auto map_instance = map_translate_singletone::instance(pass_entry._display);
   auto pass = pass_entry.fork_gui(map_instance.map);
-  std::wcout << pass << std::endl;
+  std::wcout <<"password: "<< pass << std::endl;
   return std::wstring(L"blank_password");
-
-
-
 }

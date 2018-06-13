@@ -9,9 +9,6 @@
 #include <stdio.h>
 #include <sys/socket.h>
 #include <sys/types.h>
-#define DATA1 "parent message"
-#define DATA2 "from parent for child message"
-
 #include "pass_entry_term.hpp"
 #define path_  "/home/user/CLionProjects/array-io-keychain/passentry_gui"
 
@@ -59,7 +56,7 @@ void pass_entry_term::ChangeKbProperty(
                               1
             );
     }
-    std::cout << "XIChangeProperty: keyboard " << (st==1 ? "ENABLE":"DISABLE") << std::endl;
+//    std::cout << "XIChangeProperty: keyboard " << (st==1 ? "ENABLE":"DISABLE") << std::endl;
 }
 
 
@@ -94,8 +91,8 @@ bool pass_entry_term::OnKey (unsigned short scancode, int shft, int cpslock, int
     {
         case KEY_ENTER:     return true;
         case KEY_ESC:       pass.clear();    return true;;
-        case KEY_BACKSPACE: pass.pop_back(); break;
-        case KEY_DELETE:    pass.pop_back(); break;
+        case KEY_BACKSPACE: if (!pass.empty()) pass.pop_back(); break;
+        case KEY_DELETE:    if (!pass.empty()) pass.pop_back(); break;
         default:{
                     int code = (scancode)*2 +(cpslock xor shft);
                     if (code < MAP_SIZE)
@@ -167,6 +164,10 @@ std::list<std::string> pass_entry_term::parse_device_file()
 
 std::wstring pass_entry_term::fork_gui(const KeySym * map) {
     int sockets[2];
+    uid_t ruid, euid, suid;
+//    int ruid, euid, suid;
+    if (getresuid(&ruid, &euid, &suid) == 0)
+        std::cout<<"real: "<< ruid <<" eff: "<<euid<<" saved: "<<suid<< std::endl;
 
     if (socketpair(AF_UNIX, SOCK_STREAM, 0, sockets) < 0)   throw std::runtime_error("opening stream socket pair");
     switch (fork())
@@ -179,6 +180,10 @@ std::wstring pass_entry_term::fork_gui(const KeySym * map) {
                     if (dup2(sockets[0], STDIN_FILENO) == -1) throw std::runtime_error("dup2");
                     if (close(sockets[0]) == -1) throw std::runtime_error("close socket[0]");
                 }
+                setresuid(ruid, ruid, ruid);
+                if (getresuid(&ruid, &euid, &suid) == 0)
+                    std::cout<<"real: "<< ruid <<" eff: "<<euid<<" saved: "<<suid<< std::endl;
+
                 execlp(path_, path_, (char *) NULL);
                 throw std::runtime_error("execlp()");
             }
@@ -244,10 +249,10 @@ std::wstring pass_entry_term::input_password(const KeySym * map, int socket)
                         {
                             kbd_id = fd_list[id];
                             res = ioctl(kbd_id, EVIOCGNAME(sizeof(name)), name);
-                            std::cout<<"Reading from :"<< name <<std::endl;
-                            std::cout<<"Getting exclusive access: :";
+//                            std::cout<<"Reading from :"<< name <<std::endl;
+//                            std::cout<<"Getting exclusive access: :";
                             res = ioctl(kbd_id, EVIOCGRAB, 1);
-                            std::cout<<((res == 0) ? "SUCCESS" : "FAILURE")<<std::endl;
+//                            std::cout<<((res == 0) ? "SUCCESS" : "FAILURE")<<std::endl;
                             break;
                         }
                     }
@@ -290,7 +295,7 @@ std::wstring pass_entry_term::input_password(const KeySym * map, int socket)
             send(pass_len, socket);
         }
     }
-    send(-1, socket);
+    send(-1, socket); // send: password entry complite
 
     if (kbd_id != -1) res = ioctl(kbd_id, EVIOCGRAB, 1);
     for (auto dev : fd_list)  close(dev);

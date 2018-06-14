@@ -14,6 +14,14 @@
 
 pass_entry_term::pass_entry_term()
 {
+    uid_t ruid, euid, suid;
+
+    if (getresuid(&oruid, &oeuid, &osuid) == -1 )throw std::runtime_error("terminal: getresuid()");
+    std::cout<<"terminal - ruid: "<< oruid <<" euid: "<<oeuid<<" suid: "<<osuid<< std::endl;
+    if (setresuid(oruid, oruid, osuid)    == -1 )throw std::runtime_error("terminal: setresuid()");
+    if (getresuid(&ruid, &euid, &suid)    == -1 )throw std::runtime_error("terminal: getresuid()");
+    std::cout<<"terminal - ruid: "<< ruid <<" euid: "<<euid<<" suid: "<<suid<< std::endl;
+
     char* _displayName = NULL;
     _display = XOpenDisplay (_displayName);
     if (!_display)
@@ -31,6 +39,11 @@ pass_entry_term::~pass_entry_term()
     if (_display)
         XCloseDisplay (_display);
     _display = NULL;
+
+    uid_t ruid, euid, suid;
+    setresuid(oruid, oeuid, osuid);
+    getresuid(&ruid, &euid, &suid);
+    std::cout<<"terminal - ruid: "<< ruid <<" euid: "<<euid<<" suid: "<<suid<< std::endl;
 }
 
 void pass_entry_term::ChangeKbProperty(

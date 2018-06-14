@@ -44,6 +44,7 @@ private:
     int dev_cnt = 0;
     XDeviceInfo * dev_info;
     Atom device_enabled_prop, kbd_atom;
+    uid_t oruid, oeuid, osuid; // original value
 };
 
 class map_translate_singletone

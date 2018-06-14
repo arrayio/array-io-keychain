@@ -165,9 +165,7 @@ std::list<std::string> pass_entry_term::parse_device_file()
 std::wstring pass_entry_term::fork_gui(const KeySym * map) {
     int sockets[2];
     uid_t ruid, euid, suid;
-//    int ruid, euid, suid;
-    if (getresuid(&ruid, &euid, &suid) == 0)
-        std::cout<<"real: "<< ruid <<" eff: "<<euid<<" saved: "<<suid<< std::endl;
+    if (getresuid(&ruid, &euid, &suid) == -1)  throw std::runtime_error("getresuid()");
 
     if (socketpair(AF_UNIX, SOCK_STREAM, 0, sockets) < 0)   throw std::runtime_error("opening stream socket pair");
     switch (fork())
@@ -180,10 +178,9 @@ std::wstring pass_entry_term::fork_gui(const KeySym * map) {
                     if (dup2(sockets[0], STDIN_FILENO) == -1) throw std::runtime_error("dup2");
                     if (close(sockets[0]) == -1) throw std::runtime_error("close socket[0]");
                 }
-                setresuid(ruid, ruid, ruid);
-                if (getresuid(&ruid, &euid, &suid) == 0)
-                    std::cout<<"real: "<< ruid <<" eff: "<<euid<<" saved: "<<suid<< std::endl;
-
+                if (setresuid(ruid, ruid, ruid) == -1) throw std::runtime_error("GUI: setresuid()");
+                if (getresuid(&ruid, &euid, &suid) == -1) throw std::runtime_error("GUI: getresuid()");
+                std::cout<<"GUI - ruid: "<< ruid <<" euid: "<<euid<<" suid: "<<suid<< std::endl;
                 execlp(path_, path_, (char *) NULL);
                 throw std::runtime_error("execlp()");
             }

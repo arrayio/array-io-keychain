@@ -1,5 +1,6 @@
 
 #include "SecurityManager.h"
+#include <ServiceLogger.h>
 
 using namespace std;
 
@@ -13,16 +14,22 @@ SecurityManager::~SecurityManager() {
 
 }
 
-void SecurityManager::CreateSecureDesktop() {
+void SecurityManager::CreateSecureDesktop(std::wstring transId) {
 	HINSTANCE hInst = GetModuleHandle(NULL);
+	TCHAR curDirectory[500];
+	GetCurrentDirectory(500, curDirectory);
 	LPCWSTR commandLine = GetCommandLine();
-	wchar_t* found = wcsstr((wchar_t*)commandLine, L"KeychainService.exe");
+	wchar_t* found = wcsstr((wchar_t*)commandLine, L"keychain_service_win.exe");
 	wchar_t dst[400] = { 0 };
+	wchar_t args[400] = { 0 };
 	wcsncpy_s(dst, 400, commandLine, (found - (wchar_t*)commandLine));
-	wcscat_s(dst, 400, L"pass_ent_app.exe");
+	wcscat_s(dst, 400, L"keychain_pass_entry_app.exe");
+	wcscat_s(args, 400, L"-transId ");
+	wcscat_s(args, 400, transId.c_str());
 	LPCWSTR appToStart = dst;
+	LPTSTR app_args = args;
 	//L"C:\\MyProjects\\arrayiopasswin\\array-io-keychain\\sec_win_passwd\\SDummyService\\Debug\\pass_ent_app.exe"
-	
-	StartInteractiveClientProcess(appToStart, (LPTSTR)TEXT("-transId jdlksjflfskdljfaldjkfsajf7f8f68as7dfhajsfhk"));
+	ServiceLogger::getLogger().Log("CreateSecureDescktop function StartInteractiveClientProcess to enter credentials");
+	StartInteractiveClientProcess(appToStart, (LPTSTR)app_args);
 }
 

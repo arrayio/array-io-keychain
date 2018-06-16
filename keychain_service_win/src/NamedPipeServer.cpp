@@ -11,6 +11,7 @@
 #include <future>
 
 #include "SecureModuleWrapper.h"
+#include <ServiceLogger.h>
 
 NamedPipeServer::NamedPipeServer() {
 	//_secManage = new SecurityManager();
@@ -26,6 +27,7 @@ void NamedPipeServer::ListenChannel(/*LPTSTR channelName*/) {
 	
 	lpszPipename = (LPTSTR)__TEXT("\\\\.\\pipe\\keychainservice");//channelName;
 	
+	ServiceLogger::getLogger().Log("Creating NamedPipe object");
 	hPipe = CreateNamedPipe(
 		lpszPipename,             // pipe name 
 		PIPE_ACCESS_DUPLEX,       // read/write access 
@@ -38,15 +40,18 @@ void NamedPipeServer::ListenChannel(/*LPTSTR channelName*/) {
 		0,                        // client time-out 
 		NULL);                    // default security attribute 
 
-
+	ServiceLogger::getLogger().Log("NamedPipe object is created");
 	// Wait for the client to connect; if it succeeds, 
 	// the function returns a nonzero value. If the function
 	// returns zero, GetLastError returns ERROR_PIPE_CONNECTED. 
 
 	fConnected = ConnectNamedPipe(hPipe, NULL) ?
 		TRUE : (GetLastError() == ERROR_PIPE_CONNECTED);
+	ServiceLogger::getLogger().Log("ConnectingNamePipe");
 	if (!fConnected)
 	{
+		ServiceLogger::getLogger().Log("Connection error");
+		ServiceLogger::getLogger().Log(std::to_string(GetLastError()));
 		// The client could not connect, so close the pipe. 
 		CloseHandle(hPipe);
 		return;
@@ -55,7 +60,7 @@ void NamedPipeServer::ListenChannel(/*LPTSTR channelName*/) {
 	auto fd_c = _open_osfhandle(reinterpret_cast<intptr_t>(hPipe), _O_APPEND | _O_RDWR);
 	FILE* fd = _fdopen(fd_c, "a+");
 		
-	std::cout << "Client connected, creating a processing thread." << std::endl;
+	ServiceLogger::getLogger().Log("Client connected, creating a processing thread."); //std::cout << "Client connected, creating a processing thread." << std::endl;
 	auto res = std::async(std::launch::async, [this](FILE* fd_)->int {
 		SecureModuleWrapper secureModuleWrapper;
 		keychain_invoke_f f = std::bind(&keychain_wrapper, &secureModuleWrapper, std::placeholders::_1);
@@ -64,17 +69,18 @@ void NamedPipeServer::ListenChannel(/*LPTSTR channelName*/) {
 		FlushFileBuffers(hPipe);
 		DisconnectNamedPipe(hPipe);
 		CloseHandle(hPipe);
-
+		fclose(fd_);
 		return res;
 	}, fd);
 	try
 	{
 		if (res.get() == -1)
-			std::cerr << "Error: cannot read from pipe" << std::endl;
+			ServiceLogger::getLogger().Log("Error: cannot read from pipe"); //std::cerr << "Error: cannot read from pipe" << std::endl;
 	}
 	catch (const std::exception& e)
 	{
-		std::cerr << e.what() << std::endl;
+		ServiceLogger::getLogger().Log("Error: cannot read from pipe");//std::cerr << e.what() << std::endl;
+		ServiceLogger::getLogger().Log(e.what());
 	}	
 };
 

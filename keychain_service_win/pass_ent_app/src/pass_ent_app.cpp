@@ -44,18 +44,18 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	mbstowcs_s(&outSize, &wc[0], 200, lpCmdLine, 200);
 	TransId = wc.substr(transIdLen, totalLen - transIdLen);
 
-	hOldDesktop = GetThreadDesktop(GetCurrentThreadId());
-	hNewDesktop = CreateDesktop(L"secdesktop", NULL, NULL, 0, DESKTOP_ALL, NULL);
+	//hOldDesktop = GetThreadDesktop(GetCurrentThreadId());
+	//hNewDesktop = CreateDesktop(L"secdesktop", NULL, NULL, 0, DESKTOP_ALL, NULL);
 
-	SwitchDesktop(hNewDesktop);
+	//SwitchDesktop(hNewDesktop);
 
 	string passwd = "";
 	HANDLE thread = CreateThread(NULL, 0, DrawWindow, NULL, 0, NULL);
 	
 	WaitForSingleObject(thread, INFINITE);
-	SwitchDesktop(hOldDesktop);
+	//SwitchDesktop(hOldDesktop);
 
-	CloseDesktop(hNewDesktop);
+	//CloseDesktop(hNewDesktop);
 }
 
 static DWORD WINAPI DrawWindow(LPVOID t)

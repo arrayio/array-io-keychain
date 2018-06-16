@@ -34,6 +34,6 @@ void SecureModuleWrapper::print_mnemonic(const string_list& mnemonic) const
 std::string SecureModuleWrapper::get_uid() const
 {
 	//TODO: need implementation
-	_secman.CreateSecureDesktop();
+	_secman.CreateSecureDesktop(L"test_transaction_Id");
 	return std::string("user_sid");
 }

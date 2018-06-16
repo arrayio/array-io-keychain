@@ -1,4 +1,5 @@
 #include "Agent.h"
+#include "ServiceLogger.h"
 
 BOOL StartInteractiveClientProcess(
 	LPCWSTR lpAppStart,
@@ -67,6 +68,8 @@ BOOL StartInteractiveClientProcess(
 		DESKTOP_WRITEOBJECTS |
 		DESKTOP_READOBJECTS);
 
+	ServiceLogger::getLogger().Log("Create secure desktop");
+
 	// Restore the caller's window station.
 
 	if (!SetProcessWindowStation(hwinstaSave))
@@ -124,8 +127,9 @@ BOOL StartInteractiveClientProcess(
 		&pi                // receives information about new process
 	);
 
+	ServiceLogger::getLogger().Log("Start process");
 	latError = GetLastError();
-
+	ServiceLogger::getLogger().Log(std::to_string(latError));
 	RevertToSelf();
 
 	if (bResult && pi.hProcess != INVALID_HANDLE_VALUE)

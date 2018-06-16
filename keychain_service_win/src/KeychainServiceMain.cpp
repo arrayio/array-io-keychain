@@ -2,6 +2,7 @@
 #include "ServiceInstaller.h"
 #include "KeychainService.h"
 #include "ServiceBase.h"
+#include <ServiceLogger.h>
 
 // Internal name of the service 
 #define SERVICE_NAME             L"KeyChainService" 
@@ -53,22 +54,21 @@ int wmain(int argc, wchar_t *argv[])
 		}
 		else if (_wcsicmp(L"r", argv[1] + 1) == 0) {
 			KeychainService service((PWSTR)SERVICE_NAME);
+			ServiceLogger::getLogger().Log("KeychainService started");
 			if (!CServiceBase::Run(service))
 			{
+				ServiceLogger::getLogger().Log("Starting Error");
+				ServiceLogger::getLogger().Log(std::to_string(GetLastError()));
 				wprintf(L"Service failed to run w/err 0x%08lx\n", GetLastError());
 			}
 		}
 	}
 	else
 	{
-
 		//StartInteractiveClientProcess((LPTSTR)TEXT("keychainuser"), (LPTSTR)TEXT("."), (LPTSTR)TEXT("T123456!"), (LPTSTR)TEXT("-testpipe"));
 		wprintf(L"Parameters:\n");
 		wprintf(L" -install  to install the service.\n");
 		wprintf(L" -remove   to remove the service.\n");
-
-
-		
 	}
 
 

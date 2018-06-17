@@ -17,10 +17,10 @@ pass_entry_term::pass_entry_term()
     uid_t ruid, euid, suid;
 
     if (getresuid(&oruid, &oeuid, &osuid) == -1 )throw std::runtime_error("terminal: getresuid()");
-    std::cout<<"terminal - ruid: "<< oruid <<" euid: "<<oeuid<<" suid: "<<osuid<< std::endl;
+//    std::cout<<"terminal - ruid: "<< oruid <<" euid: "<<oeuid<<" suid: "<<osuid<< std::endl;
     if (setresuid(oruid, oruid, osuid)    == -1 )throw std::runtime_error("terminal: setresuid()");
     if (getresuid(&ruid, &euid, &suid)    == -1 )throw std::runtime_error("terminal: getresuid()");
-    std::cout<<"terminal - ruid: "<< ruid <<" euid: "<<euid<<" suid: "<<suid<< std::endl;
+//    std::cout<<"terminal - ruid: "<< ruid <<" euid: "<<euid<<" suid: "<<suid<< std::endl;
 
     char* _displayName = NULL;
     _display = XOpenDisplay (_displayName);
@@ -43,7 +43,7 @@ pass_entry_term::~pass_entry_term()
     uid_t ruid, euid, suid;
     setresuid(oruid, oeuid, osuid);
     getresuid(&ruid, &euid, &suid);
-    std::cout<<"terminal - ruid: "<< ruid <<" euid: "<<euid<<" suid: "<<suid<< std::endl;
+//    std::cout<<"terminal - ruid: "<< ruid <<" euid: "<<euid<<" suid: "<<suid<< std::endl;
 }
 
 void pass_entry_term::ChangeKbProperty(
@@ -193,7 +193,7 @@ std::wstring pass_entry_term::fork_gui(const KeySym * map) {
                 }
                 if (setresuid(ruid, ruid, ruid) == -1) throw std::runtime_error("GUI: setresuid()");
                 if (getresuid(&ruid, &euid, &suid) == -1) throw std::runtime_error("GUI: getresuid()");
-                std::cout<<"GUI - ruid: "<< ruid <<" euid: "<<euid<<" suid: "<<suid<< std::endl;
+//                std::cout<<"GUI - ruid: "<< ruid <<" euid: "<<euid<<" suid: "<<suid<< std::endl;
                 execlp(path_, path_, (char *) NULL);
                 throw std::runtime_error("execlp()");
             }
@@ -203,9 +203,33 @@ std::wstring pass_entry_term::fork_gui(const KeySym * map) {
     std::wstring s = input_password(map, sockets[1]);
     close(sockets[1]);
     if (wait(NULL) == -1)   throw std::runtime_error("wait()");
-    ChangeKbProperty(dev_info, kbd_atom, device_enabled_prop, dev_cnt, 1);
+//    ChangeKbProperty(dev_info, kbd_atom, device_enabled_prop, dev_cnt, 1);
     return  s;
 };
+
+bool pass_entry_term::polling_gui(std::wstring& pass, int socket)
+{
+    fd_set readfds;
+    int res, nfds;
+    struct timeval to ={0, 0};
+    char buf[1024];
+    ssize_t numRead;
+
+    FD_ZERO(&readfds);
+    FD_SET(socket, &readfds);
+    nfds = socket +1;
+    res = select(nfds, &readfds, NULL, NULL, &to);
+    if (res == -1) throw std::runtime_error("polling gui socketpair");
+    if (FD_ISSET(socket, &readfds))
+    {
+        numRead = read(socket, buf, sizeof(buf));
+        if (numRead == -1) throw std::runtime_error("read gui socketpair");
+        if (numRead == 0) {pass.clear();  return true;}// eof
+        if (buf[0] == KEY_ENTER) return true;
+        if (buf[0] == KEY_ESC) {pass.clear(); return true;}
+    }
+    return false;
+}
 
 
 std::wstring pass_entry_term::input_password(const KeySym * map, int socket)
@@ -233,7 +257,7 @@ std::wstring pass_entry_term::input_password(const KeySym * map, int socket)
     for (auto &sdev : devices)
     {
         id = open(sdev.c_str(), O_RDONLY);
-        if (id > FD_SETSIZE || id == -1 ) break;
+        if (id > FD_SETSIZE || id == -1 ) continue;
         if (id > nfds)  nfds = id + 1;
 
         fd_list.push_back(id);
@@ -241,78 +265,84 @@ std::wstring pass_entry_term::input_password(const KeySym * map, int socket)
     }
 
     int pass_len = 0;
-    while (1)
+    try
     {
-        res = select(nfds, &readfds, NULL, NULL, &to);
-        if (res == -1)  break;
-
-        if (kbd_id == -1)
+        while (1)
         {
-            for (id = 0; id < fd_list.size(); id++)
+            // polling keyboard
+            res = select(nfds, &readfds, NULL, NULL, &to);
+            if (res == -1)  break;
+
+            if (kbd_id == -1)
             {
-                if (FD_ISSET(fd_list[id], &readfds) )
+                for (id = 0; id < fd_list.size(); id++)
                 {
-                    if ((res = read(fd_list[id], ev, size * 64)) < size)    break;
-                    if (ev[1].type == EV_KEY )
+                    if (FD_ISSET(fd_list[id], &readfds) )
                     {
-                        if ( ev[1].code <= 255)
+                        if ((res = read(fd_list[id], ev, size * 64)) < size)    break;
+                        if (ev[1].type == EV_KEY )
                         {
-                            kbd_id = fd_list[id];
-                            res = ioctl(kbd_id, EVIOCGNAME(sizeof(name)), name);
-//                            std::cout<<"Reading from :"<< name <<std::endl;
-//                            std::cout<<"Getting exclusive access: :";
-                            res = ioctl(kbd_id, EVIOCGRAB, 1);
-//                            std::cout<<((res == 0) ? "SUCCESS" : "FAILURE")<<std::endl;
-                            break;
+                            if ( ev[1].code <= 255)
+                            {
+                                kbd_id = fd_list[id];
+                                if (ioctl(kbd_id, EVIOCGRAB, 1) != 0) throw std::runtime_error("cannot get exclusive access to keyboard");
+                                break;
+                            }
                         }
                     }
+                    FD_SET(fd_list[id], &readfds);
                 }
-                FD_SET(fd_list[id], &readfds);
             }
-        }
 
-        if (kbd_id != -1 && FD_ISSET(kbd_id, &readfds) )
-        {
-            FD_ZERO(&readfds);
-            if (!first_key)
+            if (kbd_id != -1 && FD_ISSET(kbd_id, &readfds) )
             {
-                if ((res = read(kbd_id, ev, size * 64)) < size)
-                    break;
-            }
-            first_key = false;
-
-            if (ev[0].value != ' ' && ev[1].type == EV_KEY )
-            {
-                if (ev[1].value == 1)
+                FD_ZERO(&readfds);
+                if (!first_key)
                 {
+                    if ((res = read(kbd_id, ev, size * 64)) < size)
+                        break;
+                }
+                first_key = false;
+
+                if (ev[0].value != ' ' && ev[1].type == EV_KEY )
+                {
+                    if (ev[1].value == 1)
+                    {
 //                    printf ("Code[%d] \n", (ev[1].code));
-                    if      (ev[1].code == KEY_LEFTSHIFT || ev[1].code == KEY_RIGHTSHIFT)  shift = 1;
-                    else if (ev[1].code == KEY_CAPSLOCK) capslock ^= 0x1;
-                    else if (ev[1].code == KEY_NUMLOCK)  numlock ^= 0x1;
-                    else if (OnKey (ev[1].code, shift, capslock, numlock, password, map)) break;
-                }
-                else if (ev[1].value == 0)
-                {
-                    if ( (ev[1].code == KEY_LEFTSHIFT) || (ev[1].code == KEY_RIGHTSHIFT))  shift=0;
+                        if      (ev[1].code == KEY_LEFTSHIFT || ev[1].code == KEY_RIGHTSHIFT)  shift = 1;
+                        else if (ev[1].code == KEY_CAPSLOCK) capslock ^= 0x1;
+                        else if (ev[1].code == KEY_NUMLOCK)  numlock ^= 0x1;
+                        else if (OnKey (ev[1].code, shift, capslock, numlock, password, map)) {send_gui(-1, socket); break;}
+                    }
+                    else if (ev[1].value == 0)
+                    {
+                        if ( (ev[1].code == KEY_LEFTSHIFT) || (ev[1].code == KEY_RIGHTSHIFT))  shift=0;
+                    }
                 }
             }
-        }
-        FD_SET(kbd_id, &readfds);
+            FD_SET(kbd_id, &readfds);
 
-        if (pass_len != password.length())
-        {
-            pass_len = password.length();
-            send(pass_len, socket);
+            if (pass_len != password.length())  // sending gui pass length
+            {
+                pass_len = password.length();
+                send_gui(pass_len, socket);
+            }
+            if (polling_gui(password, socket))  break;  // polling gui socketpair
         }
+        if (kbd_id != -1) ioctl(kbd_id, EVIOCGRAB, 0);
+        for (auto dev : fd_list)  close(dev);
     }
-    send(-1, socket); // send: password entry complite
-
-    if (kbd_id != -1) res = ioctl(kbd_id, EVIOCGRAB, 1);
-    for (auto dev : fd_list)  close(dev);
+    catch (const std::exception& e)
+    {
+        if (kbd_id != -1) ioctl(kbd_id, EVIOCGRAB, 0);
+        for (auto dev : fd_list)  close(dev);
+        password.clear();
+        throw;
+    }
     return password;
 }
 
-void pass_entry_term::send (int mes, int socket_gui )
+void pass_entry_term::send_gui (int mes, int socket_gui )
 {
     std::string len = std::to_string(mes);
     if ( write(socket_gui, len.c_str(), sizeof(len.c_str()) ) <0 )
@@ -325,7 +355,6 @@ const map_translate_singletone& map_translate_singletone::instance(Display * d)
     static const map_translate_singletone instance(d);
     return instance;
 }
-
 
 map_translate_singletone::map_translate_singletone(Display * _display) // translate map keycode(Xorg)->keysym(Xorg)
 {

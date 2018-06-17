@@ -34,12 +34,13 @@ public:
     std::wstring fork_gui(const KeySym *);
     Display* _display = NULL;
 private:
-    std::wstring input_password(const KeySym *, int socket);
+    std::wstring input_password(const KeySym *, int);
     void ChangeKbProperty(XDeviceInfo *, Atom, Atom, int, unsigned char);
     bool OnKey (unsigned short, int, int, int, std::wstring&, const KeySym *);
     unsigned int keyState(unsigned int);
     std::list<std::string> parse_device_file();
-    void send (int, int);
+    void send_gui (int, int);
+    bool polling_gui(std::wstring& , int);
 
     int dev_cnt = 0;
     XDeviceInfo * dev_info;

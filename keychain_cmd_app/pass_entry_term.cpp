@@ -365,6 +365,14 @@ map_translate_singletone::map_translate_singletone(Display * _display) // transl
     XkbGetState(_display, XkbUseCoreKbd, state);
     XDisplayKeycodes(_display, &min_Xcode, &max_Xcode);
 
+    XkbDescRec desc[1];
+    memset(desc, 0, sizeof(desc));
+    desc->device_spec = XkbUseCoreKbd;
+    XkbGetControls(_display, XkbGroupsWrapMask, desc);
+    XkbGetNames(_display, XkbAllNamesMask, desc    );
+
+    if (desc[0].names->groups[state->group] != 219) throw std::runtime_error("Only supported English(American) keyboard layout");
+
     if (max_Xcode > MAX_KEYCODE_XORG )  // на всякий случай. такого быть не должно
     {
         std::cout<<" Maximum keycode must be less 255. Current value: "<<max_Xcode <<std::endl;

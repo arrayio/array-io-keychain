@@ -16,8 +16,12 @@ public:
     QLineEdit *ple;
 private:
     void Interior();
+    void closeEvent(QCloseEvent *);
+    int message;
 public slots:
     void cmd(const QString &result);
+    void mess_ok();
+    void send(char);
 signals:
     void poll();
 };

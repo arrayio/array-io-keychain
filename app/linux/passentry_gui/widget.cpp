@@ -4,6 +4,11 @@
 #include <QLineEdit>
 #include <QTextEdit>
 #include <QPushButton>
+#include <unistd.h>
+#include <QCloseEvent>
+
+#define KEY_ENTER		28
+#define KEY_ESC			1
 
 
 Widget::Widget(QWidget *parent)
@@ -23,6 +28,7 @@ Widget::Widget(QWidget *parent)
     connect(polling, &Polling::err, this, &Widget::close);
 
     pollingThread.start();
+    message = KEY_ESC;
     emit Widget::poll();
 
 }
@@ -58,6 +64,7 @@ void Widget::Interior()
     {
         QPushButton *plb = new QPushButton("Ok", this);
         grid->addWidget(plb, 3, 1);
+        connect(plb, SIGNAL(clicked()), this, SLOT(mess_ok()));
         connect(plb, SIGNAL(clicked()), this, SLOT(close()));
     }
     {
@@ -65,6 +72,16 @@ void Widget::Interior()
         grid->addWidget(ppb, 3, 2);
         connect(ppb, SIGNAL(clicked()), this, SLOT(close()));
     }
+}
+
+void Widget::send(char a)
+{
+    if (write(STDIN_FILENO, &a, 1) != 1) close();
+}
+
+void Widget::mess_ok()
+{
+    message = KEY_ENTER;
 }
 
 void Widget::cmd(const QString& result)
@@ -78,4 +95,9 @@ void Widget::cmd(const QString& result)
    }
 }
 
+void Widget::closeEvent(QCloseEvent *event)
+{
+    send(message);
+    event->accept();
+}
 

@@ -30,7 +30,7 @@ class keychain : public keychain_base
 public:
   keychain(std::string&& uid_hash, const char* default_key_dir = KEY_DEFAULT_PATH);
   virtual ~keychain();
-  virtual void operator()(const fc::variant& command) override;
+  virtual std::string operator()(const fc::variant& command) override;
 private:
   bfs::path m_init_path;
 };

@@ -26,13 +26,14 @@ int pipeline_parser::run()
   buf_type::value_type *p_read_begin = read_buf.data();
   buf_iterator it_read_end = read_buf.begin();
   size_t bytes_remaining = read_buf.size();
-  while (!feof(stdin)){
+  while (!feof(m_pd)){
     size_t bytes_read = fread(p_read_begin, sizeof(buf_type::value_type), 1, m_pd);
-    if(ferror(stdin))
+    if(ferror(m_pd))
     {
       std::cerr << "Error: " << strerror(errno) << std::endl;
       return -1;
     }
+	std::ofstream out("out.txt");
     it_read_end += bytes_read;
     p_read_begin += bytes_read;
     bytes_remaining -= bytes_read;
@@ -42,7 +43,10 @@ int pipeline_parser::run()
       if( std::distance(buf_range.first, buf_range.second) > 0)
       {
         try {
-          m_keychain_func(fc::json::from_string(std::string(buf_range.first, buf_range.second)));
+          std::string res = m_keychain_func(fc::json::from_string(std::string(buf_range.first, buf_range.second)));
+		  std::stringstream strbuf(std::ios_base::out);
+		  strbuf << res << std::endl;
+		  fwrite(static_cast<const void*>(strbuf.str().c_str()), 1, res.size(), m_pd);
         }
         catch(fc::exception& exc)
         {

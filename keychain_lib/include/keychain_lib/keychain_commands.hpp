@@ -46,7 +46,7 @@ public:
     using string_list = std::list<std::wstring>;
     keychain_base(std::string&& uid_hash_);
     virtual ~keychain_base();
-    virtual void operator()(const fc::variant& command) = 0;
+    virtual std::string operator()(const fc::variant& command) = 0;
     boost::signals2::signal<std::wstring(const std::string&)> get_passwd_trx_raw;
     boost::signals2::signal<std::wstring(const graphene::chain::transaction&)> get_passwd_trx;
     boost::signals2::signal<std::wstring(const std::string&)> get_passwd;
@@ -80,9 +80,6 @@ fc::variant open_keyfile(const char_t* filename)
 void create_keyfile(const char* filename, const fc::variant& keyfile_var);
 secp256_private_key get_priv_key_from_str(const std::string& str);
 fc::sha256 get_hash(const keychain_app::unit_list_t &list);
-void send_response(const signature_t& signature, int id);
-void send_response(bool res, int id);
-void send_response(const fc::variants& res, int id);
 size_t from_hex(const std::string& hex_str, unsigned char* out_data, size_t out_data_len );
 std::string to_hex(const uint8_t* data, size_t length);
 /*{
@@ -166,7 +163,7 @@ struct keychain_command_base {
     keychain_command_base(keychain_command_type type): e_type(type){}
     virtual ~keychain_command_base(){}
     keychain_command_type e_type;
-    virtual void operator()(keychain_base* keychain, const fc::variant& params_variant, int id) const = 0;
+    virtual std::string operator()(keychain_base* keychain, const fc::variant& params_variant, int id) const = 0;
 };
 
 template<keychain_command_type cmd>
@@ -174,9 +171,9 @@ struct keychain_command: keychain_command_base
 {
     keychain_command():keychain_command_base(cmd){}
     virtual ~keychain_command(){}
-    virtual void operator()(keychain_base* keychain, const fc::variant& params_variant, int id) const
+    virtual std::string operator()(keychain_base* keychain, const fc::variant& params_variant, int id) const
     {
-      std::cout << fc::json::to_pretty_string(fc::variant(json_error(id, "method is not implemented"))) << std::endl;
+      return fc::json::to_pretty_string(fc::variant(json_error(id, "method is not implemented")));
     }
     using params_t = void;
 };
@@ -196,7 +193,7 @@ struct keychain_command<CMD_SIGN> : keychain_command_base
 
     using params_t = params;
 
-    virtual void operator()(keychain_base* keychain, const fc::variant& params_variant, int id) const override
+    virtual std::string operator()(keychain_base* keychain, const fc::variant& params_variant, int id) const override
     {
       try {
         auto params = params_variant.as<params_t>();
@@ -247,16 +244,21 @@ struct keychain_command<CMD_SIGN> : keychain_command_base
           key_data = std::move(keyfile.keyinfo.data.as<std::string>());
         }
         private_key = get_priv_key_from_str(key_data);
-        send_response(private_key.sign_compact(get_hash(unit_list)), id);
+		auto signature = private_key.sign_compact(get_hash(unit_list));
+		
+		json_response response(to_hex(signature.begin(), signature.size()).c_str(), id);
+		fc::variant res(response);
+		return fc::json::to_pretty_string(res);
       }
       catch (const std::exception &exc)
       {
-        std::cout << fc::json::to_pretty_string(fc::variant(json_error(id, exc.what()))) << std::endl;
+		std::cerr << fc::json::to_pretty_string(fc::variant(json_error(id, exc.what()))) << std::endl;
+        return fc::json::to_pretty_string(fc::variant(json_error(id, exc.what())));
       }
       catch (const fc::exception& exc)
       {
-        std::cout << fc::json::to_pretty_string(fc::variant(json_error(0, exc.what()))) << std::endl;
         std::cerr << fc::json::to_pretty_string(fc::variant(json_error(0, exc.to_detail_string().c_str()))) << std::endl;
+		return fc::json::to_pretty_string(fc::variant(json_error(0, exc.what())));
       }
     }
 };
@@ -274,7 +276,7 @@ struct keychain_command<CMD_CREATE>: keychain_command_base
       keyfile_format::keyfile_t::keyinfo_t::curve_etype curve;
     };
     using params_t = params;
-    virtual void operator()(keychain_base* keychain, const fc::variant& params_variant, int id) const override
+    virtual std::string operator()(keychain_base* keychain, const fc::variant& params_variant, int id) const override
     {
       try
       {
@@ -319,16 +321,19 @@ struct keychain_command<CMD_CREATE>: keychain_command_base
         if(it != bfs::directory_iterator())
           throw std::runtime_error("Error: keyfile for this user is already exist");
         create_keyfile(filename.c_str(), fc::variant(keyfile));
-        send_response(true, id);
+
+		json_response response(true, id);
+		return fc::json::to_pretty_string(fc::variant(response));
       }
       catch (const std::exception &exc)
       {
-        std::cout << fc::json::to_pretty_string(fc::variant(json_error(id, exc.what()))) << std::endl;
+        std::cerr << fc::json::to_pretty_string(fc::variant(json_error(id, exc.what()))) << std::endl;
+		return fc::json::to_pretty_string(fc::variant(json_error(id, exc.what())));
       }
       catch (const fc::exception& exc)
       {
-        std::cout << fc::json::to_pretty_string(fc::variant(json_error(0, exc.what()))) << std::endl;
         std::cerr << fc::json::to_pretty_string(fc::variant(json_error(0, exc.to_detail_string().c_str()))) << std::endl;
+		return fc::json::to_pretty_string(fc::variant(json_error(0, exc.what())));
       }
     }
 };
@@ -340,7 +345,7 @@ struct keychain_command<CMD_LIST>: keychain_command_base {
   
   using params_t = void;
   
-  virtual void operator()(keychain_base *keychain, const fc::variant &params_variant, int id) const override
+  virtual std::string operator()(keychain_base *keychain, const fc::variant &params_variant, int id) const override
   {
     try {
       fc::variants keyname_list;
@@ -356,16 +361,18 @@ struct keychain_command<CMD_LIST>: keychain_command_base {
         keyname_list.push_back(fc::variant(std::move(keyfile.keyname)));
         return;
       });
-      send_response(keyname_list, id);
-    }
+	  json_response response(keyname_list, id);
+	  return fc::json::to_pretty_string(fc::variant(response));
+	}
     catch (const std::exception &exc)
     {
-      std::cout << fc::json::to_pretty_string(fc::variant(json_error(id, exc.what()))) << std::endl;
+      std::cerr << fc::json::to_pretty_string(fc::variant(json_error(id, exc.what()))) << std::endl;
+	  return fc::json::to_pretty_string(fc::variant(json_error(id, exc.what())));
     }
     catch (const fc::exception& exc)
     {
-      std::cout << fc::json::to_pretty_string(fc::variant(json_error(0, exc.what()))) << std::endl;
       std::cerr << fc::json::to_pretty_string(fc::variant(json_error(0, exc.to_detail_string().c_str()))) << std::endl;
+	  return fc::json::to_pretty_string(fc::variant(json_error(0, exc.what())));
     }
   }
 };
@@ -380,7 +387,7 @@ struct keychain_command<CMD_REMOVE>: keychain_command_base
     std::string keyname;
   };
   using params_t = params;
-  virtual void operator()(keychain_base* keychain, const fc::variant& params_variant, int id) const override {
+  virtual std::string operator()(keychain_base* keychain, const fc::variant& params_variant, int id) const override {
     try {
       auto params = params_variant.as<params_t>();
       keyfile_format::keyfile_t keyfile;
@@ -392,16 +399,18 @@ struct keychain_command<CMD_REMOVE>: keychain_command_base
           throw std::runtime_error("Error: can't remove keyfile because of it is owned by different user");
         bfs::remove(*it);
       }
-      send_response(true, id);
-    }
+	  json_response response(true, id);
+	  return fc::json::to_pretty_string(fc::variant(response));
+	}
     catch (const std::exception &exc)
     {
-      std::cout << fc::json::to_pretty_string(fc::variant(json_error(id, exc.what()))) << std::endl;
+	  std::cerr << fc::json::to_pretty_string(fc::variant(json_error(id, exc.what()))) << std::endl;
+	  return fc::json::to_pretty_string(fc::variant(json_error(id, exc.what())));
     }
     catch (const fc::exception& exc)
     {
-      std::cout << fc::json::to_pretty_string(fc::variant(json_error(0, exc.what()))) << std::endl;
       std::cerr << fc::json::to_pretty_string(fc::variant(json_error(0, exc.to_detail_string().c_str()))) << std::endl;
+	  return fc::json::to_pretty_string(fc::variant(json_error(0, exc.what())));
     }
   }
 };

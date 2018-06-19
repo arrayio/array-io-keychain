@@ -25,7 +25,7 @@ static const char VTAB = '\v';
 static const char NP = '\f';
 }
 
-using keychain_invoke_f = std::function<void(const fc::variant&)>;
+using keychain_invoke_f = std::function<std::string(const fc::variant&)>;
 
 class pipeline_parser
 {

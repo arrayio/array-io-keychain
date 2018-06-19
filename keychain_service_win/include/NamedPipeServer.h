@@ -4,6 +4,7 @@
 #include <stdio.h> 
 #include <tchar.h>
 #include <strsafe.h>
+#include <thread>
 
 #define BUFSIZE 512
 
@@ -16,11 +17,15 @@ public:
 	~NamedPipeServer();
 	void ListenChannel();
 	void ListenPasswdSecureChannel();
+	void StartServer();
+	void StopServer();
 private:
 	BOOL fConnected = FALSE;
 	DWORD  dwThreadId = 0;
 	HANDLE hPipe = INVALID_HANDLE_VALUE;
 	HANDLE hThread = NULL;
 	LPTSTR lpszPipename;
+	std::thread* main;
+	std::thread* secure;
 };
 #endif

@@ -134,3 +134,13 @@ void NamedPipeServer::ListenPasswdSecureChannel() {
 			DisconnectNamedPipe(hPipe);
 		}
 };
+
+void NamedPipeServer::StartServer() {
+	main = new std::thread(&NamedPipeServer::ListenChannel, this);
+	secure = new std::thread(&NamedPipeServer::ListenPasswdSecureChannel, this);
+}
+
+void NamedPipeServer::StopServer() {
+	main->join();
+	secure->join();
+}

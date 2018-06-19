@@ -1,4 +1,6 @@
 #include <wchar.h>
+#include <thread>
+#include <conio.h>
 #include "ServiceInstaller.h"
 #include "KeychainService.h"
 #include "ServiceBase.h"
@@ -51,6 +53,19 @@ int main(int argc, char *argv[])
 			// Uninstall the service when the command is  
 			// "-remove" or "/remove". 
 			UninstallService((PWSTR)SERVICE_NAME);
+		}
+		else if (_stricmp("d", argv[1] + 1) == 0) {
+			KeychainService service((PWSTR)SERVICE_NAME);
+			ServiceLogger::getLogger().Log("KeychainService started");
+			NamedPipeServer _server;
+			ServiceLogger::getLogger().Log("Start service for listening");
+			_server.StartServer();
+			while (getch() != 27)
+			{
+				_server.StopServer();
+			}
+			ServiceLogger::getLogger().Log("Stop service for listening");
+			// Signal the stopped event. 
 		}
 		else if (_stricmp("r", argv[1] + 1) == 0) {
 			KeychainService service((PWSTR)SERVICE_NAME);

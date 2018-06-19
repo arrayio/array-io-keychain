@@ -28,12 +28,12 @@
 // The password to the service account name 
 #define SERVICE_PASSWORD         NULL 
 
-int wmain(int argc, wchar_t *argv[])
+int main(int argc, char *argv[])
 //int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
-	if ((argc > 1) && ((*argv[1] == L'-' || (*argv[1] == L'/'))))
+	if ((argc > 1) && ((*argv[1] == '-' || (*argv[1] == '/'))))
 	{
-		if (_wcsicmp(L"install", argv[1] + 1) == 0)
+		if (_stricmp("install", argv[1] + 1) == 0)
 		{
 			// Install the service when the command is  
 			// "-install" or "/install". 
@@ -46,13 +46,13 @@ int wmain(int argc, wchar_t *argv[])
 				SERVICE_PASSWORD            // Password of the account 
 			);
 		}
-		else if (_wcsicmp(L"remove", argv[1] + 1) == 0)
+		else if (_stricmp("remove", argv[1] + 1) == 0)
 		{
 			// Uninstall the service when the command is  
 			// "-remove" or "/remove". 
 			UninstallService((PWSTR)SERVICE_NAME);
 		}
-		else if (_wcsicmp(L"r", argv[1] + 1) == 0) {
+		else if (_stricmp("r", argv[1] + 1) == 0) {
 			KeychainService service((PWSTR)SERVICE_NAME);
 			ServiceLogger::getLogger().Log("KeychainService started");
 			if (!CServiceBase::Run(service))

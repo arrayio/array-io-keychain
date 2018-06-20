@@ -28,5 +28,3 @@ int cmd_parser::run(int argc, const char* const argv [])
   pipeline_parser pipe_line_parser_(std::move(f), stdin);
   return pipe_line_parser_.run();
 }
-
-

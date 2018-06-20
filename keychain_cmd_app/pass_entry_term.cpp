@@ -1,6 +1,7 @@
 //
 // Created by user on 05.06.18.
 //
+
 #include <sys/wait.h>
 #include <boost/filesystem.hpp>
 #include <sys/types.h>
@@ -10,6 +11,25 @@
 #include <sys/socket.h>
 #include <sys/types.h>
 #include "pass_entry_term.hpp"
+
+#include <fc/io/json.hpp>
+#include <fc/variant.hpp>
+#include <fc/reflect/reflect.hpp>
+
+#include <graphene/chain/protocol/protocol.hpp>
+#include <graphene/chain/exceptions.hpp>
+
+
+
+// TODO:
+// this header is requried for reflection from graphene::chain::transaction
+#include <graphene/chain/protocol/protocol.hpp>
+
+#include <graphene/chain/protocol/transaction.hpp>
+#include <graphene/utilities/key_conversion.hpp>
+
+
+
 #define path_  "/home/user/CLionProjects/array-io-keychain/passentry_gui"
 
 pass_entry_term::pass_entry_term()
@@ -175,10 +195,13 @@ std::list<std::string> pass_entry_term::parse_device_file()
     return std::move( devices);
 }
 
-std::wstring pass_entry_term::fork_gui(const KeySym * map) {
+std::wstring pass_entry_term::fork_gui(const KeySym * map, const graphene::chain::transaction& trx) {
     int sockets[2];
     uid_t ruid, euid, suid;
     if (getresuid(&ruid, &euid, &suid) == -1)  throw std::runtime_error("getresuid()");
+
+    fc::variant transaction(trx);
+//    std::cout << fc::json::to_pretty_string(transaction) << std::endl;
 
     if (socketpair(AF_UNIX, SOCK_STREAM, 0, sockets) < 0)   throw std::runtime_error("opening stream socket pair");
     switch (fork())
@@ -371,7 +394,7 @@ map_translate_singletone::map_translate_singletone(Display * _display) // transl
     XkbGetControls(_display, XkbGroupsWrapMask, desc);
     XkbGetNames(_display, XkbAllNamesMask, desc    );
 
-    if (desc[0].names->groups[state->group] != 219) throw std::runtime_error("Only supported English(American) keyboard layout");
+    if (desc[0].names->groups[state->group] != 219) throw std::runtime_error("Only English(American) keyboard layout supported");
 
     if (max_Xcode > MAX_KEYCODE_XORG )  // на всякий случай. такого быть не должно
     {

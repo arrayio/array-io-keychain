@@ -1,1 +1,13 @@
+################################################################################
+# Данный GITIGNORE-файл был автоматически создан Microsoft(R) Visual Studio.
+################################################################################
+
+/sec_win_passwd/pass_ent_app/x64/Debug
 /.project
+/build*
+/nmake-build/*
+/3rd-party-components/lib/*
+/3rd-party-components
+/cmake-build-debug/*
+/cmake-build-release/*
+.idea/*

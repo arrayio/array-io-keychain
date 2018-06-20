@@ -1,0 +1,3 @@
+[submodule "array-io-core"]
+	path = array-io-core
+	url = git@github.com:arrayio/array-io-core.git

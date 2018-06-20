@@ -4,7 +4,8 @@ cmake_minimum_required( VERSION 3.0.2 )
 
 set(CMAKE_CXX_FLAGS "-std=c++14")
 if( NOT MSVC )
-  set(CMAKE_EXE_LINKER_FLAGS "-ldl")
+  set(CMAKE_EXE_LINKER_FLAGS "-ldl -v -fuse-ld=lld ")
+#  SET(CMAKE_CXX_LINK_EXECUTABLE "/usr/bin/lld-6.0")
 endif ( NOT MSVC )
   
 SET(BOOST_COMPONENTS)

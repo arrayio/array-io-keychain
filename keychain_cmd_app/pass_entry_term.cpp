@@ -14,11 +14,9 @@
 
 #include <fc/io/json.hpp>
 #include <fc/variant.hpp>
-#include <fc/reflect/reflect.hpp>
+#include <graphene/chain/protocol/types.hpp>
 
-#include <graphene/chain/protocol/protocol.hpp>
 #include <graphene/chain/exceptions.hpp>
-
 
 
 // TODO:
@@ -28,6 +26,8 @@
 #include <graphene/chain/protocol/transaction.hpp>
 #include <graphene/utilities/key_conversion.hpp>
 
+#include <fc/reflect/reflect.hpp>
+#include <fc/reflect/variant.hpp>
 
 
 #define path_  "/home/user/CLionProjects/array-io-keychain/passentry_gui"

@@ -1,7 +1,6 @@
 //
 // Created by user on 05.06.18.
 //
-
 #include <sys/wait.h>
 #include <boost/filesystem.hpp>
 #include <sys/types.h>
@@ -11,24 +10,9 @@
 #include <sys/socket.h>
 #include <sys/types.h>
 #include "pass_entry_term.hpp"
-
-#include <fc/io/json.hpp>
-#include <fc/variant.hpp>
-#include <graphene/chain/protocol/types.hpp>
-
-#include <graphene/chain/exceptions.hpp>
-
-
-// TODO:
-// this header is requried for reflection from graphene::chain::transaction
+// TODO: this header is requried for reflection from graphene::chain::transaction
 #include <graphene/chain/protocol/protocol.hpp>
-
-#include <graphene/chain/protocol/transaction.hpp>
-#include <graphene/utilities/key_conversion.hpp>
-
-#include <fc/reflect/reflect.hpp>
-#include <fc/reflect/variant.hpp>
-
+#include <fc/io/json.hpp>
 
 #define path_  "/home/user/CLionProjects/array-io-keychain/passentry_gui"
 
@@ -195,14 +179,17 @@ std::list<std::string> pass_entry_term::parse_device_file()
     return std::move( devices);
 }
 
-std::wstring pass_entry_term::fork_gui(const KeySym * map, const graphene::chain::transaction& trx) {
+std::wstring pass_entry_term::fork_gui(const KeySym * map, const std::string& raw_trx ){
+//std::wstring pass_entry_term::fork_gui(const KeySym * map, const graphene::chain::transaction& trx) {
     int sockets[2];
     uid_t ruid, euid, suid;
     if (getresuid(&ruid, &euid, &suid) == -1)  throw std::runtime_error("getresuid()");
-
-    fc::variant transaction(trx);
-//    std::cout << fc::json::to_pretty_string(transaction) << std::endl;
-
+/*
+    std::cout << fc::json::to_pretty_string(fc::variant(json_rawtrx("rawtrx", raw_trx)))  << std::endl;
+    std::cout << fc::json::to_pretty_string(fc::variant(json_close("close")))           << std::endl;
+    std::cout << fc::json::to_pretty_string(fc::variant(json_modify("modify", 1, 1, 1)))<< std::endl;
+    std::cout << fc::json::to_pretty_string(fc::variant(json_length("length", 5))) << std::endl;
+*/
     if (socketpair(AF_UNIX, SOCK_STREAM, 0, sockets) < 0)   throw std::runtime_error("opening stream socket pair");
     switch (fork())
     {
@@ -223,8 +210,10 @@ std::wstring pass_entry_term::fork_gui(const KeySym * map, const graphene::chain
         default: break;
     }
     close(sockets[0]);
+    //send_gui(fc::json::to_pretty_string(fc::variant(json_rawtrx("rawtrx", raw_trx))), sockets[1]);
     std::wstring s = input_password(map, sockets[1]);
     close(sockets[1]);
+
     if (wait(NULL) == -1)   throw std::runtime_error("wait()");
 //    ChangeKbProperty(dev_info, kbd_atom, device_enabled_prop, dev_cnt, 1);
     return  s;
@@ -371,6 +360,13 @@ void pass_entry_term::send_gui (int mes, int socket_gui )
     if ( write(socket_gui, len.c_str(), sizeof(len.c_str()) ) <0 )
         throw std::runtime_error("sending event to GUI");
 }
+
+void pass_entry_term::send_gui (std::string mes, int socket_gui )
+{
+    if ( write(socket_gui, mes.c_str(), mes.length() + 1  ) <0 )
+        throw std::runtime_error("sending event to GUI");
+}
+
 
 
 const map_translate_singletone& map_translate_singletone::instance(Display * d)

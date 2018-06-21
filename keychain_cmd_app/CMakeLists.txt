@@ -66,7 +66,7 @@ find_library(LIB_XI NAME Xi HINTS "/usr/lib/x86_64-linux-gnu/")
 if( MSVC )  
   target_link_libraries(keychain keychain_common fc secp256k1 graphene_utilities ${LIB_OPENSSL} ${Boost_LIBRARIES})
 else ( MSVC )  
-  target_link_libraries(keychain keychain_common ${LIB_PTHREAD} fc secp256k1 graphene_utilities ${LIB_OPENSSL} ${Boost_LIBRARIES} ${X11_LIBRARIES} ${LIB_XI})
+  target_link_libraries(keychain keychain_common ${LIB_PTHREAD} fc secp256k1 graphene_utilities graphene_chain ${LIB_OPENSSL} ${Boost_LIBRARIES} ${X11_LIBRARIES} ${LIB_XI})
 endif ( MSVC ) 
 
 

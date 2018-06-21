@@ -25,6 +25,6 @@ int cmd_parser::run(int argc, const char* const argv [])
   const secure_dlg_mod_base* sec_mod = secure_module<sec_mod_dummy>::instance();
 
   keychain_invoke_f f = std::bind(&keychain_wrapper, sec_mod, std::placeholders::_1);
-  pipeline_parser pipe_line_parser_(std::move(f), stdin);
+  pipeline_parser pipe_line_parser_(std::move(f), fileno(stdin));
   return pipe_line_parser_.run();
 }

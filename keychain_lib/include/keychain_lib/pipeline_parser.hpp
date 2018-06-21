@@ -30,11 +30,11 @@ using keychain_invoke_f = std::function<std::string(const fc::variant&)>;
 class pipeline_parser
 {
 public:
-    pipeline_parser(keychain_invoke_f&& keychain_func, FILE* pd);
+    pipeline_parser(keychain_invoke_f&& keychain_func, int pd);
     int run();
 private:
     keychain_invoke_f m_keychain_func;
-    FILE* m_pd;
+    int m_pipe_desciptor;
     using buf_type = std::vector<char>;
     using buf_iterator = buf_type::iterator;
     using iter_range = std::pair<buf_iterator, buf_iterator>;

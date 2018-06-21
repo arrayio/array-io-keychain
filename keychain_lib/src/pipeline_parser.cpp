@@ -10,13 +10,19 @@
 #include <stdexcept>
 #include <fc/io/json.hpp>
 
+#ifdef _MSC_VER
+#include <io.h>
+#else
+#include <unistd.h>
+#endif
+
 using keychain_t = keychain_app::keychain;
 
 using namespace keychain_app;
 
-pipeline_parser::pipeline_parser(keychain_invoke_f&& keychain_f, FILE* pd)
+pipeline_parser::pipeline_parser(keychain_invoke_f&& keychain_f, int pd)
   : m_keychain_func(keychain_f)
-  , m_pd(pd)
+  , m_pipe_desciptor(pd)
 {
 }
 
@@ -26,18 +32,20 @@ int pipeline_parser::run()
   buf_type::value_type *p_read_begin = read_buf.data();
   buf_iterator it_read_end = read_buf.begin();
   size_t bytes_remaining = read_buf.size();
-  while (!feof(m_pd)){
-    size_t bytes_read = fread(p_read_begin, sizeof(buf_type::value_type), 1, m_pd);
-    if(ferror(m_pd))
+  while (true)
+  {
+    size_t bytes_read = read(m_pipe_desciptor, p_read_begin, bytes_remaining);
+	if ( bytes_read == 0 )
+		break;
+    if( bytes_read == -1 )
     {
       std::cerr << "Error: " << strerror(errno) << std::endl;
       return -1;
     }
-	std::ofstream out("out.txt");
-    it_read_end += bytes_read;
+	it_read_end += bytes_read;
     p_read_begin += bytes_read;
     bytes_remaining -= bytes_read;
-    do
+	while (true)
     {
       auto buf_range = cut_json_obj(read_buf.begin(), it_read_end);
       if( std::distance(buf_range.first, buf_range.second) > 0)
@@ -46,12 +54,19 @@ int pipeline_parser::run()
           std::string res = m_keychain_func(fc::json::from_string(std::string(buf_range.first, buf_range.second)));
 		  std::stringstream strbuf(std::ios_base::out);
 		  strbuf << res << std::endl;
-		  fwrite(static_cast<const void*>(strbuf.str().c_str()), 1, res.size(), m_pd);
+		  write(m_pipe_desciptor, static_cast<const void*>(strbuf.str().c_str()), res.size());
+		  auto fush_res = fflush(fdopen(m_pipe_desciptor, "a+"));
+		  assert(fush_res == 0);
         }
         catch(fc::exception& exc)
         {
-          std::cout << fc::json::to_pretty_string(fc::variant(json_error(0, exc.what()))) << std::endl;
           std::cerr << fc::json::to_pretty_string(fc::variant(json_error(0, exc.to_detail_string().c_str()))) << std::endl;
+		  std::string res = fc::json::to_pretty_string(fc::variant(json_error(0, exc.what())));
+		  std::stringstream strbuf(std::ios_base::out);
+		  strbuf << res << std::endl;
+		  write(m_pipe_desciptor, static_cast<const void*>(strbuf.str().c_str()), res.size());
+		  auto fush_res = fflush(fdopen(m_pipe_desciptor, "a+"));
+		  assert(fush_res == 0);
         }
         auto it = std::copy(buf_range.second, it_read_end, read_buf.begin());
         std::for_each(it, it_read_end, [](buf_type::value_type &val) {
@@ -65,9 +80,8 @@ int pipeline_parser::run()
       else if(bytes_remaining < 256)
         read_buf.resize(256, 0x00);
       break;//goto fread()
-    } while (true);
+    }
   }
-  std::cout.flush();
   return 0;
 }
 

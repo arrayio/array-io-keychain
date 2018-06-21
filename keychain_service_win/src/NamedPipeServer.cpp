@@ -10,8 +10,6 @@
 #include <iostream>
 #include <future>
 
-#include  <boost/process/pipe.hpp>
-
 #include "SecureModuleWrapper.h"
 #include <ServiceLogger.h>
 
@@ -54,19 +52,18 @@ void NamedPipeServer::ListenChannel(/*LPTSTR channelName*/) {
 		return;
 	}			
 		
-	int fd_c = _open_osfhandle(reinterpret_cast<intptr_t>(hPipe), _O_APPEND | _O_RDWR);
-	FILE* fd = _fdopen(fd_c, "a+");
+	auto fd = _open_osfhandle(reinterpret_cast<intptr_t>(hPipe), _O_APPEND | _O_RDWR);
 		
 	ServiceLogger::getLogger().Log("Client connected, creating a processing thread."); //std::cout << "Client connected, creating a processing thread." << std::endl;
-	auto res = std::async(std::launch::async, [this](FILE* fd_)->int {
+	auto res = std::async(std::launch::async, [this](int fd)->int {
 		SecureModuleWrapper secureModuleWrapper;
 		keychain_invoke_f f = std::bind(&keychain_wrapper, &secureModuleWrapper, std::placeholders::_1);
-		pipeline_parser pipe_line_parser_(std::move(f), fd_);
+		pipeline_parser pipe_line_parser_(std::move(f), fd);
 		int res = pipe_line_parser_.run();
-		fclose(fd_);
 		FlushFileBuffers(hPipe);
 		DisconnectNamedPipe(hPipe);
 		CloseHandle(hPipe);
+		close(fd);
 		return res;
 	}, fd);
 	try

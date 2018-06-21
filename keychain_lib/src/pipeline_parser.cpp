@@ -52,21 +52,21 @@ int pipeline_parser::run()
       {
         try {
           std::string res = m_keychain_func(fc::json::from_string(std::string(buf_range.first, buf_range.second)));
-		  std::stringstream strbuf(std::ios_base::out);
-		  strbuf << res << std::endl;
-		  write(m_pipe_desciptor, static_cast<const void*>(strbuf.str().c_str()), res.size());
-		  auto fush_res = fflush(fdopen(m_pipe_desciptor, "a+"));
-		  assert(fush_res == 0);
+          std::stringstream strbuf(std::ios_base::out);
+          strbuf << res << std::endl;
+          write(m_pipe_desciptor, static_cast<const void*>(strbuf.str().c_str()), res.size());
+          auto fush_res = fflush(fdopen(m_pipe_desciptor, "a+"));
+          assert(fush_res == 0);
         }
         catch(fc::exception& exc)
         {
           std::cerr << fc::json::to_pretty_string(fc::variant(json_error(0, exc.to_detail_string().c_str()))) << std::endl;
-		  std::string res = fc::json::to_pretty_string(fc::variant(json_error(0, exc.what())));
-		  std::stringstream strbuf(std::ios_base::out);
-		  strbuf << res << std::endl;
-		  write(m_pipe_desciptor, static_cast<const void*>(strbuf.str().c_str()), res.size());
-		  auto fush_res = fflush(fdopen(m_pipe_desciptor, "a+"));
-		  assert(fush_res == 0);
+          std::string res = fc::json::to_pretty_string(fc::variant(json_error(0, exc.what())));
+          std::stringstream strbuf(std::ios_base::out);
+          strbuf << res << std::endl;
+          write(m_pipe_desciptor, static_cast<const void*>(strbuf.str().c_str()), res.size());
+          auto fush_res = fflush(fdopen(m_pipe_desciptor, "a+"));
+          assert(fush_res == 0);
         }
         auto it = std::copy(buf_range.second, it_read_end, read_buf.begin());
         std::for_each(it, it_read_end, [](buf_type::value_type &val) {

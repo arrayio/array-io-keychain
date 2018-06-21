@@ -28,7 +28,6 @@ void SecurityManager::CreateSecureDesktop(std::wstring transId) {
 	wcscat_s(args, 400, transId.c_str());
 	LPCWSTR appToStart = dst;
 	LPTSTR app_args = args;
-	//L"C:\\MyProjects\\arrayiopasswin\\array-io-keychain\\sec_win_passwd\\SDummyService\\Debug\\pass_ent_app.exe"
 	ServiceLogger::getLogger().Log("CreateSecureDescktop function StartInteractiveClientProcess to enter credentials");
 	StartInteractiveClientProcess(appToStart, (LPTSTR)app_args);
 }

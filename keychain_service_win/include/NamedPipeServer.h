@@ -16,16 +16,11 @@ public:
 	NamedPipeServer();
 	~NamedPipeServer();
 	void ListenChannel();
-	void ListenPasswdSecureChannel();
-	void StartServer();
-	void StopServer();
 private:
 	BOOL fConnected = FALSE;
 	DWORD  dwThreadId = 0;
-	HANDLE hPipe = INVALID_HANDLE_VALUE;
 	HANDLE hThread = NULL;
+	HANDLE hPipe = INVALID_HANDLE_VALUE;
 	LPTSTR lpszPipename;
-	std::thread* main;
-	std::thread* secure;
 };
 #endif

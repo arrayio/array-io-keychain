@@ -231,6 +231,8 @@ struct keychain_command<CMD_SIGN> : keychain_command_base
           // else use get_passwd_trx_raw()
           // At this moment parsing of transaction is not implemented
           std::wstring passwd = *(keychain->get_passwd_trx_raw(params.transaction));
+		  if (passwd.empty())
+			  throw std::runtime_error("Error: can't get password");
           key_data = std::move(encryptor.decrypt_keydata(passwd.c_str(), encrypted_data));
         }
         else
@@ -295,6 +297,8 @@ struct keychain_command<CMD_CREATE>: keychain_command_base
         if (params.encrypted)
         {
           auto passwd = *keychain->get_passwd(std::string("Please, enter password for your new key"));
+		  if (passwd.empty())
+			  throw std::runtime_error("Error: can't get password");
           auto& encryptor = encryptor_singletone::instance();
           auto enc_data = encryptor.encrypt_keydata(params.algo, passwd, wif_key);
           keyfile.keyinfo.priv_key_data = fc::variant(enc_data);

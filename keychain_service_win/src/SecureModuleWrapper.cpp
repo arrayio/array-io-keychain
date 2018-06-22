@@ -40,7 +40,7 @@ std::wstring SecureModuleWrapper::get_passwd(const std::string& str) const
 		&(sa.lpSecurityDescriptor),
 		NULL
 	))
-		return std::wstring(L"error_password");
+		return std::wstring(L"");
 	hPipe = CreateNamedPipe(TEXT("\\\\.\\pipe\\keychainpass"),
 		PIPE_ACCESS_DUPLEX,
 		PIPE_TYPE_BYTE | PIPE_READMODE_BYTE | PIPE_WAIT,   // FILE_FLAG_FIRST_PIPE_INSTANCE is not needed but forces CreateNamedPipe(..) to fail if the pipe already exists...
@@ -49,9 +49,9 @@ std::wstring SecureModuleWrapper::get_passwd(const std::string& str) const
 		1024 * 16,
 		NMPWAIT_USE_DEFAULT_WAIT,
 		&sa);
-	std::wstring password(200, L'#');
+	std::vector<wchar_t> password(256, 0x00);
 	if (hPipe == INVALID_HANDLE_VALUE)
-		return std::wstring(L"error_password");
+		return std::wstring(L"");
 	if (ConnectNamedPipe(hPipe, NULL) != FALSE)   // wait for someone to connect to the pipe
 	{
 		while (ReadFile(hPipe, buffer, sizeof(buffer) - 1, &dwRead, NULL) != FALSE)
@@ -73,10 +73,16 @@ std::wstring SecureModuleWrapper::get_passwd(const std::string& str) const
 			{
 				//here is decrypted password
 				printf("The decrypted data is: %s\n", DataVerify.pbData);
-				char _gotpass[50];
-				std::strncpy(_gotpass, (char*)DataVerify.pbData, DataVerify.cbData);
+				std::array<char, 512> _gotpass;
+				memset(_gotpass.data(), 0x00, 512);
+				assert(DataVerify.cbData <= _gotpass.size() - 1);
+				if(DataVerify.cbData <= _gotpass.size() - 1)
+					std::strncpy(_gotpass.data(), (char*)DataVerify.pbData, DataVerify.cbData);
+				else
+					std::strncpy(_gotpass.data(), (char*)DataVerify.pbData, _gotpass.size());
 				size_t outSize;
-				mbstowcs_s(&outSize, &password[0], 200, _gotpass, 200);
+				mbstowcs_s(&outSize, password.data(), password.size(), _gotpass.data(), password.size());
+				password.resize(outSize);
 				//printf("The description of the data was: %S\n", pDescrOut);
 			}
 			else {
@@ -88,7 +94,7 @@ std::wstring SecureModuleWrapper::get_passwd(const std::string& str) const
 		CloseHandle(hPipe);
 			
 	}
-	return password;
+	return std::wstring(password.data(), password.size());
 }
 
 void SecureModuleWrapper::print_mnemonic(const string_list& mnemonic) const

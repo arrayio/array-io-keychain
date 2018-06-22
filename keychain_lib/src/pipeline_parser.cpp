@@ -55,8 +55,6 @@ int pipeline_parser::run()
           std::stringstream strbuf(std::ios_base::out);
           strbuf << res << std::endl;
           write(m_pipe_desciptor, static_cast<const void*>(strbuf.str().c_str()), res.size());
-          auto fush_res = fflush(fdopen(m_pipe_desciptor, "a+"));
-          assert(fush_res == 0);
         }
         catch(fc::exception& exc)
         {
@@ -65,8 +63,6 @@ int pipeline_parser::run()
           std::stringstream strbuf(std::ios_base::out);
           strbuf << res << std::endl;
           write(m_pipe_desciptor, static_cast<const void*>(strbuf.str().c_str()), res.size());
-          auto fush_res = fflush(fdopen(m_pipe_desciptor, "a+"));
-          assert(fush_res == 0);
         }
         auto it = std::copy(buf_range.second, it_read_end, read_buf.begin());
         std::for_each(it, it_read_end, [](buf_type::value_type &val) {

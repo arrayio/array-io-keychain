@@ -63,7 +63,6 @@ void NamedPipeServer::ListenChannel(/*LPTSTR channelName*/) {
 		FlushFileBuffers(hPipe);
 		DisconnectNamedPipe(hPipe);
 		CloseHandle(hPipe);
-		close(fd);
 		return res;
 	}, fd);
 	try

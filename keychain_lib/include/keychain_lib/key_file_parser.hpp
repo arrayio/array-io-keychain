@@ -53,7 +53,8 @@ struct keyfile_t
       CURVE_UNKNOWN,
       CURVE_SECP256K1
     } curve_type;
-    fc::variant data;//either std::string or encrypted_data
+    fc::variant priv_key_data;//either std::string or encrypted_data
+    std::string public_key;
   } keyinfo;
 };
 
@@ -65,7 +66,7 @@ FC_REFLECT_ENUM(keychain_app::keyfile_format::file_type, (TYPE_UNKNOWN)(TYPE_KEY
 FC_REFLECT_ENUM(keychain_app::keyfile_format::keyfile_t::keyinfo_t::key_format, (FORMAT_UNKNOWN)(FORMAT_ARRAYIO))
 FC_REFLECT_ENUM(keychain_app::keyfile_format::keyfile_t::keyinfo_t::curve_etype, (CURVE_UNKNOWN)(CURVE_SECP256K1))
 FC_REFLECT(keychain_app::keyfile_format::encrypted_data, (cipher_type)(iv)(enc_data))
-FC_REFLECT(keychain_app::keyfile_format::keyfile_t::keyinfo_t, (format)(encrypted)(curve_type)(data))
+FC_REFLECT(keychain_app::keyfile_format::keyfile_t::keyinfo_t, (format)(encrypted)(curve_type)(priv_key_data)(public_key))
 FC_REFLECT(keychain_app::keyfile_format::keyfile_t, (filetype)(keyname)(uid_hash)(keyinfo))
 
 

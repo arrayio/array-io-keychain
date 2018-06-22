@@ -14,7 +14,7 @@ SecurityManager::~SecurityManager() {
 
 }
 
-void SecurityManager::CreateSecureDesktop(std::wstring transId) {
+void SecurityManager::CreateSecureDesktop(const std::string& transId) {
 	HINSTANCE hInst = GetModuleHandle(NULL);
 	TCHAR curDirectory[500];
 	GetCurrentDirectory(500, curDirectory);
@@ -25,7 +25,10 @@ void SecurityManager::CreateSecureDesktop(std::wstring transId) {
 	wcsncpy_s(dst, 400, commandLine, (found - (wchar_t*)commandLine));
 	wcscat_s(dst, 400, L"keychain_pass_entry_app.exe");
 	wcscat_s(args, 400, L"-transId ");
-	wcscat_s(args, 400, transId.c_str());
+	std::wstring _tId(400, L'#');
+	size_t outSize;
+	mbstowcs_s(&outSize, &_tId[0], 400, transId.c_str(), 400);
+	wcscat_s(args, 400, _tId.c_str());
 	LPCWSTR appToStart = dst;
 	LPTSTR app_args = args;
 	ServiceLogger::getLogger().Log("CreateSecureDescktop function StartInteractiveClientProcess to enter credentials");

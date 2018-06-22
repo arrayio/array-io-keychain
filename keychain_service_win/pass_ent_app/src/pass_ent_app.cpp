@@ -42,20 +42,20 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	std::wstring wc(200, L'#');
 	size_t outSize;
 	mbstowcs_s(&outSize, &wc[0], 200, lpCmdLine, 200);
-	TransId = wc.substr(transIdLen, totalLen - transIdLen);
+	TransId = wc.substr(0, totalLen/* - transIdLen*/);
 
-	//hOldDesktop = GetThreadDesktop(GetCurrentThreadId());
-	//hNewDesktop = CreateDesktop(L"secdesktop", NULL, NULL, 0, DESKTOP_ALL, NULL);
+	hOldDesktop = GetThreadDesktop(GetCurrentThreadId());
+	hNewDesktop = CreateDesktop(L"secdesktop", NULL, NULL, 0, DESKTOP_ALL, NULL);
 
-	//SwitchDesktop(hNewDesktop);
+	SwitchDesktop(hNewDesktop);
 
 	//string passwd = "";
 	HANDLE thread = CreateThread(NULL, 0, DrawWindow, NULL, 0, NULL);
 	
 	WaitForSingleObject(thread, INFINITE);
-	//SwitchDesktop(hOldDesktop);
+	SwitchDesktop(hOldDesktop);
 
-	//CloseDesktop(hNewDesktop);
+	CloseDesktop(hNewDesktop);
 }
 
 static DWORD WINAPI DrawWindow(LPVOID t)
@@ -76,7 +76,15 @@ static INT_PTR CALLBACK PasswordProc(HWND hDlg, UINT message, WPARAM wParam, LPA
 
 	switch (message)
 	{
-	case WM_INITDIALOG:
+	case WM_INITDIALOG: {
+		int x = GetSystemMetrics(SM_CXSCREEN);
+		int y = GetSystemMetrics(SM_CYSCREEN);
+		SetWindowPos(hDlg,
+			HWND_TOP,
+			(x / 2)- (316/2),
+			(y / 2)-(54/2),
+			0, 0,          // Ignores size arguments. 
+			SWP_NOSIZE);
 		SendDlgItemMessage(hDlg,
 			IDC_TRANSACTIONID,
 			WM_SETTEXT,
@@ -97,7 +105,7 @@ static INT_PTR CALLBACK PasswordProc(HWND hDlg, UINT message, WPARAM wParam, LPA
 			(LPARAM)0);
 
 		return TRUE;
-
+	}
 	case WM_COMMAND:
 		// Set the default push button to "OK" when the user enters text. 
 		if (HIWORD(wParam) == EN_CHANGE &&

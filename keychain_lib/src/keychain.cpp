@@ -28,7 +28,7 @@ keychain_commands_singletone::keychain_commands_singletone()
   m_command_list.reserve(32);//TODO: it is may be possible to get size info from boost::hana::tuple
   hana::for_each(cmd_static_list, [&](auto val) {
     using value_type = decltype(val);
-    constexpr auto const_val = static_cast<keychain_command_type>(value_type::value);
+    constexpr auto const_val = static_cast<command_te>(value_type::value);
     m_command_list.push_back(command_ptr(new keychain_command<const_val>()));
   });
 }
@@ -83,7 +83,7 @@ const keychain_commands_singletone& keychain_commands_singletone::instance()
   return instance;
 }
 
-const keychain_commands_singletone::command_ptr keychain_commands_singletone::operator[](keychain_command_type cmd_type) const
+const keychain_commands_singletone::command_ptr keychain_commands_singletone::operator[](command_te cmd_type) const
 {
   size_t ind = static_cast<size_t>(cmd_type);
   if (ind >= m_command_list.size())

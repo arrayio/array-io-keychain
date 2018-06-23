@@ -110,19 +110,19 @@ struct json_error
 namespace hana = boost::hana;
 namespace bfs = boost::filesystem;
 
-enum keychain_command_type {
-    CMD_UNKNOWN = 0,
-    CMD_HELP,
-    CMD_LIST,
-    CMD_SIGN,
-    CMD_CREATE,
-    CMD_IMPORT,
-    CMD_EXPORT,
-    CMD_REMOVE,
-    CMD_RESTORE,
-    CMD_SEED,
-    CMD_PUBLIC_KEY,
-    CMD_LAST
+enum struct command_te {
+    null = 0,
+    help,
+    list,
+    sign,
+    create,
+    import_cmd,
+    export_cmd,
+    remove,
+    restore,
+    seed,
+    public_key,
+    last
 };
 
 struct find_keyfile_by_username
@@ -151,22 +151,22 @@ struct find_keyfile_by_username
 };
 
 struct keychain_command_common {
-  keychain_command_common (keychain_command_type etype = CMD_UNKNOWN, int id_ = 0)
+  keychain_command_common (command_te etype = command_te::null, int id_ = 0)
     : command(etype)
     , id(id_){}
-  keychain_command_type command;
+  command_te command;
   int id;
   fc::variant params;
 };
 
 struct keychain_command_base {
-    keychain_command_base(keychain_command_type type): e_type(type){}
+    keychain_command_base(command_te type): e_type(type){}
     virtual ~keychain_command_base(){}
-    keychain_command_type e_type;
+    command_te e_type;
     virtual std::string operator()(keychain_base* keychain, const fc::variant& params_variant, int id) const = 0;
 };
 
-template<keychain_command_type cmd>
+template<command_te cmd>
 struct keychain_command: keychain_command_base
 {
     keychain_command():keychain_command_base(cmd){}
@@ -179,9 +179,9 @@ struct keychain_command: keychain_command_base
 };
 
 template<>
-struct keychain_command<CMD_SIGN> : keychain_command_base
+struct keychain_command<command_te::sign> : keychain_command_base
 {
-    keychain_command():keychain_command_base(CMD_SIGN){}
+    keychain_command():keychain_command_base(command_te::sign){}
     virtual ~keychain_command(){}
     struct params
     {
@@ -260,9 +260,9 @@ struct keychain_command<CMD_SIGN> : keychain_command_base
 };
 
 template <>
-struct keychain_command<CMD_CREATE>: keychain_command_base
+struct keychain_command<command_te::create>: keychain_command_base
 {
-    keychain_command():keychain_command_base(CMD_CREATE){}
+    keychain_command():keychain_command_base(command_te::create){}
     virtual ~keychain_command(){}
     struct params
     {
@@ -341,8 +341,8 @@ struct keychain_command<CMD_CREATE>: keychain_command_base
 };
 
 template <>
-struct keychain_command<CMD_LIST>: keychain_command_base {
-  keychain_command() : keychain_command_base(CMD_REMOVE) {}
+struct keychain_command<command_te::list>: keychain_command_base {
+  keychain_command() : keychain_command_base(command_te::list) {}
   virtual ~keychain_command() {}
   
   using params_t = void;
@@ -380,9 +380,9 @@ struct keychain_command<CMD_LIST>: keychain_command_base {
 };
 
 template <>
-struct keychain_command<CMD_REMOVE>: keychain_command_base
+struct keychain_command<command_te::remove>: keychain_command_base
 {
-  keychain_command():keychain_command_base(CMD_REMOVE){}
+  keychain_command():keychain_command_base(command_te::remove){}
   virtual ~keychain_command(){}
   struct params
   {
@@ -418,9 +418,9 @@ struct keychain_command<CMD_REMOVE>: keychain_command_base
 };
 
 template<>
-struct keychain_command<CMD_PUBLIC_KEY>: keychain_command_base
+struct keychain_command<command_te::public_key>: keychain_command_base
 {
-  keychain_command(): keychain_command_base(CMD_PUBLIC_KEY){}
+  keychain_command(): keychain_command_base(command_te::public_key){}
   virtual ~keychain_command(){}
   struct params
   {
@@ -459,18 +459,30 @@ struct keychain_command<CMD_PUBLIC_KEY>: keychain_command_base
 
 constexpr auto cmd_static_list =
     hana::make_range(
-        hana::int_c<CMD_UNKNOWN>,
-        hana::int_c<CMD_LAST>);
+        hana::int_c<static_cast<int>(command_te::null)>,
+        hana::int_c<static_cast<int>(command_te::last)>);
 
 }
 
-FC_REFLECT_ENUM(keychain_app::keychain_command_type,
-                (CMD_UNKNOWN)(CMD_HELP)(CMD_LIST)(CMD_SIGN)(CMD_CREATE)(CMD_IMPORT)(CMD_EXPORT)(CMD_REMOVE)(CMD_RESTORE)(CMD_SEED)(CMD_PUBLIC_KEY)(CMD_LAST))
+FC_REFLECT_ENUM(
+  keychain_app::command_te,
+    (null)
+    (help)
+    (list)
+    (sign)
+    (create)
+    (import_cmd)
+    (export_cmd)
+    (remove)
+    (restore)
+    (seed)
+    (public_key)
+    (last))
 
-FC_REFLECT(keychain_app::keychain_command<keychain_app::CMD_SIGN>::params_t, (chainid)(transaction)(keyname))
-FC_REFLECT(keychain_app::keychain_command<keychain_app::CMD_CREATE>::params_t, (keyname)(encrypted)(algo)(curve))
-FC_REFLECT(keychain_app::keychain_command<keychain_app::CMD_REMOVE>::params_t, (keyname))
-FC_REFLECT(keychain_app::keychain_command<keychain_app::CMD_PUBLIC_KEY>::params_t, (keyname))
+FC_REFLECT(keychain_app::keychain_command<keychain_app::command_te::sign>::params_t, (chainid)(transaction)(keyname))
+FC_REFLECT(keychain_app::keychain_command<keychain_app::command_te::create>::params_t, (keyname)(encrypted)(algo)(curve))
+FC_REFLECT(keychain_app::keychain_command<keychain_app::command_te::remove>::params_t, (keyname))
+FC_REFLECT(keychain_app::keychain_command<keychain_app::command_te::public_key>::params_t, (keyname))
 FC_REFLECT(keychain_app::keychain_command_common, (command)(id)(params))
 FC_REFLECT(keychain_app::json_response, (id)(result))
 FC_REFLECT(keychain_app::json_error, (id)(error))

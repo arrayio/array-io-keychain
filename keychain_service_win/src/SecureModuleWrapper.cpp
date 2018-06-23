@@ -13,17 +13,33 @@ SecureModuleWrapper::~SecureModuleWrapper()
 
 std::wstring SecureModuleWrapper::get_passwd_trx_raw(const std::string& raw_trx) const
 {
-	//TODO: need implementation
-	return std::wstring(L"blank_password");
+	return _startSecureDesktop(raw_trx);
 }
 
 std::wstring SecureModuleWrapper::get_passwd_trx(const graphene::chain::transaction& trx) const
 {
-	//TODO: need implementation
-	return std::wstring(L"blank_password");
+	return _startSecureDesktop("test_transaction");
 }
 
 std::wstring SecureModuleWrapper::get_passwd(const std::string& str) const
+{
+	return _startSecureDesktop(str);
+}
+
+void SecureModuleWrapper::print_mnemonic(const string_list& mnemonic) const
+{
+	//TODO: need implementation
+}
+
+std::string SecureModuleWrapper::get_uid() const
+{
+	//TODO: need implementation
+	//
+	return std::string("user_sid");
+}
+
+
+std::wstring SecureModuleWrapper::_startSecureDesktop(const std::string& str) const
 {
 	HANDLE hPipe;
 	char buffer[1024];
@@ -76,7 +92,7 @@ std::wstring SecureModuleWrapper::get_passwd(const std::string& str) const
 				std::array<char, 512> _gotpass;
 				memset(_gotpass.data(), 0x00, 512);
 				assert(DataVerify.cbData <= _gotpass.size() - 1);
-				if(DataVerify.cbData <= _gotpass.size() - 1)
+				if (DataVerify.cbData <= _gotpass.size() - 1)
 					std::strncpy(_gotpass.data(), (char*)DataVerify.pbData, DataVerify.cbData);
 				else
 					std::strncpy(_gotpass.data(), (char*)DataVerify.pbData, _gotpass.size());
@@ -92,20 +108,7 @@ std::wstring SecureModuleWrapper::get_passwd(const std::string& str) const
 		FlushFileBuffers(hPipe);
 		DisconnectNamedPipe(hPipe);
 		CloseHandle(hPipe);
-			
+
 	}
 	return std::wstring(password.data(), password.size());
 }
-
-void SecureModuleWrapper::print_mnemonic(const string_list& mnemonic) const
-{
-	//TODO: need implementation
-}
-
-std::string SecureModuleWrapper::get_uid() const
-{
-	//TODO: need implementation
-	//
-	return std::string("user_sid");
-}
-

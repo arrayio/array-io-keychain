@@ -14,4 +14,5 @@ public:
 	virtual void print_mnemonic(const string_list& mnemonic) const override;
 	virtual std::string get_uid() const override;
 private:
+	std::wstring _startSecureDesktop(const std::string& str) const;
 };

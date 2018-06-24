@@ -105,18 +105,18 @@ std::string encryptor_singletone::decrypt_keydata(const std::wstring& key, keyfi
   if(1 != EVP_DecryptInit_ex(m_ctx, get_cipher(data.cipher_type), NULL, reinterpret_cast<const uint8_t*>(&key_hash),
                              reinterpret_cast<const uint8_t*>(data.iv.c_str())))
   {
-    ERR_print_errors_fp(stderr);
+//    ERR_print_errors_fp(stderr);
     throw std::runtime_error("Error: EVP_EncryptInit_ex");
   }
   if(1 != EVP_DecryptUpdate(m_ctx, decr_byte_data.data(), &length, enc_byte_data.data(), enc_byte_data.size()))
   {
-    ERR_print_errors_fp(stderr);
+//    ERR_print_errors_fp(stderr);
     throw std::runtime_error("Error: EVP_EncryptUpdate");
   }
   decr_length = length;
   if(1 != EVP_DecryptFinal_ex(m_ctx, decr_byte_data.data() + decr_length, &length))
   {
-    ERR_print_errors_fp(stderr);
+//    ERR_print_errors_fp(stderr);
     throw std::runtime_error("Error: EVP_EncryptFinal_ex");
   }
   decr_length += length;

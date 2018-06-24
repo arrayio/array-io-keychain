@@ -1,11 +1,11 @@
 //
 // Created by user on 23.06.18.
 //
-#include "cmd.h"
+#include "cmd.hpp"
 
 using namespace gui;
-//namespace hana = boost::hana;
-/*
+namespace hana = boost::hana;
+
 const cmd_list_singletone& cmd_list_singletone::instance() {
     static const cmd_list_singletone instance;
     return instance;
@@ -30,4 +30,3 @@ const std::shared_ptr<cmd_base> cmd_list_singletone::operator[](cmd_enum cmd_) c
     return cmd_list[a];
 }
 
- */

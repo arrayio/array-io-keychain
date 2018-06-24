@@ -11,13 +11,12 @@
 
 #include <iostream>
 #include <vector>
-//#include <boost/hana/for_each.hpp>
-//#include <boost/hana/size.hpp>
-//#include <boost/hana.hpp>
-//#include <boost/hana/range.hpp>
 
-
-
+#include <boost/hana.hpp>
+#include <boost/hana/range.hpp>
+#include <boost/hana/for_each.hpp>
+#include <boost/hana/size.hpp>
+#include <boost/hana.hpp>
 
 //#include <type_traits>
 //#include <string>
@@ -149,7 +148,7 @@ namespace  gui {
             }
         };
     };
-/*
+
     struct cmd_list_singletone
     {
     public:
@@ -159,7 +158,7 @@ namespace  gui {
         cmd_list_singletone();
         std::vector<std::shared_ptr<cmd_base>> cmd_list;
     };
-*/
+
     //constexpr auto cmd_range =  hana::make_range(hana::int_c<cmd_unknown>, hana::int_c<cmd_last>);
 }
 

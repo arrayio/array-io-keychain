@@ -18,7 +18,9 @@
 #include <X11/Xos.h>
 #include <X11/XKBlib.h>
 #include <fc/reflect/reflect.hpp>
-
+//#include <fc/varinant.hpp>
+#include <graphene/chain/protocol/protocol.hpp>
+#include <fc/io/json.hpp>
 
 #define MAX_KEYCODE_XORG            255  // максимально возможное кол-во кодов не м.б. более 255
 #define MAP_SIZE                    MAX_KEYCODE_XORG*2

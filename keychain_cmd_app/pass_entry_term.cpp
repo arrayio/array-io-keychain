@@ -11,8 +11,7 @@
 #include <sys/types.h>
 #include "pass_entry_term.hpp"
 // TODO: this header is requried for reflection from graphene::chain::transaction
-#include <graphene/chain/protocol/protocol.hpp>
-#include <fc/io/json.hpp>
+
 
 #define path_  "/home/user/CLionProjects/array-io-keychain/passentry_gui"
 

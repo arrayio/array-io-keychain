@@ -20,9 +20,10 @@ using keychain_t = keychain_app::keychain;
 
 using namespace keychain_app;
 
-pipeline_parser::pipeline_parser(keychain_invoke_f&& keychain_f, int pd)
+pipeline_parser::pipeline_parser(keychain_invoke_f&& keychain_f, int pipein_desc, int pipeout_desc)
   : m_keychain_func(keychain_f)
-  , m_pipe_desciptor(pd)
+  , m_pipein_desc(pipein_desc)
+  , m_pipeout_desc(pipeout_desc)
 {
 }
 
@@ -34,7 +35,7 @@ int pipeline_parser::run()
   size_t bytes_remaining = read_buf.size();
   while (true)
   {
-    size_t bytes_read = read(m_pipe_desciptor, p_read_begin, bytes_remaining);
+    size_t bytes_read = read(m_pipein_desc, p_read_begin, bytes_remaining);
 	if ( bytes_read == 0 )
 		break;
     if( bytes_read == -1 )
@@ -54,7 +55,7 @@ int pipeline_parser::run()
           std::string res = m_keychain_func(fc::json::from_string(std::string(buf_range.first, buf_range.second)));
           std::stringstream strbuf(std::ios_base::out);
           strbuf << res << std::endl;
-          write(m_pipe_desciptor, static_cast<const void*>(strbuf.str().c_str()), res.size());
+          write(m_pipeout_desc, static_cast<const void*>(strbuf.str().c_str()), res.size());
         }
         catch(fc::exception& exc)
         {
@@ -62,7 +63,7 @@ int pipeline_parser::run()
           std::string res = fc::json::to_pretty_string(fc::variant(json_error(0, exc.what())));
           std::stringstream strbuf(std::ios_base::out);
           strbuf << res << std::endl;
-          write(m_pipe_desciptor, static_cast<const void*>(strbuf.str().c_str()), res.size());
+          write(m_pipeout_desc, static_cast<const void*>(strbuf.str().c_str()), res.size());
         }
         auto it = std::copy(buf_range.second, it_read_end, read_buf.begin());
         std::for_each(it, it_read_end, [](buf_type::value_type &val) {

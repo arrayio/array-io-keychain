@@ -58,7 +58,7 @@ void NamedPipeServer::ListenChannel(/*LPTSTR channelName*/) {
 	auto res = std::async(std::launch::async, [this](int fd)->int {
 		SecureModuleWrapper secureModuleWrapper;
 		keychain_invoke_f f = std::bind(&keychain_wrapper, &secureModuleWrapper, std::placeholders::_1);
-		pipeline_parser pipe_line_parser_(std::move(f), fd);
+		pipeline_parser pipe_line_parser_(std::move(f), fd, fd);
 		int res = pipe_line_parser_.run();
 		FlushFileBuffers(hPipe);
 		DisconnectNamedPipe(hPipe);

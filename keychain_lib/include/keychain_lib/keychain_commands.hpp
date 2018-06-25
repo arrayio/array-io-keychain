@@ -32,7 +32,7 @@
 
 namespace keychain_app {
 
-using passwd_f = std::function<std::string()>;
+using byte_seq_t = std::vector<char>;
 
 struct keychain_error: std::runtime_error
 {
@@ -47,9 +47,8 @@ public:
     keychain_base(std::string&& uid_hash_);
     virtual ~keychain_base();
     virtual std::string operator()(const fc::variant& command) = 0;
-    boost::signals2::signal<std::wstring(const std::string&)> get_passwd_trx_raw;
-    boost::signals2::signal<std::wstring(const graphene::chain::transaction&)> get_passwd_trx;
-    boost::signals2::signal<std::wstring(const std::string&)> get_passwd;
+    boost::signals2::signal<byte_seq_t(const std::string&)> get_passwd_trx_raw;
+    boost::signals2::signal<byte_seq_t(void)> get_passwd_on_create;
     boost::signals2::signal<void(const string_list&)> print_mnemonic;
     std::string uid_hash;
 };
@@ -110,19 +109,19 @@ struct json_error
 namespace hana = boost::hana;
 namespace bfs = boost::filesystem;
 
-enum keychain_command_type {
-    CMD_UNKNOWN = 0,
-    CMD_HELP,
-    CMD_LIST,
-    CMD_SIGN,
-    CMD_CREATE,
-    CMD_IMPORT,
-    CMD_EXPORT,
-    CMD_REMOVE,
-    CMD_RESTORE,
-    CMD_SEED,
-    CMD_PUBLIC_KEY,
-    CMD_LAST
+enum struct command_te {
+    null = 0,
+    help,
+    list,
+    sign,
+    create,
+    import_cmd,
+    export_cmd,
+    remove,
+    restore,
+    seed,
+    public_key,
+    last
 };
 
 struct find_keyfile_by_username
@@ -151,27 +150,27 @@ struct find_keyfile_by_username
 };
 
 struct keychain_command_common {
-  keychain_command_common (keychain_command_type etype = CMD_UNKNOWN, int id_ = 0)
+  keychain_command_common (command_te etype = command_te::null, int id_ = 0)
     : command(etype)
     , id(id_){}
-  keychain_command_type command;
+  command_te command;
   int id;
   fc::variant params;
 };
 
 struct keychain_command_base {
-    keychain_command_base(keychain_command_type type): e_type(type){}
+    keychain_command_base(command_te type): e_type(type){}
     virtual ~keychain_command_base(){}
-    keychain_command_type e_type;
+    command_te e_type;
     virtual std::string operator()(keychain_base* keychain, const fc::variant& params_variant, int id) const = 0;
 };
 
-template<keychain_command_type cmd>
+template<command_te cmd>
 struct keychain_command: keychain_command_base
 {
     keychain_command():keychain_command_base(cmd){}
     virtual ~keychain_command(){}
-    virtual std::string operator()(keychain_base* keychain, const fc::variant& params_variant, int id) const
+    virtual std::string operator()(keychain_base* keychain, const fc::variant& params_variant, int id) const override
     {
       return fc::json::to_pretty_string(fc::variant(json_error(id, "method is not implemented")));
     }
@@ -179,16 +178,15 @@ struct keychain_command: keychain_command_base
 };
 
 template<>
-struct keychain_command<CMD_SIGN> : keychain_command_base
+struct keychain_command<command_te::sign> : keychain_command_base
 {
-    keychain_command():keychain_command_base(CMD_SIGN){}
+    keychain_command():keychain_command_base(command_te::sign){}
     virtual ~keychain_command(){}
     struct params
     {
         std::string chainid;
         std::string transaction;
         std::string keyname;
-        std::string keyfile;
     };
 
     using params_t = params;
@@ -210,63 +208,60 @@ struct keychain_command<CMD_SIGN> : keychain_command_base
         keyfile_format::keyfile_t keyfile;
   
         unit_list.push_back(buf);
-        if (!params.keyfile.empty())
-        {
-          fc::variant j_keyfile = open_keyfile(params.keyfile.c_str());
-          keyfile = j_keyfile.as<keyfile_format::keyfile_t>();
-        }
-        else if (!params.keyname.empty())
-        {
-          auto curdir = bfs::current_path();
-          
-          auto first = bfs::directory_iterator(bfs::path("./"));
-          auto it = std::find_if(first, bfs::directory_iterator(),find_keyfile_by_username(params.keyname.c_str(), &keyfile));
-          if (it == bfs::directory_iterator())
-            throw std::runtime_error("Error: keyfile could not found by keyname");
-        }
+        if (params.keyname.empty())
+          std::runtime_error("Error: keyname is not specified");
+        
+        auto curdir = bfs::current_path();
+        auto first = bfs::directory_iterator(bfs::path("./"));
+        auto it = std::find_if(first, bfs::directory_iterator(),find_keyfile_by_username(params.keyname.c_str(), &keyfile));
+        if (it == bfs::directory_iterator())
+          throw std::runtime_error("Error: keyfile could not found by keyname");
+        
         if(keyfile.uid_hash != keychain->uid_hash)
           std::runtime_error("Error: user is not keyfile owner");
   
         std::string key_data;
         if(keyfile.keyinfo.encrypted)
         {
-          auto encrypted_data = keyfile.keyinfo.data.as<keyfile_format::encrypted_data>();
+          auto encrypted_data = keyfile.keyinfo.priv_key_data.as<keyfile_format::encrypted_data>();
           auto& encryptor = encryptor_singletone::instance();
           //TODO: need to try to parse transaction.
           // If we can parse transaction we need to use get_passwd_trx function
           // else use get_passwd_trx_raw()
           // At this moment parsing of transaction is not implemented
-          std::wstring passwd = *(keychain->get_passwd_trx_raw(params.transaction));
-          key_data = std::move(encryptor.decrypt_keydata(passwd.c_str(), encrypted_data));
+		  byte_seq_t passwd = *(keychain->get_passwd_trx_raw(params.transaction));
+		  if (passwd.empty())
+			  throw std::runtime_error("Error: can't get password");
+          key_data = std::move(encryptor.decrypt_keydata(passwd, encrypted_data));
         }
         else
         {
-          key_data = std::move(keyfile.keyinfo.data.as<std::string>());
+          key_data = std::move(keyfile.keyinfo.priv_key_data.as<std::string>());
         }
         private_key = get_priv_key_from_str(key_data);
-		auto signature = private_key.sign_compact(get_hash(unit_list));
+		    auto signature = private_key.sign_compact(get_hash(unit_list));
 		
-		json_response response(to_hex(signature.begin(), signature.size()).c_str(), id);
-		fc::variant res(response);
-		return fc::json::to_pretty_string(res);
+		    json_response response(to_hex(signature.begin(), signature.size()).c_str(), id);
+		    fc::variant res(response);
+		    return fc::json::to_pretty_string(res);
       }
       catch (const std::exception &exc)
       {
-		std::cerr << fc::json::to_pretty_string(fc::variant(json_error(id, exc.what()))) << std::endl;
+	    	std::cerr << fc::json::to_pretty_string(fc::variant(json_error(id, exc.what()))) << std::endl;
         return fc::json::to_pretty_string(fc::variant(json_error(id, exc.what())));
       }
       catch (const fc::exception& exc)
       {
         std::cerr << fc::json::to_pretty_string(fc::variant(json_error(0, exc.to_detail_string().c_str()))) << std::endl;
-		return fc::json::to_pretty_string(fc::variant(json_error(0, exc.what())));
+		    return fc::json::to_pretty_string(fc::variant(json_error(0, exc.what())));
       }
     }
 };
 
 template <>
-struct keychain_command<CMD_CREATE>: keychain_command_base
+struct keychain_command<command_te::create>: keychain_command_base
 {
-    keychain_command():keychain_command_base(CMD_CREATE){}
+    keychain_command():keychain_command_base(command_te::create){}
     virtual ~keychain_command(){}
     struct params
     {
@@ -283,11 +278,14 @@ struct keychain_command<CMD_CREATE>: keychain_command_base
         auto params = params_variant.as<params_t>();
         keyfile_format::keyfile_t keyfile;
         std::string wif_key;
+        fc::ecc::public_key_data public_key_data;
         switch (params.curve)
         {
           case keyfile_format::keyfile_t::keyinfo_t::CURVE_SECP256K1:
           {
-            wif_key = std::move(graphene::utilities::key_to_wif(fc::ecc::private_key::generate()));
+            auto priv_key = fc::ecc::private_key::generate();
+            public_key_data = priv_key.get_public_key().serialize();
+            wif_key = std::move(graphene::utilities::key_to_wif(priv_key));
           }
             break;
           default:
@@ -297,16 +295,19 @@ struct keychain_command<CMD_CREATE>: keychain_command_base
         }
         if (params.encrypted)
         {
-          auto passwd = *keychain->get_passwd(std::string("Please, enter password for your new key"));
+          auto passwd = *keychain->get_passwd_on_create();
+		  if (passwd.empty())
+			  throw std::runtime_error("Error: can't get password");
           auto& encryptor = encryptor_singletone::instance();
           auto enc_data = encryptor.encrypt_keydata(params.algo, passwd, wif_key);
-          keyfile.keyinfo.data = fc::variant(enc_data);
+          keyfile.keyinfo.priv_key_data = fc::variant(enc_data);
           keyfile.keyinfo.encrypted = true;
         }
         else{
-          keyfile.keyinfo.data = std::move(wif_key);
+          keyfile.keyinfo.priv_key_data = std::move(wif_key);
           keyfile.keyinfo.encrypted = false;
         }
+        keyfile.keyinfo.public_key = to_hex(reinterpret_cast<const uint8_t *>(public_key_data.begin()), public_key_data.size());
         keyfile.keyname = params.keyname;
         keyfile.uid_hash = keychain->uid_hash;
         keyfile.filetype = keyfile_format::TYPE_KEY;
@@ -339,8 +340,8 @@ struct keychain_command<CMD_CREATE>: keychain_command_base
 };
 
 template <>
-struct keychain_command<CMD_LIST>: keychain_command_base {
-  keychain_command() : keychain_command_base(CMD_REMOVE) {}
+struct keychain_command<command_te::list>: keychain_command_base {
+  keychain_command() : keychain_command_base(command_te::list) {}
   virtual ~keychain_command() {}
   
   using params_t = void;
@@ -378,9 +379,9 @@ struct keychain_command<CMD_LIST>: keychain_command_base {
 };
 
 template <>
-struct keychain_command<CMD_REMOVE>: keychain_command_base
+struct keychain_command<command_te::remove>: keychain_command_base
 {
-  keychain_command():keychain_command_base(CMD_REMOVE){}
+  keychain_command():keychain_command_base(command_te::remove){}
   virtual ~keychain_command(){}
   struct params
   {
@@ -399,9 +400,9 @@ struct keychain_command<CMD_REMOVE>: keychain_command_base
           throw std::runtime_error("Error: can't remove keyfile because of it is owned by different user");
         bfs::remove(*it);
       }
-	  json_response response(true, id);
-	  return fc::json::to_pretty_string(fc::variant(response));
-	}
+	    json_response response(true, id);
+	    return fc::json::to_pretty_string(fc::variant(response));
+	  }
     catch (const std::exception &exc)
     {
 	  std::cerr << fc::json::to_pretty_string(fc::variant(json_error(id, exc.what()))) << std::endl;
@@ -415,19 +416,72 @@ struct keychain_command<CMD_REMOVE>: keychain_command_base
   }
 };
 
+template<>
+struct keychain_command<command_te::public_key>: keychain_command_base
+{
+  keychain_command(): keychain_command_base(command_te::public_key){}
+  virtual ~keychain_command(){}
+  struct params
+  {
+    std::string keyname;
+  };
+  using params_t = params;
+  virtual std::string operator()(keychain_base* keychain, const fc::variant& params_variant, int id) const override {
+    try {
+      auto params = params_variant.as<params_t>();
+      keyfile_format::keyfile_t keyfile;
+  
+      if (params.keyname.empty())
+        std::runtime_error("Error: keyname is not specified");
+  
+      auto curdir = bfs::current_path();
+      auto first = bfs::directory_iterator(bfs::path("./"));
+      auto it = std::find_if(first, bfs::directory_iterator(),find_keyfile_by_username(params.keyname.c_str(), &keyfile));
+      if (it == bfs::directory_iterator())
+        throw std::runtime_error("Error: keyfile could not found by keyname");
+      
+      json_response response(keyfile.keyinfo.public_key.c_str(), id);
+      return fc::json::to_pretty_string(fc::variant(response));
+    }
+    catch (const std::exception &exc)
+    {
+      std::cerr << fc::json::to_pretty_string(fc::variant(json_error(id, exc.what()))) << std::endl;
+      return fc::json::to_pretty_string(fc::variant(json_error(id, exc.what())));
+    }
+    catch (const fc::exception& exc)
+    {
+      std::cerr << fc::json::to_pretty_string(fc::variant(json_error(0, exc.to_detail_string().c_str()))) << std::endl;
+      return fc::json::to_pretty_string(fc::variant(json_error(0, exc.what())));
+    }
+  }
+};
+
 constexpr auto cmd_static_list =
     hana::make_range(
-        hana::int_c<CMD_UNKNOWN>,
-        hana::int_c<CMD_LAST>);
+        hana::int_c<static_cast<int>(command_te::null)>,
+        hana::int_c<static_cast<int>(command_te::last)>);
 
 }
 
-FC_REFLECT_ENUM(keychain_app::keychain_command_type,
-                (CMD_UNKNOWN)(CMD_HELP)(CMD_LIST)(CMD_SIGN)(CMD_CREATE)(CMD_IMPORT)(CMD_EXPORT)(CMD_REMOVE)(CMD_RESTORE)(CMD_SEED)(CMD_PUBLIC_KEY)(CMD_LAST))
+FC_REFLECT_ENUM(
+  keychain_app::command_te,
+    (null)
+    (help)
+    (list)
+    (sign)
+    (create)
+    (import_cmd)
+    (export_cmd)
+    (remove)
+    (restore)
+    (seed)
+    (public_key)
+    (last))
 
-FC_REFLECT(keychain_app::keychain_command<keychain_app::CMD_SIGN>::params_t, (chainid)(transaction)(keyname)(keyfile))
-FC_REFLECT(keychain_app::keychain_command<keychain_app::CMD_CREATE>::params_t, (keyname)(encrypted)(algo)(curve))
-FC_REFLECT(keychain_app::keychain_command<keychain_app::CMD_REMOVE>::params_t, (keyname))
+FC_REFLECT(keychain_app::keychain_command<keychain_app::command_te::sign>::params_t, (chainid)(transaction)(keyname))
+FC_REFLECT(keychain_app::keychain_command<keychain_app::command_te::create>::params_t, (keyname)(encrypted)(algo)(curve))
+FC_REFLECT(keychain_app::keychain_command<keychain_app::command_te::remove>::params_t, (keyname))
+FC_REFLECT(keychain_app::keychain_command<keychain_app::command_te::public_key>::params_t, (keyname))
 FC_REFLECT(keychain_app::keychain_command_common, (command)(id)(params))
 FC_REFLECT(keychain_app::json_response, (id)(result))
 FC_REFLECT(keychain_app::json_error, (id)(error))

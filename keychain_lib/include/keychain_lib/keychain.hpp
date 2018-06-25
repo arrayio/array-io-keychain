@@ -39,7 +39,7 @@ struct keychain_commands_singletone
 {
     using command_ptr = std::shared_ptr<keychain_command_base>;
     static const keychain_commands_singletone& instance();
-    const command_ptr operator[](keychain_command_type cmd_type) const;
+    const command_ptr operator[](command_te cmd_type) const;
 private:
     std::vector<command_ptr> m_command_list;
     keychain_commands_singletone();

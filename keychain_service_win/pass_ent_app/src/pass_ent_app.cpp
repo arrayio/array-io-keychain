@@ -23,6 +23,7 @@ DESKTOP_JOURNALPLAYBACK | DESKTOP_ENUMERATE | DESKTOP_WRITEOBJECTS | \
 DESKTOP_SWITCHDESKTOP | STANDARD_RIGHTS_REQUIRED)
 
 #include <stdio.h>
+#include <KeychainServiceExchange.h>
 #include "..\resource.h"
 
 using namespace std;
@@ -34,6 +35,7 @@ std::wstring TransId;
 HDESK hOldDesktop, hNewDesktop;
 DWORD WINAPI DrawWindow(LPVOID);
 HINSTANCE _hInstance;
+BOOL password_got = FALSE;
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
@@ -42,14 +44,14 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	std::wstring wc(200, L'#');
 	size_t outSize;
 	mbstowcs_s(&outSize, &wc[0], 200, lpCmdLine, 200);
-	TransId = wc.substr(transIdLen, totalLen - transIdLen);
+	TransId = wc.substr(0, totalLen/* - transIdLen*/);
 
 	hOldDesktop = GetThreadDesktop(GetCurrentThreadId());
 	hNewDesktop = CreateDesktop(L"secdesktop", NULL, NULL, 0, DESKTOP_ALL, NULL);
 
 	SwitchDesktop(hNewDesktop);
 
-	string passwd = "";
+	//string passwd = "";
 	HANDLE thread = CreateThread(NULL, 0, DrawWindow, NULL, 0, NULL);
 	
 	WaitForSingleObject(thread, INFINITE);
@@ -76,7 +78,15 @@ static INT_PTR CALLBACK PasswordProc(HWND hDlg, UINT message, WPARAM wParam, LPA
 
 	switch (message)
 	{
-	case WM_INITDIALOG:
+	case WM_INITDIALOG: {
+		int x = GetSystemMetrics(SM_CXSCREEN);
+		int y = GetSystemMetrics(SM_CYSCREEN);
+		SetWindowPos(hDlg,
+			HWND_TOP,
+			(x / 2)- (316/2),
+			(y / 2)-(54/2),
+			0, 0,          // Ignores size arguments. 
+			SWP_NOSIZE);
 		SendDlgItemMessage(hDlg,
 			IDC_TRANSACTIONID,
 			WM_SETTEXT,
@@ -97,7 +107,7 @@ static INT_PTR CALLBACK PasswordProc(HWND hDlg, UINT message, WPARAM wParam, LPA
 			(LPARAM)0);
 
 		return TRUE;
-
+	}
 	case WM_COMMAND:
 		// Set the default push button to "OK" when the user enters text. 
 		if (HIWORD(wParam) == EN_CHANGE &&
@@ -144,59 +154,12 @@ static INT_PTR CALLBACK PasswordProc(HWND hDlg, UINT message, WPARAM wParam, LPA
 				IDC_PASSWORD,
 				EM_GETLINE,
 				(WPARAM)0,       // line 0 
-				(LPARAM)&read_password); //чтение пароля из textbox'a 
+				(LPARAM)&read_password); //reading password from text box
 
 			// Null-terminate the string. 
+			KeychainServiceExchange* serviceExchange = new KeychainServiceExchange();
+			serviceExchange->EncodeSuccess(read_password, cchPassword);
 			
-
-			HANDLE hPipe;
-			DWORD dwWritten;
-			hPipe = CreateFile(TEXT("\\\\.\\pipe\\keychainpass"),
-				GENERIC_READ | GENERIC_WRITE,
-				0,
-				NULL,
-				OPEN_EXISTING,
-				0,
-				NULL);
-			int len;
-			DWORD error = GetLastError();
- 			len = WideCharToMultiByte(CP_ACP, 0, read_password, cchPassword, 0, 0, 0, 0);
-			std::string testStr(len, '\0');
-			WideCharToMultiByte(CP_ACP, 0, read_password, cchPassword, &testStr[0], len, 0, 0);
-			DATA_BLOB DataIn;
-			DATA_BLOB DataOut;
-			
-
-			DataIn.pbData = (BYTE*)testStr.c_str();
-			DataIn.cbData = len;
-
-			if (CryptProtectData(
-				&DataIn,
-				L"This is the description string.", // A description string to be included with the encrypted data. 
-				NULL,                               // Optional entropy not used.
-				NULL,                               // Reserved.
-				NULL,                               // Pass NULL for the prompt structure.
-				CRYPTPROTECT_LOCAL_MACHINE,
-				&DataOut))
-			{
-				printf("The encryption phase worked.\n");
-			}
-			else
-			{
-				printf("Encryption error using CryptProtectData.\n");
-			}
-			
-			
-			if (hPipe != INVALID_HANDLE_VALUE)
-			{
-				WriteFile(hPipe,
-					DataOut.pbData,//testStr.c_str(),
-					DataOut.cbData+1,//len+1,   // = length of string + terminating '\0' !!!
-					&dwWritten,
-					NULL);
-			}
-			CloseHandle(hPipe);
-			testStr.~basic_string();
 			//LocalFree(read_password);
 			// Call a local password-parsing function. 
 			//ParsePassword(lpszPassword);
@@ -209,6 +172,12 @@ static INT_PTR CALLBACK PasswordProc(HWND hDlg, UINT message, WPARAM wParam, LPA
 			return TRUE;
 		}
 		return 0;
+	case WM_DESTROY: {
+		if (!password_got) {
+			KeychainServiceExchange * serviceExchange = new KeychainServiceExchange();
+			serviceExchange->EncodeError(L"empty_password", 14);
+		}
+	}
 	}
 	return FALSE;
 

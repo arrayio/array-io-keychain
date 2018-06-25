@@ -26,7 +26,6 @@ using namespace keychain_app;
 void NamedPipeServer::ListenChannel(/*LPTSTR channelName*/) {
 	
 	lpszPipename = (LPTSTR)__TEXT("\\\\.\\pipe\\keychainservice");//channelName;
-	
 	ServiceLogger::getLogger().Log("Creating NamedPipe object");
 	hPipe = CreateNamedPipe(
 		lpszPipename,             // pipe name 
@@ -41,10 +40,6 @@ void NamedPipeServer::ListenChannel(/*LPTSTR channelName*/) {
 		NULL);                    // default security attribute 
 
 	ServiceLogger::getLogger().Log("NamedPipe object is created");
-	// Wait for the client to connect; if it succeeds, 
-	// the function returns a nonzero value. If the function
-	// returns zero, GetLastError returns ERROR_PIPE_CONNECTED. 
-
 	fConnected = ConnectNamedPipe(hPipe, NULL) ?
 		TRUE : (GetLastError() == ERROR_PIPE_CONNECTED);
 	ServiceLogger::getLogger().Log("ConnectingNamePipe");
@@ -63,12 +58,11 @@ void NamedPipeServer::ListenChannel(/*LPTSTR channelName*/) {
 	auto res = std::async(std::launch::async, [this](int fd)->int {
 		SecureModuleWrapper secureModuleWrapper;
 		keychain_invoke_f f = std::bind(&keychain_wrapper, &secureModuleWrapper, std::placeholders::_1);
-		pipeline_parser pipe_line_parser_(std::move(f), fd);
+		pipeline_parser pipe_line_parser_(std::move(f), fd, fd);
 		int res = pipe_line_parser_.run();
 		FlushFileBuffers(hPipe);
 		DisconnectNamedPipe(hPipe);
 		CloseHandle(hPipe);
-		close(fd);
 		return res;
 	}, fd);
 	try
@@ -82,64 +76,3 @@ void NamedPipeServer::ListenChannel(/*LPTSTR channelName*/) {
 		ServiceLogger::getLogger().Log(e.what());
 	}	
 };
-
-void NamedPipeServer::ListenPasswdSecureChannel() {
-	
-		HANDLE hPipe;
-		char buffer[1024];
-		DWORD dwRead;
-
-
-		hPipe = CreateNamedPipe(TEXT("\\\\.\\pipe\\keychainpass"),
-			PIPE_ACCESS_DUPLEX,
-			PIPE_TYPE_BYTE | PIPE_READMODE_BYTE | PIPE_WAIT,   // FILE_FLAG_FIRST_PIPE_INSTANCE is not needed but forces CreateNamedPipe(..) to fail if the pipe already exists...
-			1,
-			1024 * 16,
-			1024 * 16,
-			NMPWAIT_USE_DEFAULT_WAIT,
-			NULL);
-		while (hPipe != INVALID_HANDLE_VALUE)
-		{
-			if (ConnectNamedPipe(hPipe, NULL) != FALSE)   // wait for someone to connect to the pipe
-			{
-				while (ReadFile(hPipe, buffer, sizeof(buffer) - 1, &dwRead, NULL) != FALSE)
-				{
-					/* add terminating zero */
-					buffer[dwRead] = '\0';
-					LPWSTR pDescrOut = NULL;
-					DATA_BLOB DataOut;
-					DataOut.cbData = sizeof(buffer) - 1;
-					DataOut.pbData = (BYTE*)buffer;
-					DATA_BLOB DataVerify;
-					if (CryptUnprotectData(
-						&DataOut,
-						&pDescrOut,
-						NULL,                 // Optional entropy
-						NULL,                 // Reserved
-						NULL,        // Optional PromptStruct
-						CRYPTPROTECT_LOCAL_MACHINE,
-						&DataVerify))
-					{
-						//here is decrypted password
-						printf("The decrypted data is: %s\n", DataVerify.pbData);
-						//printf("The description of the data was: %S\n", pDescrOut);
-					}
-					else {
-						DWORD lastError = GetLastError();
-					}
-				}
-			}
-
-			DisconnectNamedPipe(hPipe);
-		}
-};
-
-void NamedPipeServer::StartServer() {
-	main = new std::thread(&NamedPipeServer::ListenChannel, this);
-	secure = new std::thread(&NamedPipeServer::ListenPasswdSecureChannel, this);
-}
-
-void NamedPipeServer::StopServer() {
-	main->join();
-	secure->join();
-}

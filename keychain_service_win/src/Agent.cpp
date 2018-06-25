@@ -103,8 +103,8 @@ BOOL StartInteractiveClientProcess(
 	ZeroMemory(&si, sizeof(STARTUPINFO));
 	si.cb = sizeof(STARTUPINFO);
 	si.lpDesktop = (LPTSTR)TEXT("winsta0\\default");
-	si.dwX = 0;
-	si.dwY = 0;
+	si.dwX = 500;
+	si.dwY = 500;
 	si.wShowWindow = true;
 	si.hStdError = false;
 	si.hStdInput = false;

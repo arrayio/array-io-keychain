@@ -7,7 +7,7 @@ class SecurityManager {
 public:
 	SecurityManager();
 	~SecurityManager();
-	void CreateSecureDesktop(std::wstring transId);
+	void CreateSecureDesktop(const std::string& transId);
 private :
 
 };

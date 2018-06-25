@@ -9,29 +9,23 @@
 // Internal name of the service 
 #define SERVICE_NAME             L"KeyChainService" 
 
-
 // Displayed name of the service 
 #define SERVICE_DISPLAY_NAME     L"KeyChainService" 
-
 #define SERVICE_DESCRIPTION     L"This service shows window for enterance password" 
 
 // Service start options. 
 #define SERVICE_START_TYPE       SERVICE_DEMAND_START 
 
-
 // List of service dependencies - "dep1\0dep2\0\0" 
 #define SERVICE_DEPENDENCIES     L"" 
 
-
 // The name of the account under which the service should run 
 #define SERVICE_ACCOUNT          L"NT AUTHORITY\\LocalService" 
-
 
 // The password to the service account name 
 #define SERVICE_PASSWORD         NULL 
 
 int main(int argc, char *argv[])
-//int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
 	if ((argc > 1) && ((*argv[1] == '-' || (*argv[1] == '/'))))
 	{
@@ -54,19 +48,6 @@ int main(int argc, char *argv[])
 			// "-remove" or "/remove". 
 			UninstallService((PWSTR)SERVICE_NAME);
 		}
-		else if (_stricmp("d", argv[1] + 1) == 0) {
-			KeychainService service((PWSTR)SERVICE_NAME);
-			ServiceLogger::getLogger().Log("KeychainService started");
-			NamedPipeServer _server;
-			ServiceLogger::getLogger().Log("Start service for listening");
-			_server.StartServer();
-			while (getch() != 27)
-			{
-				_server.StopServer();
-			}
-			ServiceLogger::getLogger().Log("Stop service for listening");
-			// Signal the stopped event. 
-		}
 		else if (_stricmp("r", argv[1] + 1) == 0) {
 			KeychainService service((PWSTR)SERVICE_NAME);
 			ServiceLogger::getLogger().Log("KeychainService started");
@@ -80,12 +61,9 @@ int main(int argc, char *argv[])
 	}
 	else
 	{
-		//StartInteractiveClientProcess((LPTSTR)TEXT("keychainuser"), (LPTSTR)TEXT("."), (LPTSTR)TEXT("T123456!"), (LPTSTR)TEXT("-testpipe"));
 		wprintf(L"Parameters:\n");
 		wprintf(L" -install  to install the service.\n");
 		wprintf(L" -remove   to remove the service.\n");
 	}
-
-
 	return 0;
 }

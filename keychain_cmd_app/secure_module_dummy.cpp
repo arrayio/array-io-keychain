@@ -12,11 +12,6 @@ sec_mod_dummy::sec_mod_dummy()
 sec_mod_dummy::~sec_mod_dummy()
 {}
 
-std::wstring sec_mod_dummy::get_passwd_trx(const graphene::chain::transaction& trx) const
-{
-  return std::wstring(L"blank_password");
-}
-
 std::string sec_mod_dummy::get_uid() const
 {
   return std::string("uid");
@@ -27,12 +22,14 @@ void sec_mod_dummy::print_mnemonic(const string_list& mnemonic) const
 
 }
 
-std::wstring sec_mod_dummy::get_passwd_trx_raw(const std::string& raw_trx) const
+byte_seq_t sec_mod_dummy::get_passwd_trx_raw(const std::string& raw_trx) const
 {
-  return std::wstring(L"blank_password");
+  const char* pass_str = "blank_password";
+  return byte_seq_t(pass_str, pass_str + strlen(pass_str));
 }
 
-std::wstring sec_mod_dummy::get_passwd(const std::string& str) const
+byte_seq_t sec_mod_dummy::get_passwd_on_create() const
 {
-  return std::wstring(L"blank_password");
+  const char* pass_str = "blank_password";
+  return byte_seq_t(pass_str, pass_str + strlen(pass_str));
 }

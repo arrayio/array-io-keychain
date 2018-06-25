@@ -1,17 +1,12 @@
-#include "widget.hpp"
 #include <QGridLayout>
 #include <QLabel>
 #include <QLineEdit>
-#include <QTextEdit>
 #include <QPushButton>
 #include <QMessageBox>
-#include <unistd.h>
 #include <QCloseEvent>
 #include <fc/io/json.hpp>
-
-#define KEY_ENTER		28
-#define KEY_ESC			1
-
+#include "cmd.hpp"
+#include "widget.hpp"
 
 Widget::Widget(QWidget *parent)
     :QWidget(parent)
@@ -27,10 +22,8 @@ Widget::Widget(QWidget *parent)
     connect(polling, &Polling::poll, polling, &Polling::Select, Qt::QueuedConnection);
 
 //    connect(polling, &Polling::rx, this, &Widget::cmd);
-    connect(polling, &Polling::rx, polling, &Polling::parse);
+    connect(polling, &Polling::rx, this, &Widget::parse);
     connect(polling, &Polling::err, this, &Widget::close);
-
-    connect(gui::cmd_list_singletone.cmd_list[cmd_rawtrx], &Polling::err, this, &Widget::close);
 
     pollingThread.start();
     passClearOnExit = true;
@@ -60,7 +53,7 @@ void Widget::Interior()
         grid->addWidget(plb, 1, 0);
     }
     {
-        QTextEdit * pte = new QTextEdit(this);
+        pte = new QTextEdit(this);
         grid->addWidget(pte, 1, 1, 2, 3);
         pte->setText("");
         pte->setReadOnly(true);
@@ -101,9 +94,20 @@ void Widget::cmd(const QString& result)
 
 void Widget::closeEvent(QCloseEvent *event)
 {
-    if (passClearOnExit)
-        send(fc::json::to_pretty_string(fc::variant(json_cancel("cansel"))));
-    else
-        send(fc::json::to_pretty_string(fc::variant(json_ok("ok"))));
+//    if (passClearOnExit)
+//        send(fc::json::to_pretty_string(fc::variant(json_cancel("cansel"))));
+//    else
+//        send(fc::json::to_pretty_string(fc::variant(json_ok("ok"))));
     event->accept();
+}
+
+
+void Widget::parse(const std::string& s)
+{
+    auto a = fc::variant(s);
+    auto cmd = a.as<gui::cmd_common>();
+    auto cmd_map = gui::cmd_list_singletone::instance();
+    auto p_func = cmd_map[cmd.cmd];
+    (*p_func)(this, cmd.params);
+//    std::cout << "pas_len="<< (*p_func)(cmd.params) << std::endl;
 }

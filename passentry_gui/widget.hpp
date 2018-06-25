@@ -3,12 +3,9 @@
 
 #include <QWidget>
 #include <QLineEdit>
+#include <QTextEdit>
 #include <QThread>
 #include "polling.hpp"
-
-#include <fc/reflect/reflect.hpp>
-#include <graphene/chain/protocol/protocol.hpp>
-#include <fc/io/json.hpp>
 
 class Widget : public QWidget
 {
@@ -18,19 +15,11 @@ public:
     Widget(QWidget *parent = 0);
     ~Widget();
     QLineEdit *ple;
-    struct json_cancel
-    {
-        json_cancel(std::string cmd_): cmd(cmd_){};
-        std::string cmd;
-    };
-    struct json_ok
-    {
-        json_ok(std::string cmd_): cmd(cmd_){};
-        std::string cmd;
-    };
+    QTextEdit * pte;
 private:
     void Interior();
     void closeEvent(QCloseEvent *);
+    void parse(const std::string&);
     bool passClearOnExit;
 public slots:
     void cmd(const QString &result);
@@ -40,7 +29,3 @@ signals:
     void poll();
 };
 #endif // WIDGET_H
-
-
-FC_REFLECT(Widget::json_cancel,  (cmd))
-FC_REFLECT(Widget::json_ok,  (cmd))

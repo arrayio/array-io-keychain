@@ -19,8 +19,8 @@ public:
   virtual keychain_app::byte_seq_t get_passwd_on_create() const override;
   virtual void print_mnemonic(const string_list& mnemonic) const override;
   virtual std::string get_uid() const override;
-  
-  
+private:
+  static constexpr const char* pass_str = "blank_password";
 };
 
 }

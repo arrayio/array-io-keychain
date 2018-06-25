@@ -24,12 +24,10 @@ void sec_mod_dummy::print_mnemonic(const string_list& mnemonic) const
 
 byte_seq_t sec_mod_dummy::get_passwd_trx_raw(const std::string& raw_trx) const
 {
-  const char* pass_str = "blank_password";
   return byte_seq_t(pass_str, pass_str + strlen(pass_str));
 }
 
 byte_seq_t sec_mod_dummy::get_passwd_on_create() const
 {
-  const char* pass_str = "blank_password";
   return byte_seq_t(pass_str, pass_str + strlen(pass_str));
 }

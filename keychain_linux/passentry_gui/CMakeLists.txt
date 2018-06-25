@@ -30,10 +30,10 @@ LIST(APPEND BOOST_COMPONENTS coroutine)
 SET(Boost_LIBRARIES ${BOOST_LIBRARIES_TEMP} ${Boost_LIBRARIES})
 
 include_directories(
-        "../array-io-core/libraries/utilities/include"
-        "../array-io-core/libraries/db/include"
-        "../array-io-core/libraries/chain/include"
-        "../array-io-core/libraries/fc/include"
+        "../../array-io-core/libraries/utilities/include"
+        "../../array-io-core/libraries/db/include"
+        "../../array-io-core/libraries/chain/include"
+        "../../array-io-core/libraries/fc/include"
         "/usr/include/libcxxabi"
         ${Boost_INCLUDE_DIR})
 

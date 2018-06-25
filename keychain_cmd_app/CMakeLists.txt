@@ -34,7 +34,8 @@ if( MSVC )
 else ( MSVC )
     include_directories(
             "../keychain_lib/include"
-            "../array-io-core/libraries/utilities/include"
+            "../keychain_linux/passentry_cmd"
+            "../array-io-core/libraries/utilities/incl/includeude"
             "../array-io-core/libraries/db/include"
             "../array-io-core/libraries/chain/include"
             "../array-io-core/libraries/fc/include"

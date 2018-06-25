@@ -2,11 +2,11 @@
 // Created by roman on 5/14/18.
 //
 
-#ifndef KEYCHAINAPP_SECURE_MODULE_DUMMY_HPP
-#define KEYCHAINAPP_SECURE_MODULE_DUMMY_HPP
+#ifndef KEYCHAINAPP_SEC_MOD_HPP
+#define KEYCHAINAPP_SEC_MOD_HPP
 
 #include <keychain_lib/keychain_wrapper.hpp>
-#include "pass_entry_term.hpp"
+#include <pass_entry_term.hpp>
 
 namespace keychain_app
 {
@@ -26,4 +26,4 @@ private:
 
 }
 
-#endif //KEYCHAINAPP_SECURE_MODULE_DUMMY_HPP
+#endif //KEYCHAINAPP_SEC_MOD_HPP

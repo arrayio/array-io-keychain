@@ -2,7 +2,7 @@
 // Created by roman on 5/14/18.
 //
 
-#include "secure_module_dummy.hpp"
+#include "sec_mod.hpp"
 
 using namespace keychain_app;
 

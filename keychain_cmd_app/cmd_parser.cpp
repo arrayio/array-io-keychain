@@ -9,7 +9,7 @@
 #include <keychain_lib/secure_module_singletone.hpp>
 
 #include "cmd_parser.hpp"
-#include "secure_module_dummy.hpp"
+#include "sec_mod.hpp"
 
 using namespace keychain_app;
 

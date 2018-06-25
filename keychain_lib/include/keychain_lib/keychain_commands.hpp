@@ -180,82 +180,82 @@ struct keychain_command: keychain_command_base
 template<>
 struct keychain_command<command_te::sign> : keychain_command_base
 {
-    keychain_command():keychain_command_base(command_te::sign){}
-    virtual ~keychain_command(){}
-    struct params
-    {
-        std::string chainid;
-        std::string transaction;
-        std::string keyname;
-    };
+  keychain_command():keychain_command_base(command_te::sign){}
+  virtual ~keychain_command(){}
+  struct params
+  {
+      std::string chainid;
+      std::string transaction;
+      std::string keyname;
+  };
 
-    using params_t = params;
+  using params_t = params;
 
-    virtual std::string operator()(keychain_base* keychain, const fc::variant& params_variant, int id) const override
-    {
-      try {
-        auto params = params_variant.as<params_t>();
-        unit_list_t unit_list;
-        fc::ecc::private_key private_key;
-        if (!params.chainid.empty())
-          unit_list.push_back(fc::sha256(params.chainid));
-  
-        //NOTE: using vector instead array because move semantic is implemented in the vector
-        std::vector<char> buf(1024);
-        auto trans_len = fc::from_hex(params.transaction, buf.data(), buf.size());
-        buf.resize(trans_len);
-  
-        keyfile_format::keyfile_t keyfile;
-  
-        unit_list.push_back(buf);
-        if (params.keyname.empty())
-          std::runtime_error("Error: keyname is not specified");
-        
-        auto curdir = bfs::current_path();
-        auto first = bfs::directory_iterator(bfs::path("./"));
-        auto it = std::find_if(first, bfs::directory_iterator(),find_keyfile_by_username(params.keyname.c_str(), &keyfile));
-        if (it == bfs::directory_iterator())
-          throw std::runtime_error("Error: keyfile could not found by keyname");
-        
-        if(keyfile.uid_hash != keychain->uid_hash)
-          std::runtime_error("Error: user is not keyfile owner");
-  
-        std::string key_data;
-        if(keyfile.keyinfo.encrypted)
-        {
-          auto encrypted_data = keyfile.keyinfo.priv_key_data.as<keyfile_format::encrypted_data>();
-          auto& encryptor = encryptor_singletone::instance();
-          //TODO: need to try to parse transaction.
-          // If we can parse transaction we need to use get_passwd_trx function
-          // else use get_passwd_trx_raw()
-          // At this moment parsing of transaction is not implemented
-		  byte_seq_t passwd = *(keychain->get_passwd_trx_raw(params.transaction));
-		  if (passwd.empty())
-			  throw std::runtime_error("Error: can't get password");
-          key_data = std::move(encryptor.decrypt_keydata(passwd, encrypted_data));
-        }
-        else
-        {
-          key_data = std::move(keyfile.keyinfo.priv_key_data.as<std::string>());
-        }
-        private_key = get_priv_key_from_str(key_data);
-		    auto signature = private_key.sign_compact(get_hash(unit_list));
-		
-		    json_response response(to_hex(signature.begin(), signature.size()).c_str(), id);
-		    fc::variant res(response);
-		    return fc::json::to_pretty_string(res);
-      }
-      catch (const std::exception &exc)
+  virtual std::string operator()(keychain_base* keychain, const fc::variant& params_variant, int id) const override
+  {
+    try {
+      auto params = params_variant.as<params_t>();
+      unit_list_t unit_list;
+      fc::ecc::private_key private_key;
+      if (!params.chainid.empty())
+        unit_list.push_back(fc::sha256(params.chainid));
+
+      //NOTE: using vector instead array because move semantic is implemented in the vector
+      std::vector<char> buf(1024);
+      auto trans_len = fc::from_hex(params.transaction, buf.data(), buf.size());
+      buf.resize(trans_len);
+
+      keyfile_format::keyfile_t keyfile;
+
+      unit_list.push_back(buf);
+      if (params.keyname.empty())
+        std::runtime_error("Error: keyname is not specified");
+      
+      auto curdir = bfs::current_path();
+      auto first = bfs::directory_iterator(bfs::path("./"));
+      auto it = std::find_if(first, bfs::directory_iterator(),find_keyfile_by_username(params.keyname.c_str(), &keyfile));
+      if (it == bfs::directory_iterator())
+        throw std::runtime_error("Error: keyfile could not found by keyname");
+      
+      if(keyfile.uid_hash != keychain->uid_hash)
+        std::runtime_error("Error: user is not keyfile owner");
+
+      std::string key_data;
+      if(keyfile.keyinfo.encrypted)
       {
-	    	std::cerr << fc::json::to_pretty_string(fc::variant(json_error(id, exc.what()))) << std::endl;
-        return fc::json::to_pretty_string(fc::variant(json_error(id, exc.what())));
+        auto encrypted_data = keyfile.keyinfo.priv_key_data.as<keyfile_format::encrypted_data>();
+        auto& encryptor = encryptor_singletone::instance();
+        //TODO: need to try to parse transaction.
+        // If we can parse transaction we need to use get_passwd_trx function
+        // else use get_passwd_trx_raw()
+        // At this moment parsing of transaction is not implemented
+        byte_seq_t passwd = *(keychain->get_passwd_trx_raw(params.transaction));
+        if (passwd.empty())
+          throw std::runtime_error("Error: can't get password");
+        key_data = std::move(encryptor.decrypt_keydata(passwd, encrypted_data));
       }
-      catch (const fc::exception& exc)
+      else
       {
-        std::cerr << fc::json::to_pretty_string(fc::variant(json_error(0, exc.to_detail_string().c_str()))) << std::endl;
-		    return fc::json::to_pretty_string(fc::variant(json_error(0, exc.what())));
+        key_data = std::move(keyfile.keyinfo.priv_key_data.as<std::string>());
       }
+      private_key = get_priv_key_from_str(key_data);
+      auto signature = private_key.sign_compact(get_hash(unit_list));
+  
+      json_response response(to_hex(signature.begin(), signature.size()).c_str(), id);
+      fc::variant res(response);
+      return fc::json::to_pretty_string(res);
     }
+    catch (const std::exception &exc)
+    {
+      std::cerr << fc::json::to_pretty_string(fc::variant(json_error(id, exc.what()))) << std::endl;
+      return fc::json::to_pretty_string(fc::variant(json_error(id, exc.what())));
+    }
+    catch (const fc::exception& exc)
+    {
+      std::cerr << fc::json::to_pretty_string(fc::variant(json_error(0, exc.to_detail_string().c_str()))) << std::endl;
+      return fc::json::to_pretty_string(fc::variant(json_error(0, exc.what())));
+    }
+  }
 };
 
 template <>
@@ -296,8 +296,8 @@ struct keychain_command<command_te::create>: keychain_command_base
         if (params.encrypted)
         {
           auto passwd = *keychain->get_passwd_on_create();
-		  if (passwd.empty())
-			  throw std::runtime_error("Error: can't get password");
+          if (passwd.empty())
+            throw std::runtime_error("Error: can't get password");
           auto& encryptor = encryptor_singletone::instance();
           auto enc_data = encryptor.encrypt_keydata(params.algo, passwd, wif_key);
           keyfile.keyinfo.priv_key_data = fc::variant(enc_data);
@@ -323,18 +323,18 @@ struct keychain_command<command_te::create>: keychain_command_base
           throw std::runtime_error("Error: keyfile for this user is already exist");
         create_keyfile(filename.c_str(), fc::variant(keyfile));
 
-		json_response response(true, id);
-		return fc::json::to_pretty_string(fc::variant(response));
+        json_response response(true, id);
+        return fc::json::to_pretty_string(fc::variant(response));
       }
       catch (const std::exception &exc)
       {
         std::cerr << fc::json::to_pretty_string(fc::variant(json_error(id, exc.what()))) << std::endl;
-		return fc::json::to_pretty_string(fc::variant(json_error(id, exc.what())));
+        return fc::json::to_pretty_string(fc::variant(json_error(id, exc.what())));
       }
       catch (const fc::exception& exc)
       {
         std::cerr << fc::json::to_pretty_string(fc::variant(json_error(0, exc.to_detail_string().c_str()))) << std::endl;
-		return fc::json::to_pretty_string(fc::variant(json_error(0, exc.what())));
+        return fc::json::to_pretty_string(fc::variant(json_error(0, exc.what())));
       }
     }
 };

@@ -18,7 +18,7 @@
 #include <X11/Xos.h>
 #include <X11/XKBlib.h>
 #include <fc/reflect/reflect.hpp>
-//#include <fc/varinant.hpp>
+#include <fc/variant.hpp>
 #include <graphene/chain/protocol/protocol.hpp>
 #include <fc/io/json.hpp>
 
@@ -27,7 +27,10 @@
 #define DEV_INPUT_EVENT             std::string("/dev/input/")
 #define PROC_BUS_INPUT_DEVICES      "/proc/bus/input/devices"
 
-namespace graphene{ namespace  chain { struct transaction;}}
+//namespace graphene{ namespace  chain { struct transaction;}}
+enum cmd_enum {
+    cmd_unknown = 0, cmd_rawtrx, cmd_close, cmd_modify, cmd_length, cmd_last
+};
 
 class pass_entry_term
 {
@@ -40,13 +43,14 @@ public:
 
     struct json_rawtrx
     {
-        json_rawtrx(std::string cmd_, std::string rawtrx_): cmd(cmd_), rawtrx(rawtrx_){};
-        std::string cmd, rawtrx;
+        json_rawtrx(int cmd_, std::string rawtrx_): cmd(cmd_), rawtrx(rawtrx_.c_str()){};
+        int cmd;
+        fc::variant rawtrx;
     };
     struct json_close
     {
-        json_close(std::string cmd_): cmd(cmd_){};
-        std::string cmd;
+        json_close(int cmd_): cmd(cmd_){};
+        int cmd;
     };
     struct json_modify
     {
@@ -56,9 +60,9 @@ public:
     };
     struct json_length
     {
-        json_length(std::string cmd_, int len_): cmd(cmd_), len(len_){}
-        std::string cmd;
-        int len;
+        json_length(int cmd_, int len_): cmd(cmd_), len(len_){}
+        int cmd;
+        fc::variant len;
     };
 private:
     std::wstring input_password(const KeySym *, int);

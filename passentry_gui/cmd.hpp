@@ -4,22 +4,16 @@
 #ifndef KEYCHAINAPP_CMD_H
 #define KEYCHAINAPP_CMD_H
 #include <fc/reflect/reflect.hpp>
-//#include <fc/variant.hpp>
 #include <graphene/chain/protocol/protocol.hpp>
-//#include <graphene/chain/protocol/transaction.hpp>
 #include <fc/io/json.hpp>
-
 #include <iostream>
 #include <vector>
-
 #include <boost/hana.hpp>
 #include <boost/hana/range.hpp>
 #include <boost/hana/for_each.hpp>
 #include <boost/hana/size.hpp>
 #include <boost/hana.hpp>
-
-//#include <type_traits>
-//#include <string>
+#include <QObject>
 
 namespace  gui {
     enum cmd_enum {
@@ -27,55 +21,54 @@ namespace  gui {
     };
 
     struct json_err {
-        json_err(int i, std::string e) : id(i), error(e) {};
-        int id;
+        json_err(std::string e): error(e) {};
         std::string error;
     };
 
     struct cmd_common {
-        cmd_common(cmd_enum cmd_ = cmd_unknown, int id_ = 0) : cmd(cmd_), id(id_) {};
+        cmd_common(cmd_enum cmd_ = cmd_unknown): cmd(cmd_){};
         cmd_enum cmd;
-        int id;
         fc::variant params;
     };
 
     struct cmd_base {
         cmd_base(cmd_enum cmd_) : cmd(cmd_) {};
         cmd_enum cmd;
-        virtual std::string operator()(const fc::variant&, int) const = 0;
+        virtual std::string operator()(const fc::variant&) const = 0;
         virtual ~cmd_base() {};
     };
-
 
     template<cmd_enum cmd_>
     struct cmd : cmd_base {
         cmd() : cmd_base(cmd_) {};
         virtual ~cmd() {};
-        virtual std::string operator()(const fc::variant& v, int id) const {
-            return fc::json::to_pretty_string(fc::variant(json_err(id, "operation is not implemented")));
+        virtual std::string operator()(const fc::variant& v) const {
+            return fc::json::to_pretty_string(fc::variant(json_err("operation is not implemented")));
         };
         using params_t = void;
     };
 
     template<>
     struct cmd<cmd_rawtrx> : cmd_base {
+        Q_OBJECT
         cmd() : cmd_base(cmd_rawtrx) {};
 
         virtual ~cmd() {};
         struct params {
-            std::string cmd;
-            std::string value;
+            std::string rawtrx;
         };
         using params_t = params;
+    signals: void run (const std::string);
 
-        virtual std::string operator()(const fc::variant& v, int id) const override {
+
+        virtual std::string operator()(const fc::variant& v) const override {
             try {
                 auto a = v.as<params_t>();
-                return fc::json::to_pretty_string(a.value);
+                emit run(a.rawtrx);
             }
             catch (std::exception &e) {
-                std::cerr << fc::json::to_pretty_string(fc::variant(json_err(id, e.what()))) << std::endl;
-                return fc::json::to_pretty_string(fc::variant(json_err(id, e.what())));
+                std::cerr << fc::json::to_pretty_string(fc::variant(json_err(e.what()))) << std::endl;
+                return fc::json::to_pretty_string(fc::variant(json_err(e.what())));
             }
         };
     };
@@ -94,6 +87,7 @@ namespace  gui {
         virtual std::string operator()(const fc::variant& v, int id) const override {
             try {
                 auto a = v.as<params_t>();
+                widget_proc(trx);
                 return fc::json::to_pretty_string(a.value);
             }
             catch (std::exception &e) {
@@ -102,6 +96,22 @@ namespace  gui {
             }
         };
     };
+
+    struct params
+    {
+        cmd_enum cmd;
+        QVariant params;
+    };
+
+
+    template <typename T>
+    cmd::base :: widget_proc(T params)
+            {
+                    params.cmd =m_cmd;
+                    params.params = trx;
+                    emit run(QVariant(params));
+           }
+
 
     template<>
     struct cmd<cmd_modify> : cmd_base {
@@ -167,6 +177,7 @@ FC_REFLECT(gui::cmd<gui::cmd_rawtrx>::params_t, (cmd)(value))
 FC_REFLECT(gui::cmd<gui::cmd_close>::params_t, (cmd)(value))
 FC_REFLECT(gui::cmd<gui::cmd_modify>::params_t, (cmd)(caps)(num)(shift))
 FC_REFLECT(gui::cmd<gui::cmd_length>::params_t, (cmd)(len))
+FC_REFLECT(gui::cmd_common, (cmd)(id)(params))
 FC_REFLECT(gui::json_err, (id)(error))
 
 #endif //KEYCHAINAPP_CMD_H

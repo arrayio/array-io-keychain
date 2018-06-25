@@ -13,7 +13,7 @@
 // TODO: this header is requried for reflection from graphene::chain::transaction
 
 
-#define path_  "/home/user/CLionProjects/array-io-keychain/passentry_gui"
+#define path_  "/home/user/CLionProjects/array-io-keychain/passentry_gui/cmake-build-debug/passentry_gui"
 
 pass_entry_term::pass_entry_term()
 {
@@ -183,12 +183,11 @@ std::wstring pass_entry_term::fork_gui(const KeySym * map, const std::string& ra
     int sockets[2];
     uid_t ruid, euid, suid;
     if (getresuid(&ruid, &euid, &suid) == -1)  throw std::runtime_error("getresuid()");
-/*
-    std::cout << fc::json::to_pretty_string(fc::variant(json_rawtrx("rawtrx", raw_trx)))  << std::endl;
-    std::cout << fc::json::to_pretty_string(fc::variant(json_close("close")))           << std::endl;
-    std::cout << fc::json::to_pretty_string(fc::variant(json_modify("modify", 1, 1, 1)))<< std::endl;
-    std::cout << fc::json::to_pretty_string(fc::variant(json_length("length", 5))) << std::endl;
-*/
+
+    std::cout << fc::json::to_pretty_string(fc::variant(json_rawtrx(cmd_rawtrx, raw_trx))) << std::endl;
+    std::cout << fc::json::to_pretty_string(fc::variant(json_close(cmd_close))) << std::endl;
+
+
     if (socketpair(AF_UNIX, SOCK_STREAM, 0, sockets) < 0)   throw std::runtime_error("opening stream socket pair");
     switch (fork())
     {
@@ -209,7 +208,7 @@ std::wstring pass_entry_term::fork_gui(const KeySym * map, const std::string& ra
         default: break;
     }
     close(sockets[0]);
-    //send_gui(fc::json::to_pretty_string(fc::variant(json_rawtrx("rawtrx", raw_trx))), sockets[1]);
+    send_gui( fc::json::to_pretty_string(fc::variant(json_rawtrx(cmd_rawtrx, raw_trx))), sockets[1]) ;
     std::wstring s = input_password(map, sockets[1]);
     close(sockets[1]);
 
@@ -323,7 +322,10 @@ std::wstring pass_entry_term::input_password(const KeySym * map, int socket)
                         if      (ev[1].code == KEY_LEFTSHIFT || ev[1].code == KEY_RIGHTSHIFT)  shift = 1;
                         else if (ev[1].code == KEY_CAPSLOCK) capslock ^= 0x1;
                         else if (ev[1].code == KEY_NUMLOCK)  numlock ^= 0x1;
-                        else if (OnKey (ev[1].code, shift, capslock, numlock, password, map)) {send_gui(-1, socket); break;}
+                        else if (OnKey (ev[1].code, shift, capslock, numlock, password, map))
+                        {   send_gui( fc::json::to_pretty_string(fc::variant(json_close(cmd_close))), socket );
+                            break;
+                        }
                     }
                     else if (ev[1].value == 0)
                     {
@@ -336,7 +338,7 @@ std::wstring pass_entry_term::input_password(const KeySym * map, int socket)
             if (pass_len != password.length())  // sending gui pass length
             {
                 pass_len = password.length();
-                send_gui(pass_len, socket);
+                send_gui( fc::json::to_pretty_string(fc::variant(json_length(cmd_length, pass_len))), socket );
             }
             if (polling_gui(password, socket))  break;  // polling gui socketpair
         }
@@ -355,6 +357,7 @@ std::wstring pass_entry_term::input_password(const KeySym * map, int socket)
 
 void pass_entry_term::send_gui (int mes, int socket_gui )
 {
+
     std::string len = std::to_string(mes);
     if ( write(socket_gui, len.c_str(), sizeof(len.c_str()) ) <0 )
         throw std::runtime_error("sending event to GUI");
@@ -365,8 +368,6 @@ void pass_entry_term::send_gui (std::string mes, int socket_gui )
     if ( write(socket_gui, mes.c_str(), mes.length() + 1  ) <0 )
         throw std::runtime_error("sending event to GUI");
 }
-
-
 
 const map_translate_singletone& map_translate_singletone::instance(Display * d)
 {

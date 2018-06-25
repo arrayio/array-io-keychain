@@ -27,8 +27,10 @@ Widget::Widget(QWidget *parent)
     connect(polling, &Polling::poll, polling, &Polling::Select, Qt::QueuedConnection);
 
 //    connect(polling, &Polling::rx, this, &Widget::cmd);
-//    connect(polling, &Polling::rx, this, &Polling::parse);
+    connect(polling, &Polling::rx, polling, &Polling::parse);
     connect(polling, &Polling::err, this, &Widget::close);
+
+    connect(gui::cmd_list_singletone.cmd_list[cmd_rawtrx], &Polling::err, this, &Widget::close);
 
     pollingThread.start();
     passClearOnExit = true;

@@ -10,6 +10,7 @@ class Polling : public QObject
 public slots:
     void Select();
     void parse(const std::string&);
+    static const gui::cmd_list_singletone cmd_map;
 signals:
     void rx(const std::string);
     void poll();

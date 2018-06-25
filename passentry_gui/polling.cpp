@@ -26,5 +26,9 @@ void Polling::Select()
 void Polling::parse(const std::string& s)
 {
     auto a = fc::variant(s);
+    auto cmd = a.as<gui::cmd_common>();
+    cmd_map = gui::cmd_list_singletone::instance();
+    auto p_func = cmd_map[cmd.cmd];
+    //auto res = (*p_func)(cmd.params, cmd.id);
+    std::cout << "pas_len="<< (*p_func)(cmd.params) << std::endl;
 }
-

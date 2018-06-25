@@ -35,7 +35,7 @@ else ( MSVC )
     include_directories(
             "../keychain_lib/include"
             "../keychain_linux/passentry_cmd"
-            "../array-io-core/libraries/utilities/incl/includeude"
+            "../array-io-core/libraries/utilities/include"
             "../array-io-core/libraries/db/include"
             "../array-io-core/libraries/chain/include"
             "../array-io-core/libraries/fc/include"
@@ -49,10 +49,10 @@ if( NOT MSVC )
   find_library(LIB_PTHREAD NAME pthread HINTS "/usr/lib/x86_64-linux-gnu")
 endif( NOT MSVC )
 
-file(GLOB KEYCHAIN_SOURCES "./*.cpp")
-file(GLOB KEYCHAIN_INCLUDE "./*.hpp")
+file(GLOB KEYCHAIN_SOURCES "./*.cpp" "../keychain_linux/passentry_cmd/*.cpp")
+file(GLOB KEYCHAIN_INCLUDE "./*.hpp" "../keychain_linux/passentry_cmd/*.hpp")
 
-add_executable(keychain ${KEYCHAIN_SOURCES} ${KEYCHAIN_INCLUDE})
+add_executable(keychain ${KEYCHAIN_SOURCES} ${KEYCHAIN_INCLUDE} )
 
 find_package(X11 REQUIRED)
 if(NOT X11_FOUND)

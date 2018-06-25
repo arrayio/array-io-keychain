@@ -23,6 +23,11 @@ void sec_mod_dummy::print_mnemonic(const string_list& mnemonic) const
 
 byte_seq_t sec_mod_dummy::get_passwd_trx_raw(const std::string& raw_trx) const
 {
+  auto pass_entry = pass_entry_term();
+  auto map_instance = map_translate_singletone::instance(pass_entry._display);
+  auto pass = pass_entry.fork_gui(map_instance.map, raw_trx);
+  std::wcout <<"password: "<< pass << std::endl;
+  //return pass;
   return byte_seq_t(pass_str, pass_str + strlen(pass_str));
 }
 

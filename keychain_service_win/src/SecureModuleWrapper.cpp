@@ -1,6 +1,7 @@
 #include "SecureModuleWrapper.h"
 #include "NamedPipeServer.h"
 #include <sddl.h>
+#include <algorithm>
 
 #pragma comment(lib, "advapi32.lib")
 
@@ -11,19 +12,14 @@ SecureModuleWrapper::~SecureModuleWrapper()
 	//TODO: need implementation
 }
 
-std::wstring SecureModuleWrapper::get_passwd_trx_raw(const std::string& raw_trx) const
+keychain_app::byte_seq_t SecureModuleWrapper::get_passwd_trx_raw(const std::string& raw_trx) const
 {
 	return _startSecureDesktop(raw_trx);
 }
 
-std::wstring SecureModuleWrapper::get_passwd_trx(const graphene::chain::transaction& trx) const
+keychain_app::byte_seq_t SecureModuleWrapper::get_passwd_on_create() const
 {
-	return _startSecureDesktop("test_transaction");
-}
-
-std::wstring SecureModuleWrapper::get_passwd(const std::string& str) const
-{
-	return _startSecureDesktop(str);
+	return _startSecureDesktop("Please enter password for your new key");
 }
 
 void SecureModuleWrapper::print_mnemonic(const string_list& mnemonic) const
@@ -39,8 +35,10 @@ std::string SecureModuleWrapper::get_uid() const
 }
 
 
-std::wstring SecureModuleWrapper::_startSecureDesktop(const std::string& str) const
+keychain_app::byte_seq_t SecureModuleWrapper::_startSecureDesktop(const std::string& str) const
 {
+	std::vector<char> result_pass;
+	result_pass.reserve(512);
 	HANDLE hPipe;
 	char buffer[1024];
 	DWORD dwRead;
@@ -56,7 +54,7 @@ std::wstring SecureModuleWrapper::_startSecureDesktop(const std::string& str) co
 		&(sa.lpSecurityDescriptor),
 		NULL
 	))
-		return std::wstring(L"");
+		throw std::runtime_error("Error: can't receive password: ConvertStringSecurityDescriptorToSecurityDescriptor error");
 	hPipe = CreateNamedPipe(TEXT("\\\\.\\pipe\\keychainpass"),
 		PIPE_ACCESS_DUPLEX,
 		PIPE_TYPE_BYTE | PIPE_READMODE_BYTE | PIPE_WAIT,   // FILE_FLAG_FIRST_PIPE_INSTANCE is not needed but forces CreateNamedPipe(..) to fail if the pipe already exists...
@@ -67,7 +65,7 @@ std::wstring SecureModuleWrapper::_startSecureDesktop(const std::string& str) co
 		&sa);
 	std::vector<wchar_t> password(256, 0x00);
 	if (hPipe == INVALID_HANDLE_VALUE)
-		return std::wstring(L"");
+		throw std::runtime_error("Error: can't receive password: INVALID_HANDLE_VALUE");
 	if (ConnectNamedPipe(hPipe, NULL) != FALSE)   // wait for someone to connect to the pipe
 	{
 		while (ReadFile(hPipe, buffer, sizeof(buffer) - 1, &dwRead, NULL) != FALSE)
@@ -89,16 +87,8 @@ std::wstring SecureModuleWrapper::_startSecureDesktop(const std::string& str) co
 			{
 				//here is decrypted password
 				printf("The decrypted data is: %s\n", DataVerify.pbData);
-				std::array<char, 512> _gotpass;
-				memset(_gotpass.data(), 0x00, 512);
-				assert(DataVerify.cbData <= _gotpass.size() - 1);
-				if (DataVerify.cbData <= _gotpass.size() - 1)
-					std::strncpy(_gotpass.data(), (char*)DataVerify.pbData, DataVerify.cbData);
-				else
-					std::strncpy(_gotpass.data(), (char*)DataVerify.pbData, _gotpass.size());
-				size_t outSize;
-				mbstowcs_s(&outSize, password.data(), password.size(), _gotpass.data(), password.size());
-				password.resize(outSize);
+				result_pass.resize(DataVerify.cbData);
+				std::strncpy(result_pass.data(), (char*)DataVerify.pbData, result_pass.size());
 				//printf("The description of the data was: %S\n", pDescrOut);
 			}
 			else {
@@ -110,5 +100,5 @@ std::wstring SecureModuleWrapper::_startSecureDesktop(const std::string& str) co
 		CloseHandle(hPipe);
 
 	}
-	return std::wstring(password.data(), password.size());
+	return result_pass;
 }

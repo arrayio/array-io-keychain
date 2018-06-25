@@ -34,10 +34,7 @@ encryptor_singletone& encryptor_singletone::instance()
   return encryptor_instance;
 }
 
-keyfile_format::encrypted_data encryptor_singletone::encrypt_keydata(
-  keyfile_format::cipher_etype etype,
-  const std::wstring& key,
-  const std::string& keydata)
+keyfile_format::encrypted_data encryptor_singletone::encrypt_keydata(keyfile_format::cipher_etype etype, const byte_seq_t& key, const std::string& data)
 {
   keyfile_format::encrypted_data enc_data;
   int enc_length = 0;
@@ -52,7 +49,7 @@ keyfile_format::encrypted_data encryptor_singletone::encrypt_keydata(
   //I cannot figure out the exact reason what exactly is wrong with the key (it is need to debug asm function
   // to find out reason)
   //The solution (from lib/fc) is to create hash from password string and encrypt data on hash key
-  const char* key_data = reinterpret_cast<const char*>(key.data());
+  const char* key_data = key.data();
   auto key_hash = fc::sha512::hash(key_data, key.size()* sizeof(std::wstring::value_type));
   
   if(1 != EVP_EncryptInit_ex(m_ctx, get_cipher(etype), NULL, reinterpret_cast<const uint8_t*>(&key_hash),
@@ -61,7 +58,7 @@ keyfile_format::encrypted_data encryptor_singletone::encrypt_keydata(
     ERR_print_errors_fp(stderr);
     throw std::runtime_error("Error: EVP_EncryptInit_ex");
   }
-  if(1 != EVP_EncryptUpdate(m_ctx, enc_byte_data.data(), &length, reinterpret_cast<const uint8_t*>(keydata.c_str()), keydata.size()))
+  if(1 != EVP_EncryptUpdate(m_ctx, enc_byte_data.data(), &length, reinterpret_cast<const uint8_t*>(data.c_str()), data.size()))
   {
     ERR_print_errors_fp(stderr);
     throw std::runtime_error("Error: EVP_EncryptUpdate");
@@ -75,14 +72,13 @@ keyfile_format::encrypted_data encryptor_singletone::encrypt_keydata(
   enc_length += length;
   enc_byte_data.resize(enc_length);
   
-  auto data = to_hex(enc_byte_data.data(), enc_byte_data.size());
-  enc_data.enc_data.assign(std::move(data));
+  enc_data.enc_data.assign(std::move(to_hex(enc_byte_data.data(), enc_byte_data.size())));
   enc_data.cipher_type = etype;
   EVP_CIPHER_CTX_reset(m_ctx);
   return enc_data;
 }
 
-std::string encryptor_singletone::decrypt_keydata(const std::wstring& key, keyfile_format::encrypted_data& data)
+std::string encryptor_singletone::decrypt_keydata(const byte_seq_t& key, keyfile_format::encrypted_data& data)
 {
   int decr_length = 0;
   int length = 0;
@@ -99,7 +95,7 @@ std::string encryptor_singletone::decrypt_keydata(const std::wstring& key, keyfi
   //I cannot figure out the exact reason what exactly is wrong with the key (it is need to debug asm function
   // to find out reason)
   //The solution (from lib/fc) is to create hash from password string and encrypt data on hash key
-  const char* key_data = reinterpret_cast<const char*>(key.data());
+  const char* key_data =key.data();
   auto key_hash = fc::sha512::hash(key_data, key.size()* sizeof(std::wstring::value_type));
   
   if(1 != EVP_DecryptInit_ex(m_ctx, get_cipher(data.cipher_type), NULL, reinterpret_cast<const uint8_t*>(&key_hash),

@@ -32,7 +32,7 @@
 
 namespace keychain_app {
 
-using passwd_f = std::function<std::string()>;
+using byte_seq_t = std::vector<char>;
 
 struct keychain_error: std::runtime_error
 {
@@ -47,9 +47,8 @@ public:
     keychain_base(std::string&& uid_hash_);
     virtual ~keychain_base();
     virtual std::string operator()(const fc::variant& command) = 0;
-    boost::signals2::signal<std::wstring(const std::string&)> get_passwd_trx_raw;
-    boost::signals2::signal<std::wstring(const graphene::chain::transaction&)> get_passwd_trx;
-    boost::signals2::signal<std::wstring(const std::string&)> get_passwd;
+    boost::signals2::signal<byte_seq_t(const std::string&)> get_passwd_trx_raw;
+    boost::signals2::signal<byte_seq_t(void)> get_passwd_on_create;
     boost::signals2::signal<void(const string_list&)> print_mnemonic;
     std::string uid_hash;
 };
@@ -171,7 +170,7 @@ struct keychain_command: keychain_command_base
 {
     keychain_command():keychain_command_base(cmd){}
     virtual ~keychain_command(){}
-    virtual std::string operator()(keychain_base* keychain, const fc::variant& params_variant, int id) const
+    virtual std::string operator()(keychain_base* keychain, const fc::variant& params_variant, int id) const override
     {
       return fc::json::to_pretty_string(fc::variant(json_error(id, "method is not implemented")));
     }
@@ -230,10 +229,10 @@ struct keychain_command<command_te::sign> : keychain_command_base
           // If we can parse transaction we need to use get_passwd_trx function
           // else use get_passwd_trx_raw()
           // At this moment parsing of transaction is not implemented
-          std::wstring passwd = *(keychain->get_passwd_trx_raw(params.transaction));
+		  byte_seq_t passwd = *(keychain->get_passwd_trx_raw(params.transaction));
 		  if (passwd.empty())
 			  throw std::runtime_error("Error: can't get password");
-          key_data = std::move(encryptor.decrypt_keydata(passwd.c_str(), encrypted_data));
+          key_data = std::move(encryptor.decrypt_keydata(passwd, encrypted_data));
         }
         else
         {
@@ -296,7 +295,7 @@ struct keychain_command<command_te::create>: keychain_command_base
         }
         if (params.encrypted)
         {
-          auto passwd = *keychain->get_passwd(std::string("Please, enter password for your new key"));
+          auto passwd = *keychain->get_passwd_on_create();
 		  if (passwd.empty())
 			  throw std::runtime_error("Error: can't get password");
           auto& encryptor = encryptor_singletone::instance();

@@ -13,6 +13,9 @@
 
 namespace keychain_app
 {
+
+using byte_seq_t = std::vector<char>;
+
 class encryptor_singletone
 {
   encryptor_singletone();
@@ -20,12 +23,8 @@ class encryptor_singletone
 public:
   static encryptor_singletone& instance();
   
-  keyfile_format::encrypted_data encrypt_keydata(
-    keyfile_format::cipher_etype etype,
-    const std::wstring& key,
-    const std::string& keydata);
-  
-  std::string decrypt_keydata(const std::wstring& key, keyfile_format::encrypted_data& enc_data);
+  keyfile_format::encrypted_data encrypt_keydata(keyfile_format::cipher_etype etype, const byte_seq_t& key,  const std::string& data);
+  std::string decrypt_keydata(const byte_seq_t& key, keyfile_format::encrypted_data& enc_data);
 
 private:
   EVP_CIPHER_CTX* m_ctx;

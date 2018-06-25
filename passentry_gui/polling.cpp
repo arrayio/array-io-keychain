@@ -32,3 +32,4 @@ void Polling::parse(const std::string& s)
     //auto res = (*p_func)(cmd.params, cmd.id);
     std::cout << "pas_len="<< (*p_func)(cmd.params) << std::endl;
 }
+

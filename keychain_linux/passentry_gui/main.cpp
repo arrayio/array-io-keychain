@@ -3,7 +3,8 @@
 #include <QDesktopWidget>
 #include <stdlib.h>
 #include <iostream>
-#define MAX_EVENTS  10
+
+Q_DECLARE_METATYPE(std::string)
 
 int main(int argc, char *argv[])
 {

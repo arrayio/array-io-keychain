@@ -17,12 +17,11 @@ public:
     QLineEdit *ple;
     QTextEdit * pte;
 private:
-    void Interior();
+    void interior();
     void closeEvent(QCloseEvent *);
-    void parse(const std::string&);
+    void parse(const std::string);
     bool passClearOnExit;
 public slots:
-    void cmd(const QString &result);
     void found_pass();
     void send(std::string);
 signals:

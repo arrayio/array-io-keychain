@@ -13,7 +13,7 @@
 // TODO: this header is requried for reflection from graphene::chain::transaction
 
 
-#define path_  "/home/user/CLionProjects/array-io-keychain/passentry_gui/cmake-build-debug/passentry_gui"
+#define path_  "/home/user/CLionProjects/array-io-keychain/cmake-debug-build/keychain_linux/passentry_gui/passentry_gui"
 
 pass_entry_term::pass_entry_term()
 {

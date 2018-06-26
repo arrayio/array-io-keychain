@@ -2,7 +2,7 @@ project( KeychainLib  )
 
 cmake_minimum_required( VERSION 3.0.2 )
 
-set(CMAKE_CXX_FLAGS "-std=c++14 --verbose ")
+set(CMAKE_CXX_FLAGS "-std=c++14 --verbose")
 
 SET(BOOST_COMPONENTS)
 LIST(APPEND BOOST_COMPONENTS thread date_time system filesystem program_options signals serialization chrono unit_test_framework context locale iostreams)

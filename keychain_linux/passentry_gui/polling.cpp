@@ -1,6 +1,7 @@
 #include <sys/socket.h>
 #include <unistd.h>
 #include "polling.hpp"
+Q_DECLARE_METATYPE(std::string)
 
 void Polling::Select()
 {
@@ -17,7 +18,6 @@ void Polling::Select()
     {
         char buf[1024];
         read(STDIN_FILENO, buf, 1024);
-        //QString result =buf;
         emit rx(std::string(buf));
     }
     emit Polling::poll();

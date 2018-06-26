@@ -2,10 +2,10 @@
 // Created by user on 23.06.18.
 //
 #include "cmd.hpp"
-
+Q_DECLARE_METATYPE(std::string)
 namespace gui
 {
-    template<cmd_enum cmd_>
+    template<cmds cmd_>
     struct cmd : cmd_base {
         cmd() : cmd_base(cmd_) {};
         virtual ~cmd() {};
@@ -16,10 +16,10 @@ namespace gui
     };
 
     template<>
-    struct cmd<cmd_rawtrx> : cmd_base {
-        cmd() : cmd_base(cmd_rawtrx) {};
+    struct cmd<cmds::rawtrx> : cmd_base {
+        cmd() : cmd_base(cmds::rawtrx) {};
         virtual ~cmd() {};
-        struct params { std::string rawtrx; };
+        struct params {std::string rawtrx;};
         using params_t = params;
         virtual void operator()(Widget * w, const fc::variant& v) const override {
             try {
@@ -32,8 +32,8 @@ namespace gui
     };
 
     template<>
-    struct cmd<cmd_close> : cmd_base {
-        cmd() : cmd_base(cmd_close) {};
+    struct cmd<cmds::close> : cmd_base {
+        cmd() : cmd_base(cmds::close) {};
         virtual ~cmd() {};
         using params_t = void;
         virtual void operator()(Widget* w, const fc::variant& v) const override {
@@ -44,8 +44,8 @@ namespace gui
     };
 
     template<>
-    struct cmd<cmd_modify> : cmd_base {
-        cmd() : cmd_base(cmd_modify) {};
+    struct cmd<cmds::modify> : cmd_base {
+        cmd() : cmd_base(cmds::modify) {};
         virtual ~cmd() {};
         struct params { bool caps, num, shift; };
         using params_t = params;
@@ -59,10 +59,10 @@ namespace gui
     };
 
     template<>
-    struct cmd<cmd_length> : cmd_base {
-        cmd() : cmd_base(cmd_length) {};
+    struct cmd<cmds::length> : cmd_base {
+        cmd() : cmd_base(cmds::length) {};
         virtual ~cmd() {};
-        struct params { int len; };
+        struct params {int len;};
         using params_t = params;
         virtual void operator()(Widget* w, const fc::variant& v) const override {
             try {
@@ -75,9 +75,9 @@ namespace gui
     };
 }
 
-FC_REFLECT(gui::cmd<gui::cmd_rawtrx>::params_t, (rawtrx))
-FC_REFLECT(gui::cmd<gui::cmd_modify>::params_t, (caps)(num)(shift))
-FC_REFLECT(gui::cmd<gui::cmd_length>::params_t, (len))
+FC_REFLECT(gui::cmd<gui::cmds::rawtrx>::params_t, (rawtrx))
+FC_REFLECT(gui::cmd<gui::cmds::modify>::params_t, (caps)(num)(shift))
+FC_REFLECT(gui::cmd<gui::cmds::length>::params_t, (len))
 
 using namespace gui;
 namespace hana = boost::hana;
@@ -89,17 +89,17 @@ const cmd_list_singletone& cmd_list_singletone::instance() {
 
 cmd_list_singletone::cmd_list_singletone()
 {
-//    cmd_list.reserve(32);
-    hana::for_each(  hana::make_range(hana::int_c<cmd_unknown>, hana::int_c<cmd_last>),
+    hana::for_each(  hana::make_range(hana::int_c<static_cast<int>(cmds::unknown)>,
+                                      hana::int_c<static_cast<int>(cmds::last)>),
                      [&](auto a)
                      {
                          using a_type = decltype(a);
-                         constexpr auto v = static_cast<cmd_enum>(a_type::value);
+                         constexpr auto v = static_cast<cmds>(a_type::value);
                          cmd_list.push_back( std::shared_ptr<cmd_base>(new cmd<v>()) );
                      });
 };
 
-const std::shared_ptr<cmd_base> cmd_list_singletone::operator[](cmd_enum cmd_) const {
+const std::shared_ptr<cmd_base> cmd_list_singletone::operator[](cmds cmd_) const {
     size_t a = static_cast<size_t>(cmd_);
     if (a >= cmd_list.size())
         return cmd_list[0];

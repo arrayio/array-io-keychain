@@ -8,11 +8,17 @@
 #include "cmd.hpp"
 #include "widget.hpp"
 
+#include <fc/reflect/reflect.hpp>
+#include <fc/variant.hpp>
+
+Q_DECLARE_METATYPE(std::string)
+
+int id = qRegisterMetaType<std::string>();
 Widget::Widget(QWidget *parent)
     :QWidget(parent)
 {
     setWindowTitle(tr("Promt for password"));
-    Interior();
+    interior();
 
     Polling *polling = new Polling;
     polling->moveToThread(&pollingThread);
@@ -20,8 +26,6 @@ Widget::Widget(QWidget *parent)
 
     connect(this,    &Widget::poll,  polling, &Polling::Select, Qt::QueuedConnection);
     connect(polling, &Polling::poll, polling, &Polling::Select, Qt::QueuedConnection);
-
-//    connect(polling, &Polling::rx, this, &Widget::cmd);
     connect(polling, &Polling::rx, this, &Widget::parse);
     connect(polling, &Polling::err, this, &Widget::close);
 
@@ -36,7 +40,7 @@ Widget::~Widget()
     pollingThread.wait();
 }
 
-void Widget::Interior()
+void Widget::interior()
 {
     QGridLayout * grid = new QGridLayout(this);
     {
@@ -81,17 +85,6 @@ void Widget::found_pass()
   passClearOnExit = false;
 }
 
-void Widget::cmd(const QString& result)
-{
-   int i =  result.toInt();
-   if (i == -1)   close();
-   if (i>=0)
-   {
-       QString s (i, '*');
-       ple->setText(s);
-   }
-}
-
 void Widget::closeEvent(QCloseEvent *event)
 {
 //    if (passClearOnExit)
@@ -102,12 +95,15 @@ void Widget::closeEvent(QCloseEvent *event)
 }
 
 
-void Widget::parse(const std::string& s)
+void Widget::parse(const std::string s)
 {
-    auto a = fc::variant(s);
-    auto cmd = a.as<gui::cmd_common>();
-    auto cmd_map = gui::cmd_list_singletone::instance();
-    auto p_func = cmd_map[cmd.cmd];
-    (*p_func)(this, cmd.params);
-//    std::cout << "pas_len="<< (*p_func)(cmd.params) << std::endl;
+    auto a = fc::json::from_string(s);
+    try {
+        auto cmd = a.as<gui::cmd_common>();
+        auto cmd_map = gui::cmd_list_singletone::instance();
+        auto p_func = cmd_map[cmd.cmd];
+        (*p_func)(this, cmd.params);
+    }
+    catch (const std::exception &e) {throw std::runtime_error(e.what());}
+    catch (const fc::exception &e) {throw std::runtime_error(e.what());}
 }

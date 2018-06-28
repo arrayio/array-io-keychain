@@ -4,6 +4,7 @@
 #include <QWidget>
 #include <QLineEdit>
 #include <QTextEdit>
+#include <QLabel>
 #include <QThread>
 #include "polling.hpp"
 
@@ -15,7 +16,8 @@ public:
     Widget(QWidget *parent = 0);
     ~Widget();
     QLineEdit *ple;
-    QTextEdit * pte;
+    QTextEdit *pte;
+    QLabel *caps, *num, *shift;
 private:
     void interior();
     void closeEvent(QCloseEvent *);

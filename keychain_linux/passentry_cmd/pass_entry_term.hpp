@@ -19,18 +19,14 @@
 #include <X11/XKBlib.h>
 #include <fc/reflect/reflect.hpp>
 #include <fc/variant.hpp>
-#include <graphene/chain/protocol/protocol.hpp>
 #include <fc/io/json.hpp>
+// TODO: this header is requried for reflection from graphene::chain::transaction
+#include <graphene/chain/protocol/protocol.hpp>
 
 #define MAX_KEYCODE_XORG            255  // максимально возможное кол-во кодов не м.б. более 255
 #define MAP_SIZE                    MAX_KEYCODE_XORG*2
 #define DEV_INPUT_EVENT             std::string("/dev/input/")
 #define PROC_BUS_INPUT_DEVICES      "/proc/bus/input/devices"
-
-//namespace graphene{ namespace  chain { struct transaction;}}
-enum cmd_enum {
-    cmd_unknown = 0, cmd_rawtrx, cmd_close, cmd_modify, cmd_length, cmd_last
-};
 
 class pass_entry_term
 {
@@ -40,30 +36,6 @@ public:
 //    std::wstring fork_gui(const KeySym * map, const graphene::chain::transaction& );
     std::wstring fork_gui(const KeySym * map, const std::string& raw_trx );
     Display* _display = NULL;
-
-    struct json_rawtrx
-    {
-        json_rawtrx(int cmd_, std::string rawtrx_): cmd(cmd_), rawtrx(rawtrx_.c_str()){};
-        int cmd;
-        fc::variant rawtrx;
-    };
-    struct json_close
-    {
-        json_close(int cmd_): cmd(cmd_){};
-        int cmd;
-    };
-    struct json_modify
-    {
-        json_modify(std::string cmd_, int caps_, int num_, int shift_): cmd(cmd_), caps(caps_), num(num_), shift(shift_){};
-        std::string cmd;
-        int caps, num, shift;
-    };
-    struct json_length
-    {
-        json_length(int cmd_, int len_): cmd(cmd_), len(len_){}
-        int cmd;
-        fc::variant len;
-    };
 private:
     std::wstring input_password(const KeySym *, int);
     void ChangeKbProperty(XDeviceInfo *, Atom, Atom, int, unsigned char);
@@ -90,10 +62,5 @@ public:
 private:
     KeySym  keysym[MAP_SIZE]; // max count of keycodes  for lowercase and uppercase
 };
-
-FC_REFLECT(pass_entry_term::json_rawtrx, (cmd)(rawtrx))
-FC_REFLECT(pass_entry_term::json_close,  (cmd))
-FC_REFLECT(pass_entry_term::json_modify, (cmd)(caps)(num)(shift))
-FC_REFLECT(pass_entry_term::json_length, (cmd)(len))
 
 #endif //KEYCHAINCMDAPP_PASS_ENTRY_TERM_HPP

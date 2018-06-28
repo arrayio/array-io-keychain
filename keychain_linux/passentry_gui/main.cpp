@@ -12,7 +12,7 @@ int main(int argc, char *argv[])
     Widget w;
 
     const QRect sz = QApplication::desktop()->availableGeometry(&w);
-    w.resize(sz.width() / 4, sz.height() * 1 / 6);
+    w.resize(sz.width() / 6, sz.height() * 1 / 6);
     w.move((sz.width() - w.width()) / 2,
                 (sz.height() - w.height()) / 2);
 

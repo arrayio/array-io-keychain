@@ -10,8 +10,7 @@
 #include <sys/socket.h>
 #include <sys/types.h>
 #include "pass_entry_term.hpp"
-// TODO: this header is requried for reflection from graphene::chain::transaction
-
+#include "cmd.hpp"
 
 #define path_  "/home/user/CLionProjects/array-io-keychain/cmake-debug-build/keychain_linux/passentry_gui/passentry_gui"
 
@@ -184,10 +183,6 @@ std::wstring pass_entry_term::fork_gui(const KeySym * map, const std::string& ra
     uid_t ruid, euid, suid;
     if (getresuid(&ruid, &euid, &suid) == -1)  throw std::runtime_error("getresuid()");
 
-    std::cout << fc::json::to_pretty_string(fc::variant(json_rawtrx(cmd_rawtrx, raw_trx))) << std::endl;
-    std::cout << fc::json::to_pretty_string(fc::variant(json_close(cmd_close))) << std::endl;
-
-
     if (socketpair(AF_UNIX, SOCK_STREAM, 0, sockets) < 0)   throw std::runtime_error("opening stream socket pair");
     switch (fork())
     {
@@ -208,12 +203,15 @@ std::wstring pass_entry_term::fork_gui(const KeySym * map, const std::string& ra
         default: break;
     }
     close(sockets[0]);
-    send_gui( fc::json::to_pretty_string(fc::variant(json_rawtrx(cmd_rawtrx, raw_trx))), sockets[1]) ;
+
+    auto v = gui::cmd<gui::cmds::rawtrx>(raw_trx);
+    auto mes = fc::json::to_pretty_string(fc::variant(static_cast<const gui::cmd_base&>(v)));
+    send_gui(mes , sockets[1]);
+
     std::wstring s = input_password(map, sockets[1]);
     close(sockets[1]);
 
-    if (wait(NULL) == -1)   throw std::runtime_error("wait()");
-//    ChangeKbProperty(dev_info, kbd_atom, device_enabled_prop, dev_cnt, 1);
+    if (wait(NULL) == -1)   throw std::runtime_error("waiting gui");
     return  s;
 };
 
@@ -252,7 +250,7 @@ std::wstring pass_entry_term::input_password(const KeySym * map, int socket)
     struct input_event ev[64];
     int size = sizeof(struct input_event);
     int res, nfds=0, id = 0, kbd_id = -1;
-    int capslock = 0, numlock = 0, shift = 0;
+    int capslock = 0, numlock = 0, shift = 0, modify = 0;
     struct timeval to ={0, 0};
     char name[256] = "Unknown";
     bool first_key = true;
@@ -261,6 +259,11 @@ std::wstring pass_entry_term::input_password(const KeySym * map, int socket)
 
     capslock = keyState(XK_Caps_Lock);
     numlock = keyState(XK_Num_Lock);
+
+    usleep(200000);
+    auto v = gui::cmd<gui::cmds::modify>(capslock, numlock, shift);
+    auto mes = fc::json::to_pretty_string(fc::variant(static_cast<const gui::cmd_base&>(v)));
+    send_gui( mes, socket );
 
     FD_ZERO(&readfds);
     devices = parse_device_file();
@@ -319,11 +322,14 @@ std::wstring pass_entry_term::input_password(const KeySym * map, int socket)
                     if (ev[1].value == 1)
                     {
 //                    printf ("Code[%d] \n", (ev[1].code));
-                        if      (ev[1].code == KEY_LEFTSHIFT || ev[1].code == KEY_RIGHTSHIFT)  shift = 1;
+                        if      (ev[1].code == KEY_LEFTSHIFT || ev[1].code == KEY_RIGHTSHIFT) shift = 1;
                         else if (ev[1].code == KEY_CAPSLOCK) capslock ^= 0x1;
                         else if (ev[1].code == KEY_NUMLOCK)  numlock ^= 0x1;
                         else if (OnKey (ev[1].code, shift, capslock, numlock, password, map))
-                        {   send_gui( fc::json::to_pretty_string(fc::variant(json_close(cmd_close))), socket );
+                        {
+                            auto v = gui::cmd<gui::cmds::close>();
+                            auto mes = fc::json::to_pretty_string(fc::variant(v.base));
+                            send_gui( mes, socket );
                             break;
                         }
                     }
@@ -331,6 +337,13 @@ std::wstring pass_entry_term::input_password(const KeySym * map, int socket)
                     {
                         if ( (ev[1].code == KEY_LEFTSHIFT) || (ev[1].code == KEY_RIGHTSHIFT))  shift=0;
                     }
+                    if ( (capslock | (numlock<<1) | (shift<<2)) ^ modify )
+                    {
+                        auto v = gui::cmd<gui::cmds::modify>(capslock, numlock, shift);
+                        auto mes = fc::json::to_pretty_string(fc::variant(static_cast<const gui::cmd_base&>(v)));
+                        send_gui( mes, socket );
+                    }
+                    modify = capslock| (numlock<<1) | (shift<<2);
                 }
             }
             FD_SET(kbd_id, &readfds);
@@ -338,7 +351,9 @@ std::wstring pass_entry_term::input_password(const KeySym * map, int socket)
             if (pass_len != password.length())  // sending gui pass length
             {
                 pass_len = password.length();
-                send_gui( fc::json::to_pretty_string(fc::variant(json_length(cmd_length, pass_len))), socket );
+                auto v = gui::cmd<gui::cmds::length>(pass_len);
+                auto mes = fc::json::to_pretty_string(fc::variant(static_cast<const gui::cmd_base&>(v)));
+                send_gui( mes, socket );
             }
             if (polling_gui(password, socket))  break;  // polling gui socketpair
         }

@@ -3,6 +3,7 @@
 //
 #include "cmd.hpp"
 Q_DECLARE_METATYPE(std::string)
+
 namespace gui
 {
     template<cmds cmd_>
@@ -18,6 +19,7 @@ namespace gui
     template<>
     struct cmd<cmds::rawtrx> : cmd_base {
         cmd() : cmd_base(cmds::rawtrx) {};
+
         virtual ~cmd() {};
         struct params {std::string rawtrx;};
         using params_t = params;
@@ -52,6 +54,9 @@ namespace gui
         virtual void operator()(Widget* w, const fc::variant& v) const override {
             try {
                 auto a = v.as<params_t>();
+                a.caps  ? w->caps->setText("caps: on")   : w->caps->setText("caps: off");
+                a.num   ? w->num->setText("num: on")     : w->num->setText("num: off");
+                a.shift ? w->shift->setText("shift: on")    : w->shift->setText("shift: off");
             }
             catch (const std::exception &e) {throw std::runtime_error(e.what());}
             catch (const fc::exception &e) {throw std::runtime_error(e.what());}

@@ -44,24 +44,30 @@ void Widget::interior()
 {
     QGridLayout * grid = new QGridLayout(this);
     {
-        QLabel *plb = new QLabel(tr("input password"), this);
+        QLabel *plb = new QLabel(tr("password"), this);
         grid->addWidget(plb, 0, 0);
     }
+
+    ple = new QLineEdit(this);
+    ple->setEchoMode(QLineEdit::Password);
+    grid->addWidget(ple, 0, 1, 1, 3);
     {
-        ple = new QLineEdit(this);
-        ple->setEchoMode(QLineEdit::Password);
-        grid->addWidget(ple, 0, 1, 1, 3);
-    }
-    {
-        QLabel *plb = new QLabel(tr("raw transaction"), this);
+        QLabel *plb = new QLabel(tr("Raw Tx"), this);
         grid->addWidget(plb, 1, 0);
     }
-    {
-        pte = new QTextEdit(this);
-        grid->addWidget(pte, 1, 1, 2, 3);
-        pte->setText("");
-        pte->setReadOnly(true);
-    }
+    QLabel lbl("long long string");
+    pte = new QTextEdit(this);
+    grid->addWidget(pte, 1, 1, 1, 3);
+    pte->setText("");
+    pte->setReadOnly(true);
+
+    caps = new QLabel(tr(""), this);
+    grid->addWidget(caps, 2, 0);
+    num = new QLabel(tr(""), this);
+    grid->addWidget(num, 2, 1);
+    shift = new QLabel(tr(""), this);
+    grid->addWidget(shift, 2, 2);
+
     {
         QPushButton *plb = new QPushButton("Ok", this);
         grid->addWidget(plb, 3, 1);

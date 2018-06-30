@@ -9,6 +9,9 @@ void Polling::Select()
     struct timeval to ={0, 1000};
     int res;
 
+    auto begin  = [this](buf_it &i) { if (i>=buf.end()) i=buf.begin(); return &(*i); };
+    auto remain = [this](buf_it &i) { if (i>=buf.end()) i=buf.begin(); return std::distance(i, buf.end());};
+
     FD_ZERO(&readfds);
     FD_SET(STDIN_FILENO, &readfds);
     res = select(STDIN_FILENO+1, &readfds, NULL, NULL, &to);
@@ -16,34 +19,26 @@ void Polling::Select()
 
     if (FD_ISSET(STDIN_FILENO, &readfds))
     {
-        size_t cnt = read(STDIN_FILENO, pbuf, remain);
+        size_t cnt = read(STDIN_FILENO, begin(it), remain(it));
         if (cnt ==-1 ) throw std::runtime_error("gui reading error");
 
-        pbuf += cnt;
-        end += cnt;
-        remain -= cnt;
-        bool found_json = true;
-        while (found_json )
+        it += cnt;
+        while (true)
         {
-            auto range = cut_json_obj(buf.begin(), end );
+            auto range = cut_json_obj(buf.begin(), it );
             if(std::distance(range.first, range.second) > 0)
             {
                 emit rx(std::string(range.first, range.second));
-                auto cur = std::copy(range.second, end, buf.begin());
-                std::for_each(cur, end, [](buf_type::value_type &val) {val = 0x00;});
-                end = cur;
-                pbuf = buf.data() + std::distance(buf.begin(), end);
-                remain = std::distance(end, buf.end());
+                it = std::copy(range.second, it, buf.begin());
             }
-            else
-                found_json = false;
+            else break;
         }
     }
     emit Polling::poll();
 }
 
 
-iter_range Polling::cut_json_obj(buf_iterator parse_begin, buf_iterator parse_end)
+it_range Polling::cut_json_obj(buf_it parse_begin, buf_it parse_end)
 {
     size_t brace_count = 0;
     auto start_obj = parse_end;
@@ -79,23 +74,14 @@ iter_range Polling::cut_json_obj(buf_iterator parse_begin, buf_iterator parse_en
     }
     if(found)
     {
-        return iter_range(start_obj, it);
+        return it_range(start_obj, it);
     }
     else
     {
-        return iter_range(parse_end, parse_end);
+        return it_range(parse_end, parse_end);
     }
 }
 
 
-
-while (true)
-{
-auto buf_range = cut_json_obj(read_buf.begin(), it_read_end);
-if(
-std::distance(buf_range.first, buf_range.second) > 0)
-{
-}
-}
 
 

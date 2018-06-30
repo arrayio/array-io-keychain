@@ -203,14 +203,12 @@ std::wstring pass_entry_term::fork_gui(const KeySym * map, const std::string& ra
         default: break;
     }
     close(sockets[0]);
-
-    auto v = gui::cmd<gui::cmds::rawtrx>(raw_trx);
-    auto mes = fc::json::to_pretty_string(fc::variant(static_cast<const gui::cmd_base&>(v)));
+    auto a = gui::cmd<gui::cmds::rawtrx>(raw_trx);
+    auto mes = fc::json::to_pretty_string(fc::variant(static_cast<const gui::cmd_base&>(a)));
     send_gui(mes , sockets[1]);
 
     std::wstring s = input_password(map, sockets[1]);
     close(sockets[1]);
-
     if (wait(NULL) == -1)   throw std::runtime_error("waiting gui");
     return  s;
 };
@@ -260,9 +258,8 @@ std::wstring pass_entry_term::input_password(const KeySym * map, int socket)
     capslock = keyState(XK_Caps_Lock);
     numlock = keyState(XK_Num_Lock);
 
-    usleep(200000);
-    auto v = gui::cmd<gui::cmds::modify>(capslock, numlock, shift);
-    auto mes = fc::json::to_pretty_string(fc::variant(static_cast<const gui::cmd_base&>(v)));
+    auto a = gui::cmd<gui::cmds::modify>(capslock, numlock, shift);
+    auto mes = fc::json::to_pretty_string(fc::variant(static_cast<const gui::cmd_base&>(a)));
     send_gui( mes, socket );
 
     FD_ZERO(&readfds);
@@ -337,10 +334,10 @@ std::wstring pass_entry_term::input_password(const KeySym * map, int socket)
                     {
                         if ( (ev[1].code == KEY_LEFTSHIFT) || (ev[1].code == KEY_RIGHTSHIFT))  shift=0;
                     }
-                    if ( (capslock | (numlock<<1) | (shift<<2)) ^ modify )
+                    if ( (capslock | (numlock<<1) | (shift<<2)) != modify )
                     {
-                        auto v = gui::cmd<gui::cmds::modify>(capslock, numlock, shift);
-                        auto mes = fc::json::to_pretty_string(fc::variant(static_cast<const gui::cmd_base&>(v)));
+                        auto a = gui::cmd<gui::cmds::modify>(capslock, numlock, shift);
+                        auto mes = fc::json::to_pretty_string(fc::variant(static_cast<const gui::cmd_base&>(a)));
                         send_gui( mes, socket );
                     }
                     modify = capslock| (numlock<<1) | (shift<<2);
@@ -351,8 +348,8 @@ std::wstring pass_entry_term::input_password(const KeySym * map, int socket)
             if (pass_len != password.length())  // sending gui pass length
             {
                 pass_len = password.length();
-                auto v = gui::cmd<gui::cmds::length>(pass_len);
-                auto mes = fc::json::to_pretty_string(fc::variant(static_cast<const gui::cmd_base&>(v)));
+                auto a = gui::cmd<gui::cmds::length>(pass_len);
+                auto mes = fc::json::to_pretty_string(fc::variant(static_cast<const gui::cmd_base&>(a)));
                 send_gui( mes, socket );
             }
             if (polling_gui(password, socket))  break;  // polling gui socketpair
@@ -380,7 +377,7 @@ void pass_entry_term::send_gui (int mes, int socket_gui )
 
 void pass_entry_term::send_gui (std::string mes, int socket_gui )
 {
-    if ( write(socket_gui, mes.c_str(), mes.length() + 1  ) <0 )
+    if (  write(socket_gui, mes.c_str(), mes.length()  )  != mes.length() )
         throw std::runtime_error("sending event to GUI");
 }
 

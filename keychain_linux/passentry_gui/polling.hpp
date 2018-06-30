@@ -17,24 +17,19 @@ namespace json_parser
 }
 
 using buf_type = std::vector<char>;
-using buf_iterator = buf_type::iterator;
-using iter_range = std::pair<buf_iterator, buf_iterator>;
+using buf_it = buf_type::iterator;
+using it_range = std::pair<buf_it, buf_it>;
 
 class Polling : public QObject
 {
     Q_OBJECT
 public:
-    Polling() : {
-        buf.reserve(1024);
-        end = buf.begin();
-        pbuf = buf.data();
-        remain = buf.size();
+    Polling()  {
+        buf.resize(1024);
+        it = buf.begin();
     }
-
+    buf_it it;
     buf_type buf;
-    buf_iterator end ;
-    buf_type::value_type * pbuf;
-    size_t remain;
 
 public slots:
     void Select();
@@ -43,7 +38,7 @@ signals:
     void poll();
     void err();
 private:
-    iter_range cut_json_obj(buf_iterator, buf_iterator);
+    it_range cut_json_obj(buf_it, buf_it);
 };
 
 #endif // POLLING_H

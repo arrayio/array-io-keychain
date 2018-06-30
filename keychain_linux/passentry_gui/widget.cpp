@@ -113,3 +113,4 @@ void Widget::parse(const std::string s)
     catch (const std::exception &e) {throw std::runtime_error(e.what());}
     catch (const fc::exception &e) {throw std::runtime_error(e.what());}
 }
+

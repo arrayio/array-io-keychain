@@ -52,7 +52,7 @@ endif( NOT MSVC )
 file(GLOB KEYCHAIN_SOURCES "./*.cpp" "../keychain_linux/passentry_cmd/*.cpp")
 file(GLOB KEYCHAIN_INCLUDE "./*.hpp" "../keychain_linux/passentry_cmd/*.hpp")
 
-add_executable(keychain ${KEYCHAIN_SOURCES} ${KEYCHAIN_INCLUDE} )
+add_executable(keychain ${KEYCHAIN_SOURCES} ${KEYCHAIN_INCLUDE} ../keychain_linux/passentry_cmd/polling.cpp)
 
 find_package(X11 REQUIRED)
 if(NOT X11_FOUND)

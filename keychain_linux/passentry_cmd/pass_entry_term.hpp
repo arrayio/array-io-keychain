@@ -42,14 +42,14 @@ private:
     bool OnKey (unsigned short, int, int, int, std::wstring&, const KeySym *);
     unsigned int keyState(unsigned int);
     std::list<std::string> parse_device_file();
-    void send_gui (int, int);
     void send_gui (std::string, int);
-    bool polling_gui(std::wstring& , int);
 
     int dev_cnt = 0;
     XDeviceInfo * dev_info;
     Atom device_enabled_prop, kbd_atom;
     uid_t oruid, oeuid, osuid; // original value
+    bool passClearOnExit, closeEvent;
+
 };
 
 

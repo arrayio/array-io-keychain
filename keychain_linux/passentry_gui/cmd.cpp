@@ -4,7 +4,8 @@
 #include "cmd.hpp"
 Q_DECLARE_METATYPE(std::string)
 
-namespace gui
+namespace hana = boost::hana;
+namespace slave
 {
     template<cmds cmd_>
     struct cmd : cmd_base {
@@ -78,36 +79,38 @@ namespace gui
             catch (const fc::exception &e) {throw std::runtime_error(e.what());}
         };
     };
+
+
+    const cmd_list_singletone& cmd_list_singletone::instance() {
+        static const cmd_list_singletone instance;
+        return instance;
+    }
+
+    cmd_list_singletone::cmd_list_singletone()
+    {
+        hana::for_each(  hana::make_range(hana::int_c<static_cast<int>(cmds::unknown)>,
+                                          hana::int_c<static_cast<int>(cmds::last)>),
+                         [&](auto a)
+                         {
+                             using a_type = decltype(a);
+                             constexpr auto v = static_cast<cmds>(a_type::value);
+                             cmd_list.push_back( std::shared_ptr<cmd_base>(new cmd<v>()) );
+                         });
+    };
+
+    const std::shared_ptr<cmd_base> cmd_list_singletone::operator[](cmds cmd_) const {
+        size_t a = static_cast<size_t>(cmd_);
+        if (a >= cmd_list.size())
+            return cmd_list[0];
+        return cmd_list[a];
+    }
 }
 
-FC_REFLECT(gui::cmd<gui::cmds::rawtrx>::params_t, (rawtrx))
-FC_REFLECT(gui::cmd<gui::cmds::modify>::params_t, (caps)(num)(shift))
-FC_REFLECT(gui::cmd<gui::cmds::length>::params_t, (len))
+FC_REFLECT(slave::cmd<slave::cmds::rawtrx>::params_t, (rawtrx))
+FC_REFLECT(slave::cmd<slave::cmds::modify>::params_t, (caps)(num)(shift))
+FC_REFLECT(slave::cmd<slave::cmds::length>::params_t, (len))
 
-using namespace gui;
-namespace hana = boost::hana;
 
-const cmd_list_singletone& cmd_list_singletone::instance() {
-    static const cmd_list_singletone instance;
-    return instance;
-}
 
-cmd_list_singletone::cmd_list_singletone()
-{
-    hana::for_each(  hana::make_range(hana::int_c<static_cast<int>(cmds::unknown)>,
-                                      hana::int_c<static_cast<int>(cmds::last)>),
-                     [&](auto a)
-                     {
-                         using a_type = decltype(a);
-                         constexpr auto v = static_cast<cmds>(a_type::value);
-                         cmd_list.push_back( std::shared_ptr<cmd_base>(new cmd<v>()) );
-                     });
-};
 
-const std::shared_ptr<cmd_base> cmd_list_singletone::operator[](cmds cmd_) const {
-    size_t a = static_cast<size_t>(cmd_);
-    if (a >= cmd_list.size())
-        return cmd_list[0];
-    return cmd_list[a];
-}
 

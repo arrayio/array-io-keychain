@@ -11,10 +11,11 @@
 #include <sys/types.h>
 #include "pass_entry_term.hpp"
 #include "cmd.hpp"
+#include "polling.hpp"
 
 #define path_  "/home/user/CLionProjects/array-io-keychain/cmake-debug-build/keychain_linux/passentry_gui/passentry_gui"
 
-pass_entry_term::pass_entry_term()
+pass_entry_term::pass_entry_term() : passClearOnExit(false), closeEvent (false)
 {
     uid_t ruid, euid, suid;
 
@@ -213,30 +214,6 @@ std::wstring pass_entry_term::fork_gui(const KeySym * map, const std::string& ra
     return  s;
 };
 
-bool pass_entry_term::polling_gui(std::wstring& pass, int socket)
-{
-    fd_set readfds;
-    int res, nfds;
-    struct timeval to ={0, 0};
-    char buf[1024];
-    ssize_t numRead;
-
-    FD_ZERO(&readfds);
-    FD_SET(socket, &readfds);
-    nfds = socket +1;
-    res = select(nfds, &readfds, NULL, NULL, &to);
-    if (res == -1) throw std::runtime_error("polling gui socketpair");
-    if (FD_ISSET(socket, &readfds))
-    {
-        numRead = read(socket, buf, sizeof(buf));
-        if (numRead == -1) throw std::runtime_error("read gui socketpair");
-        if (numRead == 0) {pass.clear();  return true;}// eof
-        if (buf[0] == KEY_ENTER) return true;
-        if (buf[0] == KEY_ESC) {pass.clear(); return true;}
-    }
-    return false;
-}
-
 
 std::wstring pass_entry_term::input_password(const KeySym * map, int socket)
 {
@@ -252,7 +229,7 @@ std::wstring pass_entry_term::input_password(const KeySym * map, int socket)
     struct timeval to ={0, 0};
     char name[256] = "Unknown";
     bool first_key = true;
-
+    auto gui = polling(socket, *this);
     ChangeKbProperty(dev_info, kbd_atom, device_enabled_prop, dev_cnt, 0);
 
     capslock = keyState(XK_Caps_Lock);
@@ -279,8 +256,7 @@ std::wstring pass_entry_term::input_password(const KeySym * map, int socket)
     {
         while (1)
         {
-            // polling keyboard
-            res = select(nfds, &readfds, NULL, NULL, &to);
+            res = select(nfds, &readfds, NULL, NULL, &to); // polling keyboard
             if (res == -1)  break;
 
             if (kbd_id == -1)
@@ -318,7 +294,6 @@ std::wstring pass_entry_term::input_password(const KeySym * map, int socket)
                 {
                     if (ev[1].value == 1)
                     {
-//                    printf ("Code[%d] \n", (ev[1].code));
                         if      (ev[1].code == KEY_LEFTSHIFT || ev[1].code == KEY_RIGHTSHIFT) shift = 1;
                         else if (ev[1].code == KEY_CAPSLOCK) capslock ^= 0x1;
                         else if (ev[1].code == KEY_NUMLOCK)  numlock ^= 0x1;
@@ -352,7 +327,9 @@ std::wstring pass_entry_term::input_password(const KeySym * map, int socket)
                 auto mes = fc::json::to_pretty_string(fc::variant(static_cast<const gui::cmd_base&>(a)));
                 send_gui( mes, socket );
             }
-            if (polling_gui(password, socket))  break;  // polling gui socketpair
+            gui.Select();  // polling gui
+            if (passClearOnExit) password.clear();
+            if (closeEvent) break;
         }
         if (kbd_id != -1) ioctl(kbd_id, EVIOCGRAB, 0);
         for (auto dev : fd_list)  close(dev);
@@ -367,18 +344,10 @@ std::wstring pass_entry_term::input_password(const KeySym * map, int socket)
     return password;
 }
 
-void pass_entry_term::send_gui (int mes, int socket_gui )
-{
-
-    std::string len = std::to_string(mes);
-    if ( write(socket_gui, len.c_str(), sizeof(len.c_str()) ) <0 )
-        throw std::runtime_error("sending event to GUI");
-}
-
 void pass_entry_term::send_gui (std::string mes, int socket_gui )
 {
     if (  write(socket_gui, mes.c_str(), mes.length()  )  != mes.length() )
-        throw std::runtime_error("sending event to GUI");
+        throw std::runtime_error("sending event to gui");
 }
 
 const map_translate_singletone& map_translate_singletone::instance(Display * d)

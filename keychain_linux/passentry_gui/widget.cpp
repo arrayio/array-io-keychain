@@ -50,12 +50,13 @@ void Widget::interior()
 
     ple = new QLineEdit(this);
     ple->setEchoMode(QLineEdit::Password);
+
     grid->addWidget(ple, 0, 1, 1, 3);
     {
         QLabel *plb = new QLabel(tr("Raw Tx"), this);
         grid->addWidget(plb, 1, 0);
     }
-    QLabel lbl("long long string");
+
     pte = new QTextEdit(this);
     grid->addWidget(pte, 1, 1, 1, 3);
     pte->setText("");
@@ -63,8 +64,10 @@ void Widget::interior()
 
     caps = new QLabel(tr(""), this);
     grid->addWidget(caps, 2, 0);
+
     num = new QLabel(tr(""), this);
     grid->addWidget(num, 2, 1);
+
     shift = new QLabel(tr(""), this);
     grid->addWidget(shift, 2, 2);
 
@@ -83,7 +86,7 @@ void Widget::interior()
 
 void Widget::send(std::string a)
 {
-    if ( write(STDIN_FILENO, a.c_str(), sizeof(a.c_str()) ) != 1) close();
+    if ( write(STDIN_FILENO, a.c_str(), sizeof(a.c_str()) ) != a.length() ) close();
 }
 
 void Widget::found_pass()
@@ -93,20 +96,18 @@ void Widget::found_pass()
 
 void Widget::closeEvent(QCloseEvent *event)
 {
-//    if (passClearOnExit)
-//        send(fc::json::to_pretty_string(fc::variant(json_cancel("cansel"))));
-//    else
-//        send(fc::json::to_pretty_string(fc::variant(json_ok("ok"))));
+    passClearOnExit ?
+    send(fc::json::to_pretty_string(fc::variant( master::cmd<( master::cmds::cancel)>().base))) :
+    send(fc::json::to_pretty_string(fc::variant( master::cmd<( master::cmds::ok)>().base)));
     event->accept();
 }
-
 
 void Widget::parse(const std::string s)
 {
     auto a = fc::json::from_string(s);
     try {
-        auto cmd = a.as<gui::cmd_common>();
-        auto cmd_map = gui::cmd_list_singletone::instance();
+        auto cmd = a.as<slave::cmd_common>();
+        auto cmd_map = slave::cmd_list_singletone::instance();
         auto p_func = cmd_map[cmd.cmd];
         (*p_func)(this, cmd.params);
     }

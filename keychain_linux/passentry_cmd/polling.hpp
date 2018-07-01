@@ -1,4 +1,8 @@
-#include "pass_entry_term.hpp"
+#ifndef KEYCHAIN_CMDAPP_POLLING_H
+#define KEYCHAIN_CMDAPP_POLLING_H
+
+#include <vector>
+#include <string>
 
 namespace json_parser
 {
@@ -19,17 +23,18 @@ using it_range = std::pair<buf_it, buf_it>;
 class polling
 {
 public:
-    polling(int socket_, pass_entry_term& context_): socket(socket_), context(context_) {
+    polling(int socket_): socket(socket_), passClearOnExit(false), closeEvent(false) {
         buf.resize(1024);
         it = buf.begin();
     }
     void Select();
-
+    bool passClearOnExit, closeEvent;
 private:
     buf_it it;
     buf_type buf;
     int socket;
-    pass_entry_term & context;
     it_range cut_json_obj(buf_it, buf_it);
     void parse(const std::string s);
 };
+
+#endif //KEYCHAIN_CMDAPP_POLLING_H

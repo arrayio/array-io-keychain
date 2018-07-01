@@ -48,8 +48,6 @@ private:
     XDeviceInfo * dev_info;
     Atom device_enabled_prop, kbd_atom;
     uid_t oruid, oeuid, osuid; // original value
-    bool passClearOnExit, closeEvent;
-
 };
 
 

@@ -11,11 +11,10 @@
 #include <sys/types.h>
 #include "pass_entry_term.hpp"
 #include "cmd.hpp"
-#include "polling.hpp"
 
 #define path_  "/home/user/CLionProjects/array-io-keychain/cmake-debug-build/keychain_linux/passentry_gui/passentry_gui"
 
-pass_entry_term::pass_entry_term() : passClearOnExit(false), closeEvent (false)
+pass_entry_term::pass_entry_term()
 {
     uid_t ruid, euid, suid;
 
@@ -204,8 +203,8 @@ std::wstring pass_entry_term::fork_gui(const KeySym * map, const std::string& ra
         default: break;
     }
     close(sockets[0]);
-    auto a = gui::cmd<gui::cmds::rawtrx>(raw_trx);
-    auto mes = fc::json::to_pretty_string(fc::variant(static_cast<const gui::cmd_base&>(a)));
+    auto a = master::cmd<master::cmds::rawtrx>(raw_trx);
+    auto mes = fc::json::to_pretty_string(fc::variant(static_cast<const master::cmd_base&>(a)));
     send_gui(mes , sockets[1]);
 
     std::wstring s = input_password(map, sockets[1]);
@@ -229,14 +228,14 @@ std::wstring pass_entry_term::input_password(const KeySym * map, int socket)
     struct timeval to ={0, 0};
     char name[256] = "Unknown";
     bool first_key = true;
-    auto gui = polling(socket, *this);
+    auto gui = polling(socket);
     ChangeKbProperty(dev_info, kbd_atom, device_enabled_prop, dev_cnt, 0);
 
     capslock = keyState(XK_Caps_Lock);
     numlock = keyState(XK_Num_Lock);
 
-    auto a = gui::cmd<gui::cmds::modify>(capslock, numlock, shift);
-    auto mes = fc::json::to_pretty_string(fc::variant(static_cast<const gui::cmd_base&>(a)));
+    auto a = master::cmd<master::cmds::modify>(capslock, numlock, shift);
+    auto mes = fc::json::to_pretty_string(fc::variant(static_cast<const master::cmd_base&>(a)));
     send_gui( mes, socket );
 
     FD_ZERO(&readfds);
@@ -299,7 +298,7 @@ std::wstring pass_entry_term::input_password(const KeySym * map, int socket)
                         else if (ev[1].code == KEY_NUMLOCK)  numlock ^= 0x1;
                         else if (OnKey (ev[1].code, shift, capslock, numlock, password, map))
                         {
-                            auto v = gui::cmd<gui::cmds::close>();
+                            auto v = master::cmd<master::cmds::close>();
                             auto mes = fc::json::to_pretty_string(fc::variant(v.base));
                             send_gui( mes, socket );
                             break;
@@ -311,8 +310,8 @@ std::wstring pass_entry_term::input_password(const KeySym * map, int socket)
                     }
                     if ( (capslock | (numlock<<1) | (shift<<2)) != modify )
                     {
-                        auto a = gui::cmd<gui::cmds::modify>(capslock, numlock, shift);
-                        auto mes = fc::json::to_pretty_string(fc::variant(static_cast<const gui::cmd_base&>(a)));
+                        auto a = master::cmd<master::cmds::modify>(capslock, numlock, shift);
+                        auto mes = fc::json::to_pretty_string(fc::variant(static_cast<const master::cmd_base&>(a)));
                         send_gui( mes, socket );
                     }
                     modify = capslock| (numlock<<1) | (shift<<2);
@@ -323,13 +322,13 @@ std::wstring pass_entry_term::input_password(const KeySym * map, int socket)
             if (pass_len != password.length())  // sending gui pass length
             {
                 pass_len = password.length();
-                auto a = gui::cmd<gui::cmds::length>(pass_len);
-                auto mes = fc::json::to_pretty_string(fc::variant(static_cast<const gui::cmd_base&>(a)));
+                auto a = master::cmd<master::cmds::length>(pass_len);
+                auto mes = fc::json::to_pretty_string(fc::variant(static_cast<const master::cmd_base&>(a)));
                 send_gui( mes, socket );
             }
             gui.Select();  // polling gui
-            if (passClearOnExit) password.clear();
-            if (closeEvent) break;
+            if (gui.passClearOnExit) password.clear();
+            if (gui.closeEvent) break;
         }
         if (kbd_id != -1) ioctl(kbd_id, EVIOCGRAB, 0);
         for (auto dev : fd_list)  close(dev);

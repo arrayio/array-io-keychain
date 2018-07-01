@@ -2,6 +2,7 @@
 // Created by user on 30.06.18.
 //
 #include "polling.hpp"
+#include "cmd.hpp"
 #include <unistd.h>
 
 void polling::Select()
@@ -83,7 +84,7 @@ it_range polling::cut_json_obj(buf_it parse_begin, buf_it parse_end)
 
 void polling::parse(const std::string s)
 {
-/*    auto a = fc::json::from_string(s);
+    auto a = fc::json::from_string(s);
     try {
         auto cmd = a.as<slave::cmd_common>();
         auto cmd_map = slave::cmd_list_singletone::instance();
@@ -92,6 +93,5 @@ void polling::parse(const std::string s)
     }
     catch (const std::exception &e) {throw std::runtime_error(e.what());}
     catch (const fc::exception &e) {throw std::runtime_error(e.what());}
-    */
 };
 

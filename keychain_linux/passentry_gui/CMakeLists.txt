@@ -52,10 +52,7 @@ set(SRCS
 # Tell CMake to create the helloworld executable
 add_executable(passentry_gui ${SRCS})
 
-find_library(LIB_FC NAME fc  HINTS "~/CLionProjects/test2/cmake-build-debug/")
-find_library(LIB_FC NAME secp256k1 HINTS "~/CLionProjects/test2/cmake-build-debug/")
-find_library(LIB_FC NAME graphene_utilities  HINTS "~/CLionProjects/test2/cmake-build-debug")
 
 # Use the Widgets module from Qt 5
-#target_link_libraries(passentry_gui Qt5::Widgets ${LIB_PTHREAD} fc secp256k1 graphene_utilities graphene_chain ${Boost_LIBRARIES} )
-target_link_libraries(passentry_gui Qt5::Widgets ${LIB_PTHREAD} ${LIB_FC} ${Boost_LIBRARIES} )
+target_link_libraries(passentry_gui Qt5::Widgets ${LIB_PTHREAD} fc secp256k1 graphene_utilities graphene_chain ${Boost_LIBRARIES} )
+

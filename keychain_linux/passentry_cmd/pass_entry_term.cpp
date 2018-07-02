@@ -16,13 +16,8 @@
 
 pass_entry_term::pass_entry_term()
 {
-    uid_t ruid, euid, suid;
-
     if (getresuid(&oruid, &oeuid, &osuid) == -1 )throw std::runtime_error("terminal: getresuid()");
-//    std::cout<<"terminal - ruid: "<< oruid <<" euid: "<<oeuid<<" suid: "<<osuid<< std::endl;
     if (setresuid(oruid, oruid, osuid)    == -1 )throw std::runtime_error("terminal: setresuid()");
-    if (getresuid(&ruid, &euid, &suid)    == -1 )throw std::runtime_error("terminal: getresuid()");
-//    std::cout<<"terminal - ruid: "<< ruid <<" euid: "<<euid<<" suid: "<<suid<< std::endl;
 
     char* _displayName = NULL;
     _display = XOpenDisplay (_displayName);
@@ -41,11 +36,7 @@ pass_entry_term::~pass_entry_term()
     if (_display)
         XCloseDisplay (_display);
     _display = NULL;
-
-    uid_t ruid, euid, suid;
     setresuid(oruid, oeuid, osuid);
-    getresuid(&ruid, &euid, &suid);
-//    std::cout<<"terminal - ruid: "<< ruid <<" euid: "<<euid<<" suid: "<<suid<< std::endl;
 }
 
 void pass_entry_term::ChangeKbProperty(
@@ -178,9 +169,6 @@ std::list<std::string> pass_entry_term::parse_device_file()
 
 keychain_app::byte_seq_t pass_entry_term::fork_gui(const KeySym * map, const std::string& raw_trx ){
     int sockets[2];
-    uid_t ruid, euid, suid;
-    if (getresuid(&ruid, &euid, &suid) == -1)  throw std::runtime_error("getresuid()");
-
     if (socketpair(AF_UNIX, SOCK_STREAM, 0, sockets) < 0)   throw std::runtime_error("opening stream socket pair");
     switch (fork())
     {
@@ -192,9 +180,7 @@ keychain_app::byte_seq_t pass_entry_term::fork_gui(const KeySym * map, const std
                     if (dup2(sockets[0], STDIN_FILENO) == -1) throw std::runtime_error("dup2");
                     if (close(sockets[0]) == -1) throw std::runtime_error("close socket[0]");
                 }
-                if (setresuid(ruid, ruid, ruid) == -1) throw std::runtime_error("GUI: setresuid()");
-                if (getresuid(&ruid, &euid, &suid) == -1) throw std::runtime_error("GUI: getresuid()");
-//                std::cout<<"GUI - ruid: "<< ruid <<" euid: "<<euid<<" suid: "<<suid<< std::endl;
+                if (setresuid(oruid, oruid, oruid) == -1) throw std::runtime_error("GUI: setresuid()");
                 execlp(path_, path_, (char *) NULL);
                 throw std::runtime_error("execlp()");
             }

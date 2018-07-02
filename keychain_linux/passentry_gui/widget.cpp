@@ -86,7 +86,8 @@ void Widget::interior()
 
 void Widget::send(std::string a)
 {
-    if ( write(STDIN_FILENO, a.c_str(), sizeof(a.c_str()) ) != a.length() ) close();
+    if ( write(STDIN_FILENO, a.c_str(), a.length() ) != a.length() )
+        close();
 }
 
 void Widget::found_pass()

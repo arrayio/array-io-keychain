@@ -21,13 +21,14 @@ void polling::Select()
 
     if (FD_ISSET(socket, &readfds))
     {
-        size_t cnt = read(STDIN_FILENO, begin(it), remain(it));
+        size_t cnt = read(socket, begin(it), remain(it));
         if (cnt ==-1 ) throw std::runtime_error("gui reading error");
 
         it += cnt;
         while (true)
         {
             auto range = cut_json_obj(buf.begin(), it );
+            std::string str = std::string(range.first, range.second);
             if(std::distance(range.first, range.second) > 0)
             {
                 parse(std::string(range.first, range.second));

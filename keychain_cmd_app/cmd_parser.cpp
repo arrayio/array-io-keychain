@@ -9,7 +9,7 @@
 #include <keychain_lib/secure_module_singletone.hpp>
 
 #include "cmd_parser.hpp"
-#include "secure_module_dummy.hpp"
+#include "sec_mod.hpp"
 
 using namespace keychain_app;
 
@@ -28,5 +28,3 @@ int cmd_parser::run(int argc, const char* const argv [])
   pipeline_parser pipe_line_parser_(std::move(f), fileno(stdin), fileno(stdout));
   return pipe_line_parser_.run();
 }
-
-

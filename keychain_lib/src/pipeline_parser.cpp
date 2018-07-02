@@ -30,12 +30,15 @@ pipeline_parser::pipeline_parser(keychain_invoke_f&& keychain_f, int pipein_desc
 int pipeline_parser::run()
 {
   buf_type read_buf(4096, 0x00);
-  buf_type::value_type *p_read_begin = read_buf.data();
-  buf_iterator it_read_end = read_buf.begin();
-  size_t bytes_remaining = read_buf.size();
-  while (true)
+  auto ptr_from_it      = [&read_buf](buf_iterator &i) { if (i>=read_buf.end()) i=read_buf.begin(); return &(*i); };
+  auto bytes_remaining  = [&read_buf](buf_iterator &i) {
+      if (i>=read_buf.end()) i=read_buf.begin(); return std::distance(i, read_buf.end());};
+
+  auto it = read_buf.begin();
+    while (true)
   {
-    size_t bytes_read = read(m_pipein_desc, p_read_begin, bytes_remaining);
+
+    size_t bytes_read = read(m_pipein_desc, ptr_from_it(it), bytes_remaining(it));
 	if ( bytes_read == 0 )
 		break;
     if( bytes_read == -1 )
@@ -43,12 +46,10 @@ int pipeline_parser::run()
       std::cerr << "Error: " << strerror(errno) << std::endl;
       return -1;
     }
-	it_read_end += bytes_read;
-    p_read_begin += bytes_read;
-    bytes_remaining -= bytes_read;
+	it += bytes_read;
 	while (true)
     {
-      auto buf_range = cut_json_obj(read_buf.begin(), it_read_end);
+      auto buf_range = cut_json_obj(read_buf.begin(), it);
       if( std::distance(buf_range.first, buf_range.second) > 0)
       {
         try {
@@ -65,16 +66,10 @@ int pipeline_parser::run()
           strbuf << res << std::endl;
           write(m_pipeout_desc, static_cast<const void*>(strbuf.str().c_str()), res.size());
         }
-        auto it = std::copy(buf_range.second, it_read_end, read_buf.begin());
-        std::for_each(it, it_read_end, [](buf_type::value_type &val) {
-            val = 0x00;
-        });
-        p_read_begin = read_buf.data() + std::distance(read_buf.begin(), it);
-        bytes_remaining = std::distance(it, read_buf.end());
-        it_read_end = it;
+        it = std::copy(buf_range.second, it, read_buf.begin());
         continue;//try to parse remaining data
       }
-      else if(bytes_remaining < 256)
+      else if(bytes_remaining(it) < 256)
         read_buf.resize(256, 0x00);
       break;//goto fread()
     }

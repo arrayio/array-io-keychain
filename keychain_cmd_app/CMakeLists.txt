@@ -4,7 +4,8 @@ cmake_minimum_required( VERSION 3.0.2 )
 
 set(CMAKE_CXX_FLAGS "-std=c++14")
 if( NOT MSVC )
-  set(CMAKE_EXE_LINKER_FLAGS "-ldl")
+  set(CMAKE_EXE_LINKER_FLAGS "-ldl -v -fuse-ld=lld ")
+#  SET(CMAKE_CXX_LINK_EXECUTABLE "/usr/bin/lld-6.0")
 endif ( NOT MSVC )
   
 SET(BOOST_COMPONENTS)
@@ -33,6 +34,7 @@ if( MSVC )
 else ( MSVC )
     include_directories(
             "../keychain_lib/include"
+            "../keychain_linux/passentry_cmd"
             "../array-io-core/libraries/utilities/include"
             "../array-io-core/libraries/db/include"
             "../array-io-core/libraries/chain/include"
@@ -47,14 +49,29 @@ if( NOT MSVC )
   find_library(LIB_PTHREAD NAME pthread HINTS "/usr/lib/x86_64-linux-gnu")
 endif( NOT MSVC )
 
-file(GLOB KEYCHAIN_SOURCES "./*.cpp")
-file(GLOB KEYCHAIN_INCLUDE "./*.hpp")
+file(GLOB KEYCHAIN_SOURCES "./*.cpp" "../keychain_linux/passentry_cmd/*.cpp")
+file(GLOB KEYCHAIN_INCLUDE "./*.hpp" "../keychain_linux/passentry_cmd/*.hpp")
 
-add_executable(keychain ${KEYCHAIN_SOURCES} ${KEYCHAIN_INCLUDE})
+add_executable(keychain ${KEYCHAIN_SOURCES} ${KEYCHAIN_INCLUDE} ../keychain_linux/passentry_cmd/polling.cpp)
+
+find_package(X11 REQUIRED)
+if(NOT X11_FOUND)
+    message(SEND_ERROR "Failed to find X11")
+    return()
+else()
+    include_directories(${X11_INCLUDE_DIR})
+endif()
+
+find_library(LIB_XI NAME Xi HINTS "/usr/lib/x86_64-linux-gnu/")
 
 if( MSVC )  
   target_link_libraries(keychain keychain_common fc secp256k1 graphene_utilities ${LIB_OPENSSL} ${Boost_LIBRARIES})
 else ( MSVC )  
-  target_link_libraries(keychain keychain_common ${LIB_PTHREAD} fc secp256k1 graphene_utilities ${LIB_OPENSSL} ${Boost_LIBRARIES})
+  target_link_libraries(keychain keychain_common ${LIB_PTHREAD} fc secp256k1 graphene_utilities graphene_chain ${LIB_OPENSSL} ${Boost_LIBRARIES} ${X11_LIBRARIES} ${LIB_XI})
 endif ( MSVC ) 
+
+
+
+
+
 

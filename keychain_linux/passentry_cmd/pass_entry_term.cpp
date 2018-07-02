@@ -71,7 +71,6 @@ void pass_entry_term::ChangeKbProperty(
                               1
             );
     }
-//    std::cout << "XIChangeProperty: keyboard " << (st==1 ? "ENABLE":"DISABLE") << std::endl;
 }
 
 
@@ -177,8 +176,7 @@ std::list<std::string> pass_entry_term::parse_device_file()
     return std::move( devices);
 }
 
-std::wstring pass_entry_term::fork_gui(const KeySym * map, const std::string& raw_trx ){
-//std::wstring pass_entry_term::fork_gui(const KeySym * map, const graphene::chain::transaction& trx) {
+keychain_app::byte_seq_t pass_entry_term::fork_gui(const KeySym * map, const std::string& raw_trx ){
     int sockets[2];
     uid_t ruid, euid, suid;
     if (getresuid(&ruid, &euid, &suid) == -1)  throw std::runtime_error("getresuid()");
@@ -207,14 +205,18 @@ std::wstring pass_entry_term::fork_gui(const KeySym * map, const std::string& ra
     auto mes = fc::json::to_pretty_string(fc::variant(static_cast<const master::cmd_base&>(a)));
     send_gui(mes , sockets[1]);
 
-    std::wstring s = input_password(map, sockets[1]);
+    std::wstring pass = input_password(map, sockets[1]);
     close(sockets[1]);
     if (wait(NULL) == -1)   throw std::runtime_error("waiting gui");
-    return  s;
+
+    keychain_app::byte_seq_t vec(std::distance(pass.begin(), pass.end()));
+    std::transform(pass.begin(), pass.end(), vec.begin(), [](auto a){ return ((char) a);});
+
+    return vec;
 };
 
 
-std::wstring pass_entry_term::input_password(const KeySym * map, int socket)
+std::wstring  pass_entry_term::input_password(const KeySym * map, int socket)
 {
     std::wstring password;
 
@@ -340,7 +342,7 @@ std::wstring pass_entry_term::input_password(const KeySym * map, int socket)
         password.clear();
         throw;
     }
-    return password;
+    return  password;
 }
 
 void pass_entry_term::send_gui (std::string mes, int socket_gui )
@@ -372,7 +374,7 @@ map_translate_singletone::map_translate_singletone(Display * _display) // transl
 
     if (desc[0].names->groups[state->group] != 219) throw std::runtime_error("Only English(American) keyboard layout supported");
 
-    if (max_Xcode > MAX_KEYCODE_XORG )  // на всякий случай. такого быть не должно
+    if (max_Xcode > MAX_KEYCODE_XORG )  //  it is impossible
     {
         std::cout<<" Maximum keycode must be less 255. Current value: "<<max_Xcode <<std::endl;
         throw std::runtime_error("Maximum keycode must be less 255.");

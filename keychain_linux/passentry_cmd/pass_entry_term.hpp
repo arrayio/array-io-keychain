@@ -22,6 +22,7 @@
 #include <fc/io/json.hpp>
 // TODO: this header is requried for reflection from graphene::chain::transaction
 #include <graphene/chain/protocol/protocol.hpp>
+#include <keychain_lib/keychain_wrapper.hpp>
 
 #define MAX_KEYCODE_XORG            255  // максимально возможное кол-во кодов не м.б. более 255
 #define MAP_SIZE                    MAX_KEYCODE_XORG*2
@@ -33,8 +34,8 @@ class pass_entry_term
 public:
     pass_entry_term();
     ~pass_entry_term();
-//    std::wstring fork_gui(const KeySym * map, const graphene::chain::transaction& );
-    std::wstring fork_gui(const KeySym * map, const std::string& raw_trx );
+
+    keychain_app::byte_seq_t fork_gui(const KeySym * map, const std::string& raw_trx );
     Display* _display = NULL;
 private:
     std::wstring input_password(const KeySym *, int);

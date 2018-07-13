@@ -39,6 +39,7 @@ Array.io keychain may be used by a node, a frontend or dapp's nodejs server to s
 ```
  $ git clone https://github.com/arrayio/array-io-keychain.git
  $ cd array-io-keychain/
+ $ git submodule update --init --recursive
  $ mkdir build
  $ cd build 
  $ cmake -DBOOST_ROOT="/opt/boostlib" -DOPENSSL_ROOT_DIR="/opt/openssllib" -G "Unix Makefiles" ../CMakeLists.txt

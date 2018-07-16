@@ -12,7 +12,7 @@
 #include "pass_entry_term.hpp"
 #include "cmd.hpp"
 
-#define path_  "/home/user/CLionProjects/array-io-keychain/cmake-debug-build/keychain_linux/passentry_gui/passentry_gui"
+#define path_  "/home/user/CLionProjects/array-io-keychain/cmake-build-debug/keychain_linux/passentry_gui/passentry_gui"
 
 pass_entry_term::pass_entry_term()
 {
@@ -345,20 +345,35 @@ const map_translate_singletone& map_translate_singletone::instance(Display * d)
 
 map_translate_singletone::map_translate_singletone(Display * _display) // translate map keycode(Xorg)->keysym(Xorg)
 {
-    int  min_Xcode = 0, max_Xcode=0;
+    int  min_Xcode = 0, max_Xcode=0, gc;
     XkbStateRec state[1];
+    char *names[XkbNumKbdGroups];
+    char **pnames;
+    XkbDescRec desc[1];
 
     memset(state, 0, sizeof(state));
-    XkbGetState(_display, XkbUseCoreKbd, state);
-    XDisplayKeycodes(_display, &min_Xcode, &max_Xcode);
-
-    XkbDescRec desc[1];
     memset(desc, 0, sizeof(desc));
+
+    XkbGetState(_display, XkbUseCoreKbd, state);
+
     desc->device_spec = XkbUseCoreKbd;
     XkbGetControls(_display, XkbGroupsWrapMask, desc);
-    XkbGetNames(_display, XkbAllNamesMask, desc    );
+    XkbGetNames(_display, XkbGroupNamesMask, desc);
+    XGetAtomNames(_display, desc->names->groups, gc=desc->ctrls->num_groups, names);
+    XkbFreeControls(desc, XkbGroupsWrapMask, True);
+    XkbFreeNames(desc, XkbGroupNamesMask, True);
 
-    if (desc[0].names->groups[state->group] != 219) throw std::runtime_error("Only English(American) keyboard layout supported");
+    XDisplayKeycodes(_display, &min_Xcode, &max_Xcode);
+
+    std::string str (names[state->group]);
+    if (str.substr(0, 7) != "English") throw std::runtime_error("Only English(American) keyboard layout supported");
+
+    pnames = names;
+    for (; gc--; ++pnames)
+        if (*pnames) {
+            XFree(*pnames);
+            *pnames = NULL;
+        };
 
     if (max_Xcode > MAX_KEYCODE_XORG )  //  it is impossible
     {

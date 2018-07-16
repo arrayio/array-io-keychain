@@ -1,7 +1,10 @@
 cmake_minimum_required(VERSION 3.1.0)
 set(CMAKE_CXX_STANDARD 14)
-set(CMAKE_CXX_FLAGS "-std=c++14 --verbose -fno-limit-debug-info")
+#set(CMAKE_CXX_FLAGS "-std=c++14 --verbose -fno-limit-debug-info")
+set(CMAKE_CXX_FLAGS "-std=c++14 --verbose ")
 set(CMAKE_EXE_LINKER_FLAGS "-ldl -v")
+
+set (CMAKE_PREFIX_PATH "/home/user/Qt5.11.1/")
 
 project(passentrygui)
 # Find includes in corresponding build directories
@@ -19,7 +22,6 @@ SET(BOOST_COMPONENTS)
 LIST(APPEND BOOST_COMPONENTS thread date_time system filesystem program_options signals serialization chrono unit_test_framework context locale iostreams)
 SET( Boost_USE_STATIC_LIBS ON CACHE STRING "ON or OFF" )
 
-#SET(BOOST_ROOT "/opt/boostlib")
 set(Boost_USE_MULTITHREADED ON)
 set(BOOST_ALL_DYN_LINK OFF)
 
@@ -51,7 +53,6 @@ set(SRCS
 
 # Tell CMake to create the helloworld executable
 add_executable(passentry_gui ${SRCS})
-
 
 # Use the Widgets module from Qt 5
 target_link_libraries(passentry_gui Qt5::Widgets ${LIB_PTHREAD} fc secp256k1 graphene_utilities graphene_chain ${Boost_LIBRARIES} )

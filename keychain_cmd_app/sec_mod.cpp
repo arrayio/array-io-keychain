@@ -26,7 +26,7 @@ byte_seq_t sec_mod_dummy::get_passwd_trx_raw(const std::string& raw_trx) const
   auto pass_entry = pass_entry_term();
   auto map_instance = map_translate_singletone::instance(pass_entry._display);
   auto pass = pass_entry.fork_gui(map_instance.map, raw_trx);
-  std::cout <<"password: "<< std::string(pass.data(), pass.size())   << std::endl;
+  //std::cout <<"password: "<< std::string(pass.data(), pass.size())   << std::endl;
   return pass;
 }
 
@@ -35,6 +35,6 @@ byte_seq_t sec_mod_dummy::get_passwd_on_create() const
   auto pass_entry = pass_entry_term();
   auto map_instance = map_translate_singletone::instance(pass_entry._display);
   auto pass = pass_entry.fork_gui(map_instance.map, "");
-  std::cout <<"password: "<< std::string(pass.data(), pass.size())   << std::endl;
+  //std::cout <<"password: "<< std::string(pass.data(), pass.size())   << std::endl;
   return pass;
 }

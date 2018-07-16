@@ -366,7 +366,7 @@ map_translate_singletone::map_translate_singletone(Display * _display) // transl
     XDisplayKeycodes(_display, &min_Xcode, &max_Xcode);
 
     std::string str (names[state->group]);
-    if (str.substr(0, 7) != "English") throw std::runtime_error("Only English(American) keyboard layout supported");
+    if (str.substr(0, 7) != "English") throw std::runtime_error("Only English keyboard layout supported");
 
     pnames = names;
     for (; gc--; ++pnames)

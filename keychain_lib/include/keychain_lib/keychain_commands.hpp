@@ -267,7 +267,7 @@ struct keychain_command<command_te::create>: keychain_command_base
     {
       std::string keyname;
       bool encrypted;
-      keyfile_format::cipher_etype algo;
+      keyfile_format::cipher_etype cipher;
       keyfile_format::keyfile_t::keyinfo_t::curve_etype curve;
     };
     using params_t = params;
@@ -299,7 +299,7 @@ struct keychain_command<command_te::create>: keychain_command_base
           if (passwd.empty())
             throw std::runtime_error("Error: can't get password");
           auto& encryptor = encryptor_singletone::instance();
-          auto enc_data = encryptor.encrypt_keydata(params.algo, passwd, wif_key);
+          auto enc_data = encryptor.encrypt_keydata(params.cipher, passwd, wif_key);
           keyfile.keyinfo.priv_key_data = fc::variant(enc_data);
           keyfile.keyinfo.encrypted = true;
         }
@@ -479,7 +479,7 @@ FC_REFLECT_ENUM(
     (last))
 
 FC_REFLECT(keychain_app::keychain_command<keychain_app::command_te::sign>::params_t, (chainid)(transaction)(keyname))
-FC_REFLECT(keychain_app::keychain_command<keychain_app::command_te::create>::params_t, (keyname)(encrypted)(algo)(curve))
+FC_REFLECT(keychain_app::keychain_command<keychain_app::command_te::create>::params_t, (keyname)(encrypted)(cipher)(curve))
 FC_REFLECT(keychain_app::keychain_command<keychain_app::command_te::remove>::params_t, (keyname))
 FC_REFLECT(keychain_app::keychain_command<keychain_app::command_te::public_key>::params_t, (keyname))
 FC_REFLECT(keychain_app::keychain_command_common, (command)(id)(params))

@@ -20,8 +20,8 @@ enum file_type
     TYPE_KEY
 };
 
-//for more information use "openssl ecparam enc -ciphers
-enum cipher_etype
+//for more information use "openssl enc -ciphers"
+enum struct cipher_etype
 {   unknown = 0,
     aes128,
     aes192,
@@ -49,7 +49,7 @@ struct keyfile_t
     } format;
     bool encrypted;
     // for more information use "openssl ecparam -list_curves"
-    enum curve_etype
+    enum struct curve_etype
     {
       unknown,
 //      secp224k1,

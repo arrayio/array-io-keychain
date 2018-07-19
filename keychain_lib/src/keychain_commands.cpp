@@ -79,7 +79,7 @@ keychain_app::secp256_private_key keychain_app::get_priv_key_from_str(const std:
 {
   auto result = graphene::utilities::wif_to_key(str);
   if(!result)
-    throw std::runtime_error("Error: can't get private key from wif string");
+    throw std::runtime_error("Error: Can't get private key from wif string");
   return *result;
 }
 
@@ -89,7 +89,7 @@ void keychain_app::create_keyfile(const char* filename, const fc::variant& keyfi
 {
   bfs::path filepath(filename);
   if(bfs::exists(filepath))
-    throw std::runtime_error("Error: can not create keyfile, file is currently exist");
+    throw std::runtime_error("Error: Key with that name already exists. Pick another name for your new key.");
   auto path = bfs::current_path();
   path += bfs::path("/");
   path += filepath;

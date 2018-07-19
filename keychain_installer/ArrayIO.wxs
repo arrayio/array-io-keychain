@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+  <Product Id="CAA02638-871B-4B87-9452-9369FD0F2A2F"
+    Name="Array.io Software"
+    Language="1033"
+    Version="1.0.0.0"
+    Manufacturer="Array.io" UpgradeCode="2848E7E1-BEF9-4CAB-A97B-DC76E291C891">
+    <Package InstallerVersion="301" Compressed="yes" InstallScope="perMachine" Comments="(c) 2018 Array.io"/>
+    <!--<UIRef Id="WixUI_Minimal" />-->
+    <MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
+    <Condition Message="OS must be Windows 7, or higher.">
+      <![CDATA[Installed OR VersionNT >= 601]]>
+    </Condition>
+    <MediaTemplate EmbedCab="yes" />
+		<Feature Id="SecureTransactionService" Title="Secure service" Level="1">
+      <ComponentRef Id="boost_component"/>
+			<ComponentGroupRef Id="KeychainServiceComponent" />
+		</Feature>
+    <InstallExecuteSequence>
+      <Custom Action="InstallKeychainService" After="InstallFinalize" />
+      <Custom Action="StartKeychainService" After="InstallKeychainService" />
+    </InstallExecuteSequence>
+  </Product>
+</Wix>

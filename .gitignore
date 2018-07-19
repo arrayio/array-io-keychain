@@ -24,3 +24,8 @@
 *.orig
 *cpk
 .idea/*
+/.vs/keychain_installer/v15/.suo
+/packages
+/keychain_installer/packages.config
+/keychain_installer/obj
+/keychain_installer/bin

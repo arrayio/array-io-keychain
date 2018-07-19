@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+  <Fragment>
+    <Directory Id="TARGETDIR" Name="SourceDir">
+      <Directory Id="ProgramFiles64Folder">
+        <Directory Id="ArrayioDir" Name="Arrayio">
+          <Directory Id="KeychainService" Name="keychain"/>
+        </Directory>
+      </Directory>
+    </Directory>
+    <DirectoryRef Id="KeychainService">
+      <Component Id="cmp_lib_crypto"
+        Guid="3E2BD5FE-75D7-4ADF-B31E-B9D32E1C329E">
+        <File Id="libcryptoDLL"
+          Name="libcrypto-1_1-x64.dll"
+          Source="package\libcrypto-1_1-x64.dll"
+          KeyPath="yes" />
+      </Component>
+      <Component Id="cmp_pass_enterance_app"
+        Guid="BAD0F504-AB89-483D-81B8-4C87DA89EA13">
+        <File Id="FILE_keychain_pass_entry_appEXE"
+          Source="package\keychain_pass_entry_app.exe"
+          Name="keychain_pass_entry_app.exe"
+          KeyPath="yes" />
+      </Component>
+      <Component Id="cmp_keychainservice"
+        Guid="9FB8C497-31DB-47BD-B008-B31F259F0268">
+        <File Id="keychain_service_winEXE"
+          Name="keychain_service_win.exe"
+          Source="package\keychain_service_win.exe"
+          KeyPath="yes" />
+      </Component>
+    </DirectoryRef>
+    <ComponentGroup Id="KeychainServiceComponent" Directory="KeychainService">
+      <ComponentRef Id="cmp_lib_crypto" />
+      <ComponentRef Id="cmp_pass_enterance_app" />
+      <ComponentRef Id="cmp_keychainservice" />
+    </ComponentGroup>
+    <CustomAction Id="InstallKeychainService" Execute="immediate" Return="ignore" Impersonate="no" 
+      Directory="KeychainService"
+      ExeCommand="[KeychainService]keychain_service_win.exe -install" />
+    <CustomAction Id="StartKeychainService" Execute="immediate" Return="ignore" Impersonate="no"
+      Directory="KeychainService"
+      ExeCommand="sc start KeyChainService" />
+  </Fragment>
+</Wix>

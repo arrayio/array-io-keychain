@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+	<Fragment>
+    <Component Id="boost_component" Directory="KeychainService"
+        Guid="288B3267-30CF-4447-AC0C-8E2540A8B521">
+      <File Id="boost_chrono"
+          Name="boost_chrono-vc141-mt-x64-1_67.dll"
+          Source="package\boost_chrono-vc141-mt-x64-1_67.dll" />
+      <File Id="boost_context"
+          Name="boost_context-vc141-mt-x64-1_67.dll"
+          Source="package\boost_context-vc141-mt-x64-1_67.dll" />
+      <File Id="boost_coroutine"
+          Name="boost_coroutine-vc141-mt-x64-1_67.dll"
+          Source="package\boost_coroutine-vc141-mt-x64-1_67.dll" />
+      <File Id="boost_date_time"
+          Name="boost_date_time-vc141-mt-x64-1_67.dll"
+          Source="package\boost_date_time-vc141-mt-x64-1_67.dll" />
+      <File Id="boost_filesystem"
+          Name="boost_filesystem-vc141-mt-x64-1_67.dll"
+          Source="package\boost_filesystem-vc141-mt-x64-1_67.dll" />
+      <File Id="boost_iostreams"
+          Name="boost_iostreams-vc141-mt-x64-1_67.dll"
+          Source="package\boost_iostreams-vc141-mt-x64-1_67.dll" />
+      <File Id="boost_locale"
+          Name="boost_locale-vc141-mt-x64-1_67.dll"
+          Source="package\boost_locale-vc141-mt-x64-1_67.dll" />
+      <File Id="boost_log"
+          Name="boost_log-vc141-mt-x64-1_67.dll"
+          Source="package\boost_log-vc141-mt-x64-1_67.dll" />
+      <File Id="boost_program_options"
+          Name="boost_program_options-vc141-mt-x64-1_67.dll"
+          Source="package\boost_program_options-vc141-mt-x64-1_67.dll" />
+      <File Id="boost_serialization"
+          Name="boost_serialization-vc141-mt-x64-1_67.dll"
+          Source="package\boost_serialization-vc141-mt-x64-1_67.dll" />
+      <File Id="boost_signals"
+          Name="boost_signals-vc141-mt-x64-1_67.dll"
+          Source="package\boost_signals-vc141-mt-x64-1_67.dll" />
+      <File Id="boost_system"
+          Name="boost_system-vc141-mt-x64-1_67.dll"
+          Source="package\boost_system-vc141-mt-x64-1_67.dll" />
+      <File Id="boost_thread"
+          Name="boost_thread-vc141-mt-x64-1_67.dll"
+          Source="package\boost_thread-vc141-mt-x64-1_67.dll" />
+      <File Id="boost_unit_test_framework"
+          Name="boost_unit_test_framework-vc141-mt-x64-1_67.dll"
+          Source="package\boost_unit_test_framework-vc141-mt-x64-1_67.dll" />
+    </Component>
+  </Fragment>
+</Wix>

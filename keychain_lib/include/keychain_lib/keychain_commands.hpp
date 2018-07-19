@@ -281,7 +281,7 @@ struct keychain_command<command_te::create>: keychain_command_base
         fc::ecc::public_key_data public_key_data;
         switch (params.curve)
         {
-          case keyfile_format::keyfile_t::keyinfo_t::CURVE_SECP256K1:
+          case keyfile_format::keyfile_t::keyinfo_t::secp256k1:
           {
             auto priv_key = fc::ecc::private_key::generate();
             public_key_data = priv_key.get_public_key().serialize();

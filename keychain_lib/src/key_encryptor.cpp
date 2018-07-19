@@ -142,9 +142,9 @@ const EVP_CIPHER * encryptor_singletone::get_cipher(keyfile_format::cipher_etype
 {
   switch (etype)
   {
-    case CIPHER_AES128: return EVP_aes_128_cbc();
-    case CIPHER_AES192: return EVP_aes_192_cbc();
-    case CIPHER_AES256: return EVP_aes_256_cbc();
+    case aes128: return EVP_aes_128_cbc();
+    case aes192: return EVP_aes_192_cbc();
+    case aes256: return EVP_aes_256_cbc();
     //TODO: need to add other cipher algorithms
     default:
       throw std::runtime_error("Error: unsupported type of key cipher algorithm");

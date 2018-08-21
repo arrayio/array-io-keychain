@@ -32,10 +32,10 @@ LIST(APPEND BOOST_COMPONENTS coroutine)
 SET(Boost_LIBRARIES ${BOOST_LIBRARIES_TEMP} ${Boost_LIBRARIES})
 
 include_directories(
-        "../../array-io-core/libraries/utilities/include"
-        "../../array-io-core/libraries/db/include"
-        "../../array-io-core/libraries/chain/include"
-        "../../array-io-core/libraries/fc/include"
+#        "../../array-io-core/libraries/utilities/include"
+#        "../../array-io-core/libraries/db/include"
+#        "../../array-io-core/libraries/chain/include"
+#        "../../array-io-core/libraries/fc/include"
         "/usr/include/libcxxabi"
         ${Boost_INCLUDE_DIR})
 
@@ -55,5 +55,5 @@ set(SRCS
 add_executable(passentry_gui ${SRCS})
 
 # Use the Widgets module from Qt 5
-target_link_libraries(passentry_gui Qt5::Widgets ${LIB_PTHREAD} fc secp256k1 graphene_utilities graphene_chain ${Boost_LIBRARIES} )
+target_link_libraries(passentry_gui Qt5::Widgets ${LIB_PTHREAD} ${Boost_LIBRARIES} )
 

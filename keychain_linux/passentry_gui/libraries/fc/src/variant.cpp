@@ -3,7 +3,7 @@
 #include <fc/exception/exception.hpp>
 #include <fc/io/sstream.hpp>
 #include <fc/io/json.hpp>
-#include <fc/io/stdio.hpp>
+//#include <fc/io/stdio.hpp>
 #include <string.h>
 #include <fc/crypto/base64.hpp>
 #include <fc/crypto/hex.hpp>

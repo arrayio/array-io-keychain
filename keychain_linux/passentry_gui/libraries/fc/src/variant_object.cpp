@@ -1,5 +1,5 @@
 #include <fc/variant_object.hpp>
-//#include <fc/exception/exception.hpp>
+#include <fc/exception/exception.hpp>
 #include <assert.h>
 
 

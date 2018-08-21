@@ -113,11 +113,11 @@ namespace fc
    template<typename T>
    void from_variant( const variant& var,  std::deque<T>& vo );
 
-/*   template<typename T>
+   template<typename T>
    void to_variant( const fc::flat_set<T>& var,  variant& vo );
    template<typename T>
    void from_variant( const variant& var, fc::flat_set<T>& vo );
-*/
+
    template<typename T>
    void to_variant( const std::set<T>& var,  variant& vo );
    template<typename T>
@@ -227,7 +227,7 @@ namespace fc
               virtual void handle( const variants& v)const       = 0;
         };
 
-        //void  visit( const visitor& v )const;
+        void  visit( const visitor& v )const;
 
         type_id                     get_type()const;
 
@@ -249,41 +249,41 @@ namespace fc
          */
         bool                        is_integer()const;
                                     
-//        int64_t                     as_int64()const;
-//        uint64_t                    as_uint64()const;
-//        bool                        as_bool()const;
-//        double                      as_double()const;
+        int64_t                     as_int64()const;
+        uint64_t                    as_uint64()const;
+        bool                        as_bool()const;
+        double                      as_double()const;
 
-//        blob&                       get_blob();
-//        const blob&                 get_blob()const;
-//        blob                        as_blob()const;
+        blob&                       get_blob();
+        const blob&                 get_blob()const;
+        blob                        as_blob()const;
 
         /** Convert's double, ints, bools, etc to a string
          * @throw if get_type() == array_type | get_type() == object_type 
          */
-//        string                      as_string()const;
+        string                      as_string()const;
 
         /// @pre  get_type() == string_type
-//        const string&               get_string()const;
+        const string&               get_string()const;
                                     
         /// @throw if get_type() != array_type | null_type
-//        variants&                   get_array();
+        variants&                   get_array();
 
         /// @throw if get_type() != array_type 
-//        const variants&             get_array()const;
+        const variants&             get_array()const;
 
         /// @throw if get_type() != object_type | null_type
-//        variant_object&             get_object();
+        variant_object&             get_object();
 
         /// @throw if get_type() != object_type 
-//        const variant_object&       get_object()const;
+        const variant_object&       get_object()const;
 
         /// @pre is_object()
         const variant&              operator[]( const char* )const;
         /// @pre is_array()
         const variant&              operator[]( size_t pos )const;
         /// @pre is_array()
-//        size_t                      size()const;
+        size_t                      size()const;
 
         /**
          *  _types that use non-intrusive variant conversion can implement the
@@ -378,7 +378,7 @@ namespace fc
           vars[i] = variant(*itr);
        vo = vars;
    }
- /*  template<typename T>
+   template<typename T>
    void from_variant( const variant& var,  std::unordered_set<T>& vo )
    {
       const variants& vars = var.get_array();
@@ -387,7 +387,7 @@ namespace fc
       for( auto itr = vars.begin(); itr != vars.end(); ++itr )
          vo.insert( itr->as<T>() );
    }
-*/
+
 
    template<typename K, typename T>
    void to_variant( const std::unordered_map<K, T>& var,  variant& vo )
@@ -398,7 +398,7 @@ namespace fc
           vars[i] = fc::variant(*itr);
        vo = vars;
    }
- /*  template<typename K, typename T>
+   template<typename K, typename T>
    void from_variant( const variant& var,  std::unordered_map<K, T>& vo )
    {
       const variants& vars = var.get_array();
@@ -406,7 +406,7 @@ namespace fc
       for( auto itr = vars.begin(); itr != vars.end(); ++itr )
          vo.insert( itr->as< std::pair<K,T> >() );
 
-   }*/
+   }
    template<typename K, typename T>
    void to_variant( const std::map<K, T>& var,  variant& vo )
    {
@@ -416,7 +416,7 @@ namespace fc
           vars[i] = fc::variant(*itr);
        vo = vars;
    }
-/*   template<typename K, typename T>
+   template<typename K, typename T>
    void from_variant( const variant& var,  std::map<K, T>& vo )
    {
       const variants& vars = var.get_array();
@@ -424,7 +424,7 @@ namespace fc
       for( auto itr = vars.begin(); itr != vars.end(); ++itr )
          vo.insert( itr->as< std::pair<K,T> >() );
    }
-*/
+
    template<typename K, typename T>
    void to_variant( const std::multimap<K, T>& var,  variant& vo )
    {
@@ -434,7 +434,7 @@ namespace fc
           vars[i] = fc::variant(*itr);
        vo = vars;
    }
- /*  template<typename K, typename T>
+   template<typename K, typename T>
    void from_variant( const variant& var,  std::multimap<K, T>& vo )
    {
       const variants& vars = var.get_array();
@@ -443,7 +443,7 @@ namespace fc
          vo.insert( itr->as< std::pair<K,T> >() );
    }
 
-*/
+
    template<typename T>
    void to_variant( const std::set<T>& var,  variant& vo )
    {
@@ -453,7 +453,7 @@ namespace fc
           vars[i] = variant(*itr);
        vo = vars;
    }
- /* template<typename T>
+   template<typename T>
    void from_variant( const variant& var,  std::set<T>& vo )
    {
       const variants& vars = var.get_array();
@@ -462,9 +462,9 @@ namespace fc
       for( auto itr = vars.begin(); itr != vars.end(); ++itr )
          vo.insert( itr->as<T>() );
    }
-*/
+
    /** @ingroup Serializable */
- /*  template<typename T>
+   template<typename T>
    void from_variant( const variant& var, std::deque<T>& tmp )
    {
       const variants& vars = var.get_array();
@@ -472,7 +472,7 @@ namespace fc
       for( auto itr = vars.begin(); itr != vars.end(); ++itr )
          tmp.push_back( itr->as<T>() );
    }
-*/
+
    /** @ingroup Serializable */
    template<typename T>
    void to_variant( const std::deque<T>& t, variant& v )
@@ -485,7 +485,7 @@ namespace fc
 
 
    /** @ingroup Serializable */
-  /* template<typename T>
+   template<typename T>
    void from_variant( const variant& var, std::vector<T>& tmp )
    {
       const variants& vars = var.get_array();
@@ -494,7 +494,7 @@ namespace fc
       for( auto itr = vars.begin(); itr != vars.end(); ++itr )
          tmp.push_back( itr->as<T>() );
    }
-*/
+
    /** @ingroup Serializable */
    template<typename T>
    void to_variant( const std::vector<T>& t, variant& v )
@@ -515,7 +515,7 @@ namespace fc
       vars[1] = variant(t.second);
        v = vars;
    }
-  /* template<typename A, typename B>
+   template<typename A, typename B>
    void from_variant( const variant& v, std::pair<A,B>& p )
    {
       const variants& vars = v.get_array();
@@ -524,7 +524,7 @@ namespace fc
       if( vars.size() > 1 )
       p.second = vars[1].as<B>();
    }
-*/
+
 
    template<typename T>
    variant::variant( const T& val )
@@ -570,7 +570,7 @@ namespace fc
       }
    }
 
-/*
+
    template<typename T>
    void to_variant( const safe<T>& s, variant& v ) { v = s.value; }
 
@@ -599,7 +599,7 @@ namespace fc
       for( const auto& item : vars )
          c.insert( item.as<T>() );
    }
-*/
+
    variant operator + ( const variant& a, const variant& b );
    variant operator - ( const variant& a, const variant& b );
    variant operator * ( const variant& a, const variant& b );

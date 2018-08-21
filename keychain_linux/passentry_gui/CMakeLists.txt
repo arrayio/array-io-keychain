@@ -36,23 +36,19 @@ include_directories(
 #        "../../array-io-core/libraries/db/include"
 #        "../../array-io-core/libraries/chain/include"
 #        "../../array-io-core/libraries/fc/include"
+        "libraries/fc/include"
         "/usr/include/libcxxabi"
         ${Boost_INCLUDE_DIR})
 
 # Find the QtWidgets library
 find_package(Qt5Widgets CONFIG REQUIRED)
 
-# Populate a CMake variable with the sources
-set(SRCS
-    polling.cpp
-    widget.cpp
-    main.cpp
-    polling.hpp
-    widget.hpp
-        cmd.cpp cmd.hpp)
 
-# Tell CMake to create the helloworld executable
-add_executable(passentry_gui ${SRCS})
+file(GLOB GUI_SOURCES "./*.cpp" "./libraries/fc/src/*.cpp" )
+file(GLOB GUI_INCLUDE "./*.hpp" "./libraries/fc/include/fc/*.hpp")
+
+add_executable(passentry_gui ${GUI_SOURCES} ${GUI_INCLUDE})
+
 
 # Use the Widgets module from Qt 5
 target_link_libraries(passentry_gui Qt5::Widgets ${LIB_PTHREAD} ${Boost_LIBRARIES} )

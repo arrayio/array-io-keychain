@@ -2,6 +2,8 @@
 //#include <fc/io/iostream.hpp>
 #include <iostream>
 #include <fc/fwd.hpp>
+#include <fc/string.hpp>
+#include <memory>
 
 namespace fc {
 

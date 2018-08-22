@@ -584,7 +584,7 @@ namespace fc
       }
       os << '"';
    }
-   ostream& json::to_stream( ostream& out, const fc::string& str )
+   std::ostream& json::to_stream( std::ostream& out, const fc::string& str )
    {
         escape_string( str, out );
         return out;
@@ -685,7 +685,8 @@ namespace fc
 
    fc::string   json::to_string( const variant& v, output_formatting format /* = stringify_large_ints_and_doubles */ )
    {
-      fc::stringstream ss;
+      //fc::stringstream ss;
+       std::stringstream ss;
       fc::to_stream( ss, v, format );
       return ss.str();
    }
@@ -820,7 +821,7 @@ namespace fc
               FC_ASSERT( false, "Unknown JSON parser type {ptype}", ("ptype", ptype) );
       }
    }
-   variant json::from_stream( buffered_istream& in, parse_type ptype )
+/*   variant json::from_stream( buffered_istream& in, parse_type ptype )
    {
       switch( ptype )
       {
@@ -836,18 +837,18 @@ namespace fc
               FC_ASSERT( false, "Unknown JSON parser type {ptype}", ("ptype", ptype) );
       }
    }
-
-   ostream& json::to_stream( ostream& out, const variant& v, output_formatting format /* = stringify_large_ints_and_doubles */ )
+*/
+   std::ostream& json::to_stream( std::ostream& out, const variant& v, output_formatting format /* = stringify_large_ints_and_doubles */ )
    {
       fc::to_stream( out, v, format );
       return out;
    }
-   ostream& json::to_stream( ostream& out, const variants& v, output_formatting format /* = stringify_large_ints_and_doubles */ )
+   std::ostream& json::to_stream( std::ostream& out, const variants& v, output_formatting format /* = stringify_large_ints_and_doubles */ )
    {
       fc::to_stream( out, v, format );
       return out;
    }
-   ostream& json::to_stream( ostream& out, const variant_object& v, output_formatting format /* = stringify_large_ints_and_doubles */ )
+   std::ostream& json::to_stream( std::ostream& out, const variant_object& v, output_formatting format /* = stringify_large_ints_and_doubles */ )
    {
       fc::to_stream( out, v, format );
       return out;

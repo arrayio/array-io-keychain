@@ -34,14 +34,14 @@ namespace fc {
      }
      return false;
   }
-*/
+
   void spin_yield_lock::lock() {
     define_self;
     while( self->exchange(locked, boost::memory_order_acquire)==locked) {
       yield(); 
     }
   }
-
+*/
   void spin_yield_lock::unlock() {
     define_self;
     self->store(unlocked, boost::memory_order_release);

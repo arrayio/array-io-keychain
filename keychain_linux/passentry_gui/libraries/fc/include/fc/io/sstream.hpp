@@ -1,10 +1,11 @@
 #pragma once
 //#include <fc/io/iostream.hpp>
+#include <iostream>
 #include <fc/fwd.hpp>
 
 namespace fc {
 
-  class stringstream : virtual public iostream {
+class stringstream : virtual public std::iostream {
     public:
       stringstream();
       stringstream( fc::string& s);

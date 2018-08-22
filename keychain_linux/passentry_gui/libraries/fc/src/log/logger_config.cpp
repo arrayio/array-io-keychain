@@ -8,7 +8,7 @@
 #include <fc/log/file_appender.hpp>
 #include <fc/reflect/variant.hpp>
 #include <fc/exception/exception.hpp>
-#include <fc/io/stdio.hpp>
+//#include <fc/io/stdio.hpp>
 
 namespace fc {
    extern std::unordered_map<std::string,logger>& get_logger_map();

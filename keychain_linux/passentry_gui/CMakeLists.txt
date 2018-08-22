@@ -4,7 +4,8 @@ set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_FLAGS "-std=c++14 --verbose ")
 set(CMAKE_EXE_LINKER_FLAGS "-ldl -v")
 
-set (CMAKE_PREFIX_PATH "/home/user/Qt5.11.1/")
+#set (CMAKE_PREFIX_PATH "/home/user/Qt5.11.1/")
+set (CMAKE_PREFIX_PATH "/home/user/Qt5.11.1/5.11.1/gcc_64/lib/cmake/Qt5Widgets/")
 
 project(passentrygui)
 # Find includes in corresponding build directories
@@ -44,8 +45,8 @@ include_directories(
 find_package(Qt5Widgets CONFIG REQUIRED)
 
 
-file(GLOB GUI_SOURCES "./*.cpp" "./libraries/fc/src/*.cpp" )
-file(GLOB GUI_INCLUDE "./*.hpp" "./libraries/fc/include/fc/*.hpp")
+file(GLOB GUI_SOURCES "./*.cpp" "./libraries/fc/src/*.cpp" "libraries/fc/src/*/*.cpp" )
+file(GLOB GUI_INCLUDE "./*.hpp" "./libraries/fc/include/fc/*.hpp" )
 
 add_executable(passentry_gui ${GUI_SOURCES} ${GUI_INCLUDE})
 

@@ -515,7 +515,7 @@ namespace fc
     *
     *  All other characters are printed as UTF8.
     */
-   void escape_string( const string& str, ostream& os )
+   void escape_string( const string& str, std::ostream& os )
    {
       os << '"';
       for( auto itr = str.begin(); itr != str.end(); ++itr )

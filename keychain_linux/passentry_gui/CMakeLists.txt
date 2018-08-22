@@ -39,11 +39,12 @@ include_directories(
 #        "../../array-io-core/libraries/fc/include"
         "libraries/fc/include"
         "/usr/include/libcxxabi"
+        "${OPENSSL_ROOT_DIR}/include"
         ${Boost_INCLUDE_DIR})
 
 # Find the QtWidgets library
 find_package(Qt5Widgets CONFIG REQUIRED)
-
+find_library(LIB_OPENSSL NAME crypto  HINTS "${OPENSSL_ROOT_DIR}/lib")
 
 file(GLOB GUI_SOURCES "./*.cpp" "./libraries/fc/src/*.cpp" "libraries/fc/src/*/*.cpp" )
 file(GLOB GUI_INCLUDE "./*.hpp" "./libraries/fc/include/fc/*.hpp" )
@@ -52,5 +53,5 @@ add_executable(passentry_gui ${GUI_SOURCES} ${GUI_INCLUDE})
 
 
 # Use the Widgets module from Qt 5
-target_link_libraries(passentry_gui Qt5::Widgets ${LIB_PTHREAD} ${Boost_LIBRARIES} )
+target_link_libraries(passentry_gui Qt5::Widgets ${LIB_PTHREAD} ${LIB_OPENSSL} ${Boost_LIBRARIES} )
 

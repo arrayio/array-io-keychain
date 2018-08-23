@@ -1,16 +1,15 @@
-#include <unistd.h>
 #include <QGridLayout>
 #include <QLabel>
 #include <QLineEdit>
 #include <QPushButton>
 #include <QMessageBox>
 #include <QCloseEvent>
-//#include <fc/io/json.hpp>
+#include <fc/io/json.hpp>
 #include "cmd.hpp"
 #include "widget.hpp"
 
-//#include <fc/reflect/reflect.hpp>
-//#include <fc/variant.hpp>
+#include <fc/reflect/reflect.hpp>
+#include <fc/variant.hpp>
 
 Q_DECLARE_METATYPE(std::string)
 
@@ -98,16 +97,15 @@ void Widget::found_pass()
 
 void Widget::closeEvent(QCloseEvent *event)
 {
-//    fc::variant( master::cmd<( master::cmds::cancel)>().base);
-//    passClearOnExit ?
-//    send(fc::json::to_pretty_string(fc::variant( master::cmd<( master::cmds::cancel)>().base))) :
-//    send(fc::json::to_pretty_string(fc::variant( master::cmd<( master::cmds::ok)>().base)));
+    passClearOnExit ?
+    send(fc::json::to_pretty_string(fc::variant( master::cmd<( master::cmds::cancel)>().base))) :
+    send(fc::json::to_pretty_string(fc::variant( master::cmd<( master::cmds::ok)>().base)));
     event->accept();
 }
 
 void Widget::parse(const std::string s)
 {
- /*   auto a = fc::json::from_string(s);
+    auto a = fc::json::from_string(s);
     try {
         auto cmd = a.as<slave::cmd_common>();
         auto cmd_map = slave::cmd_list_singletone::instance();
@@ -116,6 +114,5 @@ void Widget::parse(const std::string s)
     }
     catch (const std::exception &e) {throw std::runtime_error(e.what());}
     catch (const fc::exception &e) {throw std::runtime_error(e.what());}
-    */
 }
 

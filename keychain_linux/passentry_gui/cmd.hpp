@@ -3,9 +3,10 @@
 //
 #ifndef KEYCHAINAPP_CMD_H
 #define KEYCHAINAPP_CMD_H
-//#include <fc/reflect/reflect.hpp>
+#include <fc/reflect/reflect.hpp>
+#include <fc/exception/exception.hpp>
 //#include <graphene/chain/protocol/protocol.hpp>
-//#include <fc/io/json.hpp>
+#include <fc/io/json.hpp>
 #include <iostream>
 #include <vector>
 #include <boost/hana.hpp>
@@ -20,12 +21,12 @@ namespace  slave {
     struct cmd_common {
         cmd_common(cmds cmd_ = cmds::unknown): cmd(cmd_){};
         cmds cmd;
-//        fc::variant params;
+        fc::variant params;
     };
     struct cmd_base {
         cmd_base(cmds cmd_) : cmd(cmd_) {};
         cmds cmd;
-//        virtual void operator()(Widget* w, const fc::variant&) const = 0;
+        virtual void operator()(Widget* w, const fc::variant&) const = 0;
         virtual ~cmd_base() {};
     };
     struct cmd_list_singletone
@@ -57,10 +58,10 @@ namespace master
     };
 }
 
-//FC_REFLECT_ENUM(slave::cmds, (unknown)(rawtrx)(close)(modify)(length)(last))
-//FC_REFLECT(slave::cmd_common, (cmd)(params))
+FC_REFLECT_ENUM(slave::cmds, (unknown)(rawtrx)(close)(modify)(length)(last))
+FC_REFLECT(slave::cmd_common, (cmd)(params))
 
-//FC_REFLECT_ENUM(master::cmds, (unknown)(ok)(cancel)(last))
-//FC_REFLECT(master::cmd<master::cmds::ok>::base_t, (cmd))
-//FC_REFLECT(master::cmd<master::cmds::cancel>::base_t, (cmd))
+FC_REFLECT_ENUM(master::cmds, (unknown)(ok)(cancel)(last))
+FC_REFLECT(master::cmd<master::cmds::ok>::base_t, (cmd))
+FC_REFLECT(master::cmd<master::cmds::cancel>::base_t, (cmd))
 #endif //KEYCHAINAPP_CMD_H

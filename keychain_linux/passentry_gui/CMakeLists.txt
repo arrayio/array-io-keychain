@@ -38,6 +38,7 @@ include_directories(
 #        "../../array-io-core/libraries/chain/include"
 #        "../../array-io-core/libraries/fc/include"
         "libraries/fc/include"
+        "libraries/chain/include"
         "/usr/include/libcxxabi"
         "${OPENSSL_ROOT_DIR}/include"
         ${Boost_INCLUDE_DIR})
@@ -47,7 +48,7 @@ find_package(Qt5Widgets CONFIG REQUIRED)
 find_library(LIB_OPENSSL NAME crypto  HINTS "${OPENSSL_ROOT_DIR}/lib")
 
 file(GLOB GUI_SOURCES "./*.cpp" "./libraries/fc/src/*.cpp" "libraries/fc/src/*/*.cpp" )
-file(GLOB GUI_INCLUDE "./*.hpp" "./libraries/fc/include/fc/*.hpp" )
+file(GLOB GUI_INCLUDE "./*.hpp" "./libraries/fc/include/fc/*.hpp" "./libraries/chain/include/*.hpp")
 
 add_executable(passentry_gui ${GUI_SOURCES} ${GUI_INCLUDE})
 

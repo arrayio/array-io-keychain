@@ -27,7 +27,7 @@ public:
 };
 
 
-std::string keychain_wrapper(const secure_dlg_mod_base* secure_dlg, const fc::variant& var);
+std::string keychain_wrapper(const secure_dlg_mod_base* secure_dlg, const fc_keychain::variant& var);
 
 }
 

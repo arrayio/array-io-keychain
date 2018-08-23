@@ -10,10 +10,10 @@ class ofstream : virtual public std::ostream {
     public:
       enum mode { out, binary };
       ofstream();
-      ofstream( const fc::path& file, int m = binary );
+      ofstream( const fc_keychain::path& file, int m = binary );
       ~ofstream();
 
-      void open( const fc::path& file, int m = binary );
+      void open( const fc_keychain::path& file, int m = binary );
       size_t writesome( const char* buf, size_t len );
       size_t writesome(const std::shared_ptr<const char>& buffer, size_t len, size_t offset);
       void   put( char c );
@@ -22,7 +22,7 @@ class ofstream : virtual public std::ostream {
 
     private:
       class impl;
-      fc::shared_ptr<impl> my;
+      fc_keychain::shared_ptr<impl> my;
   };
 
 class ifstream : virtual public std::istream {
@@ -31,10 +31,10 @@ class ifstream : virtual public std::istream {
       enum seekdir { beg, cur, end };
 
       ifstream();
-      ifstream( const fc::path& file, int m = binary);
+      ifstream( const fc_keychain::path& file, int m = binary);
       ~ifstream();
 
-      void      open( const fc::path& file, int m );
+      void      open( const fc_keychain::path& file, int m );
       size_t    readsome( char* buf, size_t len );
       size_t    readsome(const std::shared_ptr<char>& buffer, size_t max, size_t offset);
       ifstream& read( char* buf, size_t len );
@@ -45,7 +45,7 @@ class ifstream : virtual public std::istream {
       bool      eof()const;
     private:
       class impl;
-      fc::shared_ptr<impl> my;
+      fc_keychain::shared_ptr<impl> my;
   };
 
   /**
@@ -53,6 +53,6 @@ class ifstream : virtual public std::istream {
    * NB reading a full file into memory is a poor choice
    * if the file may be very large.
    */
-  void read_file_contents( const fc::path& filename, std::string& result );
+  void read_file_contents( const fc_keychain::path& filename, std::string& result );
 
 } // namespace fc

@@ -6,10 +6,10 @@
 //#include <websocketpp/utf8_validator.hpp>
 
 #include <assert.h>
-#include <fc/log/logger.hpp>
+#include <fc_keychain/log/logger.hpp>
 #include <iostream>
 
-namespace fc {
+namespace fc_keychain {
 
    bool is_utf8( const std::string& str )
    {
@@ -47,6 +47,6 @@ namespace fc {
      utf8::utf32to8(input.begin(), input.end(), std::back_inserter(*storage));
    }
 
-} ///namespace fc
+} ///namespace fc_keychain
 
 

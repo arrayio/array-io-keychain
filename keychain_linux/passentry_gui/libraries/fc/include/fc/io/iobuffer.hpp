@@ -7,7 +7,7 @@ namespace fc
   /**
    *  Records the size, but discards the data.
    */
-  class size_stream : public virtual fc::ostream
+  class size_stream : public virtual fc_keychain::ostream
   {
       public:
       size_stream( size_t s  = 0):_size(s){}
@@ -29,7 +29,7 @@ namespace fc
   };
 
   
-  class iobuffer : public virtual fc::iostream
+  class iobuffer : public virtual fc_keychain::iostream
   {
       public:
       iobuffer( size_t s )
@@ -45,7 +45,7 @@ namespace fc
       virtual size_t     readsome( char* buf, size_t len )
       {
           auto avail = std::min<size_t>( _data.size()-_pos, len );
-          if( avail == 0 ) throw fc::eof_exception();
+          if( avail == 0 ) throw fc_keychain::eof_exception();
           memcpy( buf, _data.data()+_pos, avail );
           _pos += avail;
           return avail;
@@ -56,7 +56,7 @@ namespace fc
        */
       char               peek()const 
       { 
-          if( _pos == _data.size() ) throw fc::eof_exception();
+          if( _pos == _data.size() ) throw fc_keychain::eof_exception();
          return _data[_pos]; 
       }
 

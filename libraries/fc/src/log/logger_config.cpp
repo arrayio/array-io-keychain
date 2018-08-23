@@ -1,24 +1,24 @@
-#include <fc/log/logger_config.hpp>
-#include <fc/log/appender.hpp>
-#include <fc/io/json.hpp>
-#include <fc/filesystem.hpp>
+#include <fc_keychain/log/logger_config.hpp>
+#include <fc_keychain/log/appender.hpp>
+#include <fc_keychain/io/json.hpp>
+#include <fc_keychain/filesystem.hpp>
 #include <unordered_map>
 #include <string>
-#include <fc/log/console_appender.hpp>
-//#include <fc/log/file_appender.hpp>
-#include <fc/reflect/variant.hpp>
-#include <fc/exception/exception.hpp>
+#include <fc_keychain/log/console_appender.hpp>
+//#include <fc_keychain/log/file_appender.hpp>
+#include <fc_keychain/reflect/variant.hpp>
+#include <fc_keychain/exception/exception.hpp>
 #include <iostream>
-//#include <fc/io/stdio.hpp>
+//#include <fc_keychain/io/stdio.hpp>
 
-namespace fc {
+namespace fc_keychain {
    extern std::unordered_map<std::string,logger>& get_logger_map();
    extern std::unordered_map<std::string,appender::ptr>& get_appender_map();
    logger_config& logger_config::add_appender( const string& s ) { appenders.push_back(s); return *this; }
 
-   void configure_logging( const fc::path& lc )
+   void configure_logging( const fc_keychain::path& lc )
    {
-      configure_logging( fc::json::from_file<logging_config>(lc) );
+      configure_logging( fc_keychain::json::from_file<logging_config>(lc) );
    }
    bool configure_logging( const logging_config& cfg )
    {
@@ -28,7 +28,7 @@ namespace fc {
       get_logger_map().clear();
       get_appender_map().clear();
 
-      //slog( "\n%s", fc::json::to_pretty_string(cfg).c_str() );
+      //slog( "\n%s", fc_keychain::json::to_pretty_string(cfg).c_str() );
       for( size_t i = 0; i < cfg.appenders.size(); ++i ) {
          appender::create( cfg.appenders[i].name, cfg.appenders[i].type, cfg.appenders[i].args );
         // TODO... process enabled

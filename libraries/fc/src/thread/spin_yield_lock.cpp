@@ -1,10 +1,10 @@
-#include <fc/thread/spin_yield_lock.hpp>
-#include <fc/time.hpp>
+#include <fc_keychain/thread/spin_yield_lock.hpp>
+#include <fc_keychain/time.hpp>
 #include <boost/atomic.hpp>
 #include <boost/memory_order.hpp>
 #include <new>
 
-namespace fc {
+namespace fc_keychain {
   void yield();
 
   #define define_self  boost::atomic<int>* self = (boost::atomic<int>*)&_lock
@@ -22,11 +22,11 @@ namespace fc {
     return self->exchange(locked, boost::memory_order_acquire)!=locked;
   }
 /*
-  bool spin_yield_lock::try_lock_for( const fc::microseconds& us ) {
-    return try_lock_until( fc::time_point::now() + us );
+  bool spin_yield_lock::try_lock_for( const fc_keychain::microseconds& us ) {
+    return try_lock_until( fc_keychain::time_point::now() + us );
   }
 
-  bool spin_yield_lock::try_lock_until( const fc::time_point& abs_time ) {
+  bool spin_yield_lock::try_lock_until( const fc_keychain::time_point& abs_time ) {
      while( abs_time > time_point::now() ) {
         if( try_lock() ) 
            return true;
@@ -48,4 +48,4 @@ namespace fc {
   }
   #undef define_self
 
-} // namespace fc
+} // namespace fc_keychain

@@ -10,6 +10,7 @@
 #include <string>
 
 #include "sign_define.hpp"
+#include <fc_keychain/variant.hpp>
 
 namespace keychain_app {
 
@@ -25,7 +26,7 @@ static const char VTAB = '\v';
 static const char NP = '\f';
 }
 
-using keychain_invoke_f = std::function<std::string(const fc::variant&)>;
+using keychain_invoke_f = std::function<std::string(const fc_keychain::variant&)>;
 
 class pipeline_parser
 {

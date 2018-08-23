@@ -74,7 +74,7 @@ namespace fc
         log_level     get_log_level()const;
         string        get_context()const;
 
-        void          append_context( const fc::string& c );
+        void          append_context( const fc_keychain::string& c );
 
         string        to_string()const;
       private:
@@ -133,7 +133,7 @@ namespace fc
 
 } // namespace fc
 
-FC_REFLECT_TYPENAME( fc::log_message );
+FC_REFLECT_TYPENAME( fc_keychain::log_message );
 
 #ifndef __func__
 #define __func__ __FUNCTION__
@@ -142,11 +142,11 @@ FC_REFLECT_TYPENAME( fc::log_message );
 /**
  * @def FC_LOG_CONTEXT(LOG_LEVEL)
  * @brief Automatically captures the File, Line, and Method names and passes them to
- *        the constructor of fc::log_context along with LOG_LEVEL
+ *        the constructor of fc_keychain::log_context along with LOG_LEVEL
  * @param LOG_LEVEL - a valid log_level::Enum name.
  */
 #define FC_LOG_CONTEXT(LOG_LEVEL) \
-   fc::log_context( fc::log_level::LOG_LEVEL, __FILE__, __LINE__, __func__ )
+   fc_keychain::log_context( fc_keychain::log_level::LOG_LEVEL, __FILE__, __LINE__, __func__ )
    
 /**
  * @def FC_LOG_MESSAGE(LOG_LEVEL,FORMAT,...)
@@ -158,5 +158,5 @@ FC_REFLECT_TYPENAME( fc::log_message );
  * @param ...  A set of key/value pairs denoted as ("key",val)("key2",val2)...
  */
 #define FC_LOG_MESSAGE( LOG_LEVEL, FORMAT, ... ) \
-   fc::log_message( FC_LOG_CONTEXT(LOG_LEVEL), FORMAT, fc::mutable_variant_object()__VA_ARGS__ )
+   fc_keychain::log_message( FC_LOG_CONTEXT(LOG_LEVEL), FORMAT, fc_keychain::mutable_variant_object()__VA_ARGS__ )
 

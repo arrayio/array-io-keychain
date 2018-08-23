@@ -22,9 +22,9 @@
 #include <memory>
 #include <string.h>
 
-#include <fc/log/logger.hpp>
-#include <fc/string.hpp>
-#include <fc/exception/exception.hpp>
+#include <fc_keychain/log/logger.hpp>
+#include <fc_keychain/string.hpp>
+#include <fc_keychain/exception/exception.hpp>
 
 #include <stdexcept>
 #include <vector>
@@ -615,7 +615,7 @@ inline bool DecodeBase58(const std::string& str, std::vector<unsigned char>& vch
 }
 
 
-namespace fc {
+namespace fc_keychain {
 
 std::string to_base58( const char* d, size_t s ) {
   return EncodeBase58( (const unsigned char*)d, (const unsigned char*)d+s ).c_str();
@@ -630,7 +630,7 @@ std::string to_base58( const std::vector<char>& d )
 std::vector<char> from_base58( const std::string& base58_str ) {
    std::vector<unsigned char> out;
    if( !DecodeBase58( base58_str.c_str(), out ) ) {
-     FC_THROW_EXCEPTION( parse_error_exception, "Unable to decode base58 string ${base58_str}", ("base58_str",base58_str) );
+     FC_KEYCHAIN_THROW_EXCEPTION( parse_error_exception, "Unable to decode base58 string ${base58_str}", ("base58_str",base58_str) );
    }
    return std::vector<char>((const char*)out.data(), ((const char*)out.data())+out.size() );
 }
@@ -641,9 +641,9 @@ size_t from_base58( const std::string& base58_str, char* out_data, size_t out_da
   //slog( "%s", base58_str.c_str() );
   std::vector<unsigned char> out;
   if( !DecodeBase58( base58_str.c_str(), out ) ) {
-    FC_THROW_EXCEPTION( parse_error_exception, "Unable to decode base58 string ${base58_str}", ("base58_str",base58_str) );
+    FC_KEYCHAIN_THROW_EXCEPTION( parse_error_exception, "Unable to decode base58 string ${base58_str}", ("base58_str",base58_str) );
   }
-  FC_ASSERT( out.size() <= out_data_len );
+  FC_KEYCHAIN_ASSERT( out.size() <= out_data_len );
   memcpy( out_data, out.data(), out.size() );
   return out.size();
 }

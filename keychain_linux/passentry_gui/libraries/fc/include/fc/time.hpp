@@ -38,8 +38,8 @@ namespace fc {
   inline microseconds days(int64_t d) { return hours(24*d); }
 
   class variant;
-  void to_variant( const fc::microseconds&,  fc::variant&  );
-  void from_variant( const fc::variant& , fc::microseconds& );
+  void to_variant( const fc_keychain::microseconds&,  fc_keychain::variant&  );
+  void from_variant( const fc_keychain::variant& , fc_keychain::microseconds& );
 
   class time_point {
     public:
@@ -48,8 +48,8 @@ namespace fc {
         static time_point maximum() { return time_point( microseconds::maximum() ); }
         static time_point min() { return time_point();                      }
 
-        operator fc::string()const;
-        static time_point from_iso_string( const fc::string& s );
+        operator fc_keychain::string()const;
+        static time_point from_iso_string( const fc_keychain::string& s );
 
         const microseconds& time_since_epoch()const { return elapsed; }
         uint32_t            sec_since_epoch()const  { return elapsed.count() / 1000000; }
@@ -86,10 +86,10 @@ namespace fc {
         static time_point_sec maximum() { return time_point_sec(0xffffffff); }
         static time_point_sec min() { return time_point_sec(0); }
 
-        operator time_point()const { return time_point( fc::seconds( utc_seconds) ); }
+        operator time_point()const { return time_point( fc_keychain::seconds( utc_seconds) ); }
         uint32_t sec_since_epoch()const { return utc_seconds; }
 
-        time_point_sec operator = ( const fc::time_point& t )
+        time_point_sec operator = ( const fc_keychain::time_point& t )
         {
           utc_seconds = t.time_since_epoch().count() / 1000000ll;
           return *this;
@@ -112,33 +112,33 @@ namespace fc {
         friend microseconds operator - ( const time_point_sec& t, const time_point_sec& m ) { return time_point(t) - time_point(m); }
         friend microseconds operator - ( const time_point& t, const time_point_sec& m ) { return time_point(t) - time_point(m); }
 
-        fc::string to_non_delimited_iso_string()const;
-        fc::string to_iso_string()const;
+        fc_keychain::string to_non_delimited_iso_string()const;
+        fc_keychain::string to_iso_string()const;
 
-        operator fc::string()const;
-        static time_point_sec from_iso_string( const fc::string& s );
+        operator fc_keychain::string()const;
+        static time_point_sec from_iso_string( const fc_keychain::string& s );
 
     private:
         uint32_t utc_seconds;
   };
 
-  typedef fc::optional<time_point> otime_point;
+  typedef fc_keychain::optional<time_point> otime_point;
 
   /** return a human-readable approximate time, relative to now()
    * e.g., "4 hours ago", "2 months ago", etc.
    */
   string get_approximate_relative_time_string(const time_point_sec& event_time,
-                                              const time_point_sec& relative_to_time = fc::time_point::now(),
+                                              const time_point_sec& relative_to_time = fc_keychain::time_point::now(),
                                               const std::string& ago = " ago");
   string get_approximate_relative_time_string(const time_point& event_time,
-                                              const time_point& relative_to_time = fc::time_point::now(),
+                                              const time_point& relative_to_time = fc_keychain::time_point::now(),
                                               const std::string& ago = " ago");
 }
 
 #include <fc/reflect/reflect.hpp>
-FC_REFLECT_TYPENAME( fc::time_point )
-FC_REFLECT_TYPENAME( fc::microseconds )
-FC_REFLECT_TYPENAME( fc::time_point_sec )
+FC_REFLECT_TYPENAME( fc_keychain::time_point )
+FC_REFLECT_TYPENAME( fc_keychain::microseconds )
+FC_REFLECT_TYPENAME( fc_keychain::time_point_sec )
 
 #ifdef _MSC_VER
   #pragma warning (pop)

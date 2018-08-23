@@ -1,14 +1,14 @@
-#include <fc/exception/exception.hpp>
+#include <fc_keychain/exception/exception.hpp>
 #include <boost/exception/all.hpp>
-#include <fc/io/sstream.hpp>
-#include <fc/log/logger.hpp>
-#include <fc/io/json.hpp>
+#include <fc_keychain/io/sstream.hpp>
+#include <fc_keychain/log/logger.hpp>
+#include <fc_keychain/io/json.hpp>
 
 #include <iostream>
 
-namespace fc
+namespace fc_keychain
 {
-   FC_REGISTER_EXCEPTIONS( (timeout_exception)
+   FC_KEYCHAIN_REGISTER_EXCEPTIONS( (timeout_exception)
                            (file_not_found_exception)
                            (parse_error_exception)
                            (invalid_arg_exception)
@@ -46,7 +46,7 @@ namespace fc
       my->_code = code;
       my->_what = what_value;
       my->_name = name_value;
-      my->_elog = fc::move(msgs);
+      my->_elog = fc_keychain::move(msgs);
    }
 
    exception::exception(
@@ -63,7 +63,7 @@ namespace fc
    }
 
    unhandled_exception::unhandled_exception( log_message&& m, std::exception_ptr e )
-   :exception( fc::move(m) )
+   :exception( fc_keychain::move(m) )
    {
       _inner = e;
    }
@@ -73,14 +73,14 @@ namespace fc
    }
    unhandled_exception::unhandled_exception( log_messages m )
    :exception()
-   { my->_elog = fc::move(m); }
+   { my->_elog = fc_keychain::move(m); }
 
    std::exception_ptr unhandled_exception::get_inner_exception()const { return _inner; }
 
    NO_RETURN void     unhandled_exception::dynamic_rethrow_exception()const
    {
       if( !(_inner == std::exception_ptr()) ) std::rethrow_exception( _inner );
-      else { fc::exception::dynamic_rethrow_exception(); }
+      else { fc_keychain::exception::dynamic_rethrow_exception(); }
    }
 
    std::shared_ptr<exception> unhandled_exception::dynamic_copy_exception()const
@@ -109,13 +109,13 @@ namespace fc
       my->_code = code;
       my->_what = what_value;
       my->_name = name_value;
-      my->_elog.push_back( fc::move( msg ) );
+      my->_elog.push_back( fc_keychain::move( msg ) );
    }
    exception::exception( const exception& c )
    :my( new detail::exception_impl(*c.my) )
    { }
    exception::exception( exception&& c )
-   :my( fc::move(c.my) ){}
+   :my( fc_keychain::move(c.my) ){}
 
    const char*  exception::name()const throw() { return my->_name.c_str(); }
    const char*  exception::what()const throw() { return my->_what.c_str(); }
@@ -147,7 +147,7 @@ namespace fc
    const log_messages&   exception::get_log()const { return my->_elog; }
    void                  exception::append_log( log_message m )
    {
-      my->_elog.emplace_back( fc::move(m) );
+      my->_elog.emplace_back( fc_keychain::move(m) );
    }
 
    /**
@@ -157,11 +157,11 @@ namespace fc
     */
    string exception::to_detail_string( log_level ll )const
    {
-      fc::stringstream ss;
+      fc_keychain::stringstream ss;
       ss << variant(my->_code).as_string() <<" " << my->_name << ": " <<my->_what<<"\n";
       for( auto itr = my->_elog.begin(); itr != my->_elog.end();  )
       {
-         ss << itr->get_message() <<"\n"; //fc::format_string( itr->get_format(), itr->get_data() ) <<"\n";
+         ss << itr->get_message() <<"\n"; //fc_keychain::format_string( itr->get_format(), itr->get_data() ) <<"\n";
          ss << "    " << json::to_string( itr->get_data() )<<"\n";
          ss << "    " << itr->get_context().to_string();
          ++itr;
@@ -175,12 +175,12 @@ namespace fc
     */
    string exception::to_string( log_level ll )const
    {
-      fc::stringstream ss;
+      fc_keychain::stringstream ss;
       ss << what() << ":";
       for( auto itr = my->_elog.begin(); itr != my->_elog.end(); ++itr )
       {
          if( itr->get_format().size() )
-            ss << " " << fc::format_string( itr->get_format(), itr->get_data() );
+            ss << " " << fc_keychain::format_string( itr->get_format(), itr->get_data() );
    //      ss << "    " << itr->get_context().to_string() <<"\n";
       }
       return ss.str();
@@ -208,20 +208,20 @@ namespace fc
        return std::make_shared<exception>(*this);
    }
 
-   fc::string except_str()
+   fc_keychain::string except_str()
    {
        return boost::current_exception_diagnostic_information();
    }
 
    void throw_bad_enum_cast( int64_t i, const char* e )
    {
-      FC_THROW_EXCEPTION( bad_cast_exception,
+      FC_KEYCHAIN_THROW_EXCEPTION( bad_cast_exception,
                           "invalid index '${key}' in enum '${enum}'",
                           ("key",i)("enum",e) );
    }
    void throw_bad_enum_cast( const char* k, const char* e )
    {
-      FC_THROW_EXCEPTION( bad_cast_exception,
+      FC_KEYCHAIN_THROW_EXCEPTION( bad_cast_exception,
                           "invalid name '${key}' in enum '${enum}'",
                           ("key",k)("enum",e) );
    }
@@ -250,15 +250,15 @@ namespace fc
       const char* expr
       )
    {
-      fc::mutable_variant_object assert_trip_info =
-         fc::mutable_variant_object()
+      fc_keychain::mutable_variant_object assert_trip_info =
+         fc_keychain::mutable_variant_object()
          ("source_file", filename)
          ("source_lineno", lineno)
          ("expr", expr)
          ;
       std::cout
-         << "FC_ASSERT triggered:  "
-         << fc::json::to_string( assert_trip_info ) << "\n";
+         << "FC_KEYCHAIN_ASSERT triggered:  "
+         << fc_keychain::json::to_string( assert_trip_info ) << "\n";
       return;
    }
 

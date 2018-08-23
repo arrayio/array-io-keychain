@@ -7,7 +7,7 @@
 #include <array>
 
 #include <graphene/utilities/key_conversion.hpp>
-#include <fc/io/json.hpp>
+#include <fc_keychain/io/json.hpp>
 
 #include "keychain_commands.hpp"
 
@@ -85,7 +85,7 @@ keychain_app::secp256_private_key keychain_app::get_priv_key_from_str(const std:
 
 namespace bfs = keychain_app::bfs;
 
-void keychain_app::create_keyfile(const char* filename, const fc::variant& keyfile_var)
+void keychain_app::create_keyfile(const char* filename, const fc_keychain::variant& keyfile_var)
 {
   bfs::path filepath(filename);
   if(bfs::exists(filepath))
@@ -96,7 +96,7 @@ void keychain_app::create_keyfile(const char* filename, const fc::variant& keyfi
   auto fout = std::ofstream(filename);
   if(!fout.is_open())
     throw std::runtime_error("Error: cannot open keyfile");
-  fout << fc::json::to_pretty_string(keyfile_var) << std::endl;
+  fout << fc_keychain::json::to_pretty_string(keyfile_var) << std::endl;
 }
 
 using namespace keychain_app;

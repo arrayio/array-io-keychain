@@ -1,17 +1,17 @@
-#include <fc/variant.hpp>
-#include <fc/variant_object.hpp>
-#include <fc/exception/exception.hpp>
-#include <fc/io/sstream.hpp>
-#include <fc/io/json.hpp>
-//#include <fc/io/stdio.hpp>
+#include <fc_keychain/variant.hpp>
+#include <fc_keychain/variant_object.hpp>
+#include <fc_keychain/exception/exception.hpp>
+#include <fc_keychain/io/sstream.hpp>
+#include <fc_keychain/io/json.hpp>
+//#include <fc_keychain/io/stdio.hpp>
 #include <string.h>
-#include <fc/crypto/base64.hpp>
-#include <fc/crypto/hex.hpp>
+#include <fc_keychain/crypto/base64.hpp>
+#include <fc_keychain/crypto/hex.hpp>
 #include <boost/scoped_array.hpp>
-#include <fc/reflect/variant.hpp>
+#include <fc_keychain/reflect/variant.hpp>
 #include <algorithm>
 
-namespace fc
+namespace fc_keychain
 {
 /**
  *  The TypeID is stored in the 'last byte' of the variant.
@@ -27,7 +27,7 @@ variant::variant()
    set_variant_type( this, null_type );
 }
 
-variant::variant( fc::nullptr_t )
+variant::variant( fc_keychain::nullptr_t )
 {
    set_variant_type( this, null_type );
 }
@@ -132,31 +132,31 @@ variant::variant( const wchar_t* str )
    set_variant_type( this, string_type );
 }
 
-variant::variant( fc::string val )
+variant::variant( fc_keychain::string val )
 {
-   *reinterpret_cast<string**>(this)  = new string( fc::move(val) );
+   *reinterpret_cast<string**>(this)  = new string( fc_keychain::move(val) );
    set_variant_type( this, string_type );
 }
 variant::variant( blob val )
 {
-   *reinterpret_cast<blob**>(this)  = new blob( fc::move(val) );
+   *reinterpret_cast<blob**>(this)  = new blob( fc_keychain::move(val) );
    set_variant_type( this, blob_type );
 }
 
 variant::variant( variant_object obj)
 {
-   *reinterpret_cast<variant_object**>(this)  = new variant_object(fc::move(obj));
+   *reinterpret_cast<variant_object**>(this)  = new variant_object(fc_keychain::move(obj));
    set_variant_type(this,  object_type );
 }
 variant::variant( mutable_variant_object obj)
 {
-   *reinterpret_cast<variant_object**>(this)  = new variant_object(fc::move(obj));
+   *reinterpret_cast<variant_object**>(this)  = new variant_object(fc_keychain::move(obj));
    set_variant_type(this,  object_type );
 }
 
 variant::variant( variants arr )
 {
-   *reinterpret_cast<variants**>(this)  = new variants(fc::move(arr));
+   *reinterpret_cast<variants**>(this)  = new variants(fc_keychain::move(arr));
    set_variant_type(this,  array_type );
 }
 
@@ -285,7 +285,7 @@ void  variant::visit( const visitor& v )const
          v.handle( **reinterpret_cast<const const_variant_object_ptr*>(this) );
          return;
       default:
-         FC_THROW_EXCEPTION( assert_exception, "Invalid Type / Corrupted Memory" );
+         FC_KEYCHAIN_THROW_EXCEPTION( assert_exception, "Invalid Type / Corrupted Memory" );
    }
 }
 
@@ -379,7 +379,7 @@ int64_t variant::as_int64()const
       case null_type:
           return 0;
       default:
-         FC_THROW_EXCEPTION( bad_cast_exception, "Invalid cast from ${type} to int64", ("type", get_type()) );
+         FC_KEYCHAIN_THROW_EXCEPTION( bad_cast_exception, "Invalid cast from ${type} to int64", ("type", get_type()) );
    }
 }
 
@@ -400,9 +400,9 @@ uint64_t variant::as_uint64()const
       case null_type:
           return 0;
       default:
-         FC_THROW_EXCEPTION( bad_cast_exception,"Invalid cast from ${type} to uint64", ("type",get_type()));
+         FC_KEYCHAIN_THROW_EXCEPTION( bad_cast_exception,"Invalid cast from ${type} to uint64", ("type",get_type()));
    }
-} FC_CAPTURE_AND_RETHROW( (*this) ) }
+} FC_KEYCHAIN_CAPTURE_AND_RETHROW( (*this) ) }
 
 
 double  variant::as_double()const
@@ -422,7 +422,7 @@ double  variant::as_double()const
       case null_type:
           return 0;
       default:
-         FC_THROW_EXCEPTION( bad_cast_exception, "Invalid cast from ${type} to double", ("type",get_type()) );
+         FC_KEYCHAIN_THROW_EXCEPTION( bad_cast_exception, "Invalid cast from ${type} to double", ("type",get_type()) );
    }
 }
 
@@ -437,7 +437,7 @@ bool  variant::as_bool()const
              return true;
           if( s == "false" )
              return false;
-          FC_THROW_EXCEPTION( bad_cast_exception, "Cannot convert string to bool (only \"true\" or \"false\" can be converted)" );
+          FC_KEYCHAIN_THROW_EXCEPTION( bad_cast_exception, "Cannot convert string to bool (only \"true\" or \"false\" can be converted)" );
       }
       case double_type:
           return *reinterpret_cast<const double*>(this) != 0.0;
@@ -450,7 +450,7 @@ bool  variant::as_bool()const
       case null_type:
           return false;
       default:
-         FC_THROW_EXCEPTION( bad_cast_exception, "Invalid cast from ${type} to bool" , ("type",get_type()));
+         FC_KEYCHAIN_THROW_EXCEPTION( bad_cast_exception, "Invalid cast from ${type} to bool" , ("type",get_type()));
    }
 }
 
@@ -475,7 +475,7 @@ string    variant::as_string()const
       case null_type:
           return string();
       default:
-      FC_THROW_EXCEPTION( bad_cast_exception, "Invalid cast from ${type} to string", ("type", get_type() ) );
+      FC_KEYCHAIN_THROW_EXCEPTION( bad_cast_exception, "Invalid cast from ${type} to string", ("type", get_type() ) );
    }
 }
 
@@ -486,21 +486,21 @@ variants&         variant::get_array()
   if( get_type() == array_type )
      return **reinterpret_cast<variants**>(this);
    
-  FC_THROW_EXCEPTION( bad_cast_exception, "Invalid cast from ${type} to Array", ("type",get_type()) );
+  FC_KEYCHAIN_THROW_EXCEPTION( bad_cast_exception, "Invalid cast from ${type} to Array", ("type",get_type()) );
 }
 blob&         variant::get_blob()
 {
   if( get_type() == blob_type )
      return **reinterpret_cast<blob**>(this);
    
-  FC_THROW_EXCEPTION( bad_cast_exception, "Invalid cast from ${type} to Blob", ("type",get_type()) );
+  FC_KEYCHAIN_THROW_EXCEPTION( bad_cast_exception, "Invalid cast from ${type} to Blob", ("type",get_type()) );
 }
 const blob&         variant::get_blob()const
 {
   if( get_type() == blob_type )
      return **reinterpret_cast<const const_blob_ptr*>(this);
    
-  FC_THROW_EXCEPTION( bad_cast_exception, "Invalid cast from ${type} to Blob", ("type",get_type()) );
+  FC_KEYCHAIN_THROW_EXCEPTION( bad_cast_exception, "Invalid cast from ${type} to Blob", ("type",get_type()) );
 }
 
 blob variant::as_blob()const
@@ -522,7 +522,7 @@ blob variant::as_blob()const
       }
       case object_type:
       case array_type:
-         FC_THROW_EXCEPTION( bad_cast_exception, "Invalid cast from ${type} to Blob", ("type",get_type()) );
+         FC_KEYCHAIN_THROW_EXCEPTION( bad_cast_exception, "Invalid cast from ${type} to Blob", ("type",get_type()) );
       default:
          return blob( { std::vector<char>( (char*)&_data, (char*)&_data + sizeof(_data) ) } );
    }
@@ -534,7 +534,7 @@ const variants&       variant::get_array()const
 {
   if( get_type() == array_type )
      return **reinterpret_cast<const const_variants_ptr*>(this);
-  FC_THROW_EXCEPTION( bad_cast_exception, "Invalid cast from ${type} to Array", ("type",get_type()) );
+  FC_KEYCHAIN_THROW_EXCEPTION( bad_cast_exception, "Invalid cast from ${type} to Array", ("type",get_type()) );
 }
 
 
@@ -543,7 +543,7 @@ variant_object&        variant::get_object()
 {
   if( get_type() == object_type )
      return **reinterpret_cast<variant_object**>(this);
-  FC_THROW_EXCEPTION( bad_cast_exception, "Invalid cast from ${type} to Object", ("type",get_type()) );
+  FC_KEYCHAIN_THROW_EXCEPTION( bad_cast_exception, "Invalid cast from ${type} to Object", ("type",get_type()) );
 }
 
 const variant& variant::operator[]( const char* key )const
@@ -564,7 +564,7 @@ const string&        variant::get_string()const
 {
   if( get_type() == string_type )
      return **reinterpret_cast<const const_string_ptr*>(this);
-  FC_THROW_EXCEPTION( bad_cast_exception, "Invalid cast from type '${type}' to Object", ("type",get_type()) );
+  FC_KEYCHAIN_THROW_EXCEPTION( bad_cast_exception, "Invalid cast from type '${type}' to Object", ("type",get_type()) );
 }
 
 /// @throw if get_type() != object_type 
@@ -572,7 +572,7 @@ const variant_object&  variant::get_object()const
 {
   if( get_type() == object_type )
      return **reinterpret_cast<const const_variant_object_ptr*>(this);
-  FC_THROW_EXCEPTION( bad_cast_exception, "Invalid cast from type '${type}' to Object", ("type",get_type()) );
+  FC_KEYCHAIN_THROW_EXCEPTION( bad_cast_exception, "Invalid cast from type '${type}' to Object", ("type",get_type()) );
 }
 
 void from_variant( const variant& var,  variants& vo )
@@ -642,7 +642,7 @@ void from_variant( const variant& var,  float& vo )
 
 void to_variant( const std::string& s, variant& v )
 {
-    v = variant( fc::string(s) );
+    v = variant( fc_keychain::string(s) );
 }
 
 void from_variant( const variant& var,  string& vo )
@@ -663,7 +663,7 @@ void from_variant( const variant& var,  std::vector<char>& vo )
      if( vo.size() )
      {
         size_t r = from_hex( str, vo.data(), vo.size() );
-        FC_ASSERT( r == vo.size() );
+        FC_KEYCHAIN_ASSERT( r == vo.size() );
      }
 //   std::string b64 = base64_decode( var.as_string() );
 //   vo = std::vector<char>( b64.c_str(), b64.c_str() + b64.size() );
@@ -764,7 +764,7 @@ string      format_string( const string& format, const variant_object& args )
       if( a.is_double()  || b.is_double() ) return a.as_double() < b.as_double();
       if( a.is_int64()   || b.is_int64() )  return a.as_int64() < b.as_int64();
       if( a.is_uint64()  || b.is_uint64() ) return a.as_uint64() < b.as_uint64();
-      FC_ASSERT( false, "Invalid operation" );
+      FC_KEYCHAIN_ASSERT( false, "Invalid operation" );
    }
 
    variant operator > ( const variant& a, const variant& b )
@@ -773,7 +773,7 @@ string      format_string( const string& format, const variant_object& args )
       if( a.is_double()  || b.is_double() ) return a.as_double() > b.as_double();
       if( a.is_int64()   || b.is_int64() )  return a.as_int64() > b.as_int64();
       if( a.is_uint64()  || b.is_uint64() ) return a.as_uint64() > b.as_uint64();
-      FC_ASSERT( false, "Invalid operation" );
+      FC_KEYCHAIN_ASSERT( false, "Invalid operation" );
    }
 
    variant operator <= ( const variant& a, const variant& b )
@@ -782,7 +782,7 @@ string      format_string( const string& format, const variant_object& args )
       if( a.is_double()  || b.is_double() ) return a.as_double() <= b.as_double();
       if( a.is_int64()   || b.is_int64() )  return a.as_int64() <= b.as_int64();
       if( a.is_uint64()  || b.is_uint64() ) return a.as_uint64() <= b.as_uint64();
-      FC_ASSERT( false, "Invalid operation" );
+      FC_KEYCHAIN_ASSERT( false, "Invalid operation" );
    }
 
 
@@ -810,7 +810,7 @@ string      format_string( const string& format, const variant_object& args )
       if( a.is_double()  || b.is_double() ) return a.as_double() + b.as_double();
       if( a.is_int64()   || b.is_int64() )  return a.as_int64() + b.as_int64();
       if( a.is_uint64()  || b.is_uint64() ) return a.as_uint64() + b.as_uint64();
-      FC_ASSERT( false, "invalid operation ${a} + ${b}", ("a",a)("b",b) );
+      FC_KEYCHAIN_ASSERT( false, "invalid operation ${a} + ${b}", ("a",a)("b",b) );
    }
 
    variant operator - ( const variant& a, const variant& b )
@@ -837,7 +837,7 @@ string      format_string( const string& format, const variant_object& args )
       if( a.is_double()  || b.is_double() ) return a.as_double() - b.as_double();
       if( a.is_int64()   || b.is_int64() )  return a.as_int64() - b.as_int64();
       if( a.is_uint64()  || b.is_uint64() ) return a.as_uint64() - b.as_uint64();
-      FC_ASSERT( false, "invalid operation ${a} + ${b}", ("a",a)("b",b) );
+      FC_KEYCHAIN_ASSERT( false, "invalid operation ${a} + ${b}", ("a",a)("b",b) );
    }
    variant operator * ( const variant& a, const variant& b )
    {
@@ -862,7 +862,7 @@ string      format_string( const string& format, const variant_object& args )
          }
          return result;
       }
-      FC_ASSERT( false, "invalid operation ${a} * ${b}", ("a",a)("b",b) );
+      FC_KEYCHAIN_ASSERT( false, "invalid operation ${a} * ${b}", ("a",a)("b",b) );
    }
    variant operator / ( const variant& a, const variant& b )
    {
@@ -887,6 +887,6 @@ string      format_string( const string& format, const variant_object& args )
          }
          return result;
       }
-      FC_ASSERT( false, "invalid operation ${a} / ${b}", ("a",a)("b",b) );
+      FC_KEYCHAIN_ASSERT( false, "invalid operation ${a} / ${b}", ("a",a)("b",b) );
    }
-} // namespace fc
+} // namespace fc_keychain

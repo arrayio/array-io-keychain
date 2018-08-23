@@ -2,20 +2,20 @@
 #include <fstream>
 #include <sstream>
 
-#include <fc/filesystem.hpp>
-#include <fc/exception/exception.hpp>
-#include <fc/io/fstream.hpp>
-#include <fc/log/logger.hpp>
+#include <fc_keychain/filesystem.hpp>
+#include <fc_keychain/exception/exception.hpp>
+#include <fc_keychain/io/fstream.hpp>
+#include <fc_keychain/log/logger.hpp>
 
 #include <boost/filesystem/path.hpp>
 #include <boost/filesystem/fstream.hpp>
 
-namespace fc {
-   class ofstream::impl : public fc::retainable {
+namespace fc_keychain {
+   class ofstream::impl : public fc_keychain::retainable {
       public:
          boost::filesystem::ofstream ofs;
    };
-   class ifstream::impl : public fc::retainable {
+   class ifstream::impl : public fc_keychain::retainable {
       public:
          boost::filesystem::ifstream ifs;
    };
@@ -23,11 +23,11 @@ namespace fc {
    ofstream::ofstream()
    :my( new impl() ){}
 
-   ofstream::ofstream( const fc::path& file, int m )
+   ofstream::ofstream( const fc_keychain::path& file, int m )
    :my( new impl() ) { this->open( file, m ); }
    ofstream::~ofstream(){}
 
-   void ofstream::open( const fc::path& file, int m ) {
+   void ofstream::open( const fc_keychain::path& file, int m ) {
      const boost::filesystem::path& bfp = file; 
      my->ofs.open( bfp, std::ios::binary );
    }
@@ -52,14 +52,14 @@ namespace fc {
 
    ifstream::ifstream()
    :my(new impl()){}
-   ifstream::ifstream( const fc::path& file, int m )
+   ifstream::ifstream( const fc_keychain::path& file, int m )
    :my(new impl())
    {
       this->open( file, m );
    }
    ifstream::~ifstream(){}
 
-   void ifstream::open( const fc::path& file, int m ) {
+   void ifstream::open( const fc_keychain::path& file, int m ) {
      const boost::filesystem::path& bfp = file; 
       my->ifs.open( bfp, std::ios::binary );
    }
@@ -78,10 +78,10 @@ namespace fc {
 
    ifstream& ifstream::read( char* buf, size_t len ) {
       if (eof())
-        FC_THROW_EXCEPTION( eof_exception , "");
+        FC_KEYCHAIN_THROW_EXCEPTION( eof_exception , "");
       my->ifs.read(buf,len);
       if (my->ifs.gcount() < int64_t(len))
-        FC_THROW_EXCEPTION( eof_exception , "");
+        FC_KEYCHAIN_THROW_EXCEPTION( eof_exception , "");
       return *this;
    }
    ifstream& ifstream::seekg( size_t p, seekdir d ) {
@@ -96,14 +96,14 @@ namespace fc {
 
    bool   ifstream::eof()const { return !my->ifs.good(); }
 
-   void read_file_contents( const fc::path& filename, std::string& result )
+   void read_file_contents( const fc_keychain::path& filename, std::string& result )
    {
       const boost::filesystem::path& bfp = filename;
       boost::filesystem::ifstream f( bfp, std::ios::in | std::ios::binary );
-      // don't use fc::stringstream here as we need something with override for << rdbuf()
+      // don't use fc_keychain::stringstream here as we need something with override for << rdbuf()
       std::stringstream ss;
       ss << f.rdbuf();
       result = ss.str();
    }
   
-} // namespace fc 
+} // namespace fc_keychain

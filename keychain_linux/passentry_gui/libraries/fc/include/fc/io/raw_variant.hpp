@@ -14,31 +14,31 @@ namespace fc { namespace raw {
          virtual void handle()const { }
          virtual void handle( const int64_t& v )const
          {
-            fc::raw::pack( s, v );
+            fc_keychain::raw::pack( s, v );
          }
          virtual void handle( const uint64_t& v )const
          {
-            fc::raw::pack( s, v );
+            fc_keychain::raw::pack( s, v );
          }
          virtual void handle( const double& v )const 
          {
-            fc::raw::pack( s, v );
+            fc_keychain::raw::pack( s, v );
          }
          virtual void handle( const bool& v )const
          {
-            fc::raw::pack( s, v );
+            fc_keychain::raw::pack( s, v );
          }
          virtual void handle( const string& v )const
          {
-            fc::raw::pack( s, v );
+            fc_keychain::raw::pack( s, v );
          }
          virtual void handle( const variant_object& v)const
          {
-            fc::raw::pack( s, v );
+            fc_keychain::raw::pack( s, v );
          }
          virtual void handle( const variants& v)const
          {
-            fc::raw::pack( s, v );
+            fc_keychain::raw::pack( s, v );
          }
         
          Stream& s;
@@ -91,23 +91,23 @@ namespace fc { namespace raw {
          }
          case variant::string_type:
          {
-            fc::string val;
+            fc_keychain::string val;
             raw::unpack(s,val);
-            v = fc::move(val);
+            v = fc_keychain::move(val);
             return;
          }
          case variant::array_type:
          {
             variants val;
             raw::unpack(s,val);
-            v = fc::move(val);
+            v = fc_keychain::move(val);
             return;
          }
          case variant::object_type:
          {
             variant_object val; 
             raw::unpack(s,val);
-            v = fc::move(val);
+            v = fc_keychain::move(val);
             return;
          }
          default:
@@ -136,13 +136,13 @@ namespace fc { namespace raw {
        mvo.reserve(vs.value);
        for( uint32_t i = 0; i < vs.value; ++i )
        {
-          fc::string key;
-          fc::variant value;
-          fc::raw::unpack(s,key);
-          fc::raw::unpack(s,value);
-          mvo.set( fc::move(key), fc::move(value) );
+          fc_keychain::string key;
+          fc_keychain::variant value;
+          fc_keychain::raw::unpack(s,key);
+          fc_keychain::raw::unpack(s,value);
+          mvo.set( fc_keychain::move(key), fc_keychain::move(value) );
        }
-       v = fc::move(mvo);
+       v = fc_keychain::move(mvo);
     }
 
-} } // fc::raw
+} } // fc_keychain::raw

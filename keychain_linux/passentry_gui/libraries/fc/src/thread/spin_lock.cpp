@@ -19,11 +19,11 @@ namespace fc {
     return self->exchange(locked, boost::memory_order_acquire)!=locked;
   }
 
-  bool spin_lock::try_lock_for( const fc::microseconds& us ) {
-    return try_lock_until( fc::time_point::now() + us );
+  bool spin_lock::try_lock_for( const fc_keychain::microseconds& us ) {
+    return try_lock_until( fc_keychain::time_point::now() + us );
   }
 
-  bool spin_lock::try_lock_until( const fc::time_point& abs_time ) {
+  bool spin_lock::try_lock_until( const fc_keychain::time_point& abs_time ) {
      while( abs_time > time_point::now() ) {
         if( try_lock() ) 
            return true;

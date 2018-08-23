@@ -15,7 +15,7 @@ namespace fc {
    *  @brief provides stack-based nullable value similar to boost::optional
    *
    *  Simply including boost::optional adds 35,000 lines to each object file, using
-   *  fc::optional adds less than 400.
+   *  fc_keychain::optional adds less than 400.
    */
   template<typename T>
   class optional
@@ -43,7 +43,7 @@ namespace fc {
       optional( optional&& o )
       :_valid(false) 
       {
-        if( o._valid ) new (ptr()) T( fc::move(*o) );
+        if( o._valid ) new (ptr()) T( fc_keychain::move(*o) );
         _valid = o._valid;
         o.reset();
       }
@@ -71,7 +71,7 @@ namespace fc {
       optional( optional<U>&& o )
       :_valid(false) 
       {
-        if( o._valid ) new (ptr()) T( fc::move(*o) );
+        if( o._valid ) new (ptr()) T( fc_keychain::move(*o) );
         _valid = o._valid;
         o.reset();
       }
@@ -80,14 +80,14 @@ namespace fc {
       optional( U&& u )
       :_valid(true) 
       {
-        new ((char*)ptr()) T( fc::forward<U>(u) );
+        new ((char*)ptr()) T( fc_keychain::forward<U>(u) );
       }
 
       template<typename U>
       optional& operator=( U&& u ) 
       {
         reset();
-        new (ptr()) T( fc::forward<U>(u) );
+        new (ptr()) T( fc_keychain::forward<U>(u) );
         _valid = true;
         return *this;
       }
@@ -156,10 +156,10 @@ namespace fc {
         {
           if( _valid && o._valid ) 
           {
-            ref() = fc::move(*o);
+            ref() = fc_keychain::move(*o);
             o.reset();
           } else if ( !_valid && o._valid ) {
-            *this = fc::move(*o);
+            *this = fc_keychain::move(*o);
           } else if (_valid) {
             reset();
           }
@@ -173,10 +173,10 @@ namespace fc {
         {
           if( _valid && o._valid ) 
           {
-            ref() = fc::move(*o);
+            ref() = fc_keychain::move(*o);
             o.reset();
           } else if ( !_valid && o._valid ) {
-            *this = fc::move(*o);
+            *this = fc_keychain::move(*o);
           } else if (_valid) {
             reset();
           }

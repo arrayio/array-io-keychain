@@ -112,18 +112,18 @@ namespace fc {
     std::vector<char> ve = v.as< std::vector<char> >();
     if( ve.size() )
     {
-        memcpy(&bi, ve.data(), fc::min<size_t>(ve.size(),sizeof(bi)) );
+        memcpy(&bi, ve.data(), fc_keychain::min<size_t>(ve.size(),sizeof(bi)) );
     }
     else
         memset( &bi, char(0), sizeof(bi) );
   }
 
 
-  template<typename T,size_t N> struct get_typename< fc::array<T,N> >  
+  template<typename T,size_t N> struct get_typename< fc_keychain::array<T,N> >
   { 
      static const char* name()  
      { 
-        static std::string _name = std::string("fc::array<")+std::string(fc::get_typename<T>::name())+","+ fc::to_string(N) + ">";
+        static std::string _name = std::string("fc_keychain::array<")+std::string(fc_keychain::get_typename<T>::name())+","+ fc_keychain::to_string(N) + ">";
         return _name.c_str();
      } 
   }; 
@@ -134,11 +134,11 @@ namespace fc {
 namespace std
 {
     template<typename T, size_t N>
-    struct hash<fc::array<T,N> >
+    struct hash<fc_keychain::array<T,N> >
     {
-       size_t operator()( const fc::array<T,N>& e )const
+       size_t operator()( const fc_keychain::array<T,N>& e )const
        {
-          return fc::city_hash_size_t( (char*)&e, sizeof(e) );
+          return fc_keychain::city_hash_size_t( (char*)&e, sizeof(e) );
        }
     };
 }

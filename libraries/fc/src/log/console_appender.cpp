@@ -1,24 +1,24 @@
-#include <fc/log/console_appender.hpp>
-#include <fc/log/log_message.hpp>
-#include <fc/thread/unique_lock.hpp>
-#include <fc/string.hpp>
-#include <fc/variant.hpp>
-#include <fc/reflect/variant.hpp>
+#include <fc_keychain/log/console_appender.hpp>
+#include <fc_keychain/log/log_message.hpp>
+#include <fc_keychain/thread/unique_lock.hpp>
+#include <fc_keychain/string.hpp>
+#include <fc_keychain/variant.hpp>
+#include <fc_keychain/reflect/variant.hpp>
 #ifndef WIN32
 #include <unistd.h>
 #endif
 #include <boost/thread/mutex.hpp>
 #define COLOR_CONSOLE 1
 #include "console_defines.h"
-//#include <fc/io/stdio.hpp>
+//#include <fc_keychain/io/stdio.hpp>
 #include <stdio.h>
-#include <fc/exception/exception.hpp>
+#include <fc_keychain/exception/exception.hpp>
 #include <iomanip>
 #include <sstream>
 #include <mutex>
 
 
-namespace fc {
+namespace fc_keychain {
 
    class console_appender::impl {
    public:
@@ -61,7 +61,7 @@ namespace fc {
             my->lc[i] = color::console_default;
          for( auto itr = my->cfg.level_colors.begin(); itr != my->cfg.level_colors.end(); ++itr )
             my->lc[itr->level] = itr->color;
-   } FC_CAPTURE_AND_RETHROW( (console_appender_config) ) }
+   } FC_KEYCHAIN_CAPTURE_AND_RETHROW( (console_appender_config) ) }
 
    console_appender::~console_appender() {}
 
@@ -90,12 +90,12 @@ namespace fc {
    }
 
    void console_appender::log( const log_message& m ) {
-      //fc::string message = fc::format_string( m.get_format(), m.get_data() );
-      //fc::variant lmsg(m);
+      //fc_keychain::string message = fc_keychain::format_string( m.get_format(), m.get_data() );
+      //fc_keychain::variant lmsg(m);
 
       FILE* out = stream::std_error ? stderr : stdout;
 
-      //fc::string fmt_str = fc::format_string( cfg.format, mutable_variant_object(m.get_context())( "message", message)  );
+      //fc_keychain::string fmt_str = fc_keychain::format_string( cfg.format, mutable_variant_object(m.get_context())( "message", message)  );
       std::stringstream file_line;
       file_line << m.get_context().get_file() <<":"<<m.get_context().get_line_number() <<" ";
 
@@ -119,10 +119,10 @@ namespace fc {
          line << std::setw( 20 ) << std::left << m.get_context().get_method().substr(p,20).c_str() <<" ";
       }
       line << "] ";
-      fc::string message = fc::format_string( m.get_format(), m.get_data() );
+      fc_keychain::string message = fc_keychain::format_string( m.get_format(), m.get_data() );
       line << message;//.c_str();
 
-      fc::unique_lock<boost::mutex> lock(log_mutex());
+      fc_keychain::unique_lock<boost::mutex> lock(log_mutex());
 
       print( line.str(), my->lc[m.get_context().get_log_level()] );
 

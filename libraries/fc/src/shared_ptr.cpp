@@ -1,9 +1,9 @@
-#include <fc/shared_ptr.hpp>
+#include <fc_keychain/shared_ptr.hpp>
 #include <boost/atomic.hpp>
 #include <boost/memory_order.hpp>
 #include <assert.h>
 
-namespace fc {
+namespace fc_keychain {
   retainable::retainable()
   :_ref_count(1) { 
      static_assert( sizeof(_ref_count) == sizeof(boost::atomic<int32_t>), "failed to reserve enough space" );

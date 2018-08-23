@@ -10,18 +10,20 @@
 
 #include <type_traits>
 #include <string>
-#include <fc/reflect/reflect.hpp>
-#include <fc/variant.hpp>
+#include <fc_keychain/reflect/reflect.hpp>
+#include <fc_keychain/variant.hpp>
 #include <boost/hana/range.hpp>
 #include <boost/filesystem.hpp>
 
-#include <fc/variant.hpp>
-#include <fc/io/json.hpp>
+#include <fc_keychain/variant.hpp>
+#include <fc_keychain/io/json.hpp>
+#include <fc_keychain/exception/exception.hpp>
 #include <fc/crypto/hex.hpp>
 
 //TODO: it is unclear
 //      why if we do not include this file we cannot compile reflect parser for keychain_app::keyfile_format::key_file
-#include <graphene/chain/protocol/transaction.hpp>
+//#include <graphene/chain/protocol/transaction.hpp>
+#include <fc_keychain/reflect/variant.hpp>
 
 #include <graphene/utilities/key_conversion.hpp>
 #include <boost/signals2.hpp>
@@ -46,7 +48,7 @@ public:
     using string_list = std::list<std::wstring>;
     keychain_base(std::string&& uid_hash_);
     virtual ~keychain_base();
-    virtual std::string operator()(const fc::variant& command) = 0;
+    virtual std::string operator()(const fc_keychain::variant& command) = 0;
     boost::signals2::signal<byte_seq_t(const std::string&)> get_passwd_trx_raw;
     boost::signals2::signal<byte_seq_t(void)> get_passwd_on_create;
     boost::signals2::signal<void(const string_list&)> print_mnemonic;
@@ -54,7 +56,7 @@ public:
 };
 
 template <typename char_t>
-fc::variant open_keyfile(const char_t* filename)
+fc_keychain::variant open_keyfile(const char_t* filename)
 {
   std::ifstream fin = std::ifstream(filename);
   if(!fin.is_open())
@@ -73,10 +75,10 @@ fc::variant open_keyfile(const char_t* filename)
   }
   if(!fin.good()&&read_count==0)
     throw std::runtime_error("Error: cannot read keyfile");
-  return fc::json::from_string(std::string(read_buf.begin(), read_buf.end()), fc::json::strict_parser);
+  return fc_keychain::json::from_string(std::string(read_buf.begin(), read_buf.end()), fc_keychain::json::strict_parser);
 }
 
-void create_keyfile(const char* filename, const fc::variant& keyfile_var);
+void create_keyfile(const char* filename, const fc_keychain::variant& keyfile_var);
 secp256_private_key get_priv_key_from_str(const std::string& str);
 fc::sha256 get_hash(const keychain_app::unit_list_t &list);
 size_t from_hex(const std::string& hex_str, unsigned char* out_data, size_t out_data_len );
@@ -92,11 +94,11 @@ std::string to_hex(const uint8_t* data, size_t length);
 struct json_response
 {
     json_response(){}
-    json_response(const fc::variant& var, int id_): id(id_), result(var){}
+    json_response(const fc_keychain::variant& var, int id_): id(id_), result(var){}
     json_response(const char* result_, int id_): id(id_), result(result_){}
-    json_response(const fc::variants& var, int id_): id(id_), result(var){}
+    json_response(const fc_keychain::variants& var, int id_): id(id_), result(var){}
     int id;
-    fc::variant result;
+    fc_keychain::variant result;
 };
 
 struct json_error
@@ -141,7 +143,7 @@ struct find_keyfile_by_username
     auto j_keyfile = open_keyfile(file_path.c_str());
     auto keyfile = j_keyfile.as<keyfile_format::keyfile_t>();
     if(m_keyfile)
-      *m_keyfile = keyfile;//NOTE: move semantic is not implemented in fc::variant in fact
+      *m_keyfile = keyfile;//NOTE: move semantic is not implemented in fc_keychain::variant in fact
     return strcmp(m_keyname, keyfile.keyname.c_str()) == 0;
   }
   const char* m_keyname;
@@ -155,14 +157,14 @@ struct keychain_command_common {
     , id(id_){}
   command_te command;
   int id;
-  fc::variant params;
+  fc_keychain::variant params;
 };
 
 struct keychain_command_base {
     keychain_command_base(command_te type): e_type(type){}
     virtual ~keychain_command_base(){}
     command_te e_type;
-    virtual std::string operator()(keychain_base* keychain, const fc::variant& params_variant, int id) const = 0;
+    virtual std::string operator()(keychain_base* keychain, const fc_keychain::variant& params_variant, int id) const = 0;
 };
 
 template<command_te cmd>
@@ -170,9 +172,9 @@ struct keychain_command: keychain_command_base
 {
     keychain_command():keychain_command_base(cmd){}
     virtual ~keychain_command(){}
-    virtual std::string operator()(keychain_base* keychain, const fc::variant& params_variant, int id) const override
+    virtual std::string operator()(keychain_base* keychain, const fc_keychain::variant& params_variant, int id) const override
     {
-      return fc::json::to_pretty_string(fc::variant(json_error(id, "method is not implemented")));
+      return fc_keychain::json::to_pretty_string(fc_keychain::variant(json_error(id, "method is not implemented")));
     }
     using params_t = void;
 };
@@ -191,7 +193,7 @@ struct keychain_command<command_te::sign> : keychain_command_base
 
   using params_t = params;
 
-  virtual std::string operator()(keychain_base* keychain, const fc::variant& params_variant, int id) const override
+  virtual std::string operator()(keychain_base* keychain, const fc_keychain::variant& params_variant, int id) const override
   {
     try {
       auto params = params_variant.as<params_t>();
@@ -242,18 +244,18 @@ struct keychain_command<command_te::sign> : keychain_command_base
       auto signature = private_key.sign_compact(get_hash(unit_list));
   
       json_response response(to_hex(signature.begin(), signature.size()).c_str(), id);
-      fc::variant res(response);
-      return fc::json::to_pretty_string(res);
+      fc_keychain::variant res(response);
+      return fc_keychain::json::to_pretty_string(res);
     }
     catch (const std::exception &exc)
     {
-      std::cerr << fc::json::to_pretty_string(fc::variant(json_error(id, exc.what()))) << std::endl;
-      return fc::json::to_pretty_string(fc::variant(json_error(id, exc.what())));
+      std::cerr << fc_keychain::json::to_pretty_string(fc_keychain::variant(json_error(id, exc.what()))) << std::endl;
+      return fc_keychain::json::to_pretty_string(fc_keychain::variant(json_error(id, exc.what())));
     }
-    catch (const fc::exception& exc)
+    catch (const fc_keychain::exception& exc)
     {
-      std::cerr << fc::json::to_pretty_string(fc::variant(json_error(0, exc.to_detail_string().c_str()))) << std::endl;
-      return fc::json::to_pretty_string(fc::variant(json_error(0, exc.what())));
+      std::cerr << fc_keychain::json::to_pretty_string(fc_keychain::variant(json_error(0, exc.to_detail_string().c_str()))) << std::endl;
+      return fc_keychain::json::to_pretty_string(fc_keychain::variant(json_error(0, exc.what())));
     }
   }
 };
@@ -271,7 +273,7 @@ struct keychain_command<command_te::create>: keychain_command_base
       keyfile_format::keyfile_t::keyinfo_t::curve_etype curve;
     };
     using params_t = params;
-    virtual std::string operator()(keychain_base* keychain, const fc::variant& params_variant, int id) const override
+    virtual std::string operator()(keychain_base* keychain, const fc_keychain::variant& params_variant, int id) const override
     {
       try
       {
@@ -300,7 +302,7 @@ struct keychain_command<command_te::create>: keychain_command_base
             throw std::runtime_error("Error: can't get password");
           auto& encryptor = encryptor_singletone::instance();
           auto enc_data = encryptor.encrypt_keydata(params.cipher, passwd, wif_key);
-          keyfile.keyinfo.priv_key_data = fc::variant(enc_data);
+          keyfile.keyinfo.priv_key_data = fc_keychain::variant(enc_data);
           keyfile.keyinfo.encrypted = true;
         }
         else{
@@ -321,20 +323,20 @@ struct keychain_command<command_te::create>: keychain_command_base
         auto it = std::find_if(first, bfs::directory_iterator(),find_keyfile_by_username(keyfile.keyname.c_str()));
         if(it != bfs::directory_iterator())
           throw std::runtime_error("Error: keyfile for this user is already exist");
-        create_keyfile(filename.c_str(), fc::variant(keyfile));
+        create_keyfile(filename.c_str(), fc_keychain::variant(keyfile));
 
         json_response response(true, id);
-        return fc::json::to_pretty_string(fc::variant(response));
+        return fc_keychain::json::to_pretty_string(fc_keychain::variant(response));
       }
       catch (const std::exception &exc)
       {
-        std::cerr << fc::json::to_pretty_string(fc::variant(json_error(id, exc.what()))) << std::endl;
-        return fc::json::to_pretty_string(fc::variant(json_error(id, exc.what())));
+        std::cerr << fc_keychain::json::to_pretty_string(fc_keychain::variant(json_error(id, exc.what()))) << std::endl;
+        return fc_keychain::json::to_pretty_string(fc_keychain::variant(json_error(id, exc.what())));
       }
-      catch (const fc::exception& exc)
+      catch (const fc_keychain::exception& exc)
       {
-        std::cerr << fc::json::to_pretty_string(fc::variant(json_error(0, exc.to_detail_string().c_str()))) << std::endl;
-        return fc::json::to_pretty_string(fc::variant(json_error(0, exc.what())));
+        std::cerr << fc_keychain::json::to_pretty_string(fc_keychain::variant(json_error(0, exc.to_detail_string().c_str()))) << std::endl;
+        return fc_keychain::json::to_pretty_string(fc_keychain::variant(json_error(0, exc.what())));
       }
     }
 };
@@ -346,10 +348,10 @@ struct keychain_command<command_te::list>: keychain_command_base {
   
   using params_t = void;
   
-  virtual std::string operator()(keychain_base *keychain, const fc::variant &params_variant, int id) const override
+  virtual std::string operator()(keychain_base *keychain, const fc_keychain::variant &params_variant, int id) const override
   {
     try {
-      fc::variants keyname_list;
+      fc_keychain::variants keyname_list;
       keyname_list.reserve(128);
       auto first = bfs::directory_iterator(bfs::path("./"));
       std::for_each(first, bfs::directory_iterator(), [&keyname_list](bfs::directory_entry &unit){
@@ -359,21 +361,21 @@ struct keychain_command<command_te::list>: keychain_command_base {
   
         auto j_keyfile = open_keyfile(file_path.c_str());
         auto keyfile = j_keyfile.as<keyfile_format::keyfile_t>();
-        keyname_list.push_back(fc::variant(std::move(keyfile.keyname)));
+        keyname_list.push_back(fc_keychain::variant(std::move(keyfile.keyname)));
         return;
       });
 	  json_response response(keyname_list, id);
-	  return fc::json::to_pretty_string(fc::variant(response));
+	  return fc_keychain::json::to_pretty_string(fc_keychain::variant(response));
 	}
     catch (const std::exception &exc)
     {
-      std::cerr << fc::json::to_pretty_string(fc::variant(json_error(id, exc.what()))) << std::endl;
-	  return fc::json::to_pretty_string(fc::variant(json_error(id, exc.what())));
+      std::cerr << fc_keychain::json::to_pretty_string(fc_keychain::variant(json_error(id, exc.what()))) << std::endl;
+	  return fc_keychain::json::to_pretty_string(fc_keychain::variant(json_error(id, exc.what())));
     }
-    catch (const fc::exception& exc)
+    catch (const fc_keychain::exception& exc)
     {
-      std::cerr << fc::json::to_pretty_string(fc::variant(json_error(0, exc.to_detail_string().c_str()))) << std::endl;
-	  return fc::json::to_pretty_string(fc::variant(json_error(0, exc.what())));
+      std::cerr << fc_keychain::json::to_pretty_string(fc_keychain::variant(json_error(0, exc.to_detail_string().c_str()))) << std::endl;
+	  return fc_keychain::json::to_pretty_string(fc_keychain::variant(json_error(0, exc.what())));
     }
   }
 };
@@ -388,7 +390,7 @@ struct keychain_command<command_te::remove>: keychain_command_base
     std::string keyname;
   };
   using params_t = params;
-  virtual std::string operator()(keychain_base* keychain, const fc::variant& params_variant, int id) const override {
+  virtual std::string operator()(keychain_base* keychain, const fc_keychain::variant& params_variant, int id) const override {
     try {
       auto params = params_variant.as<params_t>();
       keyfile_format::keyfile_t keyfile;
@@ -401,17 +403,17 @@ struct keychain_command<command_te::remove>: keychain_command_base
         bfs::remove(*it);
       }
 	    json_response response(true, id);
-	    return fc::json::to_pretty_string(fc::variant(response));
+	    return fc_keychain::json::to_pretty_string(fc_keychain::variant(response));
 	  }
     catch (const std::exception &exc)
     {
-	  std::cerr << fc::json::to_pretty_string(fc::variant(json_error(id, exc.what()))) << std::endl;
-	  return fc::json::to_pretty_string(fc::variant(json_error(id, exc.what())));
+	  std::cerr << fc_keychain::json::to_pretty_string(fc_keychain::variant(json_error(id, exc.what()))) << std::endl;
+	  return fc_keychain::json::to_pretty_string(fc_keychain::variant(json_error(id, exc.what())));
     }
-    catch (const fc::exception& exc)
+    catch (const fc_keychain::exception& exc)
     {
-      std::cerr << fc::json::to_pretty_string(fc::variant(json_error(0, exc.to_detail_string().c_str()))) << std::endl;
-	  return fc::json::to_pretty_string(fc::variant(json_error(0, exc.what())));
+      std::cerr << fc_keychain::json::to_pretty_string(fc_keychain::variant(json_error(0, exc.to_detail_string().c_str()))) << std::endl;
+	  return fc_keychain::json::to_pretty_string(fc_keychain::variant(json_error(0, exc.what())));
     }
   }
 };
@@ -426,7 +428,7 @@ struct keychain_command<command_te::public_key>: keychain_command_base
     std::string keyname;
   };
   using params_t = params;
-  virtual std::string operator()(keychain_base* keychain, const fc::variant& params_variant, int id) const override {
+  virtual std::string operator()(keychain_base* keychain, const fc_keychain::variant& params_variant, int id) const override {
     try {
       auto params = params_variant.as<params_t>();
       keyfile_format::keyfile_t keyfile;
@@ -441,17 +443,17 @@ struct keychain_command<command_te::public_key>: keychain_command_base
         throw std::runtime_error("Error: keyfile could not found by keyname");
       
       json_response response(keyfile.keyinfo.public_key.c_str(), id);
-      return fc::json::to_pretty_string(fc::variant(response));
+      return fc_keychain::json::to_pretty_string(fc_keychain::variant(response));
     }
     catch (const std::exception &exc)
     {
-      std::cerr << fc::json::to_pretty_string(fc::variant(json_error(id, exc.what()))) << std::endl;
-      return fc::json::to_pretty_string(fc::variant(json_error(id, exc.what())));
+      std::cerr << fc_keychain::json::to_pretty_string(fc_keychain::variant(json_error(id, exc.what()))) << std::endl;
+      return fc_keychain::json::to_pretty_string(fc_keychain::variant(json_error(id, exc.what())));
     }
-    catch (const fc::exception& exc)
+    catch (const fc_keychain::exception& exc)
     {
-      std::cerr << fc::json::to_pretty_string(fc::variant(json_error(0, exc.to_detail_string().c_str()))) << std::endl;
-      return fc::json::to_pretty_string(fc::variant(json_error(0, exc.what())));
+      std::cerr << fc_keychain::json::to_pretty_string(fc_keychain::variant(json_error(0, exc.to_detail_string().c_str()))) << std::endl;
+      return fc_keychain::json::to_pretty_string(fc_keychain::variant(json_error(0, exc.what())));
     }
   }
 };
@@ -463,7 +465,7 @@ constexpr auto cmd_static_list =
 
 }
 
-FC_REFLECT_ENUM(
+FC_KEYCHAIN_REFLECT_ENUM(
   keychain_app::command_te,
     (null)
     (help)
@@ -478,12 +480,12 @@ FC_REFLECT_ENUM(
     (public_key)
     (last))
 
-FC_REFLECT(keychain_app::keychain_command<keychain_app::command_te::sign>::params_t, (chainid)(transaction)(keyname))
-FC_REFLECT(keychain_app::keychain_command<keychain_app::command_te::create>::params_t, (keyname)(encrypted)(cipher)(curve))
-FC_REFLECT(keychain_app::keychain_command<keychain_app::command_te::remove>::params_t, (keyname))
-FC_REFLECT(keychain_app::keychain_command<keychain_app::command_te::public_key>::params_t, (keyname))
-FC_REFLECT(keychain_app::keychain_command_common, (command)(id)(params))
-FC_REFLECT(keychain_app::json_response, (id)(result))
-FC_REFLECT(keychain_app::json_error, (id)(error))
+FC_KEYCHAIN_REFLECT(keychain_app::keychain_command<keychain_app::command_te::sign>::params_t, (chainid)(transaction)(keyname))
+FC_KEYCHAIN_REFLECT(keychain_app::keychain_command<keychain_app::command_te::create>::params_t, (keyname)(encrypted)(cipher)(curve))
+FC_KEYCHAIN_REFLECT(keychain_app::keychain_command<keychain_app::command_te::remove>::params_t, (keyname))
+FC_KEYCHAIN_REFLECT(keychain_app::keychain_command<keychain_app::command_te::public_key>::params_t, (keyname))
+FC_KEYCHAIN_REFLECT(keychain_app::keychain_command_common, (command)(id)(params))
+FC_KEYCHAIN_REFLECT(keychain_app::json_response, (id)(result))
+FC_KEYCHAIN_REFLECT(keychain_app::json_error, (id)(error))
 
 #endif //KEYCHAINAPP_KEYCHAIN_COMMANDS_HPP

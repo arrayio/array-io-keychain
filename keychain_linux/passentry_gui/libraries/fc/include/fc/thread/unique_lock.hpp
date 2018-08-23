@@ -12,7 +12,7 @@ namespace fc {
   template<typename T>
   class unique_lock  {
     public:
-      unique_lock( T& l, const fc::time_point& abs ):_lock(l) { _locked = _lock.try_lock_until(abs); }
+      unique_lock( T& l, const fc_keychain::time_point& abs ):_lock(l) { _locked = _lock.try_lock_until(abs); }
       unique_lock( T& l, try_to_lock_t ):_lock(l) { _locked = _lock.try_lock(); }
       unique_lock( T& l ): _locked(false), _lock(l)                { lock(); }
       ~unique_lock()                              { if (_locked) unlock(); }
@@ -38,5 +38,5 @@ namespace fc {
     }
  *  </code>
  */
-#define synchronized(X)  fc::unique_lock<decltype((X))> __lock(((X)));
+#define synchronized(X)  fc_keychain::unique_lock<decltype((X))> __lock(((X)));
 

@@ -57,39 +57,39 @@ namespace fc
          T& val;
    };
 
-   template<typename IsReflected=fc::false_type>
+   template<typename IsReflected=fc_keychain::false_type>
    struct if_enum 
    {
      template<typename T>
-     static inline void to_variant( const T& v, fc::variant& vo ) 
+     static inline void to_variant( const T& v, fc_keychain::variant& vo )
      { 
          mutable_variant_object mvo;
-         fc::reflector<T>::visit( to_variant_visitor<T>( mvo, v ) );
-         vo = fc::move(mvo);
+         fc_keychain::reflector<T>::visit( to_variant_visitor<T>( mvo, v ) );
+         vo = fc_keychain::move(mvo);
      }
      template<typename T>
-     static inline void from_variant( const fc::variant& v, T& o ) 
+     static inline void from_variant( const fc_keychain::variant& v, T& o )
      { 
          const variant_object& vo = v.get_object();
-         fc::reflector<T>::visit( from_variant_visitor<T>( vo, o ) );
+         fc_keychain::reflector<T>::visit( from_variant_visitor<T>( vo, o ) );
      }
    };
 
     template<> 
-    struct if_enum<fc::true_type> 
+    struct if_enum<fc_keychain::true_type>
     {
        template<typename T>
-       static inline void to_variant( const T& o, fc::variant& v ) 
+       static inline void to_variant( const T& o, fc_keychain::variant& v )
        { 
-           v = fc::reflector<T>::to_fc_string(o);
+           v = fc_keychain::reflector<T>::to_fc_string(o);
        }
        template<typename T>
-       static inline void from_variant( const fc::variant& v, T& o ) 
+       static inline void from_variant( const fc_keychain::variant& v, T& o )
        { 
            if( v.is_string() )
-              o = fc::reflector<T>::from_string( v.get_string().c_str() );
+              o = fc_keychain::reflector<T>::from_string( v.get_string().c_str() );
            else
-              o = fc::reflector<T>::from_int( v.as_int64() );
+              o = fc_keychain::reflector<T>::from_int( v.as_int64() );
        }
     };
 
@@ -97,13 +97,13 @@ namespace fc
    template<typename T>
    void to_variant( const T& o, variant& v )
    {
-      if_enum<typename fc::reflector<T>::is_enum>::to_variant( o, v );
+      if_enum<typename fc_keychain::reflector<T>::is_enum>::to_variant( o, v );
    }
 
    template<typename T>
    void from_variant( const variant& v, T& o )
    {
-      if_enum<typename fc::reflector<T>::is_enum>::from_variant( v, o );
+      if_enum<typename fc_keychain::reflector<T>::is_enum>::from_variant( v, o );
    }
 
 }

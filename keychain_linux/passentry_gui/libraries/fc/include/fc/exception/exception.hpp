@@ -162,14 +162,14 @@ namespace fc
    };
 
    template<typename T>
-   fc::exception_ptr copy_exception( T&& e )
+   fc_keychain::exception_ptr copy_exception( T&& e )
    {
 #if defined(_MSC_VER) && (_MSC_VER < 1700)
      return std::make_shared<unhandled_exception>( log_message(),
-                                                   std::copy_exception(fc::forward<T>(e)) );
+                                                   std::copy_exception(fc_keychain::forward<T>(e)) );
 #else
      return std::make_shared<unhandled_exception>( log_message(),
-                                                   std::make_exception_ptr(fc::forward<T>(e)) );
+                                                   std::make_exception_ptr(fc_keychain::forward<T>(e)) );
 #endif
    }
 
@@ -213,7 +213,7 @@ namespace fc
         std::unordered_map<int64_t,base_exception_builder*> _registered_exceptions;
    };
 #define FC_REGISTER_EXCEPTION(r, unused, base) \
-   fc::exception_factory::instance().register_exception<base>();
+   fc_keychain::exception_factory::instance().register_exception<base>();
 
 #define FC_REGISTER_EXCEPTIONS( SEQ )\
      \
@@ -232,34 +232,34 @@ namespace fc
        }; \
        explicit TYPE( int64_t code, const std::string& name_value, const std::string& what_value ) \
        :BASE( code, name_value, what_value ){} \
-       explicit TYPE( fc::log_message&& m, int64_t code, const std::string& name_value, const std::string& what_value ) \
+       explicit TYPE( fc_keychain::log_message&& m, int64_t code, const std::string& name_value, const std::string& what_value ) \
        :BASE( std::move(m), code, name_value, what_value ){} \
-       explicit TYPE( fc::log_messages&& m, int64_t code, const std::string& name_value, const std::string& what_value )\
+       explicit TYPE( fc_keychain::log_messages&& m, int64_t code, const std::string& name_value, const std::string& what_value )\
        :BASE( std::move(m), code, name_value, what_value ){}\
-       explicit TYPE( const fc::log_messages& m, int64_t code, const std::string& name_value, const std::string& what_value )\
+       explicit TYPE( const fc_keychain::log_messages& m, int64_t code, const std::string& name_value, const std::string& what_value )\
        :BASE( m, code, name_value, what_value ){}\
-       TYPE( const std::string& what_value, const fc::log_messages& m ) \
+       TYPE( const std::string& what_value, const fc_keychain::log_messages& m ) \
        :BASE( m, CODE, BOOST_PP_STRINGIZE(TYPE), what_value ){} \
-       TYPE( fc::log_message&& m ) \
-       :BASE( fc::move(m), CODE, BOOST_PP_STRINGIZE(TYPE), WHAT ){}\
-       TYPE( fc::log_messages msgs ) \
-       :BASE( fc::move( msgs ), CODE, BOOST_PP_STRINGIZE(TYPE), WHAT ) {} \
+       TYPE( fc_keychain::log_message&& m ) \
+       :BASE( fc_keychain::move(m), CODE, BOOST_PP_STRINGIZE(TYPE), WHAT ){}\
+       TYPE( fc_keychain::log_messages msgs ) \
+       :BASE( fc_keychain::move( msgs ), CODE, BOOST_PP_STRINGIZE(TYPE), WHAT ) {} \
        TYPE( const TYPE& c ) \
        :BASE(c){} \
        TYPE( const BASE& c ) \
        :BASE(c){} \
        TYPE():BASE(CODE, BOOST_PP_STRINGIZE(TYPE), WHAT){}\
        \
-       virtual std::shared_ptr<fc::exception> dynamic_copy_exception()const\
+       virtual std::shared_ptr<fc_keychain::exception> dynamic_copy_exception()const\
        { return std::make_shared<TYPE>( *this ); } \
        virtual NO_RETURN void     dynamic_rethrow_exception()const \
        { if( code() == CODE ) throw *this;\
-         else fc::exception::dynamic_rethrow_exception(); \
+         else fc_keychain::exception::dynamic_rethrow_exception(); \
        } \
    };
 
   #define FC_DECLARE_EXCEPTION( TYPE, CODE, WHAT ) \
-      FC_DECLARE_DERIVED_EXCEPTION( TYPE, fc::exception, CODE, WHAT )
+      FC_DECLARE_DERIVED_EXCEPTION( TYPE, fc_keychain::exception, CODE, WHAT )
 
   FC_DECLARE_EXCEPTION( timeout_exception, timeout_exception_code, "Timeout" );
   FC_DECLARE_EXCEPTION( file_not_found_exception, file_not_found_exception_code, "File Not Found" );
@@ -331,9 +331,9 @@ namespace fc
     FC_MULTILINE_MACRO_BEGIN \
       if( UNLIKELY(!(TEST)) ) \
       {                                                                      \
-        if( fc::enable_record_assert_trip )                                  \
-           fc::record_assert_trip( __FILE__, __LINE__, #TEST );              \
-        FC_THROW_EXCEPTION( fc::assert_exception, #TEST ": "  __VA_ARGS__ ); \
+        if( fc_keychain::enable_record_assert_trip )                                  \
+           fc_keychain::record_assert_trip( __FILE__, __LINE__, #TEST );              \
+        FC_THROW_EXCEPTION( fc_keychain::assert_exception, #TEST ": "  __VA_ARGS__ ); \
       }                                                                      \
     FC_MULTILINE_MACRO_END \
   )
@@ -349,7 +349,7 @@ namespace fc
 #define FC_INDIRECT_EXPAND(MACRO, ARGS) MACRO ARGS
 #define FC_THROW(  ... ) \
   FC_MULTILINE_MACRO_BEGIN \
-    throw fc::exception( FC_INDIRECT_EXPAND(FC_LOG_MESSAGE, ( error, __VA_ARGS__ )) );  \
+    throw fc_keychain::exception( FC_INDIRECT_EXPAND(FC_LOG_MESSAGE, ( error, __VA_ARGS__ )) );  \
   FC_MULTILINE_MACRO_END
 
 #define FC_EXCEPTION( EXCEPTION_TYPE, FORMAT, ... ) \
@@ -376,19 +376,19 @@ namespace fc
   FC_MULTILINE_MACRO_END
 
 #define FC_LOG_AND_RETHROW( )  \
-   catch( fc::exception& er ) { \
+   catch( fc_keychain::exception& er ) { \
       wlog( "${details}", ("details",er.to_detail_string()) ); \
       FC_RETHROW_EXCEPTION( er, warn, "rethrow" ); \
    } catch( const std::exception& e ) {  \
-      fc::exception fce( \
+      fc_keychain::exception fce( \
                 FC_LOG_MESSAGE( warn, "rethrow ${what}: ", ("what",e.what())), \
-                fc::std_exception_code,\
+                fc_keychain::std_exception_code,\
                 typeid(e).name(), \
                 e.what() ) ; \
       wlog( "${details}", ("details",fce.to_detail_string()) ); \
       throw fce;\
    } catch( ... ) {  \
-      fc::unhandled_exception e( \
+      fc_keychain::unhandled_exception e( \
                 FC_LOG_MESSAGE( warn, "rethrow"), \
                 std::current_exception() ); \
       wlog( "${details}", ("details",e.to_detail_string()) ); \
@@ -396,21 +396,21 @@ namespace fc
    }
 
 #define FC_CAPTURE_LOG_AND_RETHROW( ... )  \
-   catch( fc::exception& er ) { \
+   catch( fc_keychain::exception& er ) { \
       wlog( "${details}", ("details",er.to_detail_string()) ); \
       wdump( __VA_ARGS__ ); \
       FC_RETHROW_EXCEPTION( er, warn, "rethrow", FC_FORMAT_ARG_PARAMS(__VA_ARGS__) ); \
    } catch( const std::exception& e ) {  \
-      fc::exception fce( \
+      fc_keychain::exception fce( \
                 FC_LOG_MESSAGE( warn, "rethrow ${what}: ", FC_FORMAT_ARG_PARAMS( __VA_ARGS__ )("what",e.what())), \
-                fc::std_exception_code,\
+                fc_keychain::std_exception_code,\
                 typeid(e).name(), \
                 e.what() ) ; \
       wlog( "${details}", ("details",fce.to_detail_string()) ); \
       wdump( __VA_ARGS__ ); \
       throw fce;\
    } catch( ... ) {  \
-      fc::unhandled_exception e( \
+      fc_keychain::unhandled_exception e( \
                 FC_LOG_MESSAGE( warn, "rethrow", FC_FORMAT_ARG_PARAMS( __VA_ARGS__) ), \
                 std::current_exception() ); \
       wlog( "${details}", ("details",e.to_detail_string()) ); \
@@ -419,19 +419,19 @@ namespace fc
    }
 
 #define FC_CAPTURE_AND_LOG( ... )  \
-   catch( fc::exception& er ) { \
+   catch( fc_keychain::exception& er ) { \
       wlog( "${details}", ("details",er.to_detail_string()) ); \
       wdump( __VA_ARGS__ ); \
    } catch( const std::exception& e ) {  \
-      fc::exception fce( \
+      fc_keychain::exception fce( \
                 FC_LOG_MESSAGE( warn, "rethrow ${what}: ",FC_FORMAT_ARG_PARAMS( __VA_ARGS__  )("what",e.what()) ), \
-                fc::std_exception_code,\
+                fc_keychain::std_exception_code,\
                 typeid(e).name(), \
                 e.what() ) ; \
       wlog( "${details}", ("details",fce.to_detail_string()) ); \
       wdump( __VA_ARGS__ ); \
    } catch( ... ) {  \
-      fc::unhandled_exception e( \
+      fc_keychain::unhandled_exception e( \
                 FC_LOG_MESSAGE( warn, "rethrow", FC_FORMAT_ARG_PARAMS( __VA_ARGS__) ), \
                 std::current_exception() ); \
       wlog( "${details}", ("details",e.to_detail_string()) ); \
@@ -445,31 +445,31 @@ namespace fc
  *   appending the provided log message.
  */
 #define FC_RETHROW_EXCEPTIONS( LOG_LEVEL, FORMAT, ... ) \
-   catch( fc::exception& er ) { \
+   catch( fc_keychain::exception& er ) { \
       FC_RETHROW_EXCEPTION( er, LOG_LEVEL, FORMAT, __VA_ARGS__ ); \
    } catch( const std::exception& e ) {  \
-      fc::exception fce( \
+      fc_keychain::exception fce( \
                 FC_LOG_MESSAGE( LOG_LEVEL, "${what}: " FORMAT,__VA_ARGS__("what",e.what())), \
-                fc::std_exception_code,\
+                fc_keychain::std_exception_code,\
                 typeid(e).name(), \
                 e.what() ) ; throw fce;\
    } catch( ... ) {  \
-      throw fc::unhandled_exception( \
+      throw fc_keychain::unhandled_exception( \
                 FC_LOG_MESSAGE( LOG_LEVEL, FORMAT,__VA_ARGS__), \
                 std::current_exception() ); \
    }
 
 #define FC_CAPTURE_AND_RETHROW( ... ) \
-   catch( fc::exception& er ) { \
+   catch( fc_keychain::exception& er ) { \
       FC_RETHROW_EXCEPTION( er, warn, "", FC_FORMAT_ARG_PARAMS(__VA_ARGS__) ); \
    } catch( const std::exception& e ) {  \
-      fc::exception fce( \
+      fc_keychain::exception fce( \
                 FC_LOG_MESSAGE( warn, "${what}: ",FC_FORMAT_ARG_PARAMS(__VA_ARGS__)("what",e.what())), \
-                fc::std_exception_code,\
+                fc_keychain::std_exception_code,\
                 typeid(e).name(), \
                 e.what() ) ; throw fce;\
    } catch( ... ) {  \
-      throw fc::unhandled_exception( \
+      throw fc_keychain::unhandled_exception( \
                 FC_LOG_MESSAGE( warn, "",FC_FORMAT_ARG_PARAMS(__VA_ARGS__)), \
                 std::current_exception() ); \
    }

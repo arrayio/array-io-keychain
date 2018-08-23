@@ -9,15 +9,15 @@ namespace fc
     namespace raw
     {
         template<typename T>
-        void unpack_file( const fc::path& filename, T& obj )
+        void unpack_file( const fc_keychain::path& filename, T& obj )
         {
            try {
-               fc::file_mapping fmap( filename.generic_string().c_str(), fc::read_only);
-               fc::mapped_region mapr( fmap, fc::read_only, 0, fc::file_size(filename) );
+               fc_keychain::file_mapping fmap( filename.generic_string().c_str(), fc_keychain::read_only);
+               fc_keychain::mapped_region mapr( fmap, fc_keychain::read_only, 0, fc_keychain::file_size(filename) );
                auto cs  = (const char*)mapr.get_address();
 
-               fc::datastream<const char*> ds( cs, mapr.get_size() );
-               fc::raw::unpack(ds,obj);
+               fc_keychain::datastream<const char*> ds( cs, mapr.get_size() );
+               fc_keychain::raw::unpack(ds,obj);
            } FC_RETHROW_EXCEPTIONS( info, "unpacking file ${file}", ("file",filename) );
         }
    }

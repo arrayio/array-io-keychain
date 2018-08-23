@@ -89,7 +89,7 @@ namespace fc
    void from_variant( const variant& var,  std::unordered_map<K,T>& vo );
 
    template<typename K, typename... T>
-   void to_variant( const fc::flat_map<K,T...>& var,  variant& vo );
+   void to_variant( const fc_keychain::flat_map<K,T...>& var,  variant& vo );
    template<typename K, typename T, typename... A>
    void from_variant(const variant& var, flat_map<K, T, A...>& vo);
 
@@ -114,9 +114,9 @@ namespace fc
    void from_variant( const variant& var,  std::deque<T>& vo );
 
    template<typename T>
-   void to_variant( const fc::flat_set<T>& var,  variant& vo );
+   void to_variant( const fc_keychain::flat_set<T>& var,  variant& vo );
    template<typename T>
-   void from_variant( const variant& var, fc::flat_set<T>& vo );
+   void from_variant( const variant& var, fc_keychain::flat_set<T>& vo );
 
    template<typename T>
    void to_variant( const std::set<T>& var,  variant& vo );
@@ -201,7 +201,7 @@ namespace fc
         variant( double val );
         variant( bool val );
         variant( blob val );
-        variant( fc::string val );
+        variant( fc_keychain::string val );
         variant( variant_object );
         variant( mutable_variant_object );
         variant( variants );
@@ -317,7 +317,7 @@ namespace fc
         template<typename T>
         variant& operator=( T&& v )
         {
-           return *this = variant( fc::forward<T>(v) );
+           return *this = variant( fc_keychain::forward<T>(v) );
         }
 
         template<typename T>
@@ -395,7 +395,7 @@ namespace fc
        std::vector< variant > vars(var.size());
        size_t i = 0;
        for( auto itr = var.begin(); itr != var.end(); ++itr, ++i )
-          vars[i] = fc::variant(*itr);
+          vars[i] = fc_keychain::variant(*itr);
        vo = vars;
    }
    template<typename K, typename T>
@@ -413,7 +413,7 @@ namespace fc
        std::vector< variant > vars(var.size());
        size_t i = 0;
        for( auto itr = var.begin(); itr != var.end(); ++itr, ++i )
-          vars[i] = fc::variant(*itr);
+          vars[i] = fc_keychain::variant(*itr);
        vo = vars;
    }
    template<typename K, typename T>
@@ -431,7 +431,7 @@ namespace fc
        std::vector< variant > vars(var.size());
        size_t i = 0;
        for( auto itr = var.begin(); itr != var.end(); ++itr, ++i )
-          vars[i] = fc::variant(*itr);
+          vars[i] = fc_keychain::variant(*itr);
        vo = vars;
    }
    template<typename K, typename T>
@@ -612,6 +612,6 @@ namespace fc
 } // namespace fc
 
 #include <fc/reflect/reflect.hpp>
-FC_REFLECT_TYPENAME( fc::variant )
-FC_REFLECT_ENUM( fc::variant::type_id, (null_type)(int64_type)(uint64_type)(double_type)(bool_type)(string_type)(array_type)(object_type)(blob_type) )
-FC_REFLECT( fc::blob, (data) );
+FC_REFLECT_TYPENAME( fc_keychain::variant )
+FC_REFLECT_ENUM( fc_keychain::variant::type_id, (null_type)(int64_type)(uint64_type)(double_type)(bool_type)(string_type)(array_type)(object_type)(blob_type) )
+FC_REFLECT( fc_keychain::blob, (data) );

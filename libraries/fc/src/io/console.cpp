@@ -1,7 +1,7 @@
 #include <iostream>
 #include <string>
 
-namespace fc {
+namespace fc_keychain {
 
 #ifdef WIN32
 #include <windows.h>
@@ -43,4 +43,4 @@ void set_console_echo( bool enable_echo )
 
 #endif // WIN32
 
-} // namespace fc
+} // namespace fc_keychain

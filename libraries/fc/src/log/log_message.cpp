@@ -1,14 +1,14 @@
-#include <fc/log/log_message.hpp>
-#include <fc/exception/exception.hpp>
-#include <fc/variant.hpp>
-#include <fc/time.hpp>
-//#include <fc/thread/thread.hpp>
-//#include <fc/thread/task.hpp>
-#include <fc/filesystem.hpp>
-//#include <fc/io/stdio.hpp>
-#include <fc/io/json.hpp>
+#include <fc_keychain/log/log_message.hpp>
+#include <fc_keychain/exception/exception.hpp>
+#include <fc_keychain/variant.hpp>
+#include <fc_keychain/time.hpp>
+//#include <fc_keychain/thread/thread.hpp>
+//#include <fc_keychain/thread/task.hpp>
+#include <fc_keychain/filesystem.hpp>
+//#include <fc_keychain/io/stdio.hpp>
+#include <fc_keychain/io/json.hpp>
 
-namespace fc
+namespace fc_keychain
 {
    namespace detail
    {
@@ -49,12 +49,12 @@ namespace fc
    :my( std::make_shared<detail::log_context_impl>() )
    {
       my->level       = ll;
-      my->file        = fc::path(file).filename().generic_string(); // TODO truncate filename
+      my->file        = fc_keychain::path(file).filename().generic_string(); // TODO truncate filename
       my->line        = line;
       my->method      = method;
       my->timestamp   = time_point::now();
-//      my->thread_name = fc::thread::current().name();
-//      const char* current_task_desc = fc::thread::current().current_task_desc();
+//      my->thread_name = fc_keychain::thread::current().name();
+//      const char* current_task_desc = fc_keychain::thread::current().current_task_desc();
 //      my->task_name   = current_task_desc ? current_task_desc : "?unnamed?";
    }
 
@@ -75,13 +75,13 @@ namespace fc
            my->context      = obj["context"].as<string>();
    }
 
-   fc::string log_context::to_string()const
+   fc_keychain::string log_context::to_string()const
    {
-      return /*my->thread_name + "  " +*/ my->file + ":" + fc::to_string(my->line) + " " + my->method;
+      return /*my->thread_name + "  " +*/ my->file + ":" + fc_keychain::to_string(my->line) + " " + my->method;
 
    }
 
-   void log_context::append_context( const fc::string& s )
+   void log_context::append_context( const fc_keychain::string& s )
    {
         if (!my->context.empty())
           my->context += " -> ";
@@ -144,8 +144,8 @@ namespace fc
         else if( v.as_string() == "warn" ) e = log_level::warn;
         else if( v.as_string() == "error" ) e = log_level::error;
         else if( v.as_string() == "off" ) e = log_level::off;
-        else FC_THROW_EXCEPTION( bad_cast_exception, "Failed to cast from Variant to log_level" );
-      } FC_RETHROW_EXCEPTIONS( error, 
+        else FC_KEYCHAIN_THROW_EXCEPTION( bad_cast_exception, "Failed to cast from Variant to log_level" );
+      } FC_KEYCHAIN_RETHROW_EXCEPTIONS( error,
                                    "Expected 'all|debug|info|warn|error|off', but got '${variant}'",
                                    ("variant",v) );
    }

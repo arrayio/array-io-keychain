@@ -21,20 +21,20 @@ SET(Boost_LIBRARIES ${BOOST_LIBRARIES_TEMP} ${Boost_LIBRARIES})
 if( MSVC )
     include_directories(
             "./include/keychain_lib"
-#            "../array-io-core/libraries/utilities/include"
-#            "../array-io-core/libraries/db/include"
-#            "../array-io-core/libraries/chain/include"
-#            "../array-io-core/libraries/fc/include"
+            "../array-io-core/libraries/utilities/include"
+            "../array-io-core/libraries/db/include"
+            "../array-io-core/libraries/chain/include"
+            "../array-io-core/libraries/fc/include"
             "../libraries/fc/include"
             "${OPENSSL_ROOT_DIR}/include"
             ${Boost_INCLUDE_DIR})
 else ( MSVC )
     include_directories(
             "./include/keychain_lib"
-#            "../array-io-core/libraries/utilities/include"
-#            "../array-io-core/libraries/db/include"
-#            "../array-io-core/libraries/chain/include"
-#            "../array-io-core/libraries/fc/include"
+            "../array-io-core/libraries/utilities/include"
+            "../array-io-core/libraries/db/include"
+            "../array-io-core/libraries/chain/include"
+            "../array-io-core/libraries/fc/include"
             "../libraries/fc/include"
             "${OPENSSL_ROOT_DIR}/include"
             "/usr/include/libcxxabi"

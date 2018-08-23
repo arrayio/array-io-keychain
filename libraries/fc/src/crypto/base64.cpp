@@ -1,4 +1,4 @@
-#include <fc/crypto/base64.hpp>
+#include <fc_keychain/crypto/base64.hpp>
 #include <ctype.h>
 /* 
    base64.cpp and base64.h
@@ -27,7 +27,7 @@
 
 */
 
-namespace fc {
+namespace fc_keychain {
 
 inline const std::string& base64_chars()
 {
@@ -134,5 +134,5 @@ std::string base64_decode(std::string const& encoded_string) {
   return ret;
 }
 
-} // namespace fc
+} // namespace fc_keychain
 

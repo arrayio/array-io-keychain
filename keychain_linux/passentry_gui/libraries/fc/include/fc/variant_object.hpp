@@ -173,7 +173,7 @@ namespace fc
       template<typename T>
       mutable_variant_object& operator()( string key, T&& var )
       {
-         set(std::move(key), variant( fc::forward<T>(var) ) );
+         set(std::move(key), variant( fc_keychain::forward<T>(var) ) );
          return *this;
       }
       /**
@@ -191,7 +191,7 @@ namespace fc
       explicit mutable_variant_object( T&& v )
       :_key_value( new std::vector<entry>() )
       {
-          *this = variant(fc::forward<T>(v)).get_object();
+          *this = variant(fc_keychain::forward<T>(v)).get_object();
       }
 
       mutable_variant_object();

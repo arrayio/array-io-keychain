@@ -1,17 +1,17 @@
-#include <fc/io/sstream.hpp>
-#include <fc/fwd_impl.hpp>
-#include <fc/exception/exception.hpp>
-#include <fc/log/logger.hpp>
+#include <fc_keychain/io/sstream.hpp>
+#include <fc_keychain/fwd_impl.hpp>
+#include <fc_keychain/exception/exception.hpp>
+#include <fc_keychain/log/logger.hpp>
 #include <sstream>
 
-namespace fc {
+namespace fc_keychain {
   class stringstream::impl {
     public:
-    impl( fc::string&s )
+    impl( fc_keychain::string&s )
     :ss( s )
     { ss.exceptions( std::stringstream::badbit ); }
 
-    impl( const fc::string&s )
+    impl( const fc_keychain::string&s )
     :ss( s )
     { ss.exceptions( std::stringstream::badbit ); }
 
@@ -20,21 +20,21 @@ namespace fc {
     std::stringstream ss;
   };
 
-  stringstream::stringstream( fc::string& s )
+  stringstream::stringstream( fc_keychain::string& s )
   :my(s) {
   }
-  stringstream::stringstream( const fc::string& s )
+  stringstream::stringstream( const fc_keychain::string& s )
   :my(s) {
   }
   stringstream::stringstream(){}
   stringstream::~stringstream(){}
 
 
-  fc::string stringstream::str(){
-    return my->ss.str();//.c_str();//*reinterpret_cast<fc::string*>(&st);
+  fc_keychain::string stringstream::str(){
+    return my->ss.str();//.c_str();//*reinterpret_cast<fc_keychain::string*>(&st);
   }
 
-  void stringstream::str(const fc::string& s) {
+  void stringstream::str(const fc_keychain::string& s) {
     my->ss.str(s);
   }
 
@@ -50,7 +50,7 @@ namespace fc {
     my->ss.write(buf,len);
     if( my->ss.eof() )
     {
-       FC_THROW_EXCEPTION( eof_exception, "stringstream" );
+       FC_KEYCHAIN_THROW_EXCEPTION( eof_exception, "stringstream" );
     }
     return len;
   }
@@ -63,7 +63,7 @@ namespace fc {
     size_t r = static_cast<size_t>(my->ss.readsome(buf,len));
     if( my->ss.eof() || r == 0 )
     {
-       FC_THROW_EXCEPTION( eof_exception, "stringstream" );
+       FC_KEYCHAIN_THROW_EXCEPTION( eof_exception, "stringstream" );
     }
     return r;
   }
@@ -93,9 +93,9 @@ namespace fc {
   istream& stringstream::read( double&      v ) { my->ss >> v; return *this; }
   istream& stringstream::read( bool&        v ) { my->ss >> v; return *this; }
   istream& stringstream::read( char&        v ) { my->ss >> v; return *this; }
-  istream& stringstream::read( fc::string&  v ) { my->ss >> *reinterpret_cast<std::string*>(&v); return *this; }
+  istream& stringstream::read( fc_keychain::string&  v ) { my->ss >> *reinterpret_cast<std::string*>(&v); return *this; }
 
-  ostream& stringstream::write( const fc::string& s) {
+  ostream& stringstream::write( const fc_keychain::string& s) {
     my->ss.write( s.c_str(), s.size() );
     return *this;
   }
@@ -106,7 +106,7 @@ namespace fc {
     char c = my->ss.peek(); 
     if( my->ss.eof() )
     {
-       FC_THROW_EXCEPTION( eof_exception, "stringstream" );
+       FC_KEYCHAIN_THROW_EXCEPTION( eof_exception, "stringstream" );
     }
     return c;
   }

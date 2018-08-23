@@ -7,11 +7,11 @@
 namespace fc {
   class stringstream::impl {
     public:
-    impl( fc::string&s )
+    impl( fc_keychain::string&s )
     :ss( s )
     { ss.exceptions( std::stringstream::badbit ); }
 
-    impl( const fc::string&s )
+    impl( const fc_keychain::string&s )
     :ss( s )
     { ss.exceptions( std::stringstream::badbit ); }
 
@@ -20,21 +20,21 @@ namespace fc {
     std::stringstream ss;
   };
 
-  stringstream::stringstream( fc::string& s )
+  stringstream::stringstream( fc_keychain::string& s )
   :my(s) {
   }
-  stringstream::stringstream( const fc::string& s )
+  stringstream::stringstream( const fc_keychain::string& s )
   :my(s) {
   }
   stringstream::stringstream(){}
   stringstream::~stringstream(){}
 
 
-  fc::string stringstream::str(){
-    return my->ss.str();//.c_str();//*reinterpret_cast<fc::string*>(&st);
+  fc_keychain::string stringstream::str(){
+    return my->ss.str();//.c_str();//*reinterpret_cast<fc_keychain::string*>(&st);
   }
 
-  void stringstream::str(const fc::string& s) {
+  void stringstream::str(const fc_keychain::string& s) {
     my->ss.str(s);
   }
 
@@ -93,9 +93,9 @@ namespace fc {
   istream& stringstream::read( double&      v ) { my->ss >> v; return *this; }
   istream& stringstream::read( bool&        v ) { my->ss >> v; return *this; }
   istream& stringstream::read( char&        v ) { my->ss >> v; return *this; }
-  istream& stringstream::read( fc::string&  v ) { my->ss >> *reinterpret_cast<std::string*>(&v); return *this; }
+  istream& stringstream::read( fc_keychain::string&  v ) { my->ss >> *reinterpret_cast<std::string*>(&v); return *this; }
 
-  ostream& stringstream::write( const fc::string& s) {
+  ostream& stringstream::write( const fc_keychain::string& s) {
     my->ss.write( s.c_str(), s.size() );
     return *this;
   }

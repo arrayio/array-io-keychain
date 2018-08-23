@@ -1,12 +1,12 @@
 //#define BOOST_NO_SCOPED_ENUMS
-#include <fc/filesystem.hpp>
-#include <fc/exception/exception.hpp>
-#include <fc/fwd_impl.hpp>
-#include <fc/utility.hpp>
-#include <fc/io/fstream.hpp>
+#include <fc_keychain/filesystem.hpp>
+#include <fc_keychain/exception/exception.hpp>
+#include <fc_keychain/fwd_impl.hpp>
+#include <fc_keychain/utility.hpp>
+#include <fc_keychain/io/fstream.hpp>
 
-#include <fc/utf8.hpp>
-#include <fc/variant.hpp>
+#include <fc_keychain/utf8.hpp>
+#include <fc_keychain/variant.hpp>
 
 #include <boost/config.hpp>
 #include <boost/filesystem.hpp>
@@ -19,19 +19,19 @@
   #include <sys/types.h>
   #include <sys/stat.h>
   #include <pwd.h>
-# ifdef FC_HAS_SIMPLE_FILE_LOCK  
+# ifdef FC_KEYCHAIN_HAS_SIMPLE_FILE_LOCK
   #include <sys/file.h>
   #include <fcntl.h>
 # endif
 #endif
 
-namespace fc {
+namespace fc_keychain {
   // when converting to and from a variant, store utf-8 in the variant
-  void to_variant( const fc::path& path_to_convert, variant& variant_output ) 
+  void to_variant( const fc_keychain::path& path_to_convert, variant& variant_output )
   {
     std::wstring wide_string = path_to_convert.generic_wstring();
     std::string utf8_string;
-    fc::encodeUtf8(wide_string, &utf8_string);
+    fc_keychain::encodeUtf8(wide_string, &utf8_string);
     variant_output = utf8_string;
 
     //std::string path = t.to_native_ansi_path();
@@ -39,10 +39,10 @@ namespace fc {
     //v = path;
   }
 
-  void from_variant( const fc::variant& variant_to_convert, fc::path& path_output ) 
+  void from_variant( const fc_keychain::variant& variant_to_convert, fc_keychain::path& path_output )
   {
     std::wstring wide_string;
-    fc::decodeUtf8(variant_to_convert.as_string(), &wide_string);
+    fc_keychain::decodeUtf8(variant_to_convert.as_string(), &wide_string);
     path_output = path(wide_string);
   }
 
@@ -56,7 +56,7 @@ namespace fc {
 
    path::path( const char* p )
    :_p(p){}
-   path::path( const fc::string& p )
+   path::path( const fc_keychain::string& p )
    :_p(p.c_str()){}
 
    path::path(const std::wstring& p)
@@ -73,19 +73,19 @@ namespace fc {
     return *this;
    }
    path& path::operator =( path&& p ) {
-    *_p = fc::move( *p._p );
+    *_p = fc_keychain::move( *p._p );
     return *this;
    }
 
-   bool operator <( const fc::path& l, const fc::path& r ) { return *l._p < *r._p; }
-   bool operator ==( const fc::path& l, const fc::path& r ) { return *l._p == *r._p; }
-   bool operator !=( const fc::path& l, const fc::path& r ) { return *l._p != *r._p; }
+   bool operator <( const fc_keychain::path& l, const fc_keychain::path& r ) { return *l._p < *r._p; }
+   bool operator ==( const fc_keychain::path& l, const fc_keychain::path& r ) { return *l._p == *r._p; }
+   bool operator !=( const fc_keychain::path& l, const fc_keychain::path& r ) { return *l._p != *r._p; }
 
-   path& path::operator /=( const fc::path& p ) {
+   path& path::operator /=( const fc_keychain::path& p ) {
       *_p /= *p._p;
       return *this;
    }
-   path   operator /( const fc::path& p, const fc::path& o ) {
+   path   operator /( const fc_keychain::path& p, const fc_keychain::path& o ) {
       path tmp;
       tmp = *p._p / *o._p;
       return tmp;
@@ -97,11 +97,11 @@ namespace fc {
    path::operator const boost::filesystem::path& ()const {
     return *_p;
    }
-   fc::string path::generic_string()const {
+   fc_keychain::string path::generic_string()const {
     return _p->generic_string();
    }
 
-   fc::string path::preferred_string() const
+   fc_keychain::string path::preferred_string() const
    {
      return boost::filesystem::path(*_p).make_preferred().string();
    }
@@ -136,7 +136,7 @@ namespace fc {
       path = buffer;
 #endif
     std::string filePath;
-    fc::encodeUtf8(path, &filePath);
+    fc_keychain::encodeUtf8(path, &filePath);
     return filePath;
     }
 
@@ -144,40 +144,40 @@ namespace fc {
     *  @todo use iterators instead of indexes for 
     *  faster performance
     */
-   fc::string path::windows_string()const {
+   fc_keychain::string path::windows_string()const {
      std::string result = _p->generic_string();
      std::replace(result.begin(), result.end(), '/', '\\');
      return result;
    }
 
-   fc::string path::string()const {
+   fc_keychain::string path::string()const {
     return _p->string();
    }
-   fc::path path::filename()const {
+   fc_keychain::path path::filename()const {
     return _p->filename();
    }
-   void     path::replace_extension( const fc::path& e ) {
+   void     path::replace_extension( const fc_keychain::path& e ) {
         _p->replace_extension(e);
    }
-   fc::path path::extension()const {
+   fc_keychain::path path::extension()const {
     return _p->extension();
    }
-   fc::path path::stem()const {
+   fc_keychain::path path::stem()const {
     return _p->stem();
    }
-   fc::path path::parent_path()const {
+   fc_keychain::path path::parent_path()const {
     return _p->parent_path();
    }
   bool path::is_relative()const { return _p->is_relative(); }
   bool path::is_absolute()const { return _p->is_absolute(); }
 
-      directory_iterator::directory_iterator( const fc::path& p )
+      directory_iterator::directory_iterator( const fc_keychain::path& p )
       :_p(p){}
 
       directory_iterator::directory_iterator(){}
       directory_iterator::~directory_iterator(){}
 
-      fc::path            directory_iterator::operator*()const { return boost::filesystem::path(*(*_p)); }
+      fc_keychain::path            directory_iterator::operator*()const { return boost::filesystem::path(*(*_p)); }
       detail::path_wrapper directory_iterator::operator->() const { return detail::path_wrapper(boost::filesystem::path(*(*_p))); }
       directory_iterator& directory_iterator::operator++(int)  { (*_p)++; return *this; }
       directory_iterator& directory_iterator::operator++()     { (*_p)++; return *this; }
@@ -190,13 +190,13 @@ namespace fc {
       }
 
 
-      recursive_directory_iterator::recursive_directory_iterator( const fc::path& p )
+      recursive_directory_iterator::recursive_directory_iterator( const fc_keychain::path& p )
       :_p(p){}
 
       recursive_directory_iterator::recursive_directory_iterator(){}
       recursive_directory_iterator::~recursive_directory_iterator(){}
 
-      fc::path            recursive_directory_iterator::operator*()const { return boost::filesystem::path(*(*_p)); }
+      fc_keychain::path            recursive_directory_iterator::operator*()const { return boost::filesystem::path(*(*_p)); }
       recursive_directory_iterator& recursive_directory_iterator::operator++(int)  { (*_p)++; return *this; }
       recursive_directory_iterator& recursive_directory_iterator::operator++()     { (*_p)++; return *this; }
 
@@ -216,7 +216,7 @@ namespace fc {
     try {
       boost::filesystem::create_directories(p); 
     } catch ( ... ) {
-      FC_THROW( "Unable to create directories ${path}", ("path", p )("inner", fc::except_str() ) );
+      FC_KEYCHAIN_THROW( "Unable to create directories ${path}", ("path", p )("inner", fc_keychain::except_str() ) );
     }
   }
   bool is_directory( const path& p ) { return boost::filesystem::is_directory(p); }
@@ -226,7 +226,7 @@ namespace fc {
   uint64_t directory_size(const path& p)
   {
     try {
-      FC_ASSERT( is_directory( p ) );
+      FC_KEYCHAIN_ASSERT( is_directory( p ) );
 
       recursive_directory_iterator end;
       uint64_t size = 0;
@@ -238,7 +238,7 @@ namespace fc {
 
       return size;
     } catch ( ... ) {
-      FC_THROW( "Unable to calculate size of directory ${path}", ("path", p )("inner", fc::except_str() ) );
+      FC_KEYCHAIN_THROW( "Unable to calculate size of directory ${path}", ("path", p )("inner", fc_keychain::except_str() ) );
     }
   }
 
@@ -247,11 +247,11 @@ namespace fc {
      try {
   	    boost::filesystem::copy( boost::filesystem::path(f), boost::filesystem::path(t) ); 
      } catch ( boost::system::system_error& e ) {
-     	FC_THROW( "Copy from ${srcfile} to ${dstfile} failed because ${reason}",
+     	FC_KEYCHAIN_THROW( "Copy from ${srcfile} to ${dstfile} failed because ${reason}",
 	         ("srcfile",f)("dstfile",t)("reason",e.what() ) );
      } catch ( ... ) {
-     	FC_THROW( "Copy from ${srcfile} to ${dstfile} failed",
-	         ("srcfile",f)("dstfile",t)("inner", fc::except_str() ) );
+     	FC_KEYCHAIN_THROW( "Copy from ${srcfile} to ${dstfile} failed",
+	         ("srcfile",f)("dstfile",t)("inner", fc_keychain::except_str() ) );
      }
   }
   void resize_file( const path& f, size_t t ) 
@@ -261,13 +261,13 @@ namespace fc {
     } 
     catch ( boost::system::system_error& e )
     {
-      FC_THROW( "Resize file '${f}' to size ${s} failed: ${reason}",
+      FC_KEYCHAIN_THROW( "Resize file '${f}' to size ${s} failed: ${reason}",
                 ("f",f)("s",t)( "reason", e.what() ) );
     } 
     catch ( ... ) 
     {
-      FC_THROW( "Resize file '${f}' to size ${s} failed: ${reason}",
-                ("f",f)("s",t)( "reason", fc::except_str() ) );
+      FC_KEYCHAIN_THROW( "Resize file '${f}' to size ${s} failed: ${reason}",
+                ("f",f)("s",t)( "reason", fc_keychain::except_str() ) );
     }
   }
 
@@ -293,7 +293,7 @@ namespace fc {
 
     int result = ::chmod( p.string().c_str(), actual_perm );
     if( result != 0 )
-        FC_THROW( "chmod operation failed on ${p}", ("p",p) );
+        FC_KEYCHAIN_THROW( "chmod operation failed on ${p}", ("p",p) );
 #endif
     return;
   }
@@ -306,42 +306,42 @@ namespace fc {
              boost::filesystem::copy( boost::filesystem::path(f), boost::filesystem::path(t) ); 
              boost::filesystem::remove( boost::filesystem::path(f)); 
          } catch ( boost::system::system_error& e ) {
-             FC_THROW( "Rename from ${srcfile} to ${dstfile} failed because ${reason}",
+             FC_KEYCHAIN_THROW( "Rename from ${srcfile} to ${dstfile} failed because ${reason}",
                      ("srcfile",f)("dstfile",t)("reason",e.what() ) );
          }
      } catch ( ... ) {
-     	FC_THROW( "Rename from ${srcfile} to ${dstfile} failed",
-	         ("srcfile",f)("dstfile",t)("inner", fc::except_str() ) );
+     	FC_KEYCHAIN_THROW( "Rename from ${srcfile} to ${dstfile} failed",
+	         ("srcfile",f)("dstfile",t)("inner", fc_keychain::except_str() ) );
      }
   }
   void create_hard_link( const path& f, const path& t ) { 
      try {
         boost::filesystem::create_hard_link( f, t ); 
      } catch ( ... ) {
-         FC_THROW( "Unable to create hard link from '${from}' to '${to}'", 
-                          ( "from", f )("to",t)("exception", fc::except_str() ) );
+         FC_KEYCHAIN_THROW( "Unable to create hard link from '${from}' to '${to}'",
+                          ( "from", f )("to",t)("exception", fc_keychain::except_str() ) );
      }
   }
   bool remove( const path& f ) { 
      try {
         return boost::filesystem::remove( f ); 
      } catch ( ... ) {
-         FC_THROW( "Unable to remove '${path}'", ( "path", f )("exception", fc::except_str() ) );
+         FC_KEYCHAIN_THROW( "Unable to remove '${path}'", ( "path", f )("exception", fc_keychain::except_str() ) );
      }
   }
-  fc::path canonical( const fc::path& p ) { 
+  fc_keychain::path canonical( const fc_keychain::path& p ) {
      try {
         return boost::filesystem::canonical(p); 
      } catch ( ... ) {
-         FC_THROW( "Unable to resolve path '${path}'", ( "path", p )("exception", fc::except_str() ) );
+         FC_KEYCHAIN_THROW( "Unable to resolve path '${path}'", ( "path", p )("exception", fc_keychain::except_str() ) );
      }
   }
-  fc::path absolute( const fc::path& p ) { return boost::filesystem::absolute(p); }
+  fc_keychain::path absolute( const fc_keychain::path& p ) { return boost::filesystem::absolute(p); }
   path     unique_path() { return boost::filesystem::unique_path(); }
   path     temp_directory_path() { return boost::filesystem::temp_directory_path(); }
 
   // Return path when appended to a_From will resolve to same as a_To
-  fc::path make_relative(const fc::path& from, const fc::path& to) {
+  fc_keychain::path make_relative(const fc_keychain::path& from, const fc_keychain::path& to) {
     boost::filesystem::path a_From = boost::filesystem::absolute(from);
     boost::filesystem::path a_To = boost::filesystem::absolute(to);
     boost::filesystem::path ret;
@@ -359,16 +359,16 @@ namespace fc {
     return ret;
   }
 
-   temp_file::temp_file(const fc::path& p, bool create)
-   : temp_file_base(p / fc::unique_path())
+   temp_file::temp_file(const fc_keychain::path& p, bool create)
+   : temp_file_base(p / fc_keychain::unique_path())
    {
-      if (fc::exists(*_path))
+      if (fc_keychain::exists(*_path))
       {
-         FC_THROW( "Name collision: ${path}", ("path", _path->string()) );
+         FC_KEYCHAIN_THROW( "Name collision: ${path}", ("path", _path->string()) );
       }
       if (create)
       {
-         fc::ofstream ofs(*_path, fc::ofstream::out | fc::ofstream::binary);
+         fc_keychain::ofstream ofs(*_path, fc_keychain::ofstream::out | fc_keychain::ofstream::binary);
          ofs.close();
       }
    }
@@ -388,14 +388,14 @@ namespace fc {
       return *this;
    }
 
-   temp_directory::temp_directory(const fc::path& p)
-   : temp_file_base(p / fc::unique_path())
+   temp_directory::temp_directory(const fc_keychain::path& p)
+   : temp_file_base(p / fc_keychain::unique_path())
    {
-      if (fc::exists(*_path))
+      if (fc_keychain::exists(*_path))
       {
-         FC_THROW( "Name collision: ${path}", ("path", _path->string()) );
+         FC_KEYCHAIN_THROW( "Name collision: ${path}", ("path", _path->string()) );
       }
-      fc::create_directories(*_path);
+      fc_keychain::create_directories(*_path);
    }
 
    temp_directory::temp_directory(temp_directory&& other)
@@ -413,11 +413,11 @@ namespace fc {
       return *this;
    }
 
-   const fc::path& temp_file_base::path() const
+   const fc_keychain::path& temp_file_base::path() const
    {
       if (!_path)
       {
-         FC_THROW( "Temporary directory has been released." );
+         FC_KEYCHAIN_THROW( "Temporary directory has been released." );
       }
       return *_path;
    }
@@ -428,7 +428,7 @@ namespace fc {
       {
          try
          {
-            fc::remove_all(*_path);
+            fc_keychain::remove_all(*_path);
          }
          catch (...)
          {
@@ -440,24 +440,24 @@ namespace fc {
 
    void temp_file_base::release()
    {
-      _path = fc::optional<fc::path>();
+      _path = fc_keychain::optional<fc_keychain::path>();
    }
 
-   const fc::path& home_path()
+   const fc_keychain::path& home_path()
    {
-      static fc::path p = []()
+      static fc_keychain::path p = []()
       {
 #ifdef WIN32
           HANDLE access_token;
           if (!OpenProcessToken(GetCurrentProcess(), TOKEN_READ, &access_token))
-            FC_ASSERT(false, "Unable to open an access token for the current process");
+            FC_KEYCHAIN_ASSERT(false, "Unable to open an access token for the current process");
           wchar_t user_profile_dir[MAX_PATH];
           DWORD user_profile_dir_len = sizeof(user_profile_dir);
           BOOL success = GetUserProfileDirectoryW(access_token, user_profile_dir, &user_profile_dir_len);
           CloseHandle(access_token);
           if (!success)
-            FC_ASSERT(false, "Unable to get the user profile directory");
-          return fc::path(std::wstring(user_profile_dir));
+            FC_KEYCHAIN_ASSERT(false, "Unable to get the user profile directory");
+          return fc_keychain::path(std::wstring(user_profile_dir));
 #else
           char* home = getenv( "HOME" );
           if( nullptr == home )
@@ -465,42 +465,42 @@ namespace fc {
              struct passwd* pwd = getpwuid(getuid());
              if( pwd )
              {
-                 return fc::path( std::string( pwd->pw_dir ) );
+                 return fc_keychain::path( std::string( pwd->pw_dir ) );
              }
-             FC_ASSERT( home != nullptr, "The HOME environment variable is not set" );
+             FC_KEYCHAIN_ASSERT( home != nullptr, "The HOME environment variable is not set" );
           }
-          return fc::path( std::string(home) );
+          return fc_keychain::path( std::string(home) );
 #endif
       }();
       return p;
    }
 
-   const fc::path& app_path()
+   const fc_keychain::path& app_path()
    {
 #ifdef __APPLE__
-         static fc::path appdir = [](){  return home_path() / "Library" / "Application Support"; }();  
+         static fc_keychain::path appdir = [](){  return home_path() / "Library" / "Application Support"; }();
 #elif defined( WIN32 )
-         static fc::path appdir = [](){
+         static fc_keychain::path appdir = [](){
            wchar_t app_data_dir[MAX_PATH];
 
            if (!SUCCEEDED(SHGetFolderPathW(NULL, CSIDL_APPDATA | CSIDL_FLAG_CREATE, NULL, 0, app_data_dir)))
-             FC_ASSERT(false, "Unable to get the current AppData directory");
-           return fc::path(std::wstring(app_data_dir));
+             FC_KEYCHAIN_ASSERT(false, "Unable to get the current AppData directory");
+           return fc_keychain::path(std::wstring(app_data_dir));
          }();
 #else
-        static fc::path appdir = home_path();
+        static fc_keychain::path appdir = home_path();
 #endif
       return appdir;
    }
 
-   const fc::path& current_path()
+   const fc_keychain::path& current_path()
    {
-     static fc::path appCurrentPath = boost::filesystem::current_path();
+     static fc_keychain::path appCurrentPath = boost::filesystem::current_path();
      return appCurrentPath;
    }
 
 
-#ifdef FC_HAS_SIMPLE_FILE_LOCK  
+#ifdef FC_KEYCHAIN_HAS_SIMPLE_FILE_LOCK
   class simple_lock_file::impl
   {
   public:
@@ -594,6 +594,6 @@ namespace fc {
   {
     my->unlock();
   }
-#endif // FC_HAS_SIMPLE_FILE_LOCK
+#endif // FC_KEYCHAIN_HAS_SIMPLE_FILE_LOCK
 
 }

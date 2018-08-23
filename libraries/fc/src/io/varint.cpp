@@ -1,7 +1,7 @@
-#include <fc/io/varint.hpp>
-#include <fc/variant.hpp>
+#include <fc_keychain/io/varint.hpp>
+#include <fc_keychain/variant.hpp>
 
-namespace fc
+namespace fc_keychain
 {
 void to_variant( const signed_int& var,  variant& vo ) { vo = var.value; }
 void from_variant( const variant& var,  signed_int& vo ) { vo.value = static_cast<int32_t>(var.as_int64()); }

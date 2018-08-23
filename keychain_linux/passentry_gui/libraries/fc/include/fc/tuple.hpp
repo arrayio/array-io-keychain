@@ -35,10 +35,10 @@ namespace fc {
 
     template<typename AA, typename BB, typename CC, typename DD>
     tuple( AA&& aa, BB&& bb, CC&& cc, DD&& dd )
-    :a( fc::forward<AA>(aa) ),
-     b( fc::forward<BB>(bb) ),
-     c( fc::forward<CC>(cc) ),
-     d( fc::forward<DD>(dd) )
+    :a( fc_keychain::forward<AA>(aa) ),
+     b( fc_keychain::forward<BB>(bb) ),
+     c( fc_keychain::forward<CC>(cc) ),
+     d( fc_keychain::forward<DD>(dd) )
      {}
 
     template<typename V>
@@ -69,16 +69,16 @@ namespace fc {
 
         template<typename T>
         struct is_tuple {
-          typedef fc::false_type type;
+          typedef fc_keychain::false_type type;
         };
 
         #define RREF_PARAMS(z,n,data) BOOST_PP_CAT(AA,n)&& BOOST_PP_CAT(p,n)
-        #define ILIST_PARAMS(z,n,data) BOOST_PP_CAT(a,n)( fc::forward<BOOST_PP_CAT(AA,n)>( BOOST_PP_CAT(p,n) ) )
+        #define ILIST_PARAMS(z,n,data) BOOST_PP_CAT(a,n)( fc_keychain::forward<BOOST_PP_CAT(AA,n)>( BOOST_PP_CAT(p,n) ) )
         #define ILIST_PARAMS_COPY(z,n,data) BOOST_PP_CAT(a,n)( t.BOOST_PP_CAT(a,n)  )
         #define VISIT_PARAMS(z,n,data) v(BOOST_PP_CAT(a,n));
         #define LIST_MEMBERS_ON(z,n,data) data.BOOST_PP_CAT(a,n)
-        #define DEDUCE_MEMBERS(z,n,data) typename fc::deduce<BOOST_PP_CAT(AA,n)>::type
-        #define FORWARD_PARAMS(z,n,data) fc::forward<BOOST_PP_CAT(AA,n)>(BOOST_PP_CAT(p,n))
+        #define DEDUCE_MEMBERS(z,n,data) typename fc_keychain::deduce<BOOST_PP_CAT(AA,n)>::type
+        #define FORWARD_PARAMS(z,n,data) fc_keychain::forward<BOOST_PP_CAT(AA,n)>(BOOST_PP_CAT(p,n))
         #define MEM_PARAMS(z,n,data) BOOST_PP_CAT(A,n) BOOST_PP_CAT(a,n);
         #define TUPLE(z,n,unused) \
         template<BOOST_PP_ENUM_PARAMS( n, typename A)> \
@@ -110,12 +110,12 @@ namespace fc {
           return f( BOOST_PP_ENUM( n, LIST_MEMBERS_ON, t) ); \
         } \
         template<BOOST_PP_ENUM_PARAMS( n, typename AA)> \
-        struct is_tuple<fc::tuple<BOOST_PP_ENUM_PARAMS(n,AA)> > { \
-          typedef fc::true_type type; \
+        struct is_tuple<fc_keychain::tuple<BOOST_PP_ENUM_PARAMS(n,AA)> > { \
+          typedef fc_keychain::true_type type; \
         }; \
         template<BOOST_PP_ENUM_PARAMS( n, typename AA)> \
-        struct deduce<fc::tuple<BOOST_PP_ENUM_PARAMS(n,AA)> > { \
-          typedef fc::tuple<BOOST_PP_ENUM( n, DEDUCE_MEMBERS,unused)>  type; \
+        struct deduce<fc_keychain::tuple<BOOST_PP_ENUM_PARAMS(n,AA)> > { \
+          typedef fc_keychain::tuple<BOOST_PP_ENUM( n, DEDUCE_MEMBERS,unused)>  type; \
         }; 
 
         BOOST_PP_REPEAT_FROM_TO( 1, 5, TUPLE, unused )

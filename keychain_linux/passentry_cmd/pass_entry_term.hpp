@@ -17,9 +17,9 @@
 #include <X11/Xutil.h>
 #include <X11/Xos.h>
 #include <X11/XKBlib.h>
-#include <fc/reflect/reflect.hpp>
-#include <fc/variant.hpp>
-#include <fc/io/json.hpp>
+#include <fc_keychain/reflect/reflect.hpp>
+#include <fc_keychain/variant.hpp>
+#include <fc_keychain/io/json.hpp>
 // TODO: this header is requried for reflection from graphene::chain::transaction
 #include <graphene/chain/protocol/protocol.hpp>
 #include <keychain_lib/keychain_wrapper.hpp>

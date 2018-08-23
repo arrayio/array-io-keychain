@@ -21,10 +21,10 @@ namespace fc {
    *  @brief wraps boost::filesystem::path to provide platform independent path manipulation.
    *
    *  Most calls are simply a passthrough to boost::filesystem::path, however exceptions are
-   *  wrapped in an fc::error_report and the additional helper method fc::path::windows_string(),
+   *  wrapped in an fc_keychain::error_report and the additional helper method fc_keychain::path::windows_string(),
    *  can be used to calculate paths intended for systems different than the host.
    *
-   *  @note Serializes to a fc::value() as the result of generic_string()
+   *  @note Serializes to a fc_keychain::value() as the result of generic_string()
    */
   class path {
     public:
@@ -40,20 +40,20 @@ namespace fc {
       path& operator =( const path& );
       path& operator =( path&& );
 
-      path& operator /=( const fc::path& );
-      friend path operator /( const fc::path& p, const fc::path& );
-      friend bool operator ==( const fc::path& p, const fc::path& );
-      friend bool operator !=( const fc::path& p, const fc::path& );
-      friend bool operator < ( const fc::path& p, const fc::path& );
+      path& operator /=( const fc_keychain::path& );
+      friend path operator /( const fc_keychain::path& p, const fc_keychain::path& );
+      friend bool operator ==( const fc_keychain::path& p, const fc_keychain::path& );
+      friend bool operator !=( const fc_keychain::path& p, const fc_keychain::path& );
+      friend bool operator < ( const fc_keychain::path& p, const fc_keychain::path& );
 
       operator boost::filesystem::path& ();
       operator const boost::filesystem::path& ()const;
 
-      void         replace_extension( const fc::path& e );
-      fc::path     stem()const;
-      fc::path     extension()const;
-      fc::path     filename()const;
-      fc::path     parent_path()const;
+      void         replace_extension( const fc_keychain::path& e );
+      fc_keychain::path     stem()const;
+      fc_keychain::path     extension()const;
+      fc_keychain::path     filename()const;
+      fc_keychain::path     parent_path()const;
       std::string   string()const;
       std::string   generic_string()const;
       /** On windows, returns a path where all path separators are '\' suitable for displaying
@@ -68,7 +68,7 @@ namespace fc {
       /** Retrieves native string path representation and next converts it into
           ANSI UTF-8 representation.
           It is needed since not all parts of fc library accept unicode paths
-          (fc::file_mapping).
+          (fc_keychain::file_mapping).
       */
       std::string  to_native_ansi_path() const;
 
@@ -112,11 +112,11 @@ namespace fc {
 
   class directory_iterator {
     public:
-      directory_iterator( const fc::path& p );
+      directory_iterator( const fc_keychain::path& p );
       directory_iterator();
       ~directory_iterator();
 
-      fc::path            operator*()const;
+      fc_keychain::path            operator*()const;
       detail::path_wrapper operator->() const;
       directory_iterator& operator++(int);
       directory_iterator& operator++();
@@ -128,11 +128,11 @@ namespace fc {
   };
   class recursive_directory_iterator {
     public:
-      recursive_directory_iterator( const fc::path& p );
+      recursive_directory_iterator( const fc_keychain::path& p );
       recursive_directory_iterator();
       ~recursive_directory_iterator();
 
-      fc::path            operator*()const;
+      fc_keychain::path            operator*()const;
       recursive_directory_iterator& operator++(int);
       recursive_directory_iterator& operator++();
       void pop();
@@ -179,11 +179,11 @@ namespace fc {
   const path& app_path();
 
   /** @return application executable path */
-  const fc::path& current_path();
+  const fc_keychain::path& current_path();
 
   class variant;
-  void to_variant( const fc::path&,  fc::variant&  );
-  void from_variant( const fc::variant& , fc::path& );
+  void to_variant( const fc_keychain::path&,  fc_keychain::variant&  );
+  void from_variant( const fc_keychain::variant& , fc_keychain::path& );
 
   template<> struct get_typename<path> { static const char* name()   { return "path";   } };
 
@@ -196,11 +196,11 @@ namespace fc {
      inline ~temp_file_base() { remove(); }
      inline operator bool() const { return _path.valid(); }
      inline bool operator!() const { return !_path; }
-     const fc::path& path() const;
+     const fc_keychain::path& path() const;
      void remove();
      void release();
   protected:
-     typedef fc::optional<fc::path> path_t;
+     typedef fc_keychain::optional<fc_keychain::path> path_t;
      inline temp_file_base(const path_t& path) : _path(path) {}
      inline temp_file_base(path_t&& path) : _path(std::move(path)) {}
      path_t _path;
@@ -214,7 +214,7 @@ namespace fc {
   public:
      temp_file(temp_file&& other);
      temp_file& operator=(temp_file&& other);
-     temp_file(const fc::path& tempFolder = fc::temp_directory_path(), bool create = false);
+     temp_file(const fc_keychain::path& tempFolder = fc_keychain::temp_directory_path(), bool create = false);
   };
 
   /**
@@ -225,7 +225,7 @@ namespace fc {
   public:
      temp_directory(temp_directory&& other);
      temp_directory& operator=(temp_directory&& other);
-     temp_directory(const fc::path& tempFolder = fc::temp_directory_path());
+     temp_directory(const fc_keychain::path& tempFolder = fc_keychain::temp_directory_path());
   };
 
 
@@ -239,7 +239,7 @@ namespace fc {
   /** simple class which only allows one process to open any given file. 
    * approximate usage:
    * int main() {
-   *   fc::simple_file_lock instance_lock("~/.my_app/.lock");
+   *   fc_keychain::simple_file_lock instance_lock("~/.my_app/.lock");
    *   if (!instance_lock.try_lock()) {
    *     elog("my_app is already running");
    *     return 1;

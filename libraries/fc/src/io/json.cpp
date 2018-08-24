@@ -88,7 +88,7 @@ namespace fc_keychain
    template<typename T>
    fc_keychain::string stringFromStream( T& in )
    {
-      fc_keychain::stringstream token;
+      std::stringstream token;
       try
       {
          char c = in.peek();
@@ -460,20 +460,20 @@ namespace fc_keychain
    { try {
       check_string_depth( utf8_str );
 
-      fc_keychain::stringstream in( utf8_str );
+      std::stringstream in( utf8_str );
       //in.exceptions( std::ifstream::eofbit );
       switch( ptype )
       {
           case legacy_parser:
-              return variant_from_stream<fc_keychain::stringstream, legacy_parser>( in );
+              return variant_from_stream<std::stringstream, legacy_parser>( in );
           case legacy_parser_with_string_doubles:
-              return variant_from_stream<fc_keychain::stringstream, legacy_parser_with_string_doubles>( in );
+              return variant_from_stream<std::stringstream, legacy_parser_with_string_doubles>( in );
           case strict_parser:
-              return json_relaxed::variant_from_stream<fc_keychain::stringstream, true,  false>( in );
+              return json_relaxed::variant_from_stream<std::stringstream, true,  false>( in );
           case relaxed_parser:
-              return json_relaxed::variant_from_stream<fc_keychain::stringstream, false, false>( in );
+              return json_relaxed::variant_from_stream<std::stringstream, false, false>( in );
           case cmdline_parser:
-              return json_relaxed::variant_from_stream<fc_keychain::stringstream, false, true> ( in );
+              return json_relaxed::variant_from_stream<std::stringstream, false, true> ( in );
           default:
               FC_KEYCHAIN_ASSERT( false, "Unknown JSON parser type {ptype}", ("ptype", ptype) );
       }

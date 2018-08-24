@@ -27,7 +27,7 @@ namespace fc_keychain { namespace json_relaxed
    template<typename T>
    fc_keychain::string tokenFromStream( T& in )
    {
-      fc_keychain::stringstream token;
+      std::stringstream token;
       try
       {
          char c = in.peek();

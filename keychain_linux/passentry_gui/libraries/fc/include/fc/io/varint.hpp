@@ -81,19 +81,19 @@ void from_variant( const variant& var,  unsigned_int& vo );
 namespace std
 {
    template<>
-   struct hash<fc_keychain::signed_int>
+   struct hash<fc_light::signed_int>
    {
        public:
-         size_t operator()(const fc_keychain::signed_int &a) const
+         size_t operator()(const fc_light::signed_int &a) const
          {
             return std::hash<int32_t>()(a.value);
          }
    };
    template<>
-   struct hash<fc_keychain::unsigned_int>
+   struct hash<fc_light::unsigned_int>
    {
        public:
-         size_t operator()(const fc_keychain::signed_int &a) const
+         size_t operator()(const fc_light::signed_int &a) const
          {
             return std::hash<uint32_t>()(a.value);
          }

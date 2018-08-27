@@ -16,24 +16,24 @@ namespace fc {
      return time_point( microseconds( bch::duration_cast<bch::microseconds>( bch::system_clock::now().time_since_epoch() ).count() ) );
   }
 
-  fc_keychain::string time_point_sec::to_non_delimited_iso_string()const
+  fc_light::string time_point_sec::to_non_delimited_iso_string()const
   {
     const auto ptime = boost::posix_time::from_time_t( time_t( sec_since_epoch() ) );
     return boost::posix_time::to_iso_string( ptime );
   }
 
-  fc_keychain::string time_point_sec::to_iso_string()const
+  fc_light::string time_point_sec::to_iso_string()const
   {
     const auto ptime = boost::posix_time::from_time_t( time_t( sec_since_epoch() ) );
     return boost::posix_time::to_iso_extended_string( ptime );
   }
 
-  time_point_sec::operator fc_keychain::string()const
+  time_point_sec::operator fc_light::string()const
   {
       return this->to_iso_string();
   }
 
-  time_point_sec time_point_sec::from_iso_string( const fc_keychain::string& s )
+  time_point_sec time_point_sec::from_iso_string( const fc_light::string& s )
   { try {
       static boost::posix_time::ptime epoch = boost::posix_time::from_time_t( 0 );
       boost::posix_time::ptime pt;
@@ -41,35 +41,35 @@ namespace fc {
           pt = boost::date_time::parse_delimited_time<boost::posix_time::ptime>( s, 'T' );
       else
           pt = boost::posix_time::from_iso_string( s );
-      return fc_keychain::time_point_sec( (pt - epoch).total_seconds() );
-  } FC_RETHROW_EXCEPTIONS( warn, "unable to convert ISO-formatted string to fc_keychain::time_point_sec" ) }
+      return fc_light::time_point_sec( (pt - epoch).total_seconds() );
+  } FC_RETHROW_EXCEPTIONS( warn, "unable to convert ISO-formatted string to fc_light::time_point_sec" ) }
 
-  time_point::operator fc_keychain::string()const
+  time_point::operator fc_light::string()const
   {
-      return fc_keychain::string( time_point_sec( *this ) );
+      return fc_light::string( time_point_sec( *this ) );
   }
 
-  time_point time_point::from_iso_string( const fc_keychain::string& s )
+  time_point time_point::from_iso_string( const fc_light::string& s )
   { try {
       return time_point( time_point_sec::from_iso_string( s ) );
-  } FC_RETHROW_EXCEPTIONS( warn, "unable to convert ISO-formatted string to fc_keychain::time_point" ) }
+  } FC_RETHROW_EXCEPTIONS( warn, "unable to convert ISO-formatted string to fc_light::time_point" ) }
 
-  void to_variant( const fc_keychain::time_point& t, variant& v ) {
-    v = fc_keychain::string( t );
+  void to_variant( const fc_light::time_point& t, variant& v ) {
+    v = fc_light::string( t );
   }
-  void from_variant( const fc_keychain::variant& v, fc_keychain::time_point& t ) {
-    t = fc_keychain::time_point::from_iso_string( v.as_string() );
+  void from_variant( const fc_light::variant& v, fc_light::time_point& t ) {
+    t = fc_light::time_point::from_iso_string( v.as_string() );
   }
-  void to_variant( const fc_keychain::time_point_sec& t, variant& v ) {
-    v = fc_keychain::string( t );
+  void to_variant( const fc_light::time_point_sec& t, variant& v ) {
+    v = fc_light::string( t );
   }
-  void from_variant( const fc_keychain::variant& v, fc_keychain::time_point_sec& t ) {
-    t = fc_keychain::time_point_sec::from_iso_string( v.as_string() );
+  void from_variant( const fc_light::variant& v, fc_light::time_point_sec& t ) {
+    t = fc_light::time_point_sec::from_iso_string( v.as_string() );
   }
 
   // inspired by show_date_relative() in git's date.c
   string get_approximate_relative_time_string(const time_point_sec& event_time,
-                                              const time_point_sec& relative_to_time /* = fc_keychain::time_point::now() */,
+                                              const time_point_sec& relative_to_time /* = fc_light::time_point::now() */,
                                               const std::string& default_ago /* = " ago" */) {
 
 
@@ -129,7 +129,7 @@ namespace fc {
     return result.str();
   }
   string get_approximate_relative_time_string(const time_point& event_time,
-                                              const time_point& relative_to_time /* = fc_keychain::time_point::now() */,
+                                              const time_point& relative_to_time /* = fc_light::time_point::now() */,
                                               const std::string& ago /* = " ago" */) {
     return get_approximate_relative_time_string(time_point_sec(event_time), time_point_sec(relative_to_time), ago);
   }

@@ -79,12 +79,12 @@ namespace fc {
   };
 
   template<typename T, typename O>
-  fc_keychain::shared_ptr<T> dynamic_pointer_cast( const fc_keychain::shared_ptr<O>& t ) {
-    return fc_keychain::shared_ptr<T>( dynamic_cast<T*>(t.get()), true );
+  fc_light::shared_ptr<T> dynamic_pointer_cast( const fc_light::shared_ptr<O>& t ) {
+    return fc_light::shared_ptr<T>( dynamic_cast<T*>(t.get()), true );
   }
   template<typename T, typename O>
-  fc_keychain::shared_ptr<T> static_pointer_cast( const fc_keychain::shared_ptr<O>& t ) {
-    return fc_keychain::shared_ptr<T>( static_cast<T*>(t.get()), true );
+  fc_light::shared_ptr<T> static_pointer_cast( const fc_light::shared_ptr<O>& t ) {
+    return fc_light::shared_ptr<T>( static_cast<T*>(t.get()), true );
   }
 }
 

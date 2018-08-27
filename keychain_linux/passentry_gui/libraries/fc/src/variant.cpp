@@ -27,7 +27,7 @@ variant::variant()
    set_variant_type( this, null_type );
 }
 
-variant::variant( fc_keychain::nullptr_t )
+variant::variant( fc_light::nullptr_t )
 {
    set_variant_type( this, null_type );
 }
@@ -132,31 +132,31 @@ variant::variant( const wchar_t* str )
    set_variant_type( this, string_type );
 }
 
-variant::variant( fc_keychain::string val )
+variant::variant( fc_light::string val )
 {
-   *reinterpret_cast<string**>(this)  = new string( fc_keychain::move(val) );
+   *reinterpret_cast<string**>(this)  = new string( fc_light::move(val) );
    set_variant_type( this, string_type );
 }
 variant::variant( blob val )
 {
-   *reinterpret_cast<blob**>(this)  = new blob( fc_keychain::move(val) );
+   *reinterpret_cast<blob**>(this)  = new blob( fc_light::move(val) );
    set_variant_type( this, blob_type );
 }
 
 variant::variant( variant_object obj)
 {
-   *reinterpret_cast<variant_object**>(this)  = new variant_object(fc_keychain::move(obj));
+   *reinterpret_cast<variant_object**>(this)  = new variant_object(fc_light::move(obj));
    set_variant_type(this,  object_type );
 }
 variant::variant( mutable_variant_object obj)
 {
-   *reinterpret_cast<variant_object**>(this)  = new variant_object(fc_keychain::move(obj));
+   *reinterpret_cast<variant_object**>(this)  = new variant_object(fc_light::move(obj));
    set_variant_type(this,  object_type );
 }
 
 variant::variant( variants arr )
 {
-   *reinterpret_cast<variants**>(this)  = new variants(fc_keychain::move(arr));
+   *reinterpret_cast<variants**>(this)  = new variants(fc_light::move(arr));
    set_variant_type(this,  array_type );
 }
 
@@ -642,7 +642,7 @@ void from_variant( const variant& var,  float& vo )
 
 void to_variant( const std::string& s, variant& v )
 {
-    v = variant( fc_keychain::string(s) );
+    v = variant( fc_light::string(s) );
 }
 
 void from_variant( const variant& var,  string& vo )

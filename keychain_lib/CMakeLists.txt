@@ -25,7 +25,7 @@ if( MSVC )
             "../array-io-core/libraries/db/include"
             "../array-io-core/libraries/chain/include"
             "../array-io-core/libraries/fc/include"
-            "../libraries/fc/include"
+            "../libraries/fc_light/include"
             "${OPENSSL_ROOT_DIR}/include"
             ${Boost_INCLUDE_DIR})
 else ( MSVC )
@@ -35,7 +35,7 @@ else ( MSVC )
             "../array-io-core/libraries/db/include"
             "../array-io-core/libraries/chain/include"
             "../array-io-core/libraries/fc/include"
-            "../libraries/fc/include"
+            "../libraries/fc_light/include"
             "${OPENSSL_ROOT_DIR}/include"
             "/usr/include/libcxxabi"
             ${Boost_INCLUDE_DIR})

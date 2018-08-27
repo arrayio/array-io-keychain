@@ -11,11 +11,11 @@
 #include <boost/filesystem/fstream.hpp>
 
 namespace fc {
-   class ofstream::impl : public fc_keychain::retainable {
+   class ofstream::impl : public fc_light::retainable {
       public:
          boost::filesystem::ofstream ofs;
    };
-   class ifstream::impl : public fc_keychain::retainable {
+   class ifstream::impl : public fc_light::retainable {
       public:
          boost::filesystem::ifstream ifs;
    };
@@ -23,11 +23,11 @@ namespace fc {
    ofstream::ofstream()
    :my( new impl() ){}
 
-   ofstream::ofstream( const fc_keychain::path& file, int m )
+   ofstream::ofstream( const fc_light::path& file, int m )
    :my( new impl() ) { this->open( file, m ); }
    ofstream::~ofstream(){}
 
-   void ofstream::open( const fc_keychain::path& file, int m ) {
+   void ofstream::open( const fc_light::path& file, int m ) {
      const boost::filesystem::path& bfp = file; 
      my->ofs.open( bfp, std::ios::binary );
    }
@@ -52,14 +52,14 @@ namespace fc {
 
    ifstream::ifstream()
    :my(new impl()){}
-   ifstream::ifstream( const fc_keychain::path& file, int m )
+   ifstream::ifstream( const fc_light::path& file, int m )
    :my(new impl())
    {
       this->open( file, m );
    }
    ifstream::~ifstream(){}
 
-   void ifstream::open( const fc_keychain::path& file, int m ) {
+   void ifstream::open( const fc_light::path& file, int m ) {
      const boost::filesystem::path& bfp = file; 
       my->ifs.open( bfp, std::ios::binary );
    }
@@ -96,11 +96,11 @@ namespace fc {
 
    bool   ifstream::eof()const { return !my->ifs.good(); }
 
-   void read_file_contents( const fc_keychain::path& filename, std::string& result )
+   void read_file_contents( const fc_light::path& filename, std::string& result )
    {
       const boost::filesystem::path& bfp = filename;
       boost::filesystem::ifstream f( bfp, std::ios::in | std::ios::binary );
-      // don't use fc_keychain::stringstream here as we need something with override for << rdbuf()
+      // don't use fc_light::stringstream here as we need something with override for << rdbuf()
       std::stringstream ss;
       ss << f.rdbuf();
       result = ss.str();

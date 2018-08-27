@@ -22,7 +22,7 @@ namespace fc
    class logger 
    {
       public:
-         static logger get( const fc_keychain::string& name = "default");
+         static logger get( const fc_light::string& name = "default");
 
          logger();
          logger( const string& name, const logger& parent = nullptr );
@@ -40,19 +40,19 @@ namespace fc
          logger&    set_parent( const logger& l );
          logger     get_parent()const;
 
-         void  set_name( const fc_keychain::string& n );
-         const fc_keychain::string& name()const;
+         void  set_name( const fc_light::string& n );
+         const fc_light::string& name()const;
 
-         void add_appender( const fc_keychain::shared_ptr<appender>& a );
-         std::vector<fc_keychain::shared_ptr<appender> > get_appenders()const;
-         void remove_appender( const fc_keychain::shared_ptr<appender>& a );
+         void add_appender( const fc_light::shared_ptr<appender>& a );
+         std::vector<fc_light::shared_ptr<appender> > get_appenders()const;
+         void remove_appender( const fc_light::shared_ptr<appender>& a );
 
          bool is_enabled( log_level e )const;
          void log( log_message m );
 
       private:
          class impl;
-         fc_keychain::shared_ptr<impl> my;
+         fc_light::shared_ptr<impl> my;
    };
 
 //#define WITH_DIRECT_LOGGER
@@ -85,32 +85,32 @@ namespace fc
 
 #define fc_dlog( LOGGER, FORMAT, ... ) \
   FC_MULTILINE_MACRO_BEGIN \
-   if( (LOGGER).is_enabled( fc_keychain::log_level::debug ) ) \
+   if( (LOGGER).is_enabled( fc_light::log_level::debug ) ) \
       (LOGGER).log( FC_LOG_MESSAGE( debug, FORMAT, __VA_ARGS__ ) ); \
   FC_MULTILINE_MACRO_END
 
 #define fc_ilog( LOGGER, FORMAT, ... ) \
   FC_MULTILINE_MACRO_BEGIN \
-   if( (LOGGER).is_enabled( fc_keychain::log_level::info ) ) \
+   if( (LOGGER).is_enabled( fc_light::log_level::info ) ) \
       (LOGGER).log( FC_LOG_MESSAGE( info, FORMAT, __VA_ARGS__ ) ); \
   FC_MULTILINE_MACRO_END
 
 #define fc_wlog( LOGGER, FORMAT, ... ) \
   FC_MULTILINE_MACRO_BEGIN \
-   if( (LOGGER).is_enabled( fc_keychain::log_level::warn ) ) \
+   if( (LOGGER).is_enabled( fc_light::log_level::warn ) ) \
       (LOGGER).log( FC_LOG_MESSAGE( warn, FORMAT, __VA_ARGS__ ) ); \
   FC_MULTILINE_MACRO_END
 
 #define fc_elog( LOGGER, FORMAT, ... ) \
   FC_MULTILINE_MACRO_BEGIN \
-   if( (LOGGER).is_enabled( fc_keychain::log_level::error ) ) \
+   if( (LOGGER).is_enabled( fc_light::log_level::error ) ) \
       (LOGGER).log( FC_LOG_MESSAGE( error, FORMAT, __VA_ARGS__ ) ); \
   FC_MULTILINE_MACRO_END
 
 #define dlog( FORMAT, ... ) \
   FC_MULTILINE_MACRO_BEGIN \
-   if( (fc_keychain::logger::get(DEFAULT_LOGGER)).is_enabled( fc_keychain::log_level::debug ) ) \
-      (fc_keychain::logger::get(DEFAULT_LOGGER)).log( FC_LOG_MESSAGE( debug, FORMAT, __VA_ARGS__ ) ); \
+   if( (fc_light::logger::get(DEFAULT_LOGGER)).is_enabled( fc_light::log_level::debug ) ) \
+      (fc_light::logger::get(DEFAULT_LOGGER)).log( FC_LOG_MESSAGE( debug, FORMAT, __VA_ARGS__ ) ); \
   FC_MULTILINE_MACRO_END
 
 /**
@@ -119,27 +119,27 @@ namespace fc
  */
 #define ulog( FORMAT, ... ) \
   FC_MULTILINE_MACRO_BEGIN \
-   if( (fc_keychain::logger::get("user")).is_enabled( fc_keychain::log_level::debug ) ) \
-      (fc_keychain::logger::get("user")).log( FC_LOG_MESSAGE( debug, FORMAT, __VA_ARGS__ ) ); \
+   if( (fc_light::logger::get("user")).is_enabled( fc_light::log_level::debug ) ) \
+      (fc_light::logger::get("user")).log( FC_LOG_MESSAGE( debug, FORMAT, __VA_ARGS__ ) ); \
   FC_MULTILINE_MACRO_END
 
 
 #define ilog( FORMAT, ... ) \
   FC_MULTILINE_MACRO_BEGIN \
-   if( (fc_keychain::logger::get(DEFAULT_LOGGER)).is_enabled( fc_keychain::log_level::info ) ) \
-      (fc_keychain::logger::get(DEFAULT_LOGGER)).log( FC_LOG_MESSAGE( info, FORMAT, __VA_ARGS__ ) ); \
+   if( (fc_light::logger::get(DEFAULT_LOGGER)).is_enabled( fc_light::log_level::info ) ) \
+      (fc_light::logger::get(DEFAULT_LOGGER)).log( FC_LOG_MESSAGE( info, FORMAT, __VA_ARGS__ ) ); \
   FC_MULTILINE_MACRO_END
 
 #define wlog( FORMAT, ... ) \
   FC_MULTILINE_MACRO_BEGIN \
-   if( (fc_keychain::logger::get(DEFAULT_LOGGER)).is_enabled( fc_keychain::log_level::warn ) ) \
-      (fc_keychain::logger::get(DEFAULT_LOGGER)).log( FC_LOG_MESSAGE( warn, FORMAT, __VA_ARGS__ ) ); \
+   if( (fc_light::logger::get(DEFAULT_LOGGER)).is_enabled( fc_light::log_level::warn ) ) \
+      (fc_light::logger::get(DEFAULT_LOGGER)).log( FC_LOG_MESSAGE( warn, FORMAT, __VA_ARGS__ ) ); \
   FC_MULTILINE_MACRO_END
 
 #define elog( FORMAT, ... ) \
   FC_MULTILINE_MACRO_BEGIN \
-   if( (fc_keychain::logger::get(DEFAULT_LOGGER)).is_enabled( fc_keychain::log_level::error ) ) \
-      (fc_keychain::logger::get(DEFAULT_LOGGER)).log( FC_LOG_MESSAGE( error, FORMAT, __VA_ARGS__ ) ); \
+   if( (fc_light::logger::get(DEFAULT_LOGGER)).is_enabled( fc_light::log_level::error ) ) \
+      (fc_light::logger::get(DEFAULT_LOGGER)).log( FC_LOG_MESSAGE( error, FORMAT, __VA_ARGS__ ) ); \
   FC_MULTILINE_MACRO_END
 
 #include <boost/preprocessor/seq/for_each.hpp>
@@ -154,7 +154,7 @@ namespace fc
   BOOST_PP_STRINGIZE(base) ": ${" BOOST_PP_STRINGIZE( base ) "} "
 
 #define FC_FORMAT_ARGS(r, unused, base) \
-  BOOST_PP_LPAREN() BOOST_PP_STRINGIZE(base),fc_keychain::variant(base) BOOST_PP_RPAREN()
+  BOOST_PP_LPAREN() BOOST_PP_STRINGIZE(base),fc_light::variant(base) BOOST_PP_RPAREN()
 
 #define FC_FORMAT( SEQ )\
     BOOST_PP_SEQ_FOR_EACH( FC_FORMAT_ARG, v, SEQ ) 

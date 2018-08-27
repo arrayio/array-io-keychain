@@ -90,12 +90,12 @@ namespace fc {
    }
 
    void console_appender::log( const log_message& m ) {
-      //fc_keychain::string message = fc_keychain::format_string( m.get_format(), m.get_data() );
-      //fc_keychain::variant lmsg(m);
+      //fc_light::string message = fc_light::format_string( m.get_format(), m.get_data() );
+      //fc_light::variant lmsg(m);
 
       FILE* out = stream::std_error ? stderr : stdout;
 
-      //fc_keychain::string fmt_str = fc_keychain::format_string( cfg.format, mutable_variant_object(m.get_context())( "message", message)  );
+      //fc_light::string fmt_str = fc_light::format_string( cfg.format, mutable_variant_object(m.get_context())( "message", message)  );
       std::stringstream file_line;
       file_line << m.get_context().get_file() <<":"<<m.get_context().get_line_number() <<" ";
 
@@ -119,10 +119,10 @@ namespace fc {
          line << std::setw( 20 ) << std::left << m.get_context().get_method().substr(p,20).c_str() <<" ";
       }
       line << "] ";
-      fc_keychain::string message = fc_keychain::format_string( m.get_format(), m.get_data() );
+      fc_light::string message = fc_light::format_string( m.get_format(), m.get_data() );
       line << message;//.c_str();
 
-      fc_keychain::unique_lock<boost::mutex> lock(log_mutex());
+      fc_light::unique_lock<boost::mutex> lock(log_mutex());
 
       print( line.str(), my->lc[m.get_context().get_log_level()] );
 

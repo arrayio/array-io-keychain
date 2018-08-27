@@ -62,7 +62,7 @@ keychain::~keychain()
   bfs::current_path(m_init_path);
 }
 
-std::string keychain::operator()(const fc_keychain::variant& command) {
+std::string keychain::operator()(const fc_light::variant& command) {
   try
   {
     auto cmd = command.as<keychain_command_common>();
@@ -70,10 +70,10 @@ std::string keychain::operator()(const fc_keychain::variant& command) {
     auto p_func = cmd_map[cmd.command];
     return (*p_func)(this, cmd.params, cmd.id);
   }
-  catch(fc_keychain::exception& exc)
+  catch(fc_light::exception& exc)
   {
-    std::cerr << fc_keychain::json::to_pretty_string(fc_keychain::variant(json_error(0, exc.to_detail_string().c_str()))) << std::endl;
-	return fc_keychain::json::to_pretty_string(fc_keychain::variant(json_error(0, exc.what())));
+    std::cerr << fc_light::json::to_pretty_string(fc_light::variant(json_error(0, exc.to_detail_string().c_str()))) << std::endl;
+	return fc_light::json::to_pretty_string(fc_light::variant(json_error(0, exc.what())));
   }
 }
 

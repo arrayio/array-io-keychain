@@ -49,12 +49,12 @@ namespace fc
    :my( std::make_shared<detail::log_context_impl>() )
    {
       my->level       = ll;
-      my->file        = fc_keychain::path(file).filename().generic_string(); // TODO truncate filename
+      my->file        = fc_light::path(file).filename().generic_string(); // TODO truncate filename
       my->line        = line;
       my->method      = method;
       my->timestamp   = time_point::now();
-//      my->thread_name = fc_keychain::thread::current().name();
-//      const char* current_task_desc = fc_keychain::thread::current().current_task_desc();
+//      my->thread_name = fc_light::thread::current().name();
+//      const char* current_task_desc = fc_light::thread::current().current_task_desc();
 //      my->task_name   = current_task_desc ? current_task_desc : "?unnamed?";
    }
 
@@ -75,13 +75,13 @@ namespace fc
            my->context      = obj["context"].as<string>();
    }
 
-   fc_keychain::string log_context::to_string()const
+   fc_light::string log_context::to_string()const
    {
-      return /*my->thread_name + "  " +*/ my->file + ":" + fc_keychain::to_string(my->line) + " " + my->method;
+      return /*my->thread_name + "  " +*/ my->file + ":" + fc_light::to_string(my->line) + " " + my->method;
 
    }
 
-   void log_context::append_context( const fc_keychain::string& s )
+   void log_context::append_context( const fc_light::string& s )
    {
         if (!my->context.empty())
           my->context += " -> ";

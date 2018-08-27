@@ -25,9 +25,9 @@ namespace fc { namespace json_relaxed
    variant variant_from_stream( T& in );
 
    template<typename T>
-   fc_keychain::string tokenFromStream( T& in )
+   fc_light::string tokenFromStream( T& in )
    {
-      fc_keychain::stringstream token;
+      fc_light::stringstream token;
       try
       {
          char c = in.peek();
@@ -68,7 +68,7 @@ namespace fc { namespace json_relaxed
          }
          return token.str();
       }
-      catch( const fc_keychain::eof_exception& eof )
+      catch( const fc_light::eof_exception& eof )
       {
          return token.str();
       }
@@ -82,9 +82,9 @@ namespace fc { namespace json_relaxed
    }
 
    template<typename T, bool strict, bool allow_escape>
-   fc_keychain::string quoteStringFromStream( T& in )
+   fc_light::string quoteStringFromStream( T& in )
    {
-       fc_keychain::stringstream token;
+       fc_light::stringstream token;
        try
        {
            char q = in.get();
@@ -106,7 +106,7 @@ namespace fc { namespace json_relaxed
            {
                in.get();
                if( in.peek() != q )
-                   return fc_keychain::string();
+                   return fc_light::string();
 
                // triple quote processing
                if( strict )
@@ -180,7 +180,7 @@ namespace fc { namespace json_relaxed
    }
 
    template<typename T, bool strict>
-   fc_keychain::string stringFromStream( T& in )
+   fc_light::string stringFromStream( T& in )
    {
       try
       {
@@ -286,7 +286,7 @@ namespace fc { namespace json_relaxed
    };
    
    template<uint8_t base>
-   fc_keychain::variant parseInt( const fc_keychain::string& token, size_t start )
+   fc_light::variant parseInt( const fc_light::string& token, size_t start )
    {
        static const CharValueTable ctbl;
        static const uint64_t INT64_MAX_PLUS_ONE = static_cast<uint64_t>(INT64_MAX) + 1;
@@ -321,14 +321,14 @@ namespace fc { namespace json_relaxed
                FC_THROW_EXCEPTION( parse_error_exception, "negative integer literal overflow" );
            // special cased to avoid trying to compute -INT64_MIN which is probably undefined or something
            if( val == INT64_MAX_PLUS_ONE )
-               return fc_keychain::variant( INT64_MIN );
-           return fc_keychain::variant( -static_cast<int64_t>(val) );
+               return fc_light::variant( INT64_MIN );
+           return fc_light::variant( -static_cast<int64_t>(val) );
        }
-       return fc_keychain::variant( val );
+       return fc_light::variant( val );
    }
 
    template<bool strict, uint8_t base>
-   fc_keychain::variant maybeParseInt( const fc_keychain::string& token, size_t start )
+   fc_light::variant maybeParseInt( const fc_light::string& token, size_t start )
    {
        try
        {
@@ -339,12 +339,12 @@ namespace fc { namespace json_relaxed
            if( strict )
                throw( e );
            else
-               return fc_keychain::variant( token );
+               return fc_light::variant( token );
        }
    }
 
    template<bool strict>
-   fc_keychain::variant parseNumberOrStr( const fc_keychain::string& token )
+   fc_light::variant parseNumberOrStr( const fc_light::string& token )
    { try {
        //ilog( (token) ); 
        size_t i = 0, n = token.length();
@@ -368,7 +368,7 @@ namespace fc { namespace json_relaxed
        {
            case '0':
                if( i >= n )
-                   return fc_keychain::variant( uint64_t( 0 ) );
+                   return fc_light::variant( uint64_t( 0 ) );
                switch( token[i] )
                {
                    case 'b':
@@ -414,7 +414,7 @@ namespace fc { namespace json_relaxed
            case '_': case '-': case '.': case '+': case '/':
                if( strict )
                    FC_THROW_EXCEPTION( parse_error_exception, "illegal character '{c}' parsing number", ( "c", c ) );
-               return fc_keychain::variant( token );
+               return fc_light::variant( token );
            default:
                FC_THROW_EXCEPTION( parse_error_exception, "illegal character '{c}' in token", ( "c", c ) );
        }
@@ -435,7 +435,7 @@ namespace fc { namespace json_relaxed
                case '5': case '6': case '7': case '8': case '9':
                    break;
                case '.':
-                   return fc_keychain::variant(token);
+                   return fc_light::variant(token);
                    if( dot_ok )
                    {
                        dot_ok = false;
@@ -443,7 +443,7 @@ namespace fc { namespace json_relaxed
                        {
                            if( strict )
                                FC_THROW_EXCEPTION( parse_error_exception, "number cannot end with '.' in strict mode" );
-                           return fc_keychain::variant( fc_keychain::to_double(token.c_str()) );
+                           return fc_light::variant( fc_light::to_double(token.c_str()) );
                        }
 
                        //idump((i));
@@ -470,7 +470,7 @@ namespace fc { namespace json_relaxed
                            case '_': case '-': case '.': case '+': case '/':
                                if( strict )
                                    FC_THROW_EXCEPTION( parse_error_exception, "expected digit after '.'" );
-                               return fc_keychain::variant( token );
+                               return fc_light::variant( token );
                            default:
                                FC_THROW_EXCEPTION( parse_error_exception, "illegal character '{c}' in token", ( "c", c )("i",int(c)) );
                        }
@@ -479,7 +479,7 @@ namespace fc { namespace json_relaxed
                    {
                        if( strict )
                            FC_THROW_EXCEPTION( parse_error_exception, "illegal multiple . in number" );
-                       return fc_keychain::variant( token );
+                       return fc_light::variant( token );
                    }
                    break;
                case 'e':
@@ -488,7 +488,7 @@ namespace fc { namespace json_relaxed
                    {
                        if( strict )
                            FC_THROW_EXCEPTION( parse_error_exception, "expected exponent after 'e'|'E' parsing number" );
-                       return fc_keychain::variant( token );
+                       return fc_light::variant( token );
                    }
                    c = token[i++];
                    switch( c )
@@ -498,7 +498,7 @@ namespace fc { namespace json_relaxed
                            {
                                if( strict )
                                    FC_THROW_EXCEPTION( parse_error_exception, "expected exponent" );
-                               return fc_keychain::variant( token );
+                               return fc_light::variant( token );
                            }
                            break;
                        case '0': case '1': case '2': case '3': case '4':
@@ -515,7 +515,7 @@ namespace fc { namespace json_relaxed
                        case '_':           case '.':           case '/':
                            if( strict )
                                FC_THROW_EXCEPTION( parse_error_exception, "illegal character '{c}' in number", ( "c", c ) );
-                           return fc_keychain::variant( token );
+                           return fc_light::variant( token );
                        default:
                            FC_THROW_EXCEPTION( parse_error_exception, "illegal character '{c}' in token", ( "c", c ) );
                    }
@@ -540,10 +540,10 @@ namespace fc { namespace json_relaxed
                            case '_': case '-': case '.': case '+': case '/':
                                if( strict )
                                    FC_THROW_EXCEPTION( parse_error_exception, "illegal character '{c}' in number", ( "c", c ) );
-                               return fc_keychain::variant( token );
+                               return fc_light::variant( token );
                        }
                    }
-                   return fc_keychain::variant( fc_keychain::to_double(token.c_str()) );
+                   return fc_light::variant( fc_light::to_double(token.c_str()) );
                case 'a': case 'b': case 'c': case 'd':           case 'f': case 'g': case 'h':
                case 'i': case 'j': case 'k': case 'l': case 'm': case 'n': case 'o': case 'p':
                case 'q': case 'r': case 's': case 't': case 'u': case 'v': case 'w': case 'x':
@@ -555,7 +555,7 @@ namespace fc { namespace json_relaxed
                case '_': case '-':           case '+': case '/':
                    if( strict )
                        FC_THROW_EXCEPTION( parse_error_exception, "illegal character '{c}' parsing number", ( "c", c ) );
-                   return fc_keychain::variant( token );
+                   return fc_light::variant( token );
                default:
                    FC_THROW_EXCEPTION( parse_error_exception, "illegal character '{c}' in number", ( "c", c ) );
            }
@@ -603,7 +603,7 @@ namespace fc { namespace json_relaxed
          }
          FC_THROW_EXCEPTION( parse_error_exception, "Expected '}' after ${variant}", ("variant", obj ) );
       }
-      catch( const fc_keychain::eof_exception& e )
+      catch( const fc_light::eof_exception& e )
       {
          FC_THROW_EXCEPTION( parse_error_exception, "Unexpected EOF: ${e}", ("e", e.to_detail_string() ) );
       }
@@ -648,7 +648,7 @@ namespace fc { namespace json_relaxed
    template<typename T, bool strict>
    variant numberFromStream( T& in )
    { try {
-       fc_keychain::string token = tokenFromStream(in);
+       fc_light::string token = tokenFromStream(in);
        variant result = json_relaxed::parseNumberOrStr<strict>( token );
        if( strict && !(result.is_int64() || result.is_uint64() || result.is_double()) )
            FC_THROW_EXCEPTION( parse_error_exception, "expected: number" );
@@ -658,7 +658,7 @@ namespace fc { namespace json_relaxed
    template<typename T, bool strict>
    variant wordFromStream( T& in )
    {
-       fc_keychain::string token = tokenFromStream(in);
+       fc_light::string token = tokenFromStream(in);
        
        FC_ASSERT( token.length() > 0 );
 
@@ -705,13 +705,13 @@ namespace fc { namespace json_relaxed
                                                  "@filename (<filename) expects filename to be a string, but got vt=${vt}",
                                                  ("vt",fname.get_type()) );
 
-           fc_keychain::string fdata;
+           fc_light::string fdata;
            read_file_contents(fname.get_string(), fdata);
 
            if( c == '@' )
            {
-               fc_keychain::stringstream ss( fdata );
-               return variant_from_stream<fc_keychain::stringstream, strict, true>( ss );
+               fc_light::stringstream ss( fdata );
+               return variant_from_stream<fc_light::stringstream, strict, true>( ss );
            }
            else if( c == '%' )
            {
@@ -787,4 +787,4 @@ namespace fc { namespace json_relaxed
 	  return variant();
    }
 
-} } // fc_keychain::json_relaxed
+} } // fc_light::json_relaxed

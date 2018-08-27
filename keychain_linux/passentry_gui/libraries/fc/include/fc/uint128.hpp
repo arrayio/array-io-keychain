@@ -31,10 +31,10 @@ namespace fc
       uint128( const std::string& s );
       uint128( uint64_t _h, uint64_t _l )
       :hi(_h),lo(_l){}
-      uint128( const fc_keychain::bigint& bi );
+      uint128( const fc_light::bigint& bi );
 
       operator std::string()const;
-      operator fc_keychain::bigint()const;
+      operator fc_light::bigint()const;
 
       bool     operator == ( const uint128& o )const{ return hi == o.hi && lo == o.lo;             }
       bool     operator != ( const uint128& o )const{ return hi != o.hi || lo != o.lo;             }
@@ -137,16 +137,16 @@ namespace fc
 namespace std
 {
     template<>
-    struct hash<fc_keychain::uint128>
+    struct hash<fc_light::uint128>
     {
-       size_t operator()( const fc_keychain::uint128& s )const
+       size_t operator()( const fc_light::uint128& s )const
        {
-           return fc_keychain::city_hash_size_t((char*)&s, sizeof(s));
+           return fc_light::city_hash_size_t((char*)&s, sizeof(s));
        }
     };
 }
 
-FC_REFLECT( fc_keychain::uint128_t, (hi)(lo) )
+FC_REFLECT( fc_light::uint128_t, (hi)(lo) )
 
 #ifdef _MSC_VER
   #pragma warning (pop)

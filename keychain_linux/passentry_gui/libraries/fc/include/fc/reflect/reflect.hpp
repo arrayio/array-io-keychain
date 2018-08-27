@@ -32,8 +32,8 @@ namespace fc {
 template<typename T>
 struct reflector{
     typedef T type;
-    typedef fc_keychain::false_type is_defined;
-    typedef fc_keychain::false_type is_enum;
+    typedef fc_light::false_type is_defined;
+    typedef fc_light::false_type is_enum;
 
     /**
      *  @tparam Visitor a function object of the form:
@@ -71,7 +71,7 @@ void throw_bad_enum_cast( const char* k, const char* e );
 #ifndef DOXYGEN
 
 #define FC_REFLECT_VISIT_BASE(r, visitor, base) \
-  fc_keychain::reflector<base>::visit( visitor );
+  fc_light::reflector<base>::visit( visitor );
 
 
 //this is msvc compatibility legacy
@@ -85,7 +85,7 @@ void throw_bad_enum_cast( const char* k, const char* e );
 
 
 #define FC_REFLECT_BASE_MEMBER_COUNT( r, OP, elem ) \
-  OP fc_keychain::reflector<elem>::total_member_count
+  OP fc_light::reflector<elem>::total_member_count
 
 #define FC_REFLECT_MEMBER_COUNT( r, OP, elem ) \
   OP 1
@@ -99,7 +99,7 @@ static inline void visit( const Visitor& v ) { \
 
 #define FC_REFLECT_DERIVED_IMPL_EXT( TYPE, INHERITS, MEMBERS ) \
 template<typename Visitor>\
-void fc_keychain::reflector<TYPE>::visit( const Visitor& v ) { \
+void fc_light::reflector<TYPE>::visit( const Visitor& v ) { \
     BOOST_PP_SEQ_FOR_EACH( FC_REFLECT_VISIT_BASE, v, INHERITS ) \
     BOOST_PP_SEQ_FOR_EACH( FC_REFLECT_VISIT_MEMBER, v, MEMBERS ) \
 }
@@ -112,7 +112,7 @@ void fc_keychain::reflector<TYPE>::visit( const Visitor& v ) { \
 #define FC_REFLECT_ENUM_TO_STRING( r, enum_type, elem ) \
    case enum_type::elem: return BOOST_PP_STRINGIZE(elem);
 #define FC_REFLECT_ENUM_TO_FC_STRING( r, enum_type, elem ) \
-   case enum_type::elem: return fc_keychain::string(BOOST_PP_STRINGIZE(elem));
+   case enum_type::elem: return fc_light::string(BOOST_PP_STRINGIZE(elem));
 
 #define FC_REFLECT_ENUM_FROM_STRING( r, enum_type, elem ) \
   if( strcmp( s, BOOST_PP_STRINGIZE(elem)  ) == 0 ) return enum_type::elem;
@@ -122,26 +122,26 @@ void fc_keychain::reflector<TYPE>::visit( const Visitor& v ) { \
 #define FC_REFLECT_ENUM( ENUM, FIELDS ) \
 namespace fc { \
 template<> struct reflector<ENUM> { \
-    typedef fc_keychain::true_type is_defined; \
-    typedef fc_keychain::true_type is_enum; \
+    typedef fc_light::true_type is_defined; \
+    typedef fc_light::true_type is_enum; \
     static const char* to_string(ENUM elem) { \
       switch( elem ) { \
         BOOST_PP_SEQ_FOR_EACH( FC_REFLECT_ENUM_TO_STRING, ENUM, FIELDS ) \
         default: \
-           fc_keychain::throw_bad_enum_cast( fc_keychain::to_string(int64_t(elem)).c_str(), BOOST_PP_STRINGIZE(ENUM) ); \
+           fc_light::throw_bad_enum_cast( fc_light::to_string(int64_t(elem)).c_str(), BOOST_PP_STRINGIZE(ENUM) ); \
       }\
       return nullptr; \
     } \
     static const char* to_string(int64_t i) { \
       return to_string(ENUM(i)); \
     } \
-    static fc_keychain::string to_fc_string(ENUM elem) { \
+    static fc_light::string to_fc_string(ENUM elem) { \
       switch( elem ) { \
         BOOST_PP_SEQ_FOR_EACH( FC_REFLECT_ENUM_TO_FC_STRING, ENUM, FIELDS ) \
       } \
-      return fc_keychain::to_string(int64_t(elem)); \
+      return fc_light::to_string(int64_t(elem)); \
     } \
-    static fc_keychain::string to_fc_string(int64_t i) { \
+    static fc_light::string to_fc_string(int64_t i) { \
       return to_fc_string(ENUM(i)); \
     } \
     static ENUM from_int(int64_t i) { \
@@ -151,7 +151,7 @@ template<> struct reflector<ENUM> { \
         BOOST_PP_SEQ_FOR_EACH( FC_REFLECT_ENUM_FROM_STRING_CASE, ENUM, FIELDS ) \
           break; \
         default: \
-          fc_keychain::throw_bad_enum_cast( i, BOOST_PP_STRINGIZE(ENUM) ); \
+          fc_light::throw_bad_enum_cast( i, BOOST_PP_STRINGIZE(ENUM) ); \
       } \
       return e;\
     } \
@@ -164,7 +164,7 @@ template<> struct reflector<ENUM> { \
         } \
         catch( const boost::bad_lexical_cast& e ) \
         { \
-           fc_keychain::throw_bad_enum_cast( s, BOOST_PP_STRINGIZE(ENUM) ); \
+           fc_light::throw_bad_enum_cast( s, BOOST_PP_STRINGIZE(ENUM) ); \
         } \
         return from_int(i); \
     } \
@@ -189,7 +189,7 @@ template<> struct get_typename<ENUM>  { static const char* name()  { return BOOS
 /**
  *  @def FC_REFLECT_DERIVED(TYPE,INHERITS,MEMBERS)
  *
- *  @brief Specializes fc_keychain::reflector for TYPE where
+ *  @brief Specializes fc_light::reflector for TYPE where
  *         type inherits other reflected classes
  *
  *  @param INHERITS - a sequence of base class names (basea)(baseb)(basec)
@@ -200,8 +200,8 @@ namespace fc {  \
   template<> struct get_typename<TYPE>  { static const char* name()  { return BOOST_PP_STRINGIZE(TYPE);  } }; \
 template<> struct reflector<TYPE> {\
     typedef TYPE type; \
-    typedef fc_keychain::true_type  is_defined; \
-    typedef fc_keychain::false_type is_enum; \
+    typedef fc_light::true_type  is_defined; \
+    typedef fc_light::false_type is_enum; \
     enum  member_count_enum {  \
       local_member_count = 0  BOOST_PP_SEQ_FOR_EACH( FC_REFLECT_MEMBER_COUNT, +, MEMBERS ),\
       total_member_count = local_member_count BOOST_PP_SEQ_FOR_EACH( FC_REFLECT_BASE_MEMBER_COUNT, +, INHERITS )\
@@ -213,8 +213,8 @@ namespace fc {  \
   template<BOOST_PP_SEQ_ENUM(TEMPLATE_ARGS)> struct get_typename<TYPE>  { static const char* name()  { return BOOST_PP_STRINGIZE(TYPE);  } }; \
 template<BOOST_PP_SEQ_ENUM(TEMPLATE_ARGS)> struct reflector<TYPE> {\
     typedef TYPE type; \
-    typedef fc_keychain::true_type  is_defined; \
-    typedef fc_keychain::false_type is_enum; \
+    typedef fc_light::true_type  is_defined; \
+    typedef fc_light::false_type is_enum; \
     enum  member_count_enum {  \
       local_member_count = 0  BOOST_PP_SEQ_FOR_EACH( FC_REFLECT_MEMBER_COUNT, +, MEMBERS ),\
       total_member_count = local_member_count BOOST_PP_SEQ_FOR_EACH( FC_REFLECT_BASE_MEMBER_COUNT, +, INHERITS )\
@@ -226,7 +226,7 @@ template<BOOST_PP_SEQ_ENUM(TEMPLATE_ARGS)> struct reflector<TYPE> {\
 
 /**
  *  @def FC_REFLECT(TYPE,MEMBERS)
- *  @brief Specializes fc_keychain::reflector for TYPE
+ *  @brief Specializes fc_light::reflector for TYPE
  *
  *  @param MEMBERS - a sequence of member names.  (field1)(field2)(field3)
  *
@@ -251,7 +251,7 @@ namespace fc { \
   template<> struct get_typename<TYPE>  { static const char* name()  { return BOOST_PP_STRINGIZE(TYPE);  } }; \
 template<> struct reflector<TYPE> {\
     typedef TYPE type; \
-    typedef fc_keychain::true_type is_defined; \
+    typedef fc_light::true_type is_defined; \
     enum  member_count_enum {  \
       local_member_count = BOOST_PP_SEQ_SIZE(MEMBERS), \
       total_member_count = local_member_count BOOST_PP_SEQ_FOR_EACH( FC_REFLECT_BASE_MEMBER_COUNT, +, INHERITS )\

@@ -21,12 +21,12 @@ namespace  slave {
     struct cmd_common {
         cmd_common(cmds cmd_ = cmds::unknown): cmd(cmd_){};
         cmds cmd;
-        fc_keychain::variant params;
+        fc_light::variant params;
     };
     struct cmd_base {
         cmd_base(cmds cmd_) : cmd(cmd_) {};
         cmds cmd;
-        virtual void operator()(Widget* w, const fc_keychain::variant&) const = 0;
+        virtual void operator()(Widget* w, const fc_light::variant&) const = 0;
         virtual ~cmd_base() {};
     };
     struct cmd_list_singletone

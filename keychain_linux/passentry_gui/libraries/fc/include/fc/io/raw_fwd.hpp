@@ -31,13 +31,13 @@ namespace fc {
     template<typename T>
     inline size_t pack_size(  const T& v );
 
-    template<typename Stream, typename Storage> inline void pack( Stream& s, const fc_keychain::fixed_string<Storage>& u );
-    template<typename Stream, typename Storage> inline void unpack( Stream& s, fc_keychain::fixed_string<Storage>& u );
+    template<typename Stream, typename Storage> inline void pack( Stream& s, const fc_light::fixed_string<Storage>& u );
+    template<typename Stream, typename Storage> inline void unpack( Stream& s, fc_light::fixed_string<Storage>& u );
 
     template<typename Stream, typename IntType, typename EnumType>
-    inline void pack( Stream& s, const fc_keychain::enum_type<IntType,EnumType>& tp );
+    inline void pack( Stream& s, const fc_light::enum_type<IntType,EnumType>& tp );
     template<typename Stream, typename IntType, typename EnumType>
-    inline void unpack( Stream& s, fc_keychain::enum_type<IntType,EnumType>& tp );
+    inline void unpack( Stream& s, fc_light::enum_type<IntType,EnumType>& tp );
 
 
 
@@ -78,11 +78,11 @@ namespace fc {
     template<typename Stream> inline void unpack( Stream& s, ip::endpoint& v );
 
 
-    template<typename Stream, typename T> void unpack( Stream& s, fc_keychain::optional<T>& v );
+    template<typename Stream, typename T> void unpack( Stream& s, fc_light::optional<T>& v );
     template<typename Stream, typename T> void unpack( Stream& s, const T& v ); 
-    template<typename Stream, typename T> void pack( Stream& s, const fc_keychain::optional<T>& v );
+    template<typename Stream, typename T> void pack( Stream& s, const fc_light::optional<T>& v );
     template<typename Stream, typename T> void pack( Stream& s, const safe<T>& v );
-    template<typename Stream, typename T> void unpack( Stream& s, fc_keychain::safe<T>& v );
+    template<typename Stream, typename T> void unpack( Stream& s, fc_light::safe<T>& v );
 
     template<typename Stream> void unpack( Stream& s, time_point& ); 
     template<typename Stream> void pack( Stream& s, const time_point& );
@@ -90,10 +90,10 @@ namespace fc {
     template<typename Stream> void pack( Stream& s, const time_point_sec& );
     template<typename Stream> void unpack( Stream& s, std::string& ); 
     template<typename Stream> void pack( Stream& s, const std::string& );
-    template<typename Stream> void unpack( Stream& s, fc_keychain::ecc::public_key& );
-    template<typename Stream> void pack( Stream& s, const fc_keychain::ecc::public_key& );
-    template<typename Stream> void unpack( Stream& s, fc_keychain::ecc::private_key& );
-    template<typename Stream> void pack( Stream& s, const fc_keychain::ecc::private_key& );
+    template<typename Stream> void unpack( Stream& s, fc_light::ecc::public_key& );
+    template<typename Stream> void pack( Stream& s, const fc_light::ecc::public_key& );
+    template<typename Stream> void unpack( Stream& s, fc_light::ecc::private_key& );
+    template<typename Stream> void pack( Stream& s, const fc_light::ecc::private_key& );
 
     template<typename Stream, typename T> inline void pack( Stream& s, const T& v ); 
     template<typename Stream, typename T> inline void unpack( Stream& s, T& v );
@@ -111,8 +111,8 @@ namespace fc {
     template<typename Stream> inline void pack( Stream& s, const std::vector<char>& value );
     template<typename Stream> inline void unpack( Stream& s, std::vector<char>& value );
 
-    template<typename Stream, typename T, size_t N> inline void pack( Stream& s, const fc_keychain::array<T,N>& v);
-    template<typename Stream, typename T, size_t N> inline void unpack( Stream& s, fc_keychain::array<T,N>& v);
+    template<typename Stream, typename T, size_t N> inline void pack( Stream& s, const fc_light::array<T,N>& v);
+    template<typename Stream, typename T, size_t N> inline void unpack( Stream& s, fc_light::array<T,N>& v);
 
     template<typename Stream> inline void pack( Stream& s, const bool& v );
     template<typename Stream> inline void unpack( Stream& s, bool& v );

@@ -19,7 +19,7 @@ namespace fc
       
       explicit operator IntType()const     { return static_cast<IntType>(value);    }
       operator EnumType()const    { return value;                          }
-      operator std::string()const { return fc_keychain::reflector<EnumType>::to_string(value); }
+      operator std::string()const { return fc_light::reflector<EnumType>::to_string(value); }
       
       enum_type& operator=( IntType i )  { value = (EnumType)i; return *this;}
       enum_type& operator=( EnumType i ) { value = i; return *this;}
@@ -63,16 +63,16 @@ namespace fc
   namespace raw 
   { 
     template<typename Stream, typename IntType, typename EnumType>
-    inline void pack( Stream& s, const fc_keychain::enum_type<IntType,EnumType>& tp )
+    inline void pack( Stream& s, const fc_light::enum_type<IntType,EnumType>& tp )
     {
-       fc_keychain::raw::pack( s, static_cast<IntType>(tp) );
+       fc_light::raw::pack( s, static_cast<IntType>(tp) );
     }
 
     template<typename Stream, typename IntType, typename EnumType>
-    inline void unpack( Stream& s, fc_keychain::enum_type<IntType,EnumType>& tp )
+    inline void unpack( Stream& s, fc_light::enum_type<IntType,EnumType>& tp )
     {
        IntType t;
-       fc_keychain::raw::unpack( s, t );
+       fc_light::raw::unpack( s, t );
        tp = t;
     }
   }

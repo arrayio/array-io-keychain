@@ -9,7 +9,7 @@ namespace fc {
    /**
     * Provides fixed point math operations based on decimal fractions
     * with 18 places.
-    * Delegates to fc_keychain::bigint for multiplication and division.
+    * Delegates to fc_light::bigint for multiplication and division.
     */
    class real128
    {

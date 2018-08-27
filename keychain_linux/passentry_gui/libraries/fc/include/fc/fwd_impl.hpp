@@ -9,25 +9,25 @@ namespace fc {
     namespace detail {
       template<typename A, typename U>
       struct add {
-        typedef decltype( *((A*)0) + *((typename fc_keychain::remove_reference<U>::type*)0) ) type;
+        typedef decltype( *((A*)0) + *((typename fc_light::remove_reference<U>::type*)0) ) type;
       };
       template<typename A, typename U>
       struct add_eq {
-        typedef decltype( *((A*)0) += *((typename fc_keychain::remove_reference<U>::type*)0) ) type;
+        typedef decltype( *((A*)0) += *((typename fc_light::remove_reference<U>::type*)0) ) type;
       };
 
       template<typename A, typename U>
       struct sub {
-        typedef decltype( *((A*)0) - *((typename fc_keychain::remove_reference<U>::type*)0) ) type;
+        typedef decltype( *((A*)0) - *((typename fc_light::remove_reference<U>::type*)0) ) type;
       };
 
       template<typename A, typename U>
       struct sub_eq {
-        typedef decltype( *((A*)0) -= *((typename fc_keychain::remove_reference<U>::type*)0) ) type;
+        typedef decltype( *((A*)0) -= *((typename fc_light::remove_reference<U>::type*)0) ) type;
       };
       template<typename A, typename U>
       struct insert_op {
-        typedef decltype( *((A*)0) << *((typename fc_keychain::remove_reference<U>::type*)0) ) type;
+        typedef decltype( *((A*)0) << *((typename fc_light::remove_reference<U>::type*)0) ) type;
       };
       template<typename A, typename U>
       struct extract_op {
@@ -39,10 +39,10 @@ namespace fc {
 
 
     template<typename T, unsigned int S, typename U, typename A>
-    auto operator + ( const fwd<T,S,A>& x, U&& u ) -> typename detail::add<T,U>::type { return *x+fc_keychain::forward<U>(u); }
+    auto operator + ( const fwd<T,S,A>& x, U&& u ) -> typename detail::add<T,U>::type { return *x+fc_light::forward<U>(u); }
 
     template<typename T, unsigned int S, typename U, typename A>
-    auto operator - ( const fwd<T,S,A>& x, U&& u ) -> typename detail::sub<T,U>::type { return *x-fc_keychain::forward<U>(u); }
+    auto operator - ( const fwd<T,S,A>& x, U&& u ) -> typename detail::sub<T,U>::type { return *x-fc_light::forward<U>(u); }
 
     template<typename T, unsigned int S, typename U, typename A>
     auto operator << ( U& u, const fwd<T,S,A>& f ) -> typename detail::insert_op<U,T>::type { return u << *f; }
@@ -55,26 +55,26 @@ namespace fc {
 
 
     template<uint64_t RequiredSize, uint64_t ProvidedSize>
-    void check_size() { static_assert( (ProvidedSize >= RequiredSize), "Failed to reserve enough space in fc_keychain::fwd<T,S>" ); }
+    void check_size() { static_assert( (ProvidedSize >= RequiredSize), "Failed to reserve enough space in fc_light::fwd<T,S>" ); }
 
     template<typename T,unsigned int S,typename A>
     template<typename U>
     fwd<T,S,A>::fwd( U&& u ) {
       check_size<sizeof(T),sizeof(_store)>();
-      new (this) T( fc_keychain::forward<U>(u) );
+      new (this) T( fc_light::forward<U>(u) );
     }
 
     template<typename T,unsigned int S,typename A>
     template<typename U,typename V>
     fwd<T,S,A>::fwd( U&& u, V&& v ) {
       check_size<sizeof(T),sizeof(_store)>();
-      new (this) T( fc_keychain::forward<U>(u), fc_keychain::forward<V>(v) );
+      new (this) T( fc_light::forward<U>(u), fc_light::forward<V>(v) );
     }
     template<typename T,unsigned int S,typename A>
     template<typename U,typename V,typename X,typename Y>
     fwd<T,S,A>::fwd( U&& u, V&& v, X&& x, Y&&  y ) {
       check_size<sizeof(T),sizeof(_store)>();
-      new (this) T( fc_keychain::forward<U>(u), fc_keychain::forward<V>(v), fc_keychain::forward<X>(x), fc_keychain::forward<Y>(y) );
+      new (this) T( fc_light::forward<U>(u), fc_light::forward<V>(v), fc_light::forward<X>(x), fc_light::forward<Y>(y) );
     }
 
 
@@ -91,7 +91,7 @@ namespace fc {
     template<typename T,unsigned int S,typename A>
     fwd<T,S,A>::fwd( fwd<T,S,A>&& f ){
       check_size<sizeof(T),sizeof(_store)>();
-      new (this) T( fc_keychain::move(*f) );
+      new (this) T( fc_light::move(*f) );
     }
 
 
@@ -119,12 +119,12 @@ namespace fc {
     template<typename T,unsigned int S, typename A>
     template<typename U>
     T& fwd<T,S,A>::operator = ( U&& u ) {
-      return **this = fc_keychain::forward<U>(u);
+      return **this = fc_light::forward<U>(u);
     }
 
     template<typename T,unsigned int S, typename A>
     T& fwd<T,S,A>::operator = ( fwd<T,S,A>&& u ) {
-      return **this = fc_keychain::move(*u);
+      return **this = fc_light::move(*u);
     }
     template<typename T,unsigned int S, typename A>
     T& fwd<T,S,A>::operator = ( const fwd<T,S,A>& u ) {

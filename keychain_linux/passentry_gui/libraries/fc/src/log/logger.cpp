@@ -17,11 +17,11 @@
 
 namespace fc {
 
-    class logger::impl : public fc_keychain::retainable {
+    class logger::impl : public fc_light::retainable {
       public:
          impl()
          :_parent(nullptr),_enabled(true),_additivity(false),_level(log_level::warn){}
-         fc_keychain::string       _name;
+         fc_light::string       _name;
          logger           _parent;
          bool             _enabled;
          bool             _additivity;
@@ -48,7 +48,7 @@ namespace fc {
     :my(l.my){}
 
     logger::logger( logger&& l )
-    :my(fc_keychain::move(l.my)){}
+    :my(fc_light::move(l.my)){}
 
     logger::~logger(){}
 
@@ -77,21 +77,21 @@ namespace fc {
           my->_parent.log(m);
        }
     }
-    void logger::set_name( const fc_keychain::string& n ) { my->_name = n; }
-    const fc_keychain::string& logger::name()const { return my->_name; }
+    void logger::set_name( const fc_light::string& n ) { my->_name = n; }
+    const fc_light::string& logger::name()const { return my->_name; }
 
     extern bool do_default_config;
 
     std::unordered_map<std::string,logger>& get_logger_map() {
-      static bool force_link_default_config = fc_keychain::do_default_config;
+      static bool force_link_default_config = fc_light::do_default_config;
       //TODO: Atomic compare/swap set
       static std::unordered_map<std::string,logger>* lm = new std::unordered_map<std::string, logger>();
       (void)force_link_default_config; // hide warning;
       return *lm;
     }
 
-    logger logger::get( const fc_keychain::string& s ) {
-       static fc_keychain::spin_lock logger_spinlock;
+    logger logger::get( const fc_light::string& s ) {
+       static fc_light::spin_lock logger_spinlock;
        scoped_lock<spin_lock> lock(logger_spinlock);
        return get_logger_map()[s];
     }
@@ -102,13 +102,13 @@ namespace fc {
     log_level logger::get_log_level()const { return my->_level; }
     logger& logger::set_log_level(log_level ll) { my->_level = ll; return *this; }
 
-    void logger::add_appender( const fc_keychain::shared_ptr<appender>& a )
+    void logger::add_appender( const fc_light::shared_ptr<appender>& a )
     { my->_appenders.push_back(a); }
     
-//    void logger::remove_appender( const fc_keychain::shared_ptr<appender>& a )
+//    void logger::remove_appender( const fc_light::shared_ptr<appender>& a )
  //   { my->_appenders.erase(a); }
 
-    std::vector<fc_keychain::shared_ptr<appender> > logger::get_appenders()const
+    std::vector<fc_light::shared_ptr<appender> > logger::get_appenders()const
     {
         return my->_appenders;
     }

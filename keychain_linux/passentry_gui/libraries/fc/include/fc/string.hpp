@@ -9,25 +9,25 @@ namespace fc
 {
     typedef std::string string;
 
-  int64_t  to_int64( const fc_keychain::string& );
-  uint64_t to_uint64( const fc_keychain::string& );
-  double   to_double( const fc_keychain::string& );
-  fc_keychain::string to_string( double );
-  fc_keychain::string to_string( uint64_t );
-  fc_keychain::string to_string( int64_t );
-  fc_keychain::string to_string( uint16_t );
+  int64_t  to_int64( const fc_light::string& );
+  uint64_t to_uint64( const fc_light::string& );
+  double   to_double( const fc_light::string& );
+  fc_light::string to_string( double );
+  fc_light::string to_string( uint64_t );
+  fc_light::string to_string( int64_t );
+  fc_light::string to_string( uint16_t );
   std::string to_pretty_string( int64_t );
-  inline fc_keychain::string to_string( int32_t v ) { return to_string( int64_t(v) ); }
-  inline fc_keychain::string to_string( uint32_t v ){ return to_string( uint64_t(v) ); }
+  inline fc_light::string to_string( int32_t v ) { return to_string( int64_t(v) ); }
+  inline fc_light::string to_string( uint32_t v ){ return to_string( uint64_t(v) ); }
 #ifdef __APPLE__
-  inline fc_keychain::string to_string( size_t s) { return to_string(uint64_t(s)); }
+  inline fc_light::string to_string( size_t s) { return to_string(uint64_t(s)); }
 #endif
 
-  typedef fc_keychain::optional<fc_keychain::string> ostring;
+  typedef fc_light::optional<fc_light::string> ostring;
   class variant_object;
-  fc_keychain::string format_string( const fc_keychain::string&, const variant_object& );
-  fc_keychain::string trim( const fc_keychain::string& );
-  fc_keychain::string to_lower( const fc_keychain::string& );
+  fc_light::string format_string( const fc_light::string&, const variant_object& );
+  fc_light::string trim( const fc_light::string& );
+  fc_light::string to_lower( const fc_light::string& );
   string trim_and_normalize_spaces( const string& s );
 
   uint64_t parse_size( const string& s );
@@ -61,12 +61,12 @@ namespace fc {
    *  Including <string> results in 4000 lines of code
    *  that must be included to build your header.  This
    *  class hides all of those details while maintaining
-   *  compatability with std::string. Using fc_keychain::string
+   *  compatability with std::string. Using fc_light::string
    *  instead of std::string can accelerate compile times
    *  10x.
    *
    *  The implementation of this class is std::string, this header simply
-   *  accelerates compile times.   fc_keychain::string is automatically convertable to / from
+   *  accelerates compile times.   fc_light::string is automatically convertable to / from
    *  std::string.
    */
   class string {
@@ -104,14 +104,14 @@ namespace fc {
       void    reserve( size_t );
       size_t  size()const;
       size_t  find( char c, size_t pos = 0 )const;
-      size_t  find(const fc_keychain::string& str, size_t pos = 0) const;
+      size_t  find(const fc_light::string& str, size_t pos = 0) const;
       size_t  find(const char* s, size_t pos = 0) const;
       size_t  rfind( char c, size_t pos = npos )const;
       size_t  rfind( const char* c, size_t pos = npos )const;
-      size_t  rfind( const fc_keychain::string& c, size_t pos = npos )const;
-      size_t  find_first_of (const fc_keychain::string& str, size_t pos = 0) const;
+      size_t  rfind( const fc_light::string& c, size_t pos = npos )const;
+      size_t  find_first_of (const fc_light::string& str, size_t pos = 0) const;
       size_t  find_first_of (const char* s, size_t pos = 0) const;
-      string& replace(size_t pos,  size_t len,  const fc_keychain::string& str);
+      string& replace(size_t pos,  size_t len,  const fc_light::string& str);
       string& replace(size_t pos,  size_t len,  const char* s);
 
       void    resize( size_t s );
@@ -132,22 +132,22 @@ namespace fc {
       friend string operator + ( const string&, const string&  );
       friend string operator + ( const string&, char c );
 
-      fc_keychain::string substr( size_t start, size_t len = fc_keychain::string::npos )const;
+      fc_light::string substr( size_t start, size_t len = fc_light::string::npos )const;
     
     private:
-       fc_keychain::fwd<std::string,32> my;
+       fc_light::fwd<std::string,32> my;
   };
 
-  int64_t  to_int64( const fc_keychain::string& );
-  uint64_t to_uint64( const fc_keychain::string& );
-  double   to_double( const fc_keychain::string& );
-  fc_keychain::string to_string( double );
-  fc_keychain::string to_string( uint64_t );
-  fc_keychain::string to_string( int64_t );
+  int64_t  to_int64( const fc_light::string& );
+  uint64_t to_uint64( const fc_light::string& );
+  double   to_double( const fc_light::string& );
+  fc_light::string to_string( double );
+  fc_light::string to_string( uint64_t );
+  fc_light::string to_string( int64_t );
 
-  typedef fc_keychain::optional<fc_keychain::string> ostring;
+  typedef fc_light::optional<fc_light::string> ostring;
   class variant_object;
-  fc_keychain::string format_string( const fc_keychain::string&, const variant_object& );
+  fc_light::string format_string( const fc_light::string&, const variant_object& );
 
 } // namespace fc
 

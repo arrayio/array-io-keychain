@@ -10,12 +10,12 @@ namespace fc {
 class stringstream : virtual public std::iostream {
     public:
       stringstream();
-      stringstream( fc_keychain::string& s);
-      stringstream( const fc_keychain::string& s);
+      stringstream( fc_light::string& s);
+      stringstream( const fc_light::string& s);
       ~stringstream();
 
-      fc_keychain::string str();
-      void str(const fc_keychain::string& s);
+      fc_light::string str();
+      void str(const fc_light::string& s);
 
       void clear();
 

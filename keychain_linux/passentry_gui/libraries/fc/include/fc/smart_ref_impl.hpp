@@ -10,7 +10,7 @@ namespace fc {
 
       template<typename A, typename U>
       struct insert_op {
-        typedef decltype( *((A*)0) << *((typename fc_keychain::remove_reference<U>::type*)0) ) type;
+        typedef decltype( *((A*)0) << *((typename fc_light::remove_reference<U>::type*)0) ) type;
       };
 
       template<typename A, typename U>
@@ -33,18 +33,18 @@ namespace fc {
     template<typename T>
     template<typename U>
     smart_ref<T>::smart_ref( U&& u ) {
-      impl = new (this) T( fc_keychain::forward<U>(u) );
+      impl = new (this) T( fc_light::forward<U>(u) );
     }
 
     template<typename T>
     template<typename U,typename V>
     smart_ref<T>::smart_ref( U&& u, V&& v ) {
-      impl = new T( fc_keychain::forward<U>(u), fc_keychain::forward<V>(v) );
+      impl = new T( fc_light::forward<U>(u), fc_light::forward<V>(v) );
     }
     template<typename T>
     template<typename U,typename V,typename X,typename Y>
     smart_ref<T>::smart_ref( U&& u, V&& v, X&& x, Y&&  y ) {
-      impl = new T( fc_keychain::forward<U>(u), fc_keychain::forward<V>(v), fc_keychain::forward<X>(x), fc_keychain::forward<Y>(y) );
+      impl = new T( fc_light::forward<U>(u), fc_light::forward<V>(v), fc_light::forward<X>(x), fc_light::forward<Y>(y) );
     }
 
     template<typename T>
@@ -57,7 +57,7 @@ namespace fc {
     }
     template<typename T>
     smart_ref<T>::smart_ref( smart_ref<T>&& f ){
-      impl = new T( fc_keychain::move(*f) );
+      impl = new T( fc_light::move(*f) );
     }
 
     template<typename T>
@@ -83,7 +83,7 @@ namespace fc {
     template<typename T>
     template<typename U>
     T& smart_ref<T>::operator = ( U&& u ) {
-      return **this = fc_keychain::forward<U>(u);
+      return **this = fc_light::forward<U>(u);
     }
 
     template<typename T>

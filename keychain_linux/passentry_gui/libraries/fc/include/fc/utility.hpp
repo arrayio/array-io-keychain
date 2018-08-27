@@ -30,7 +30,7 @@ namespace fc {
   template<typename T> struct deduce<const T&&>{ typedef T type; };
 
   template<typename T>
-  typename fc_keychain::remove_reference<T>::type&& move( T&& t ) { return static_cast<typename fc_keychain::remove_reference<T>::type&&>(t); }
+  typename fc_light::remove_reference<T>::type&& move( T&& t ) { return static_cast<typename fc_light::remove_reference<T>::type&&>(t); }
 
   template<typename T, typename U>
   inline T&& forward( U&& u ) { return static_cast<T&&>(u); }
@@ -39,8 +39,8 @@ namespace fc {
   struct false_type { enum _value { value = 0 }; };
 
   namespace detail {
-    template<typename T> fc_keychain::true_type is_class_helper(void(T::*)());
-    template<typename T> fc_keychain::false_type is_class_helper(...);
+    template<typename T> fc_light::true_type is_class_helper(void(T::*)());
+    template<typename T> fc_light::false_type is_class_helper(...);
   }
 
   template<typename T>
@@ -55,9 +55,9 @@ namespace fc {
   // outside of namespace fc becuase of VC++ conflict with std::swap
   template<typename T>
   void fc_swap( T& a, T& b ) {     
-    T tmp = fc_keychain::move(a);
-    a = fc_keychain::move(b);
-    b = fc_keychain::move(tmp);
+    T tmp = fc_light::move(a);
+    a = fc_light::move(b);
+    b = fc_light::move(tmp);
   }
 
 #define LLCONST(constant)   static_cast<int64_t>(constant##ll)

@@ -8,7 +8,7 @@
 #include <stdio.h>
 #include <iostream>
 #include <stdexcept>
-#include <fc_keychain/io/json.hpp>
+#include <fc_light/io/json.hpp>
 
 #ifdef _MSC_VER
 #include <io.h>
@@ -53,15 +53,15 @@ int pipeline_parser::run()
       if( std::distance(buf_range.first, buf_range.second) > 0)
       {
         try {
-          std::string res = m_keychain_func(fc_keychain::json::from_string(std::string(buf_range.first, buf_range.second)));
+          std::string res = m_keychain_func(fc_light::json::from_string(std::string(buf_range.first, buf_range.second)));
           std::stringstream strbuf(std::ios_base::out);
           strbuf << res << std::endl;
           write(m_pipeout_desc, static_cast<const void*>(strbuf.str().c_str()), res.size());
         }
-        catch(fc_keychain::exception& exc)
+        catch(fc_light::exception& exc)
         {
-          std::cerr << fc_keychain::json::to_pretty_string(fc_keychain::variant(json_error(0, exc.to_detail_string().c_str()))) << std::endl;
-          std::string res = fc_keychain::json::to_pretty_string(fc_keychain::variant(json_error(0, exc.what())));
+          std::cerr << fc_light::json::to_pretty_string(fc_light::variant(json_error(0, exc.to_detail_string().c_str()))) << std::endl;
+          std::string res = fc_light::json::to_pretty_string(fc_light::variant(json_error(0, exc.what())));
           std::stringstream strbuf(std::ios_base::out);
           strbuf << res << std::endl;
           write(m_pipeout_desc, static_cast<const void*>(strbuf.str().c_str()), res.size());

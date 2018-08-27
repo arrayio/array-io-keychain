@@ -29,7 +29,7 @@ namespace fc
             legacy_generator = 1
          };
 
-         static std::ostream& to_stream( std::ostream& out, const fc_keychain::string&);
+         static std::ostream& to_stream( std::ostream& out, const fc_light::string&);
          static std::ostream& to_stream( std::ostream& out, const variant& v, output_formatting format = stringify_large_ints_and_doubles );
          static std::ostream& to_stream( std::ostream& out, const variants& v, output_formatting format = stringify_large_ints_and_doubles );
          static std::ostream& to_stream( std::ostream& out, const variant_object& v, output_formatting format = stringify_large_ints_and_doubles );
@@ -44,16 +44,16 @@ namespace fc
          static bool     is_valid( const std::string& json_str, parse_type ptype = legacy_parser );
 
          template<typename T>
-         static void     save_to_file( const T& v, const fc_keychain::path& fi, bool pretty = true, output_formatting format = stringify_large_ints_and_doubles )
+         static void     save_to_file( const T& v, const fc_light::path& fi, bool pretty = true, output_formatting format = stringify_large_ints_and_doubles )
          {
             save_to_file( variant(v), fi, pretty, format );
          }
 
-         static void     save_to_file( const variant& v, const fc_keychain::path& fi, bool pretty = true, output_formatting format = stringify_large_ints_and_doubles );
-         static variant  from_file( const fc_keychain::path& p, parse_type ptype = legacy_parser );
+         static void     save_to_file( const variant& v, const fc_light::path& fi, bool pretty = true, output_formatting format = stringify_large_ints_and_doubles );
+         static variant  from_file( const fc_light::path& p, parse_type ptype = legacy_parser );
 
          template<typename T>
-         static T from_file( const fc_keychain::path& p, parse_type ptype = legacy_parser )
+         static T from_file( const fc_light::path& p, parse_type ptype = legacy_parser )
          {
             return json::from_file(p, ptype).as<T>();
          }
@@ -73,7 +73,7 @@ namespace fc
          template<typename T>
          static void save_to_file( const T& v, const std::string& p, bool pretty = true, output_formatting format = stringify_large_ints_and_doubles ) 
          {
-            save_to_file( variant(v), fc_keychain::path(p), pretty );
+            save_to_file( variant(v), fc_light::path(p), pretty );
          } 
    };
 

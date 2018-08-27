@@ -16,9 +16,9 @@ namespace fc {
    extern std::unordered_map<std::string,appender::ptr>& get_appender_map();
    logger_config& logger_config::add_appender( const string& s ) { appenders.push_back(s); return *this; }
 
-   void configure_logging( const fc_keychain::path& lc )
+   void configure_logging( const fc_light::path& lc )
    {
-      configure_logging( fc_keychain::json::from_file<logging_config>(lc) );
+      configure_logging( fc_light::json::from_file<logging_config>(lc) );
    }
    bool configure_logging( const logging_config& cfg )
    {
@@ -28,7 +28,7 @@ namespace fc {
       get_logger_map().clear();
       get_appender_map().clear();
 
-      //slog( "\n%s", fc_keychain::json::to_pretty_string(cfg).c_str() );
+      //slog( "\n%s", fc_light::json::to_pretty_string(cfg).c_str() );
       for( size_t i = 0; i < cfg.appenders.size(); ++i ) {
          appender::create( cfg.appenders[i].name, cfg.appenders[i].type, cfg.appenders[i].args );
         // TODO... process enabled

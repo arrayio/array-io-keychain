@@ -98,14 +98,14 @@ void Widget::found_pass()
 void Widget::closeEvent(QCloseEvent *event)
 {
     passClearOnExit ?
-    send(fc_keychain::json::to_pretty_string(fc_keychain::variant( master::cmd<( master::cmds::cancel)>().base))) :
-    send(fc_keychain::json::to_pretty_string(fc_keychain::variant( master::cmd<( master::cmds::ok)>().base)));
+    send(fc_light::json::to_pretty_string(fc_light::variant( master::cmd<( master::cmds::cancel)>().base))) :
+    send(fc_light::json::to_pretty_string(fc_light::variant( master::cmd<( master::cmds::ok)>().base)));
     event->accept();
 }
 
 void Widget::parse(const std::string s)
 {
-    auto a = fc_keychain::json::from_string(s);
+    auto a = fc_light::json::from_string(s);
     try {
         auto cmd = a.as<slave::cmd_common>();
         auto cmd_map = slave::cmd_list_singletone::instance();
@@ -113,6 +113,6 @@ void Widget::parse(const std::string s)
         (*p_func)(this, cmd.params);
     }
     catch (const std::exception &e) {throw std::runtime_error(e.what());}
-    catch (const fc_keychain::exception &e) {throw std::runtime_error(e.what());}
+    catch (const fc_light::exception &e) {throw std::runtime_error(e.what());}
 }
 

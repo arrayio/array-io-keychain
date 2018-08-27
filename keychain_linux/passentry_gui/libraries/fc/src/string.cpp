@@ -34,12 +34,12 @@ namespace fc  {
 #ifdef USE_FC_STRING
   string::string(const char* s, int l) :my(s,l){ }
   string::string(){}
-  string::string( const fc_keychain::string& c ):my(*c.my) { }
-  string::string( string&& m ):my(fc_keychain::move(*m.my)) {}
+  string::string( const fc_light::string& c ):my(*c.my) { }
+  string::string( string&& m ):my(fc_light::move(*m.my)) {}
   string::string( const char* c ):my(c){}
   string::string( const_iterator b, const_iterator e ):my(b,e){}
   string::string( const std::string& s ):my(s) {}
-  string::string( std::string&& s ):my(fc_keychain::move(s)) {}
+  string::string( std::string&& s ):my(fc_light::move(s)) {}
   string::~string() { }
   string::operator std::string&() { return *my; }
   string::operator const std::string&()const { return *my; }
@@ -56,21 +56,21 @@ namespace fc  {
   void       string::reserve(size_t r)           { my->reserve(r); }
   size_t   string::size()const                   { return my->size(); }
   size_t   string::find(char c, size_t p)const { return my->find(c,p); }
-  size_t   string::find(const fc_keychain::string& str, size_t pos /* = 0 */) const { return my->find(str, pos); }
+  size_t   string::find(const fc_light::string& str, size_t pos /* = 0 */) const { return my->find(str, pos); }
   size_t   string::find(const char* s, size_t pos /* = 0 */) const { return my->find(s,pos); }
   size_t   string::rfind(char c, size_t p)const { return my->rfind(c,p); }
   size_t   string::rfind(const char* c, size_t p)const { return my->rfind(c,p); }
-  size_t   string::rfind(const fc_keychain::string& c, size_t p)const { return my->rfind(c,p); }
-  size_t   string::find_first_of(const fc_keychain::string& str, size_t pos /* = 0 */) const { return my->find_first_of(str, pos); }
+  size_t   string::rfind(const fc_light::string& c, size_t p)const { return my->rfind(c,p); }
+  size_t   string::find_first_of(const fc_light::string& str, size_t pos /* = 0 */) const { return my->find_first_of(str, pos); }
   size_t   string::find_first_of(const char* s, size_t pos /* = 0 */) const { return my->find_first_of(s, pos); }
 
-  fc_keychain::string& string::replace(size_t pos,  size_t len,  const string& str) { my->replace(pos, len, str); return *this; }
-  fc_keychain::string& string::replace(size_t pos,  size_t len,  const char* s) { my->replace(pos, len, s); return *this; }
+  fc_light::string& string::replace(size_t pos,  size_t len,  const string& str) { my->replace(pos, len, str); return *this; }
+  fc_light::string& string::replace(size_t pos,  size_t len,  const char* s) { my->replace(pos, len, s); return *this; }
 
   void       string::clear()                       { my->clear(); }
   void       string::resize( size_t s )          { my->resize(s); }
                                             
-  fc_keychain::string string::substr( size_t start, size_t len )const { return my->substr(start,len); }
+  fc_light::string string::substr( size_t start, size_t len )const { return my->substr(start,len); }
   const char* string::c_str()const                        { return my->c_str(); }
 
   bool    string::operator == ( const char* s )const   { return *my == s; }
@@ -78,7 +78,7 @@ namespace fc  {
   bool    string::operator != ( const string& s )const { return *my != *s.my; }
 
   string& string::operator =( const string& c )          { *my = *c.my; return *this; }
-  string& string::operator =( string&& c )               { *my = fc_keychain::move( *c.my ); return *this; }
+  string& string::operator =( string&& c )               { *my = fc_light::move( *c.my ); return *this; }
 
   string& string::operator+=( const string& s )          { *my += *s.my; return *this; }
   string& string::operator+=( char c )                   { *my += c; return *this; }
@@ -89,7 +89,7 @@ namespace fc  {
 #endif // USE_FC_STRING
 
 
-  int64_t    to_int64( const fc_keychain::string& i )
+  int64_t    to_int64( const fc_light::string& i )
   {
     try
     {
@@ -102,7 +102,7 @@ namespace fc  {
     FC_RETHROW_EXCEPTIONS( warn, "${i} => int64_t", ("i",i) )
   }
 
-  uint64_t   to_uint64( const fc_keychain::string& i )
+  uint64_t   to_uint64( const fc_light::string& i )
   { try {
     try
     {
@@ -115,7 +115,7 @@ namespace fc  {
     FC_RETHROW_EXCEPTIONS( warn, "${i} => uint64_t", ("i",i) )
   } FC_CAPTURE_AND_RETHROW( (i) ) }
 
-  double     to_double( const fc_keychain::string& i)
+  double     to_double( const fc_light::string& i)
   {
     try
     {
@@ -128,7 +128,7 @@ namespace fc  {
     FC_RETHROW_EXCEPTIONS( warn, "${i} => double", ("i",i) )
   }
 
-  fc_keychain::string to_string(double d)
+  fc_light::string to_string(double d)
   {
     // +2 is required to ensure that the double is rounded correctly when read back in.  http://docs.oracle.com/cd/E19957-01/806-3568/ncg_goldberg.html
     std::stringstream ss;
@@ -136,16 +136,16 @@ namespace fc  {
     return ss.str();
   }
 
-  fc_keychain::string to_string( uint64_t d)
+  fc_light::string to_string( uint64_t d)
   {
     return boost::lexical_cast<std::string>(d);
   }
 
-  fc_keychain::string to_string( int64_t d)
+  fc_light::string to_string( int64_t d)
   {
     return boost::lexical_cast<std::string>(d);
   }
-  fc_keychain::string to_string( uint16_t d)
+  fc_light::string to_string( uint16_t d)
   {
     return boost::lexical_cast<std::string>(d);
   }
@@ -250,7 +250,7 @@ namespace fc  {
         }
         return u*m;
      }
-     catch( const fc_keychain::exception& e )
+     catch( const fc_light::exception& e )
      {
         FC_THROW_EXCEPTION( parse_error_exception, "Couldn't parse size" );
      }

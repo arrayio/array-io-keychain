@@ -31,7 +31,7 @@ namespace fc {
   template<> struct get_typename<void>     { static const char* name()  { return "char";     } };
   template<> struct get_typename<string>   { static const char* name()  { return "string";   } };
   template<> struct get_typename<value>    { static const char* name()   { return "value";   } };
-  template<> struct get_typename<fc_keychain::exception>   { static const char* name()   { return "fc_keychain::exception";   } };
+  template<> struct get_typename<fc_light::exception>   { static const char* name()   { return "fc_light::exception";   } };
   template<> struct get_typename<std::vector<char>>   { static const char* name()   { return "std::vector<char>";   } };
   template<typename T> struct get_typename<std::vector<T>>   
   { 

@@ -29,7 +29,7 @@ if( MSVC )
             "../array-io-core/libraries/db/include"
             "../array-io-core/libraries/chain/include"
             "../array-io-core/libraries/fc/include"
-            "../libraries/fc/include"
+            "../libraries/fc_light/include"
             "${OPENSSL_ROOT_DIR}/include"
             ${Boost_INCLUDE_DIR})
 else ( MSVC )
@@ -40,7 +40,7 @@ else ( MSVC )
             "../array-io-core/libraries/db/include"
             "../array-io-core/libraries/chain/include"
             "../array-io-core/libraries/fc/include"
-            "../libraries/fc/include"
+            "../libraries/fc_light/include"
             "${OPENSSL_ROOT_DIR}/include"
             "/usr/include/libcxxabi"
             ${Boost_INCLUDE_DIR})
@@ -51,8 +51,8 @@ if( NOT MSVC )
   find_library(LIB_PTHREAD NAME pthread HINTS "/usr/lib/x86_64-linux-gnu")
 endif( NOT MSVC )
 
-file(GLOB KEYCHAIN_SOURCES "./*.cpp" "../keychain_linux/passentry_cmd/*.cpp" "../libraries/fc/src/*.cpp" "../libraries/fc/src/*/*.cpp")
-file(GLOB KEYCHAIN_INCLUDE "./*.hpp" "../keychain_linux/passentry_cmd/*.hpp" "../libraries/fc/include/*.hpp" )
+file(GLOB KEYCHAIN_SOURCES "./*.cpp" "../keychain_linux/passentry_cmd/*.cpp" "../libraries/fc_light/src/*.cpp" "../libraries/fc_light/src/*/*.cpp")
+file(GLOB KEYCHAIN_INCLUDE "./*.hpp" "../keychain_linux/passentry_cmd/*.hpp" "../libraries/fc_light/include/*.hpp" )
 
 add_executable(keychain ${KEYCHAIN_SOURCES} ${KEYCHAIN_INCLUDE} ../keychain_linux/passentry_cmd/polling.cpp)
 

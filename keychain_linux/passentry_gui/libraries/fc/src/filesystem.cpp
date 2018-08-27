@@ -27,11 +27,11 @@
 
 namespace fc {
   // when converting to and from a variant, store utf-8 in the variant
-  void to_variant( const fc_keychain::path& path_to_convert, variant& variant_output )
+  void to_variant( const fc_light::path& path_to_convert, variant& variant_output )
   {
     std::wstring wide_string = path_to_convert.generic_wstring();
     std::string utf8_string;
-    fc_keychain::encodeUtf8(wide_string, &utf8_string);
+    fc_light::encodeUtf8(wide_string, &utf8_string);
     variant_output = utf8_string;
 
     //std::string path = t.to_native_ansi_path();
@@ -39,10 +39,10 @@ namespace fc {
     //v = path;
   }
 
-  void from_variant( const fc_keychain::variant& variant_to_convert, fc_keychain::path& path_output )
+  void from_variant( const fc_light::variant& variant_to_convert, fc_light::path& path_output )
   {
     std::wstring wide_string;
-    fc_keychain::decodeUtf8(variant_to_convert.as_string(), &wide_string);
+    fc_light::decodeUtf8(variant_to_convert.as_string(), &wide_string);
     path_output = path(wide_string);
   }
 
@@ -56,7 +56,7 @@ namespace fc {
 
    path::path( const char* p )
    :_p(p){}
-   path::path( const fc_keychain::string& p )
+   path::path( const fc_light::string& p )
    :_p(p.c_str()){}
 
    path::path(const std::wstring& p)
@@ -73,19 +73,19 @@ namespace fc {
     return *this;
    }
    path& path::operator =( path&& p ) {
-    *_p = fc_keychain::move( *p._p );
+    *_p = fc_light::move( *p._p );
     return *this;
    }
 
-   bool operator <( const fc_keychain::path& l, const fc_keychain::path& r ) { return *l._p < *r._p; }
-   bool operator ==( const fc_keychain::path& l, const fc_keychain::path& r ) { return *l._p == *r._p; }
-   bool operator !=( const fc_keychain::path& l, const fc_keychain::path& r ) { return *l._p != *r._p; }
+   bool operator <( const fc_light::path& l, const fc_light::path& r ) { return *l._p < *r._p; }
+   bool operator ==( const fc_light::path& l, const fc_light::path& r ) { return *l._p == *r._p; }
+   bool operator !=( const fc_light::path& l, const fc_light::path& r ) { return *l._p != *r._p; }
 
-   path& path::operator /=( const fc_keychain::path& p ) {
+   path& path::operator /=( const fc_light::path& p ) {
       *_p /= *p._p;
       return *this;
    }
-   path   operator /( const fc_keychain::path& p, const fc_keychain::path& o ) {
+   path   operator /( const fc_light::path& p, const fc_light::path& o ) {
       path tmp;
       tmp = *p._p / *o._p;
       return tmp;
@@ -97,11 +97,11 @@ namespace fc {
    path::operator const boost::filesystem::path& ()const {
     return *_p;
    }
-   fc_keychain::string path::generic_string()const {
+   fc_light::string path::generic_string()const {
     return _p->generic_string();
    }
 
-   fc_keychain::string path::preferred_string() const
+   fc_light::string path::preferred_string() const
    {
      return boost::filesystem::path(*_p).make_preferred().string();
    }
@@ -136,7 +136,7 @@ namespace fc {
       path = buffer;
 #endif
     std::string filePath;
-    fc_keychain::encodeUtf8(path, &filePath);
+    fc_light::encodeUtf8(path, &filePath);
     return filePath;
     }
 
@@ -144,40 +144,40 @@ namespace fc {
     *  @todo use iterators instead of indexes for 
     *  faster performance
     */
-   fc_keychain::string path::windows_string()const {
+   fc_light::string path::windows_string()const {
      std::string result = _p->generic_string();
      std::replace(result.begin(), result.end(), '/', '\\');
      return result;
    }
 
-   fc_keychain::string path::string()const {
+   fc_light::string path::string()const {
     return _p->string();
    }
-   fc_keychain::path path::filename()const {
+   fc_light::path path::filename()const {
     return _p->filename();
    }
-   void     path::replace_extension( const fc_keychain::path& e ) {
+   void     path::replace_extension( const fc_light::path& e ) {
         _p->replace_extension(e);
    }
-   fc_keychain::path path::extension()const {
+   fc_light::path path::extension()const {
     return _p->extension();
    }
-   fc_keychain::path path::stem()const {
+   fc_light::path path::stem()const {
     return _p->stem();
    }
-   fc_keychain::path path::parent_path()const {
+   fc_light::path path::parent_path()const {
     return _p->parent_path();
    }
   bool path::is_relative()const { return _p->is_relative(); }
   bool path::is_absolute()const { return _p->is_absolute(); }
 
-      directory_iterator::directory_iterator( const fc_keychain::path& p )
+      directory_iterator::directory_iterator( const fc_light::path& p )
       :_p(p){}
 
       directory_iterator::directory_iterator(){}
       directory_iterator::~directory_iterator(){}
 
-      fc_keychain::path            directory_iterator::operator*()const { return boost::filesystem::path(*(*_p)); }
+      fc_light::path            directory_iterator::operator*()const { return boost::filesystem::path(*(*_p)); }
       detail::path_wrapper directory_iterator::operator->() const { return detail::path_wrapper(boost::filesystem::path(*(*_p))); }
       directory_iterator& directory_iterator::operator++(int)  { (*_p)++; return *this; }
       directory_iterator& directory_iterator::operator++()     { (*_p)++; return *this; }
@@ -190,13 +190,13 @@ namespace fc {
       }
 
 
-      recursive_directory_iterator::recursive_directory_iterator( const fc_keychain::path& p )
+      recursive_directory_iterator::recursive_directory_iterator( const fc_light::path& p )
       :_p(p){}
 
       recursive_directory_iterator::recursive_directory_iterator(){}
       recursive_directory_iterator::~recursive_directory_iterator(){}
 
-      fc_keychain::path            recursive_directory_iterator::operator*()const { return boost::filesystem::path(*(*_p)); }
+      fc_light::path            recursive_directory_iterator::operator*()const { return boost::filesystem::path(*(*_p)); }
       recursive_directory_iterator& recursive_directory_iterator::operator++(int)  { (*_p)++; return *this; }
       recursive_directory_iterator& recursive_directory_iterator::operator++()     { (*_p)++; return *this; }
 
@@ -216,7 +216,7 @@ namespace fc {
     try {
       boost::filesystem::create_directories(p); 
     } catch ( ... ) {
-      FC_THROW( "Unable to create directories ${path}", ("path", p )("inner", fc_keychain::except_str() ) );
+      FC_THROW( "Unable to create directories ${path}", ("path", p )("inner", fc_light::except_str() ) );
     }
   }
   bool is_directory( const path& p ) { return boost::filesystem::is_directory(p); }
@@ -238,7 +238,7 @@ namespace fc {
 
       return size;
     } catch ( ... ) {
-      FC_THROW( "Unable to calculate size of directory ${path}", ("path", p )("inner", fc_keychain::except_str() ) );
+      FC_THROW( "Unable to calculate size of directory ${path}", ("path", p )("inner", fc_light::except_str() ) );
     }
   }
 
@@ -251,7 +251,7 @@ namespace fc {
 	         ("srcfile",f)("dstfile",t)("reason",e.what() ) );
      } catch ( ... ) {
      	FC_THROW( "Copy from ${srcfile} to ${dstfile} failed",
-	         ("srcfile",f)("dstfile",t)("inner", fc_keychain::except_str() ) );
+	         ("srcfile",f)("dstfile",t)("inner", fc_light::except_str() ) );
      }
   }
   void resize_file( const path& f, size_t t ) 
@@ -267,7 +267,7 @@ namespace fc {
     catch ( ... ) 
     {
       FC_THROW( "Resize file '${f}' to size ${s} failed: ${reason}",
-                ("f",f)("s",t)( "reason", fc_keychain::except_str() ) );
+                ("f",f)("s",t)( "reason", fc_light::except_str() ) );
     }
   }
 
@@ -311,7 +311,7 @@ namespace fc {
          }
      } catch ( ... ) {
      	FC_THROW( "Rename from ${srcfile} to ${dstfile} failed",
-	         ("srcfile",f)("dstfile",t)("inner", fc_keychain::except_str() ) );
+	         ("srcfile",f)("dstfile",t)("inner", fc_light::except_str() ) );
      }
   }
   void create_hard_link( const path& f, const path& t ) { 
@@ -319,29 +319,29 @@ namespace fc {
         boost::filesystem::create_hard_link( f, t ); 
      } catch ( ... ) {
          FC_THROW( "Unable to create hard link from '${from}' to '${to}'", 
-                          ( "from", f )("to",t)("exception", fc_keychain::except_str() ) );
+                          ( "from", f )("to",t)("exception", fc_light::except_str() ) );
      }
   }
   bool remove( const path& f ) { 
      try {
         return boost::filesystem::remove( f ); 
      } catch ( ... ) {
-         FC_THROW( "Unable to remove '${path}'", ( "path", f )("exception", fc_keychain::except_str() ) );
+         FC_THROW( "Unable to remove '${path}'", ( "path", f )("exception", fc_light::except_str() ) );
      }
   }
-  fc_keychain::path canonical( const fc_keychain::path& p ) {
+  fc_light::path canonical( const fc_light::path& p ) {
      try {
         return boost::filesystem::canonical(p); 
      } catch ( ... ) {
-         FC_THROW( "Unable to resolve path '${path}'", ( "path", p )("exception", fc_keychain::except_str() ) );
+         FC_THROW( "Unable to resolve path '${path}'", ( "path", p )("exception", fc_light::except_str() ) );
      }
   }
-  fc_keychain::path absolute( const fc_keychain::path& p ) { return boost::filesystem::absolute(p); }
+  fc_light::path absolute( const fc_light::path& p ) { return boost::filesystem::absolute(p); }
   path     unique_path() { return boost::filesystem::unique_path(); }
   path     temp_directory_path() { return boost::filesystem::temp_directory_path(); }
 
   // Return path when appended to a_From will resolve to same as a_To
-  fc_keychain::path make_relative(const fc_keychain::path& from, const fc_keychain::path& to) {
+  fc_light::path make_relative(const fc_light::path& from, const fc_light::path& to) {
     boost::filesystem::path a_From = boost::filesystem::absolute(from);
     boost::filesystem::path a_To = boost::filesystem::absolute(to);
     boost::filesystem::path ret;
@@ -359,16 +359,16 @@ namespace fc {
     return ret;
   }
 
-   temp_file::temp_file(const fc_keychain::path& p, bool create)
-   : temp_file_base(p / fc_keychain::unique_path())
+   temp_file::temp_file(const fc_light::path& p, bool create)
+   : temp_file_base(p / fc_light::unique_path())
    {
-      if (fc_keychain::exists(*_path))
+      if (fc_light::exists(*_path))
       {
          FC_THROW( "Name collision: ${path}", ("path", _path->string()) );
       }
       if (create)
       {
-         fc_keychain::ofstream ofs(*_path, fc_keychain::ofstream::out | fc_keychain::ofstream::binary);
+         fc_light::ofstream ofs(*_path, fc_light::ofstream::out | fc_light::ofstream::binary);
          ofs.close();
       }
    }
@@ -388,14 +388,14 @@ namespace fc {
       return *this;
    }
 
-   temp_directory::temp_directory(const fc_keychain::path& p)
-   : temp_file_base(p / fc_keychain::unique_path())
+   temp_directory::temp_directory(const fc_light::path& p)
+   : temp_file_base(p / fc_light::unique_path())
    {
-      if (fc_keychain::exists(*_path))
+      if (fc_light::exists(*_path))
       {
          FC_THROW( "Name collision: ${path}", ("path", _path->string()) );
       }
-      fc_keychain::create_directories(*_path);
+      fc_light::create_directories(*_path);
    }
 
    temp_directory::temp_directory(temp_directory&& other)
@@ -413,7 +413,7 @@ namespace fc {
       return *this;
    }
 
-   const fc_keychain::path& temp_file_base::path() const
+   const fc_light::path& temp_file_base::path() const
    {
       if (!_path)
       {
@@ -428,7 +428,7 @@ namespace fc {
       {
          try
          {
-            fc_keychain::remove_all(*_path);
+            fc_light::remove_all(*_path);
          }
          catch (...)
          {
@@ -440,12 +440,12 @@ namespace fc {
 
    void temp_file_base::release()
    {
-      _path = fc_keychain::optional<fc_keychain::path>();
+      _path = fc_light::optional<fc_light::path>();
    }
 
-   const fc_keychain::path& home_path()
+   const fc_light::path& home_path()
    {
-      static fc_keychain::path p = []()
+      static fc_light::path p = []()
       {
 #ifdef WIN32
           HANDLE access_token;
@@ -457,7 +457,7 @@ namespace fc {
           CloseHandle(access_token);
           if (!success)
             FC_ASSERT(false, "Unable to get the user profile directory");
-          return fc_keychain::path(std::wstring(user_profile_dir));
+          return fc_light::path(std::wstring(user_profile_dir));
 #else
           char* home = getenv( "HOME" );
           if( nullptr == home )
@@ -465,37 +465,37 @@ namespace fc {
              struct passwd* pwd = getpwuid(getuid());
              if( pwd )
              {
-                 return fc_keychain::path( std::string( pwd->pw_dir ) );
+                 return fc_light::path( std::string( pwd->pw_dir ) );
              }
              FC_ASSERT( home != nullptr, "The HOME environment variable is not set" );
           }
-          return fc_keychain::path( std::string(home) );
+          return fc_light::path( std::string(home) );
 #endif
       }();
       return p;
    }
 
-   const fc_keychain::path& app_path()
+   const fc_light::path& app_path()
    {
 #ifdef __APPLE__
-         static fc_keychain::path appdir = [](){  return home_path() / "Library" / "Application Support"; }();
+         static fc_light::path appdir = [](){  return home_path() / "Library" / "Application Support"; }();
 #elif defined( WIN32 )
-         static fc_keychain::path appdir = [](){
+         static fc_light::path appdir = [](){
            wchar_t app_data_dir[MAX_PATH];
 
            if (!SUCCEEDED(SHGetFolderPathW(NULL, CSIDL_APPDATA | CSIDL_FLAG_CREATE, NULL, 0, app_data_dir)))
              FC_ASSERT(false, "Unable to get the current AppData directory");
-           return fc_keychain::path(std::wstring(app_data_dir));
+           return fc_light::path(std::wstring(app_data_dir));
          }();
 #else
-        static fc_keychain::path appdir = home_path();
+        static fc_light::path appdir = home_path();
 #endif
       return appdir;
    }
 
-   const fc_keychain::path& current_path()
+   const fc_light::path& current_path()
    {
-     static fc_keychain::path appCurrentPath = boost::filesystem::current_path();
+     static fc_light::path appCurrentPath = boost::filesystem::current_path();
      return appCurrentPath;
    }
 

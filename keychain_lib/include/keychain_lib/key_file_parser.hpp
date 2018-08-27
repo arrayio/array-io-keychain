@@ -5,8 +5,8 @@
 #ifndef KEYCHAINAPP_KEY_FILE_PARSER_HPP
 #define KEYCHAINAPP_KEY_FILE_PARSER_HPP
 
-#include <fc_keychain/reflect/reflect.hpp>
-#include <fc_keychain/variant.hpp>
+#include <fc_light/reflect/reflect.hpp>
+#include <fc_light/variant.hpp>
 
 namespace keychain_app {
 
@@ -58,7 +58,7 @@ struct keyfile_t
 //      secp384r1,
 //      secp521r1
     } curve_type;
-    fc_keychain::variant priv_key_data;//either std::string or encrypted_data
+    fc_light::variant priv_key_data;//either std::string or encrypted_data
     std::string public_key;
   } keyinfo;
 };
@@ -66,13 +66,13 @@ struct keyfile_t
 }
 
 }
-FC_KEYCHAIN_REFLECT_ENUM(keychain_app::keyfile_format::cipher_etype, (unknown)(aes128)(aes192)(aes256))
-FC_KEYCHAIN_REFLECT_ENUM(keychain_app::keyfile_format::file_type, (TYPE_UNKNOWN)(TYPE_KEY))
-FC_KEYCHAIN_REFLECT_ENUM(keychain_app::keyfile_format::keyfile_t::keyinfo_t::key_format, (FORMAT_UNKNOWN)(FORMAT_ARRAYIO))
-FC_KEYCHAIN_REFLECT_ENUM(keychain_app::keyfile_format::keyfile_t::keyinfo_t::curve_etype, (unknown)(secp256k1))
-FC_KEYCHAIN_REFLECT(keychain_app::keyfile_format::encrypted_data, (cipher_type)(iv)(enc_data))
-FC_KEYCHAIN_REFLECT(keychain_app::keyfile_format::keyfile_t::keyinfo_t, (format)(encrypted)(curve_type)(priv_key_data)(public_key))
-FC_KEYCHAIN_REFLECT(keychain_app::keyfile_format::keyfile_t, (filetype)(keyname)(uid_hash)(keyinfo))
+FC_LIGHT_REFLECT_ENUM(keychain_app::keyfile_format::cipher_etype, (unknown)(aes128)(aes192)(aes256))
+FC_LIGHT_REFLECT_ENUM(keychain_app::keyfile_format::file_type, (TYPE_UNKNOWN)(TYPE_KEY))
+FC_LIGHT_REFLECT_ENUM(keychain_app::keyfile_format::keyfile_t::keyinfo_t::key_format, (FORMAT_UNKNOWN)(FORMAT_ARRAYIO))
+FC_LIGHT_REFLECT_ENUM(keychain_app::keyfile_format::keyfile_t::keyinfo_t::curve_etype, (unknown)(secp256k1))
+FC_LIGHT_REFLECT(keychain_app::keyfile_format::encrypted_data, (cipher_type)(iv)(enc_data))
+FC_LIGHT_REFLECT(keychain_app::keyfile_format::keyfile_t::keyinfo_t, (format)(encrypted)(curve_type)(priv_key_data)(public_key))
+FC_LIGHT_REFLECT(keychain_app::keyfile_format::keyfile_t, (filetype)(keyname)(uid_hash)(keyinfo))
 
 
 #endif //KEYCHAINAPP_KEY_FILE_PARSER_HPP

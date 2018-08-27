@@ -25,123 +25,123 @@ namespace fc {
     }
 
     template<typename Stream>
-    inline void pack( Stream& s, const fc_keychain::exception& e )
+    inline void pack( Stream& s, const fc_light::exception& e )
     {
-       fc_keychain::raw::pack( s, e.code() );
-       fc_keychain::raw::pack( s, std::string(e.name()) );
-       fc_keychain::raw::pack( s, std::string(e.what()) );
-       fc_keychain::raw::pack( s, e.get_log() );
+       fc_light::raw::pack( s, e.code() );
+       fc_light::raw::pack( s, std::string(e.name()) );
+       fc_light::raw::pack( s, std::string(e.what()) );
+       fc_light::raw::pack( s, e.get_log() );
     }
     template<typename Stream>
-    inline void unpack( Stream& s, fc_keychain::exception& e )
+    inline void unpack( Stream& s, fc_light::exception& e )
     {
        int64_t code;
        std::string name, what;
        log_messages msgs;
 
-       fc_keychain::raw::unpack( s, code );
-       fc_keychain::raw::unpack( s, name );
-       fc_keychain::raw::unpack( s, what );
-       fc_keychain::raw::unpack( s, msgs );
+       fc_light::raw::unpack( s, code );
+       fc_light::raw::unpack( s, name );
+       fc_light::raw::unpack( s, what );
+       fc_light::raw::unpack( s, msgs );
 
-       e = fc_keychain::exception( fc_keychain::move(msgs), code, name, what );
+       e = fc_light::exception( fc_light::move(msgs), code, name, what );
     }
 
     template<typename Stream>
-    inline void pack( Stream& s, const fc_keychain::log_message& msg )
+    inline void pack( Stream& s, const fc_light::log_message& msg )
     {
-       fc_keychain::raw::pack( s, variant(msg) );
+       fc_light::raw::pack( s, variant(msg) );
     }
     template<typename Stream>
-    inline void unpack( Stream& s, fc_keychain::log_message& msg )
+    inline void unpack( Stream& s, fc_light::log_message& msg )
     {
-       fc_keychain::variant vmsg;
-       fc_keychain::raw::unpack( s, vmsg );
+       fc_light::variant vmsg;
+       fc_light::raw::unpack( s, vmsg );
        msg = vmsg.as<log_message>();
     }
 
     template<typename Stream>
-    inline void pack( Stream& s, const fc_keychain::path& tp )
+    inline void pack( Stream& s, const fc_light::path& tp )
     {
-       fc_keychain::raw::pack( s, tp.generic_string() );
+       fc_light::raw::pack( s, tp.generic_string() );
     }
 
     template<typename Stream>
-    inline void unpack( Stream& s, fc_keychain::path& tp )
+    inline void unpack( Stream& s, fc_light::path& tp )
     {
        std::string p;
-       fc_keychain::raw::unpack( s, p );
+       fc_light::raw::unpack( s, p );
        tp = p;
     }
 
     template<typename Stream>
-    inline void pack( Stream& s, const fc_keychain::time_point_sec& tp )
+    inline void pack( Stream& s, const fc_light::time_point_sec& tp )
     {
        uint32_t usec = tp.sec_since_epoch();
        s.write( (const char*)&usec, sizeof(usec) );
     }
 
     template<typename Stream>
-    inline void unpack( Stream& s, fc_keychain::time_point_sec& tp )
+    inline void unpack( Stream& s, fc_light::time_point_sec& tp )
     { try {
        uint32_t sec;
        s.read( (char*)&sec, sizeof(sec) );
-       tp = fc_keychain::time_point() + fc_keychain::seconds(sec);
+       tp = fc_light::time_point() + fc_light::seconds(sec);
     } FC_RETHROW_EXCEPTIONS( warn, "" ) }
 
     template<typename Stream>
-    inline void pack( Stream& s, const fc_keychain::time_point& tp )
+    inline void pack( Stream& s, const fc_light::time_point& tp )
     {
        uint64_t usec = tp.time_since_epoch().count();
        s.write( (const char*)&usec, sizeof(usec) );
     }
 
     template<typename Stream>
-    inline void unpack( Stream& s, fc_keychain::time_point& tp )
+    inline void unpack( Stream& s, fc_light::time_point& tp )
     { try {
        uint64_t usec;
        s.read( (char*)&usec, sizeof(usec) );
-       tp = fc_keychain::time_point() + fc_keychain::microseconds(usec);
+       tp = fc_light::time_point() + fc_light::microseconds(usec);
     } FC_RETHROW_EXCEPTIONS( warn, "" ) }
 
     template<typename Stream>
-    inline void pack( Stream& s, const fc_keychain::microseconds& usec )
+    inline void pack( Stream& s, const fc_light::microseconds& usec )
     {
        uint64_t usec_as_int64 = usec.count();
        s.write( (const char*)&usec_as_int64, sizeof(usec_as_int64) );
     }
 
     template<typename Stream>
-    inline void unpack( Stream& s, fc_keychain::microseconds& usec )
+    inline void unpack( Stream& s, fc_light::microseconds& usec )
     { try {
        uint64_t usec_as_int64;
        s.read( (char*)&usec_as_int64, sizeof(usec_as_int64) );
-       usec = fc_keychain::microseconds(usec_as_int64);
+       usec = fc_light::microseconds(usec_as_int64);
     } FC_RETHROW_EXCEPTIONS( warn, "" ) }
 
     template<typename Stream, typename T, size_t N>
-    inline void pack( Stream& s, const fc_keychain::array<T,N>& v) {
+    inline void pack( Stream& s, const fc_light::array<T,N>& v) {
       s.write((const char*)&v.data[0],N*sizeof(T));
     }
 
     template<typename Stream, typename T>
     inline void pack( Stream& s, const std::shared_ptr<T>& v)
     {
-      fc_keychain::raw::pack( s, *v );
+      fc_light::raw::pack( s, *v );
     }
 
     template<typename Stream, typename T, size_t N>
-    inline void unpack( Stream& s, fc_keychain::array<T,N>& v)
+    inline void unpack( Stream& s, fc_light::array<T,N>& v)
     { try {
       s.read((char*)&v.data[0],N*sizeof(T));
-    } FC_RETHROW_EXCEPTIONS( warn, "fc_keychain::array<type,length>", ("type",fc_keychain::get_typename<T>::name())("length",N) ) }
+    } FC_RETHROW_EXCEPTIONS( warn, "fc_light::array<type,length>", ("type",fc_light::get_typename<T>::name())("length",N) ) }
 
     template<typename Stream, typename T>
     inline void unpack( Stream& s, std::shared_ptr<T>& v)
     { try {
       v = std::make_shared<T>();
-      fc_keychain::raw::unpack( s, *v );
-    } FC_RETHROW_EXCEPTIONS( warn, "std::shared_ptr<T>", ("type",fc_keychain::get_typename<T>::name()) ) }
+      fc_light::raw::unpack( s, *v );
+    } FC_RETHROW_EXCEPTIONS( warn, "std::shared_ptr<T>", ("type",fc_light::get_typename<T>::name()) ) }
 
     template<typename Stream> inline void pack( Stream& s, const signed_int& v ) {
       uint32_t val = (v.value<<1) ^ (v.value>>31);
@@ -187,80 +187,80 @@ namespace fc {
     template<typename Stream, typename T> inline void unpack( Stream& s, const T& vi )
     {
        T tmp;
-       fc_keychain::raw::unpack( s, tmp );
+       fc_light::raw::unpack( s, tmp );
        FC_ASSERT( vi == tmp );
     }
 
-    template<typename Stream> inline void pack( Stream& s, const char* v ) { fc_keychain::raw::pack( s, fc_keychain::string(v) ); }
+    template<typename Stream> inline void pack( Stream& s, const char* v ) { fc_light::raw::pack( s, fc_light::string(v) ); }
 
     template<typename Stream, typename T>
-    void pack( Stream& s, const safe<T>& v ) { fc_keychain::raw::pack( s, v.value ); }
+    void pack( Stream& s, const safe<T>& v ) { fc_light::raw::pack( s, v.value ); }
 
     template<typename Stream, typename T>
-    void unpack( Stream& s, fc_keychain::safe<T>& v ) { fc_keychain::raw::unpack( s, v.value ); }
+    void unpack( Stream& s, fc_light::safe<T>& v ) { fc_light::raw::unpack( s, v.value ); }
 
     template<typename Stream, typename T, unsigned int S, typename Align>
-    void pack( Stream& s, const fc_keychain::fwd<T,S,Align>& v ) {
-       fc_keychain::raw::pack( *v );
+    void pack( Stream& s, const fc_light::fwd<T,S,Align>& v ) {
+       fc_light::raw::pack( *v );
     }
 
     template<typename Stream, typename T, unsigned int S, typename Align>
-    void unpack( Stream& s, fc_keychain::fwd<T,S,Align>& v ) {
-       fc_keychain::raw::unpack( *v );
+    void unpack( Stream& s, fc_light::fwd<T,S,Align>& v ) {
+       fc_light::raw::unpack( *v );
     }
     template<typename Stream, typename T>
-    void pack( Stream& s, const fc_keychain::smart_ref<T>& v ) { fc_keychain::raw::pack( s, *v ); }
+    void pack( Stream& s, const fc_light::smart_ref<T>& v ) { fc_light::raw::pack( s, *v ); }
 
     template<typename Stream, typename T>
-    void unpack( Stream& s, fc_keychain::smart_ref<T>& v ) { fc_keychain::raw::unpack( s, *v ); }
+    void unpack( Stream& s, fc_light::smart_ref<T>& v ) { fc_light::raw::unpack( s, *v ); }
 
     // optional
     template<typename Stream, typename T>
-    void pack( Stream& s, const fc_keychain::optional<T>& v ) {
-      fc_keychain::raw::pack( s, bool(!!v) );
-      if( !!v ) fc_keychain::raw::pack( s, *v );
+    void pack( Stream& s, const fc_light::optional<T>& v ) {
+      fc_light::raw::pack( s, bool(!!v) );
+      if( !!v ) fc_light::raw::pack( s, *v );
     }
 
     template<typename Stream, typename T>
-    void unpack( Stream& s, fc_keychain::optional<T>& v )
+    void unpack( Stream& s, fc_light::optional<T>& v )
     { try {
-      bool b; fc_keychain::raw::unpack( s, b );
-      if( b ) { v = T(); fc_keychain::raw::unpack( s, *v ); }
-    } FC_RETHROW_EXCEPTIONS( warn, "optional<${type}>", ("type",fc_keychain::get_typename<T>::name() ) ) }
+      bool b; fc_light::raw::unpack( s, b );
+      if( b ) { v = T(); fc_light::raw::unpack( s, *v ); }
+    } FC_RETHROW_EXCEPTIONS( warn, "optional<${type}>", ("type",fc_light::get_typename<T>::name() ) ) }
 
     // std::vector<char>
     template<typename Stream> inline void pack( Stream& s, const std::vector<char>& value ) {
-      fc_keychain::raw::pack( s, unsigned_int((uint32_t)value.size()) );
+      fc_light::raw::pack( s, unsigned_int((uint32_t)value.size()) );
       if( value.size() )
         s.write( &value.front(), (uint32_t)value.size() );
     }
     template<typename Stream> inline void unpack( Stream& s, std::vector<char>& value ) {
-      unsigned_int size; fc_keychain::raw::unpack( s, size );
+      unsigned_int size; fc_light::raw::unpack( s, size );
       FC_ASSERT( size.value < MAX_ARRAY_ALLOC_SIZE );
       value.resize(size.value);
       if( value.size() )
         s.read( value.data(), value.size() );
     }
 
-    // fc_keychain::string
-    template<typename Stream> inline void pack( Stream& s, const fc_keychain::string& v )  {
-      fc_keychain::raw::pack( s, unsigned_int((uint32_t)v.size()));
+    // fc_light::string
+    template<typename Stream> inline void pack( Stream& s, const fc_light::string& v )  {
+      fc_light::raw::pack( s, unsigned_int((uint32_t)v.size()));
       if( v.size() ) s.write( v.c_str(), v.size() );
     }
 
-    template<typename Stream> inline void unpack( Stream& s, fc_keychain::string& v )  {
-      std::vector<char> tmp; fc_keychain::raw::unpack(s,tmp);
+    template<typename Stream> inline void unpack( Stream& s, fc_light::string& v )  {
+      std::vector<char> tmp; fc_light::raw::unpack(s,tmp);
       if( tmp.size() )
-         v = fc_keychain::string(tmp.data(),tmp.data()+tmp.size());
-      else v = fc_keychain::string();
+         v = fc_light::string(tmp.data(),tmp.data()+tmp.size());
+      else v = fc_light::string();
     }
 
     // bool
-    template<typename Stream> inline void pack( Stream& s, const bool& v ) { fc_keychain::raw::pack( s, uint8_t(v) );             }
+    template<typename Stream> inline void pack( Stream& s, const bool& v ) { fc_light::raw::pack( s, uint8_t(v) );             }
     template<typename Stream> inline void unpack( Stream& s, bool& v )
     {
        uint8_t b;
-       fc_keychain::raw::unpack( s, b );
+       fc_light::raw::unpack( s, b );
        FC_ASSERT( (b & ~1) == 0 );
        v=(b!=0);
     }
@@ -274,7 +274,7 @@ namespace fc {
 
         template<typename T, typename C, T(C::*p)>
         void operator()( const char* name )const {
-          fc_keychain::raw::pack( s, c.*p );
+          fc_light::raw::pack( s, c.*p );
         }
         private:
           const Class& c;
@@ -289,14 +289,14 @@ namespace fc {
         template<typename T, typename C, T(C::*p)>
         inline void operator()( const char* name )const
         { try {
-          fc_keychain::raw::unpack( s, c.*p );
+          fc_light::raw::unpack( s, c.*p );
         } FC_RETHROW_EXCEPTIONS( warn, "Error unpacking field ${field}", ("field",name) ) }
         private:
           Class&  c;
           Stream& s;
       };
 
-      template<typename IsClass=fc_keychain::true_type>
+      template<typename IsClass=fc_light::true_type>
       struct if_class{
         template<typename Stream, typename T>
         static inline void pack( Stream& s, const T& v ) { s << v; }
@@ -305,7 +305,7 @@ namespace fc {
       };
 
       template<>
-      struct if_class<fc_keychain::false_type> {
+      struct if_class<fc_light::false_type> {
         template<typename Stream, typename T>
         static inline void pack( Stream& s, const T& v ) {
           s.write( (char*)&v, sizeof(v) );
@@ -316,51 +316,51 @@ namespace fc {
         }
       };
 
-      template<typename IsEnum=fc_keychain::false_type>
+      template<typename IsEnum=fc_light::false_type>
       struct if_enum {
         template<typename Stream, typename T>
         static inline void pack( Stream& s, const T& v ) {
-          fc_keychain::reflector<T>::visit( pack_object_visitor<Stream,T>( v, s ) );
+          fc_light::reflector<T>::visit( pack_object_visitor<Stream,T>( v, s ) );
         }
         template<typename Stream, typename T>
         static inline void unpack( Stream& s, T& v ) {
-          fc_keychain::reflector<T>::visit( unpack_object_visitor<Stream,T>( v, s ) );
+          fc_light::reflector<T>::visit( unpack_object_visitor<Stream,T>( v, s ) );
         }
       };
       template<>
-      struct if_enum<fc_keychain::true_type> {
+      struct if_enum<fc_light::true_type> {
         template<typename Stream, typename T>
         static inline void pack( Stream& s, const T& v ) {
-          fc_keychain::raw::pack(s, (int64_t)v);
+          fc_light::raw::pack(s, (int64_t)v);
         }
         template<typename Stream, typename T>
         static inline void unpack( Stream& s, T& v ) {
           int64_t temp;
-          fc_keychain::raw::unpack(s, temp);
+          fc_light::raw::unpack(s, temp);
           v = (T)temp;
         }
       };
 
-      template<typename IsReflected=fc_keychain::false_type>
+      template<typename IsReflected=fc_light::false_type>
       struct if_reflected {
         template<typename Stream, typename T>
         static inline void pack( Stream& s, const T& v ) {
-          if_class<typename fc_keychain::is_class<T>::type>::pack(s,v);
+          if_class<typename fc_light::is_class<T>::type>::pack(s,v);
         }
         template<typename Stream, typename T>
         static inline void unpack( Stream& s, T& v ) {
-          if_class<typename fc_keychain::is_class<T>::type>::unpack(s,v);
+          if_class<typename fc_light::is_class<T>::type>::unpack(s,v);
         }
       };
       template<>
-      struct if_reflected<fc_keychain::true_type> {
+      struct if_reflected<fc_light::true_type> {
         template<typename Stream, typename T>
         static inline void pack( Stream& s, const T& v ) {
-          if_enum< typename fc_keychain::reflector<T>::is_enum >::pack(s,v);
+          if_enum< typename fc_light::reflector<T>::is_enum >::pack(s,v);
         }
         template<typename Stream, typename T>
         static inline void unpack( Stream& s, T& v ) {
-          if_enum< typename fc_keychain::reflector<T>::is_enum >::unpack(s,v);
+          if_enum< typename fc_light::reflector<T>::is_enum >::unpack(s,v);
         }
       };
 
@@ -368,24 +368,24 @@ namespace fc {
 
     template<typename Stream, typename T>
     inline void pack( Stream& s, const std::unordered_set<T>& value ) {
-      fc_keychain::raw::pack( s, unsigned_int((uint32_t)value.size()) );
+      fc_light::raw::pack( s, unsigned_int((uint32_t)value.size()) );
       auto itr = value.begin();
       auto end = value.end();
       while( itr != end ) {
-        fc_keychain::raw::pack( s, *itr );
+        fc_light::raw::pack( s, *itr );
         ++itr;
       }
     }
     template<typename Stream, typename T>
     inline void unpack( Stream& s, std::unordered_set<T>& value ) {
-      unsigned_int size; fc_keychain::raw::unpack( s, size );
+      unsigned_int size; fc_light::raw::unpack( s, size );
       value.clear();
       FC_ASSERT( size.value*sizeof(T) < MAX_ARRAY_ALLOC_SIZE );
       value.reserve(size.value);
       for( uint32_t i = 0; i < size.value; ++i )
       {
           T tmp;
-          fc_keychain::raw::unpack( s, tmp );
+          fc_light::raw::unpack( s, tmp );
           value.insert( std::move(tmp) );
       }
     }
@@ -393,130 +393,130 @@ namespace fc {
 
     template<typename Stream, typename K, typename V>
     inline void pack( Stream& s, const std::pair<K,V>& value ) {
-       fc_keychain::raw::pack( s, value.first );
-       fc_keychain::raw::pack( s, value.second );
+       fc_light::raw::pack( s, value.first );
+       fc_light::raw::pack( s, value.second );
     }
     template<typename Stream, typename K, typename V>
     inline void unpack( Stream& s, std::pair<K,V>& value )
     {
-       fc_keychain::raw::unpack( s, value.first );
-       fc_keychain::raw::unpack( s, value.second );
+       fc_light::raw::unpack( s, value.first );
+       fc_light::raw::unpack( s, value.second );
     }
 
    template<typename Stream, typename K, typename V>
     inline void pack( Stream& s, const std::unordered_map<K,V>& value ) {
-      fc_keychain::raw::pack( s, unsigned_int((uint32_t)value.size()) );
+      fc_light::raw::pack( s, unsigned_int((uint32_t)value.size()) );
       auto itr = value.begin();
       auto end = value.end();
       while( itr != end ) {
-        fc_keychain::raw::pack( s, *itr );
+        fc_light::raw::pack( s, *itr );
         ++itr;
       }
     }
     template<typename Stream, typename K, typename V>
     inline void unpack( Stream& s, std::unordered_map<K,V>& value )
     {
-      unsigned_int size; fc_keychain::raw::unpack( s, size );
+      unsigned_int size; fc_light::raw::unpack( s, size );
       value.clear();
       FC_ASSERT( size.value*(sizeof(K)+sizeof(V)) < MAX_ARRAY_ALLOC_SIZE );
       value.reserve(size.value);
       for( uint32_t i = 0; i < size.value; ++i )
       {
           std::pair<K,V> tmp;
-          fc_keychain::raw::unpack( s, tmp );
+          fc_light::raw::unpack( s, tmp );
           value.insert( std::move(tmp) );
       }
     }
     template<typename Stream, typename K, typename V>
     inline void pack( Stream& s, const std::map<K,V>& value ) {
-      fc_keychain::raw::pack( s, unsigned_int((uint32_t)value.size()) );
+      fc_light::raw::pack( s, unsigned_int((uint32_t)value.size()) );
       auto itr = value.begin();
       auto end = value.end();
       while( itr != end ) {
-        fc_keychain::raw::pack( s, *itr );
+        fc_light::raw::pack( s, *itr );
         ++itr;
       }
     }
     template<typename Stream, typename K, typename V>
     inline void unpack( Stream& s, std::map<K,V>& value )
     {
-      unsigned_int size; fc_keychain::raw::unpack( s, size );
+      unsigned_int size; fc_light::raw::unpack( s, size );
       value.clear();
       FC_ASSERT( size.value*(sizeof(K)+sizeof(V)) < MAX_ARRAY_ALLOC_SIZE );
       for( uint32_t i = 0; i < size.value; ++i )
       {
           std::pair<K,V> tmp;
-          fc_keychain::raw::unpack( s, tmp );
+          fc_light::raw::unpack( s, tmp );
           value.insert( std::move(tmp) );
       }
     }
 
     template<typename Stream, typename T>
     inline void pack( Stream& s, const std::deque<T>& value ) {
-      fc_keychain::raw::pack( s, unsigned_int((uint32_t)value.size()) );
+      fc_light::raw::pack( s, unsigned_int((uint32_t)value.size()) );
       auto itr = value.begin();
       auto end = value.end();
       while( itr != end ) {
-        fc_keychain::raw::pack( s, *itr );
+        fc_light::raw::pack( s, *itr );
         ++itr;
       }
     }
 
     template<typename Stream, typename T>
     inline void unpack( Stream& s, std::deque<T>& value ) {
-      unsigned_int size; fc_keychain::raw::unpack( s, size );
+      unsigned_int size; fc_light::raw::unpack( s, size );
       FC_ASSERT( size.value*sizeof(T) < MAX_ARRAY_ALLOC_SIZE );
       value.resize(size.value);
       auto itr = value.begin();
       auto end = value.end();
       while( itr != end ) {
-        fc_keychain::raw::unpack( s, *itr );
+        fc_light::raw::unpack( s, *itr );
         ++itr;
       }
     }
 
     template<typename Stream, typename T>
     inline void pack( Stream& s, const std::vector<T>& value ) {
-      fc_keychain::raw::pack( s, unsigned_int((uint32_t)value.size()) );
+      fc_light::raw::pack( s, unsigned_int((uint32_t)value.size()) );
       auto itr = value.begin();
       auto end = value.end();
       while( itr != end ) {
-        fc_keychain::raw::pack( s, *itr );
+        fc_light::raw::pack( s, *itr );
         ++itr;
       }
     }
 
     template<typename Stream, typename T>
     inline void unpack( Stream& s, std::vector<T>& value ) {
-      unsigned_int size; fc_keychain::raw::unpack( s, size );
+      unsigned_int size; fc_light::raw::unpack( s, size );
       FC_ASSERT( size.value*sizeof(T) < MAX_ARRAY_ALLOC_SIZE );
       value.resize(size.value);
       auto itr = value.begin();
       auto end = value.end();
       while( itr != end ) {
-        fc_keychain::raw::unpack( s, *itr );
+        fc_light::raw::unpack( s, *itr );
         ++itr;
       }
     }
 
     template<typename Stream, typename T>
     inline void pack( Stream& s, const std::set<T>& value ) {
-      fc_keychain::raw::pack( s, unsigned_int((uint32_t)value.size()) );
+      fc_light::raw::pack( s, unsigned_int((uint32_t)value.size()) );
       auto itr = value.begin();
       auto end = value.end();
       while( itr != end ) {
-        fc_keychain::raw::pack( s, *itr );
+        fc_light::raw::pack( s, *itr );
         ++itr;
       }
     }
 
     template<typename Stream, typename T>
     inline void unpack( Stream& s, std::set<T>& value ) {
-      unsigned_int size; fc_keychain::raw::unpack( s, size );
+      unsigned_int size; fc_light::raw::unpack( s, size );
       for( uint64_t i = 0; i < size.value; ++i )
       {
         T tmp;
-        fc_keychain::raw::unpack( s, tmp );
+        fc_light::raw::unpack( s, tmp );
         value.insert( std::move(tmp) );
       }
     }
@@ -525,31 +525,31 @@ namespace fc {
 
     template<typename Stream, typename T>
     inline void pack( Stream& s, const T& v ) {
-      fc_keychain::raw::detail::if_reflected< typename fc_keychain::reflector<T>::is_defined >::pack(s,v);
+      fc_light::raw::detail::if_reflected< typename fc_light::reflector<T>::is_defined >::pack(s,v);
     }
     template<typename Stream, typename T>
     inline void unpack( Stream& s, T& v )
     { try {
-      fc_keychain::raw::detail::if_reflected< typename fc_keychain::reflector<T>::is_defined >::unpack(s,v);
-    } FC_RETHROW_EXCEPTIONS( warn, "error unpacking ${type}", ("type",fc_keychain::get_typename<T>::name() ) ) }
+      fc_light::raw::detail::if_reflected< typename fc_light::reflector<T>::is_defined >::unpack(s,v);
+    } FC_RETHROW_EXCEPTIONS( warn, "error unpacking ${type}", ("type",fc_light::get_typename<T>::name() ) ) }
 
     template<typename T>
     inline size_t pack_size(  const T& v )
     {
       datastream<size_t> ps;
-      fc_keychain::raw::pack(ps,v );
+      fc_light::raw::pack(ps,v );
       return ps.tellp();
     }
 
     template<typename T>
     inline std::vector<char> pack(  const T& v ) {
       datastream<size_t> ps;
-      fc_keychain::raw::pack(ps,v );
+      fc_light::raw::pack(ps,v );
       std::vector<char> vec(ps.tellp());
 
       if( vec.size() ) {
         datastream<char*>  ds( vec.data(), size_t(vec.size()) );
-        fc_keychain::raw::pack(ds,v);
+        fc_light::raw::pack(ds,v);
       }
       return vec;
     }
@@ -557,12 +557,12 @@ namespace fc {
     template<typename T, typename... Next>
     inline std::vector<char> pack(  const T& v, Next... next ) {
       datastream<size_t> ps;
-      fc_keychain::raw::pack(ps,v,next...);
+      fc_light::raw::pack(ps,v,next...);
       std::vector<char> vec(ps.tellp());
 
       if( vec.size() ) {
         datastream<char*>  ds( vec.data(), size_t(vec.size()) );
-        fc_keychain::raw::pack(ds,v,next...);
+        fc_light::raw::pack(ds,v,next...);
       }
       return vec;
     }
@@ -574,24 +574,24 @@ namespace fc {
       T tmp;
       if( s.size() ) {
         datastream<const char*>  ds( s.data(), size_t(s.size()) );
-        fc_keychain::raw::unpack(ds,tmp);
+        fc_light::raw::unpack(ds,tmp);
       }
       return tmp;
-    } FC_RETHROW_EXCEPTIONS( warn, "error unpacking ${type}", ("type",fc_keychain::get_typename<T>::name() ) ) }
+    } FC_RETHROW_EXCEPTIONS( warn, "error unpacking ${type}", ("type",fc_light::get_typename<T>::name() ) ) }
 
     template<typename T>
     inline void unpack( const std::vector<char>& s, T& tmp )
     { try  {
       if( s.size() ) {
         datastream<const char*>  ds( s.data(), size_t(s.size()) );
-        fc_keychain::raw::unpack(ds,tmp);
+        fc_light::raw::unpack(ds,tmp);
       }
-    } FC_RETHROW_EXCEPTIONS( warn, "error unpacking ${type}", ("type",fc_keychain::get_typename<T>::name() ) ) }
+    } FC_RETHROW_EXCEPTIONS( warn, "error unpacking ${type}", ("type",fc_light::get_typename<T>::name() ) ) }
 
     template<typename T>
     inline void pack( char* d, uint32_t s, const T& v ) {
       datastream<char*> ds(d,s);
-      fc_keychain::raw::pack(ds,v );
+      fc_light::raw::pack(ds,v );
     }
 
     template<typename T>
@@ -599,17 +599,17 @@ namespace fc {
     { try {
       T v;
       datastream<const char*>  ds( d, s );
-      fc_keychain::raw::unpack(ds,v);
+      fc_light::raw::unpack(ds,v);
       return v;
-    } FC_RETHROW_EXCEPTIONS( warn, "error unpacking ${type}", ("type",fc_keychain::get_typename<T>::name() ) ) }
+    } FC_RETHROW_EXCEPTIONS( warn, "error unpacking ${type}", ("type",fc_light::get_typename<T>::name() ) ) }
 
     template<typename T>
     inline void unpack( const char* d, uint32_t s, T& v )
     { try {
       datastream<const char*>  ds( d, s );
-      fc_keychain::raw::unpack(ds,v);
+      fc_light::raw::unpack(ds,v);
       return v;
-    } FC_RETHROW_EXCEPTIONS( warn, "error unpacking ${type}", ("type",fc_keychain::get_typename<T>::name() ) ) }
+    } FC_RETHROW_EXCEPTIONS( warn, "error unpacking ${type}", ("type",fc_light::get_typename<T>::name() ) ) }
 
    template<typename Stream>
    struct pack_static_variant
@@ -620,7 +620,7 @@ namespace fc {
       typedef void result_type;
       template<typename T> void operator()( const T& v )const
       {
-         fc_keychain::raw::pack( stream, v );
+         fc_light::raw::pack( stream, v );
       }
    };
 
@@ -633,7 +633,7 @@ namespace fc {
       typedef void result_type;
       template<typename T> void operator()( T& v )const
       {
-         fc_keychain::raw::unpack( stream, v );
+         fc_light::raw::unpack( stream, v );
       }
    };
 
@@ -641,17 +641,17 @@ namespace fc {
     template<typename Stream, typename... T>
     void pack( Stream& s, const static_variant<T...>& sv )
     {
-       fc_keychain::raw::pack( s, unsigned_int(sv.which()) );
+       fc_light::raw::pack( s, unsigned_int(sv.which()) );
        sv.visit( pack_static_variant<Stream>(s) );
     }
 
     template<typename Stream, typename... T> void unpack( Stream& s, static_variant<T...>& sv )
     {
        unsigned_int w;
-       fc_keychain::raw::unpack( s, w );
+       fc_light::raw::unpack( s, w );
        sv.set_which(w.value);
        sv.visit( unpack_static_variant<Stream>(s) );
     }
 
-} } // namespace fc_keychain::raw
+} } // namespace fc_light::raw
 

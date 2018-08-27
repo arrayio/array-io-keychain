@@ -84,7 +84,7 @@ namespace fc_keychain { namespace json_relaxed
    template<typename T, bool strict, bool allow_escape>
    fc_keychain::string quoteStringFromStream( T& in )
    {
-       fc_keychain::stringstream token;
+       std::stringstream token;
        try
        {
            char q = in.get();

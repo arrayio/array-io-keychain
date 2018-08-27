@@ -66,9 +66,11 @@ fc_keychain::variant open_keyfile(const char_t* filename)
   auto pbuf = read_buf.data();
   auto it = read_buf.begin();
   size_t read_count = 0;
-  while(!fin.eof()&&fin.good())
+  while(true)
   {
     fin.getline(pbuf, std::distance(it, read_buf.end()));
+    if (fin.eof() || !fin.good())
+        break;
     pbuf += fin.gcount() - 1;
     it += fin.gcount() - 1;
     read_count += fin.gcount() - 1;

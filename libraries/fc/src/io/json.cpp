@@ -694,7 +694,7 @@ namespace fc_keychain
 
     fc_keychain::string pretty_print( const fc_keychain::string& v, uint8_t indent ) {
       int level = 0;
-      fc_keychain::stringstream ss;
+      std::stringstream ss;
       bool first = false;
       bool quote = false;
       bool escape = false;

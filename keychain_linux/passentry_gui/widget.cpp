@@ -4,12 +4,12 @@
 #include <QPushButton>
 #include <QMessageBox>
 #include <QCloseEvent>
-#include <fc/io/json.hpp>
+#include <fc_light/io/json.hpp>
 #include "cmd.hpp"
 #include "widget.hpp"
 
-#include <fc/reflect/reflect.hpp>
-#include <fc/variant.hpp>
+#include <fc_light/reflect/reflect.hpp>
+#include <fc_light/variant.hpp>
 
 Q_DECLARE_METATYPE(std::string)
 

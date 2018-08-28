@@ -5,7 +5,6 @@
 #include <boost/filesystem.hpp>
 #include <sys/types.h>
 #include <unistd.h>
-#include <iostream>
 #include <stdio.h>
 #include <sys/socket.h>
 #include <sys/types.h>

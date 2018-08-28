@@ -51,10 +51,10 @@ if( NOT MSVC )
   find_library(LIB_PTHREAD NAME pthread HINTS "/usr/lib/x86_64-linux-gnu")
 endif( NOT MSVC )
 
-file(GLOB KEYCHAIN_SOURCES "./*.cpp" "../keychain_linux/passentry_cmd/*.cpp" "../libraries/fc_light/src/*.cpp" "../libraries/fc_light/src/*/*.cpp")
-file(GLOB KEYCHAIN_INCLUDE "./*.hpp" "../keychain_linux/passentry_cmd/*.hpp" "../libraries/fc_light/include/*.hpp" )
+file(GLOB KEYCHAIN_SOURCES "./*.cpp" "../keychain_linux/passentry_cmd/*.cpp" )
+file(GLOB KEYCHAIN_INCLUDE "./*.hpp" "../keychain_linux/passentry_cmd/*.hpp" )
 
-add_executable(keychain ${KEYCHAIN_SOURCES} ${KEYCHAIN_INCLUDE} ../keychain_linux/passentry_cmd/polling.cpp)
+add_executable(keychain ${KEYCHAIN_SOURCES} ${KEYCHAIN_INCLUDE} )
 
 find_package(X11 REQUIRED)
 if(NOT X11_FOUND)
@@ -65,21 +65,11 @@ else()
 endif()
 
 find_library(LIB_XI NAME Xi HINTS "/usr/lib/x86_64-linux-gnu/")
+#find_library(LIB_FC_LIGTH NAME FC_LIGHT )
 
 if( MSVC )
-  target_link_libraries(keychain keychain_common fc secp256k1 graphene_utilities ${LIB_OPENSSL} ${Boost_LIBRARIES})
+  target_link_libraries(keychain keychain_common fc_light secp256k1 graphene_utilities ${LIB_OPENSSL} ${Boost_LIBRARIES})
 else ( MSVC )
-  target_link_libraries(keychain keychain_common ${LIB_PTHREAD} fc secp256k1 graphene_utilities graphene_chain ${LIB_OPENSSL} ${Boost_LIBRARIES} ${X11_LIBRARIES} ${LIB_XI})
+  target_link_libraries(keychain keychain_common ${LIB_PTHREAD}  fc_light  secp256k1 graphene_utilities graphene_chain ${LIB_OPENSSL} ${Boost_LIBRARIES} ${X11_LIBRARIES} ${LIB_XI})
 endif ( MSVC )
-
-#if( MSVC )
-#  target_link_libraries(keychain keychain_common secp256k1  ${LIB_OPENSSL} ${Boost_LIBRARIES})
-#else ( MSVC )
-#  target_link_libraries(keychain keychain_common ${LIB_PTHREAD} secp256k1 ${LIB_OPENSSL} ${Boost_LIBRARIES} ${X11_LIBRARIES} ${LIB_XI})
-#endif ( MSVC )
-
-
-
-
-
 

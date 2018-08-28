@@ -20,9 +20,6 @@
 #include <fc_light/exception/exception.hpp>
 #include <fc/crypto/hex.hpp>
 
-//TODO: it is unclear
-//      why if we do not include this file we cannot compile reflect parser for keychain_app::keyfile_format::key_file
-//#include <graphene/chain/protocol/transaction.hpp>
 #include <fc_light/reflect/variant.hpp>
 
 #include <graphene/utilities/key_conversion.hpp>

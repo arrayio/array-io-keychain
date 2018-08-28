@@ -1,6 +1,6 @@
 #pragma once
 /**
- * @file fc/reflect.hpp
+ * @file fc_light/reflect.hpp
  *
  * @brief Defines types and macros used to provide reflection.
  *

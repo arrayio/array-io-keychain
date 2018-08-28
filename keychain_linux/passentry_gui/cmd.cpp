@@ -106,9 +106,9 @@ namespace slave
     }
 }
 
-FC_REFLECT(slave::cmd<slave::cmds::rawtrx>::params_t, (rawtrx))
-FC_REFLECT(slave::cmd<slave::cmds::modify>::params_t, (caps)(num)(shift))
-FC_REFLECT(slave::cmd<slave::cmds::length>::params_t, (len))
+FC_LIGHT_REFLECT(slave::cmd<slave::cmds::rawtrx>::params_t, (rawtrx))
+FC_LIGHT_REFLECT(slave::cmd<slave::cmds::modify>::params_t, (caps)(num)(shift))
+FC_LIGHT_REFLECT(slave::cmd<slave::cmds::length>::params_t, (len))
 
 
 

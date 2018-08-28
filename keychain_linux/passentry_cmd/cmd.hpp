@@ -4,12 +4,10 @@
 #ifndef KEYCHAINAPP_CMD_H
 #define KEYCHAINAPP_CMD_H
 #include <fc_light/reflect/reflect.hpp>
-//#include <graphene/chain/protocol/protocol.hpp>
 #include <fc_light/reflect/variant.hpp>
 #include <fc_light/variant.hpp>
 #include <fc_light/io/json.hpp>
 #include <iostream>
-#include <vector>
 
 #undef Bool //NOTE: Xlib contains #define Bool, that causes error compilation hana
 #undef None //NOTE: Xlib contains #define None, that causes error compilation hana

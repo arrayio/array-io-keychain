@@ -3,10 +3,10 @@
 //
 #ifndef KEYCHAINAPP_CMD_H
 #define KEYCHAINAPP_CMD_H
-#include <fc/reflect/reflect.hpp>
-#include <fc/exception/exception.hpp>
-//#include <graphene/chain/protocol/protocol.hpp>
-#include <fc/io/json.hpp>
+#include <fc_light/reflect/reflect.hpp>
+#include <fc_light/reflect/variant.hpp>
+#include <fc_light/exception/exception.hpp>
+#include <fc_light/io/json.hpp>
 #include <iostream>
 #include <vector>
 #include <boost/hana.hpp>
@@ -58,10 +58,10 @@ namespace master
     };
 }
 
-FC_REFLECT_ENUM(slave::cmds, (unknown)(rawtrx)(close)(modify)(length)(last))
-FC_REFLECT(slave::cmd_common, (cmd)(params))
+FC_LIGHT_REFLECT_ENUM(slave::cmds, (unknown)(rawtrx)(close)(modify)(length)(last))
+FC_LIGHT_REFLECT(slave::cmd_common, (cmd)(params))
 
-FC_REFLECT_ENUM(master::cmds, (unknown)(ok)(cancel)(last))
-FC_REFLECT(master::cmd<master::cmds::ok>::base_t, (cmd))
-FC_REFLECT(master::cmd<master::cmds::cancel>::base_t, (cmd))
+FC_LIGHT_REFLECT_ENUM(master::cmds, (unknown)(ok)(cancel)(last))
+FC_LIGHT_REFLECT(master::cmd<master::cmds::ok>::base_t, (cmd))
+FC_LIGHT_REFLECT(master::cmd<master::cmds::cancel>::base_t, (cmd))
 #endif //KEYCHAINAPP_CMD_H

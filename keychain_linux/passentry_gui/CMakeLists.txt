@@ -1,8 +1,7 @@
 cmake_minimum_required(VERSION 3.1.0)
 set(CMAKE_CXX_STANDARD 14)
 #set(CMAKE_CXX_FLAGS "-std=c++14 --verbose -fno-limit-debug-info")
-set(CMAKE_CXX_FLAGS "-std=c++14 --verbose ")
-set(CMAKE_EXE_LINKER_FLAGS "-ldl -v")
+set(CMAKE_CXX_FLAGS "-std=c++14 ")
 
 set (CMAKE_PREFIX_PATH "${QT_ROOT}/5.11.1/gcc_64/lib/cmake/Qt5Widgets/")
 

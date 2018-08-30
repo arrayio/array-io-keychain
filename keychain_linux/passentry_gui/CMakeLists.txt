@@ -4,8 +4,7 @@ set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_FLAGS "-std=c++14 --verbose ")
 set(CMAKE_EXE_LINKER_FLAGS "-ldl -v")
 
-#set (CMAKE_PREFIX_PATH "/home/user/Qt5.11.1/")
-set (CMAKE_PREFIX_PATH "/home/user/Qt5.11.1/5.11.1/gcc_64/lib/cmake/Qt5Widgets/")
+set (CMAKE_PREFIX_PATH ${QT_ROOT}"/5.11.1/gcc_64/lib/cmake/Qt5Widgets/")
 
 project(passentrygui)
 # Find includes in corresponding build directories

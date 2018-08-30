@@ -1,0 +1,11 @@
+#include <fc_light/git_revision.hpp>
+
+#define FC_LIGHT_GIT_REVISION_SHA "@FC_LIGHT_GIT_REVISION_SHA@"
+#define FC_LIGHT_GIT_REVISION_UNIX_TIMESTAMP @FC_LIGHT_GIT_REVISION_UNIX_TIMESTAMP@
+
+namespace fc_light {
+
+const char* const git_revision_sha = FC_LIGHT_GIT_REVISION_SHA;
+const uint32_t git_revision_unix_timestamp = FC_LIGHT_GIT_REVISION_UNIX_TIMESTAMP;
+
+} // end namespace fc_light

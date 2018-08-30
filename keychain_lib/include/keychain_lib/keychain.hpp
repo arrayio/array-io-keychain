@@ -12,7 +12,7 @@
 
 #include <fc/crypto/elliptic.hpp>
 #include <fc/crypto/hex.hpp>
-#include <fc/variant.hpp>
+#include <fc_light/variant.hpp>
 #include <graphene/utilities/key_conversion.hpp>
 
 #include <boost/filesystem.hpp>
@@ -30,7 +30,7 @@ class keychain : public keychain_base
 public:
   keychain(std::string&& uid_hash, const char* default_key_dir = KEY_DEFAULT_PATH);
   virtual ~keychain();
-  virtual std::string operator()(const fc::variant& command) override;
+  virtual std::string operator()(const fc_light::variant& command) override;
 private:
   bfs::path m_init_path;
 };

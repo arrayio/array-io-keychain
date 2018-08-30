@@ -4,7 +4,8 @@ set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_FLAGS "-std=c++14 --verbose ")
 set(CMAKE_EXE_LINKER_FLAGS "-ldl -v")
 
-set (CMAKE_PREFIX_PATH "/home/user/Qt5.11.1/")
+#set (CMAKE_PREFIX_PATH "/home/user/Qt5.11.1/")
+set (CMAKE_PREFIX_PATH "/home/user/Qt5.11.1/5.11.1/gcc_64/lib/cmake/Qt5Widgets/")
 
 project(passentrygui)
 # Find includes in corresponding build directories
@@ -32,28 +33,21 @@ LIST(APPEND BOOST_COMPONENTS coroutine)
 SET(Boost_LIBRARIES ${BOOST_LIBRARIES_TEMP} ${Boost_LIBRARIES})
 
 include_directories(
-        "../../array-io-core/libraries/utilities/include"
-        "../../array-io-core/libraries/db/include"
-        "../../array-io-core/libraries/chain/include"
-        "../../array-io-core/libraries/fc/include"
+        "../../libraries/fc_light/include"
         "/usr/include/libcxxabi"
+        "${OPENSSL_ROOT_DIR}/include"
         ${Boost_INCLUDE_DIR})
 
 # Find the QtWidgets library
 find_package(Qt5Widgets CONFIG REQUIRED)
+find_library(LIB_OPENSSL NAME crypto  HINTS "${OPENSSL_ROOT_DIR}/lib")
 
-# Populate a CMake variable with the sources
-set(SRCS
-    polling.cpp
-    widget.cpp
-    main.cpp
-    polling.hpp
-    widget.hpp
-        cmd.cpp cmd.hpp)
+file(GLOB GUI_SOURCES "./*.cpp")
+file(GLOB GUI_INCLUDE "./*.hpp")
 
-# Tell CMake to create the helloworld executable
-add_executable(passentry_gui ${SRCS})
+add_executable(passentry_gui ${GUI_SOURCES} ${GUI_INCLUDE})
+
 
 # Use the Widgets module from Qt 5
-target_link_libraries(passentry_gui Qt5::Widgets ${LIB_PTHREAD} fc secp256k1 graphene_utilities graphene_chain ${Boost_LIBRARIES} )
+target_link_libraries(passentry_gui Qt5::Widgets fc_light ${LIB_PTHREAD} ${LIB_OPENSSL} ${Boost_LIBRARIES} )
 

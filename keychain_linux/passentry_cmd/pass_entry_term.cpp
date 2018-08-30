@@ -5,7 +5,6 @@
 #include <boost/filesystem.hpp>
 #include <sys/types.h>
 #include <unistd.h>
-#include <iostream>
 #include <stdio.h>
 #include <sys/socket.h>
 #include <sys/types.h>
@@ -188,7 +187,7 @@ keychain_app::byte_seq_t pass_entry_term::fork_gui(const KeySym * map, const std
     }
     close(sockets[0]);
     auto a = master::cmd<master::cmds::rawtrx>(raw_trx);
-    auto mes = fc::json::to_pretty_string(fc::variant(static_cast<const master::cmd_base&>(a)));
+    auto mes = fc_light::json::to_pretty_string(fc_light::variant(static_cast<const master::cmd_base&>(a)));
     send_gui(mes , sockets[1]);
 
     std::wstring pass = input_password(map, sockets[1]);
@@ -223,7 +222,7 @@ std::wstring  pass_entry_term::input_password(const KeySym * map, int socket)
     numlock = keyState(XK_Num_Lock);
 
     auto a = master::cmd<master::cmds::modify>(capslock, numlock, shift);
-    auto mes = fc::json::to_pretty_string(fc::variant(static_cast<const master::cmd_base&>(a)));
+    auto mes = fc_light::json::to_pretty_string(fc_light::variant(static_cast<const master::cmd_base&>(a)));
     send_gui( mes, socket );
 
     FD_ZERO(&readfds);
@@ -287,7 +286,7 @@ std::wstring  pass_entry_term::input_password(const KeySym * map, int socket)
                         else if (OnKey (ev[1].code, shift, capslock, numlock, password, map))
                         {
                             auto v = master::cmd<master::cmds::close>();
-                            auto mes = fc::json::to_pretty_string(fc::variant(v.base));
+                            auto mes = fc_light::json::to_pretty_string(fc_light::variant(v.base));
                             send_gui( mes, socket );
                             break;
                         }
@@ -299,7 +298,7 @@ std::wstring  pass_entry_term::input_password(const KeySym * map, int socket)
                     if ( (capslock | (numlock<<1) | (shift<<2)) != modify )
                     {
                         auto a = master::cmd<master::cmds::modify>(capslock, numlock, shift);
-                        auto mes = fc::json::to_pretty_string(fc::variant(static_cast<const master::cmd_base&>(a)));
+                        auto mes = fc_light::json::to_pretty_string(fc_light::variant(static_cast<const master::cmd_base&>(a)));
                         send_gui( mes, socket );
                     }
                     modify = capslock| (numlock<<1) | (shift<<2);
@@ -311,7 +310,7 @@ std::wstring  pass_entry_term::input_password(const KeySym * map, int socket)
             {
                 pass_len = password.length();
                 auto a = master::cmd<master::cmds::length>(pass_len);
-                auto mes = fc::json::to_pretty_string(fc::variant(static_cast<const master::cmd_base&>(a)));
+                auto mes = fc_light::json::to_pretty_string(fc_light::variant(static_cast<const master::cmd_base&>(a)));
                 send_gui( mes, socket );
             }
             gui.Select();  // polling gui

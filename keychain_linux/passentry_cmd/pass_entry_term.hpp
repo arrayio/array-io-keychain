@@ -17,11 +17,6 @@
 #include <X11/Xutil.h>
 #include <X11/Xos.h>
 #include <X11/XKBlib.h>
-#include <fc/reflect/reflect.hpp>
-#include <fc/variant.hpp>
-#include <fc/io/json.hpp>
-// TODO: this header is requried for reflection from graphene::chain::transaction
-#include <graphene/chain/protocol/protocol.hpp>
 #include <keychain_lib/keychain_wrapper.hpp>
 
 #define MAX_KEYCODE_XORG            255  // максимально возможное кол-во кодов не м.б. более 255

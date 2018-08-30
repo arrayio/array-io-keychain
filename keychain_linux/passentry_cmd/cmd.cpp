@@ -3,6 +3,7 @@
 //
 #include "cmd.hpp"
 #include <fc_light/exception/exception.hpp>
+#include <fc_light/exception/exception.hpp>
 namespace hana = boost::hana;
 namespace slave
 {

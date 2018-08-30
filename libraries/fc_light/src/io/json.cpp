@@ -123,7 +123,7 @@ namespace fc_light
    template<typename T>
    fc_light::string stringFromToken( T& in )
    {
-      fc_light::stringstream token;
+      std::stringstream token;
       try
       {
          char c = in.peek();
@@ -251,7 +251,7 @@ namespace fc_light
    template<typename T, json::parse_type parser_type>
    variant number_from_stream( T& in )
    {
-      fc_light::stringstream ss;
+      std::stringstream ss;
 
       bool  dot = false;
       bool  neg = false;
@@ -481,7 +481,7 @@ namespace fc_light
    { try {
       check_string_depth( utf8_str );
       variants result;
-      fc_light::stringstream in( utf8_str );
+      std::stringstream in( utf8_str );
       //in.exceptions( std::ifstream::eofbit );
       try {
          while( true )
@@ -489,8 +489,8 @@ namespace fc_light
            // result.push_back( variant_from_stream( in ));
            result.push_back(
               (ptype == cmdline_parser) ?
-              json_relaxed::variant_from_stream<fc_light::stringstream, false, true> ( in ) :
-              json_relaxed::variant_from_stream<fc_light::stringstream, false, false>( in )   );
+              json_relaxed::variant_from_stream<std::stringstream, false, true> ( in ) :
+              json_relaxed::variant_from_stream<std::stringstream, false, false>( in )   );
          }
       } catch ( const fc_light::eof_exception& ){}
       return result;
@@ -854,20 +854,20 @@ namespace fc_light
    bool json::is_valid( const std::string& utf8_str, parse_type ptype )
    {
       if( utf8_str.size() == 0 ) return false;
-      fc_light::stringstream in( utf8_str );
+      std::stringstream in( utf8_str );
       switch( ptype )
       {
           case legacy_parser:
-              variant_from_stream<fc_light::stringstream, legacy_parser>( in );
+              variant_from_stream<std::stringstream, legacy_parser>( in );
               break;
           case legacy_parser_with_string_doubles:
-              variant_from_stream<fc_light::stringstream, legacy_parser_with_string_doubles>( in );
+              variant_from_stream<std::stringstream, legacy_parser_with_string_doubles>( in );
               break;
           case strict_parser:
-              json_relaxed::variant_from_stream<fc_light::stringstream, true>( in );
+              json_relaxed::variant_from_stream<std::stringstream, true>( in );
               break;
           case relaxed_parser:
-              json_relaxed::variant_from_stream<fc_light::stringstream, false>( in );
+              json_relaxed::variant_from_stream<std::stringstream, false>( in );
               break;
           default:
               FC_LIGHT_ASSERT( false, "Unknown JSON parser type {ptype}", ("ptype", ptype) );

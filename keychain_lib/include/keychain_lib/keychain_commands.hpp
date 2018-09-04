@@ -28,6 +28,7 @@
 #include "key_file_parser.hpp"
 #include "key_encryptor.hpp"
 #include "sign_define.hpp"
+#include "sig.hpp"
 
 namespace keychain_app {
 
@@ -240,8 +241,10 @@ struct keychain_command<command_te::sign> : keychain_command_base
         key_data = std::move(keyfile.keyinfo.priv_key_data.as<std::string>());
       }
       private_key = get_priv_key_from_str(key_data);
-      auto signature = private_key.sign_compact(get_hash(unit_list));
-  
+      //auto signature = private_key.sign_compact(get_hash(unit_list));
+
+      auto signature = set_sign(private_key.get_secret().data(), get_hash(unit_list).data());
+
       json_response response(to_hex(signature.begin(), signature.size()).c_str(), id);
       fc_light::variant res(response);
       return fc_light::json::to_pretty_string(res);

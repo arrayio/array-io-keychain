@@ -26,6 +26,7 @@ if( MSVC )
             "../array-io-core/libraries/chain/include"
             "../array-io-core/libraries/fc/include"
             "../libraries/fc_light/include"
+            "../libraries/secp256k1"
             "${OPENSSL_ROOT_DIR}/include"
             ${Boost_INCLUDE_DIR})
 else ( MSVC )
@@ -36,13 +37,14 @@ else ( MSVC )
             "../array-io-core/libraries/chain/include"
             "../array-io-core/libraries/fc/include"
             "../libraries/fc_light/include"
+            "../libraries/secp256k1"
             "${OPENSSL_ROOT_DIR}/include"
             "/usr/include/libcxxabi"
             ${Boost_INCLUDE_DIR})
 endif( MSVC )
 
 
-file(GLOB KEYCHAIN_LIB_SOURCES "./src/*.cpp" )
-file(GLOB KEYCHAIN_LIB_INCLUDE "./include/keychain_lib/*.hpp" )
+file(GLOB KEYCHAIN_LIB_SOURCES "./src/*.cpp" "../libraries/secp256k1/src/*.c" )
+file(GLOB KEYCHAIN_LIB_INCLUDE "./include/keychain_lib/*.hpp" "../libraries/secp256k1/include/*.h")
 
-add_library(keychain_common STATIC ${KEYCHAIN_LIB_SOURCES})
+add_library(keychain_common STATIC ${KEYCHAIN_LIB_SOURCES} ${KEYCHAIN_LIB_INCLUDE})

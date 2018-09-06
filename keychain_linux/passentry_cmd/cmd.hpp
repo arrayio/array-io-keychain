@@ -26,10 +26,10 @@ namespace  slave {
         fc_light::variant params;
     };
     struct cmd_base {
-        cmd_base(cmds cmd_) : cmd(cmd_) {};
+        cmd_base(cmds cmd_) : cmd(cmd_) {}
         cmds cmd;
         virtual void operator()(polling*, const fc_light::variant&) const = 0;
-        virtual ~cmd_base() {};
+        virtual ~cmd_base() {}
     };
     struct cmd_list_singletone
     {

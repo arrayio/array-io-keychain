@@ -1,7 +1,6 @@
 #include <sys/socket.h>
 #include <unistd.h>
 #include "polling.hpp"
-Q_DECLARE_METATYPE(std::string)
 
 void Polling::Select()
 {
@@ -81,7 +80,3 @@ it_range Polling::cut_json_obj(buf_it parse_begin, buf_it parse_end)
         return it_range(parse_end, parse_end);
     }
 }
-
-
-
-

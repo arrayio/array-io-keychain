@@ -2,7 +2,8 @@
 #define POLLING_H
 
 #include <QObject>
-#include <QString>
+
+Q_DECLARE_METATYPE(std::string)
 
 namespace json_parser
 {
@@ -23,6 +24,7 @@ using it_range = std::pair<buf_it, buf_it>;
 class Polling : public QObject
 {
     Q_OBJECT
+
 public:
     Polling()  {
         buf.resize(1024);

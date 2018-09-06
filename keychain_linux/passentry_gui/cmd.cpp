@@ -9,75 +9,75 @@ namespace slave
 {
     template<cmds cmd_>
     struct cmd : cmd_base {
-        cmd() : cmd_base(cmd_) {};
-        virtual ~cmd() {};
-        virtual void operator()(Widget* w, const fc_light::variant& v) const override {
+        cmd() : cmd_base(cmd_) {}
+        virtual ~cmd() {}
+        virtual void operator()(Controller* w, const fc_light::variant& v) const override {
             throw std::runtime_error("operation is not implemented");
-        };
+        }
         using params_t = void;
     };
 
     template<>
     struct cmd<cmds::rawtrx> : cmd_base {
-        cmd() : cmd_base(cmds::rawtrx) {};
+        cmd() : cmd_base(cmds::rawtrx) {}
 
-        virtual ~cmd() {};
+        virtual ~cmd() {}
         struct params {std::string rawtrx;};
         using params_t = params;
-        virtual void operator()(Widget * w, const fc_light::variant& v) const override {
+        virtual void operator()(Controller * w, const fc_light::variant& v) const override {
             try {
                 auto a = v.as<params_t>();
-                w->pte->setText(QString(a.rawtrx.c_str()));
+                w->setRawTx(QString(a.rawtrx.c_str()));
             }
             catch (const std::exception &e) {throw std::runtime_error(e.what());}
             catch (const fc_light::exception &e) {throw std::runtime_error(e.what());}
-        };
+        }
     };
 
     template<>
     struct cmd<cmds::close> : cmd_base {
-        cmd() : cmd_base(cmds::close) {};
-        virtual ~cmd() {};
+        cmd() : cmd_base(cmds::close) {}
+        virtual ~cmd() {}
         using params_t = void;
-        virtual void operator()(Widget* w, const fc_light::variant& v) const override {
+        virtual void operator()(Controller* w, const fc_light::variant& v) const override {
             try { w->close(); }
             catch (const std::exception &e) {throw std::runtime_error(e.what());}
             catch (const fc_light::exception &e) {throw std::runtime_error(e.what());}
-        };
+        }
     };
 
     template<>
     struct cmd<cmds::modify> : cmd_base {
-        cmd() : cmd_base(cmds::modify) {};
-        virtual ~cmd() {};
+        cmd() : cmd_base(cmds::modify) {}
+        virtual ~cmd() {}
         struct params { bool caps, num, shift; };
         using params_t = params;
-        virtual void operator()(Widget* w, const fc_light::variant& v) const override {
+        virtual void operator()(Controller* w, const fc_light::variant& v) const override {
             try {
                 auto a = v.as<params_t>();
-                a.caps  ? w->caps->setText("caps: on")   : w->caps->setText("caps: off");
-                a.num   ? w->num->setText("num: on")     : w->num->setText("num: off");
-                a.shift ? w->shift->setText("shift: on")    : w->shift->setText("shift: off");
+//                a.caps  ? w->caps->setText("caps: on")   : w->caps->setText("caps: off");
+//                a.num   ? w->num->setText("num: on")     : w->num->setText("num: off");
+//                a.shift ? w->shift->setText("shift: on")    : w->shift->setText("shift: off");
             }
             catch (const std::exception &e) {throw std::runtime_error(e.what());}
             catch (const fc_light::exception &e) {throw std::runtime_error(e.what());}
-        };
+        }
     };
 
     template<>
     struct cmd<cmds::length> : cmd_base {
-        cmd() : cmd_base(cmds::length) {};
-        virtual ~cmd() {};
+        cmd() : cmd_base(cmds::length) {}
+        virtual ~cmd() {}
         struct params {int len;};
         using params_t = params;
-        virtual void operator()(Widget* w, const fc_light::variant& v) const override {
+        virtual void operator()(Controller* w, const fc_light::variant& v) const override {
             try {
                 auto a = v.as<params_t>();
-                w->ple->setText(QString (a.len, '*'));
+                w->setPassword(QString(a.len, '*'));
             }
             catch (const std::exception &e) {throw std::runtime_error(e.what());}
             catch (const fc_light::exception &e) {throw std::runtime_error(e.what());}
-        };
+        }
     };
 
 

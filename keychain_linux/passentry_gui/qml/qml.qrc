@@ -1,7 +1,7 @@
 <RCC>
     <qresource prefix="/">
         <file>main.qml</file>
-        <file>TabContent.qml</file>
+        <file>RawTxContent.qml</file>
         <file>DropDownButton.qml</file>
     </qresource>
 </RCC>

@@ -13,21 +13,21 @@
 #include <boost/hana/range.hpp>
 #include <boost/hana/for_each.hpp>
 #include <boost/hana/size.hpp>
-#include "widget.hpp"
+#include "controller.hpp"
 
 namespace  slave {
     enum struct cmds {unknown = 0, rawtrx, close, modify, length, last }; // to gui
 
     struct cmd_common {
-        cmd_common(cmds cmd_ = cmds::unknown): cmd(cmd_){};
+        cmd_common(cmds cmd_ = cmds::unknown): cmd(cmd_){}
         cmds cmd;
         fc_light::variant params;
     };
     struct cmd_base {
-        cmd_base(cmds cmd_) : cmd(cmd_) {};
+        cmd_base(cmds cmd_) : cmd(cmd_) {}
         cmds cmd;
-        virtual void operator()(Widget* w, const fc_light::variant&) const = 0;
-        virtual ~cmd_base() {};
+        virtual void operator()(Controller* w, const fc_light::variant&) const = 0;
+        virtual ~cmd_base() {}
     };
     struct cmd_list_singletone
     {

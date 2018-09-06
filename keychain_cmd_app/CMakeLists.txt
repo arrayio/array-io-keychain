@@ -66,8 +66,10 @@ find_library(LIB_XI NAME Xi HINTS "/usr/lib/x86_64-linux-gnu/")
 #find_library(LIB_FC_LIGTH NAME FC_LIGHT )
 
 if( MSVC )
-  target_link_libraries(keychain keychain_common fc_light ether secp256k1 graphene_utilities ${LIB_OPENSSL} ${Boost_LIBRARIES})
+#  target_link_libraries(keychain keychain_common fc_light ether secp256k1 graphene_utilities ${LIB_OPENSSL} ${Boost_LIBRARIES})
+target_link_libraries(keychain keychain_common fc_light ether graphene_utilities ${LIB_OPENSSL} ${Boost_LIBRARIES})
 else ( MSVC )
-  target_link_libraries(keychain keychain_common ${LIB_PTHREAD}  fc_light ether secp256k1 graphene_utilities graphene_chain ${LIB_OPENSSL} ${Boost_LIBRARIES} ${X11_LIBRARIES} ${LIB_XI})
+    target_link_libraries(keychain keychain_common ${LIB_PTHREAD}  fc_light ether graphene_utilities graphene_chain ${LIB_OPENSSL} ${Boost_LIBRARIES} ${X11_LIBRARIES} ${LIB_XI})
+#  target_link_libraries(keychain keychain_common ${LIB_PTHREAD}  fc_light ether secp256k1 graphene_utilities graphene_chain ${LIB_OPENSSL} ${Boost_LIBRARIES} ${X11_LIBRARIES} ${LIB_XI})
 endif ( MSVC )
 

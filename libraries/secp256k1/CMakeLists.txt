@@ -2,6 +2,8 @@
 # Configure secp256k1-zkp
 project( Secp256k1_bitcon  )
 
+add_definitions(-DENABLE_MODULE_RECOVERY -DENABLE_MODULE_ECDH)
+
 set( SECP256K1_DIR "../secp256k1" )
 
 file( GLOB SECP256K1_SOURCES

@@ -85,6 +85,8 @@ secp256_private_key get_priv_key_from_str(const std::string& str);
 fc::sha256 get_hash(const keychain_app::unit_list_t &list);
 size_t from_hex(const std::string& hex_str, unsigned char* out_data, size_t out_data_len );
 std::string to_hex(const uint8_t* data, size_t length);
+bool is_canonical_( const std::array<unsigned char, 65>& c );
+
 /*{
   using out_map = std::map<std::string, nlohmann::json>;
   using out_map_val = out_map::value_type;
@@ -92,6 +94,8 @@ std::string to_hex(const uint8_t* data, size_t length);
   result.insert(out_map_val(json_parser::json_keys::RESULT,to_hex(signature.begin(),signature.size())));
   return result;
 }*/
+
+
 
 struct json_response
 {
@@ -243,12 +247,34 @@ struct keychain_command<command_te::sign> : keychain_command_base
         key_data = std::move(keyfile.keyinfo.priv_key_data.as<std::string>());
       }
       private_key = get_priv_key_from_str(key_data);
-//      auto signature = private_key.sign_compact(get_hash(unit_list));
+      //auto signature = private_key.sign_compact(get_hash(unit_list));
 
-      std::vector<byte> hash (private_key.get_secret().data(),
-                           private_key.get_secret().data() + private_key.get_secret().data_size());
+      std::array<unsigned char, 65> signature = {0};
+      int res_sig, recid = 0, counter=0;
+
+      do{
+        secp256k1_context *ctx = secp256k1_context_create(SECP256K1_CONTEXT_SIGN |SECP256K1_CONTEXT_VERIFY );
+
+        res_sig = secp256k1_ecdsa_sign_with_recid(
+                        ctx,
+                        (secp256k1_ecdsa_signature *) (signature.data() + 1),
+                        (unsigned char *) get_hash(unit_list).data(),
+                        (unsigned char *) private_key.get_secret().data(),
+                        NULL,
+                        &counter,
+                        &recid
+                        );
+
+        if (res_sig == 0)
+          throw std::runtime_error("secp256k1_ecdsa_sign_with_recid()");
+        secp256k1_context_destroy(ctx);
+        signature.begin()[0] = 27 + 4 + recid;
+      }while (!is_canonical_(signature));
+
+
+/*      std::vector<byte> hash (private_key.get_secret().data(),
+                              private_key.get_secret().data() + private_key.get_secret().data_size());
       auto signature = dev::sign(
-              //dev::SecureFixedHash<32>( ((dev::bytes const*) &hash), dev::SecureFixedHash<32>::ConstructFromPointerType::ConstructFromPointer ),
               dev::SecureFixedHash<32>(
                       dev::FixedHash<32>(((byte const*) private_key.get_secret().data()),
                                          dev::FixedHash<32>::ConstructFromPointerType::ConstructFromPointer)
@@ -256,8 +282,8 @@ struct keychain_command<command_te::sign> : keychain_command_base
               dev::FixedHash<32>(((byte const*) get_hash(unit_list).data()),
                                  dev::FixedHash<32>::ConstructFromPointerType::ConstructFromPointer)
                                 );
-
-      json_response response(to_hex(signature.begin(), signature.size).c_str(), id);
+*/
+      json_response response(to_hex(signature.begin(), signature.size()).c_str(), id);
       fc_light::variant res(response);
       return fc_light::json::to_pretty_string(res);
     }

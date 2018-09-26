@@ -20,34 +20,75 @@
 namespace dev
 {
 
+template <size_t N>
 class sha3_encoder_base {
 public:
-  sha3_encoder_base();
-  virtual ~sha3_encoder_base();
+  template<typename T>
+  sha3_encoder_base(T p_evp_sha_func)
+    :m_evp_sha_func(p_evp_sha_func)
+  {
+    ctx = EVP_MD_CTX_create();
+  }
+  using result_t = dev::FixedHash<N>;
   
-  void write(const char *d, uint32_t dlen);
-  void put(char c);
-  h256 result();
-  void result(char *out, uint32_t dlen);
+  virtual ~sha3_encoder_base()
+  {
+    EVP_MD_CTX_destroy(ctx);
+  }
+  
+  void write(const char *d, uint32_t dlen)
+  {
+    //TODO: implement error handling
+    EVP_DigestUpdate(ctx, d, dlen);
+  }
+  
+  void put(char c)
+  {
+    write(&c, 1);
+  }
+  
+  result_t result()
+  {
+    result_t result;
+    unsigned int digest_len;
+    int sha_size = EVP_MD_size(m_evp_sha_func());
+    FC_ASSERT(result.size == sha_size, "Invalid sha3_256 hash size");
+  
+    EVP_DigestFinal_ex(ctx, result.data(), &digest_len);
+  
+    FC_ASSERT(digest_len == result.size, "Invalid sha3_256 hash size has been written");
+  
+    return result;
+  }
+  
+  void result(char *out, uint32_t dlen)
+  {
+    unsigned int digest_len;
+    int sha_size = EVP_MD_size(m_evp_sha_func());
+    FC_LIGHT_ASSERT(dlen == sha_size, "Invalid sha3_256 hash size");
+    EVP_DigestFinal_ex(ctx, (unsigned char*)out, &digest_len);
+    FC_LIGHT_ASSERT(digest_len == dlen, "Invalid sha3_256 hash size has been written");
+  }
 protected:
   EVP_MD_CTX* ctx;
+  std::function<const EVP_MD* (void)> m_evp_sha_func;
 };
 
-class sha3_224_encoder: public sha3_encoder_base
+class sha3_224_encoder: public sha3_encoder_base<28>
 {
 public:
   sha3_224_encoder();
   virtual ~sha3_224_encoder();
 };
 
-class sha3_256_encoder: public sha3_encoder_base
+class sha3_256_encoder: public sha3_encoder_base<32>
 {
 public:
   sha3_256_encoder();
   virtual ~sha3_256_encoder();
 };
 
-class sha3_512_encoder: public sha3_encoder_base
+class sha3_512_encoder: public sha3_encoder_base<64>
 {
 public:
   sha3_512_encoder();

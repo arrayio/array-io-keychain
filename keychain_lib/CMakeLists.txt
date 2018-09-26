@@ -21,10 +21,6 @@ SET(Boost_LIBRARIES ${BOOST_LIBRARIES_TEMP} ${Boost_LIBRARIES})
 if( MSVC )
     include_directories(
             "./include/keychain_lib"
-            "../array-io-core/libraries/utilities/include"
-            "../array-io-core/libraries/db/include"
-            "../array-io-core/libraries/chain/include"
-            "../array-io-core/libraries/fc/include"
             "../libraries/fc_light/include"
             "../libraries/secp256k1/include"
             "../libraries/ethereum/include"
@@ -33,10 +29,6 @@ if( MSVC )
 else ( MSVC )
     include_directories(
             "./include/keychain_lib"
-            "../array-io-core/libraries/utilities/include"
-            "../array-io-core/libraries/db/include"
-            "../array-io-core/libraries/chain/include"
-            "../array-io-core/libraries/fc/include"
             "../libraries/fc_light/include"
             "../libraries/secp256k1/include"
             "../libraries/ethereum/include"

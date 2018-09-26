@@ -22,10 +22,6 @@ SET(Boost_LIBRARIES ${BOOST_LIBRARIES_TEMP} ${Boost_LIBRARIES})
 if( MSVC )
     include_directories(
             "../keychain_lib/include"
-            "../array-io-core/libraries/utilities/include"
-            "../array-io-core/libraries/db/include"
-            "../array-io-core/libraries/chain/include"
-            "../array-io-core/libraries/fc/include"
             "../libraries/fc_light/include"
             "../libraries/ethereum/include"
             "../libraries/secp256k1/include"
@@ -35,10 +31,6 @@ else ( MSVC )
     include_directories(
             "../keychain_lib/include"
             "../keychain_linux/passentry_cmd"
-            "../array-io-core/libraries/utilities/include"
-            "../array-io-core/libraries/db/include"
-            "../array-io-core/libraries/chain/include"
-            "../array-io-core/libraries/fc/include"
             "../libraries/fc_light/include"
             "../libraries/ethereum/include"
             "../libraries/secp256k1/include"
@@ -68,8 +60,8 @@ endif()
 find_library(LIB_XI NAME Xi HINTS "/usr/lib/x86_64-linux-gnu/")
 
 if( MSVC )
-    target_link_libraries(keychain keychain_common fc_light ether graphene_utilities ${LIB_OPENSSL} ${Boost_LIBRARIES})
+    target_link_libraries(keychain keychain_common fc_light ether ${LIB_OPENSSL} ${Boost_LIBRARIES})
 else ( MSVC )
-    target_link_libraries(keychain keychain_common ${LIB_PTHREAD}   fc_light ether graphene_utilities graphene_chain ${LIB_OPENSSL} ${Boost_LIBRARIES} ${X11_LIBRARIES} ${LIB_XI})
+    target_link_libraries(keychain keychain_common ${LIB_PTHREAD} fc_light ether ${LIB_OPENSSL} ${Boost_LIBRARIES} ${X11_LIBRARIES} ${LIB_XI})
 endif ( MSVC )
 

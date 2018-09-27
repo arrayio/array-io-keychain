@@ -34,7 +34,7 @@
 
 namespace keychain_app {
 
-    using byte_seq_t = std::vector<char>;
+using byte_seq_t = std::vector<char>;
 
 struct keychain_error: std::runtime_error
 {

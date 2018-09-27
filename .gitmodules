@@ -1,3 +1,6 @@
 [submodule "array-io-core"]
 	path = array-io-core
 	url = git@github.com:arrayio/array-io-core.git
+[submodule "libraries/secp256k1"]
+	path = libraries/secp256k1
+	url = https://github.com/bitcoin-core/secp256k1

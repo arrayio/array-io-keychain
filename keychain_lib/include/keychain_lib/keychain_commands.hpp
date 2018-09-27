@@ -29,10 +29,12 @@
 #include "sign_define.hpp"
 #include <ethereum/core/FixedHash.h>
 #include <ethereum/crypto/Common.h>
+#include <secp256k1_ext.hpp>
+
 
 namespace keychain_app {
 
-using byte_seq_t = std::vector<char>;
+    using byte_seq_t = std::vector<char>;
 
 struct keychain_error: std::runtime_error
 {
@@ -82,7 +84,6 @@ void create_keyfile(const char* filename, const fc_light::variant& keyfile_var);
 std::vector<unsigned char> get_hash(const keychain_app::unit_list_t &list);
 size_t from_hex(const std::string& hex_str, unsigned char* out_data, size_t out_data_len );
 std::string to_hex(const uint8_t* data, size_t length);
-bool is_canonical_( const std::array<unsigned char, 65>& c );
 
 /*{
   using out_map = std::map<std::string, nlohmann::json>;
@@ -251,26 +252,12 @@ struct keychain_command<command_te::sign> : keychain_command_base
       }
       int pk_len = keychain_app::from_hex(key_data, (unsigned char*) private_key.data(), 32);
       std::array<unsigned char, 65> signature = {0};
-      int res_sig, recid = 0, counter=0;
 
-      do{
-        secp256k1_context *ctx = secp256k1_context_create(SECP256K1_CONTEXT_SIGN |SECP256K1_CONTEXT_VERIFY );
-
-        res_sig = secp256k1_ecdsa_sign_with_recid(
-                        ctx,
-                        (secp256k1_ecdsa_signature *) (signature.data() + 1),
-                        get_hash(unit_list).data(),
-                        (unsigned char *) private_key.data(),
-                        NULL,
-                        &counter,
-                        &recid
-                        );
-
-        if (res_sig == 0)
-          throw std::runtime_error("secp256k1_ecdsa_sign_with_recid()");
-        secp256k1_context_destroy(ctx);
-        signature.begin()[0] = 27 + 4 + recid;
-      }while (!is_canonical_(signature));
+      sign_bitshares(
+              signature,
+              get_hash(unit_list).data(),
+              (unsigned char *) private_key.data()
+              );
 
       json_response response(to_hex(signature.begin(), signature.size()).c_str(), id);
       fc_light::variant res(response);

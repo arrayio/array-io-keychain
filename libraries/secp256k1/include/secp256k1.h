@@ -501,24 +501,6 @@ SECP256K1_API int secp256k1_ecdsa_sign(
     const void *ndata
 ) SECP256K1_ARG_NONNULL(1) SECP256K1_ARG_NONNULL(2) SECP256K1_ARG_NONNULL(3) SECP256K1_ARG_NONNULL(4);
 
-static int extended_nonce_function(
-        unsigned char *nonce32,
-        const unsigned char *msg32,
-        const unsigned char *key32,
-        const unsigned char *algo16,
-        void *data,
-        unsigned int attempt
-);
-
-int secp256k1_ecdsa_sign_with_recid(
-        const secp256k1_context* ctx,
-        secp256k1_ecdsa_signature *signature,
-        const unsigned char *msg32,
-        const unsigned char *seckey,
-        secp256k1_nonce_function noncefp,
-        const void* noncedata,
-        int * recid );
-
 /** Verify an ECDSA secret key.
  *
  *  Returns: 1: secret key is valid

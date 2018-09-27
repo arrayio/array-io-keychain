@@ -9,7 +9,7 @@ set( SECP256K1_DIR "../secp256k1" )
 file( GLOB SECP256K1_SOURCES
         "${SECP256K1_DIR}/src/ec*.c"
         "${SECP256K1_DIR}/src/gen*.c"
-        "${SECP256K1_DIR}/src/secp*.c"
+        "./secp256k1_ext.cpp"
         )
 
 file( GLOB SECP256K1_HEADERS
@@ -21,6 +21,7 @@ file( GLOB SECP256K1_HEADERS
         "${SECP256K1_DIR}/src/n*.h"
         "${SECP256K1_DIR}/src/s*.h"
         "${SECP256K1_DIR}/src/u*.h"
+        "./include/secp256k1_ext.hpp"
         )
 add_library( secp256k1_btc ${SECP256K1_SOURCES} ${SECP256K1_HEADERS})
 
@@ -29,6 +30,7 @@ add_definitions( -DVERIFY )
 target_include_directories( secp256k1_btc
         PRIVATE "${SECP256K1_DIR}"
         PUBLIC "${SECP256K1_DIR}/include"
+        PUBLIC "./include"
         PUBLIC "${SECP256K1_DIR}/src"
         )
 

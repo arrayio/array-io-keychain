@@ -23,6 +23,7 @@ if( MSVC )
             "./include/keychain_lib"
             "../libraries/fc_light/include"
             "../libraries/secp256k1/include"
+            "../libraries/secp256k1_ext/include"
             "../libraries/ethereum/include"
             "${OPENSSL_ROOT_DIR}/include"
             ${Boost_INCLUDE_DIR})
@@ -31,6 +32,7 @@ else ( MSVC )
             "./include/keychain_lib"
             "../libraries/fc_light/include"
             "../libraries/secp256k1/include"
+            "../libraries/secp256k1_ext/include"
             "../libraries/ethereum/include"
             "${OPENSSL_ROOT_DIR}/include"
             "/usr/include/libcxxabi"

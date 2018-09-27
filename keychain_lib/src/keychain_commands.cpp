@@ -93,15 +93,6 @@ void keychain_app::create_keyfile(const char* filename, const fc_light::variant&
   fout << fc_light::json::to_pretty_string(keyfile_var) << std::endl;
 }
 
-bool keychain_app::is_canonical_( const std::array<unsigned char, 65>& c )
-{
-  return !(c[1] & 0x80)
-    && !(c[1] == 0 && !(c[2] & 0x80))
-    && !(c[33] & 0x80)
-    && !(c[33] == 0 && !(c[34] & 0x80));
-}
-
-
 using namespace keychain_app;
 
 keychain_base::keychain_base(std::string&& uid_hash_)

@@ -2,7 +2,7 @@ project( KeychainLib  )
 
 cmake_minimum_required( VERSION 3.0.2 )
 
-set(CMAKE_CXX_FLAGS "-std=c++14")
+set(CMAKE_CXX_FLAGS "-std=c++14 --verbose")
 
 SET(BOOST_COMPONENTS)
 LIST(APPEND BOOST_COMPONENTS thread date_time system filesystem program_options signals serialization chrono unit_test_framework context locale iostreams)
@@ -21,21 +21,19 @@ SET(Boost_LIBRARIES ${BOOST_LIBRARIES_TEMP} ${Boost_LIBRARIES})
 if( MSVC )
     include_directories(
             "./include/keychain_lib"
-            "../array-io-core/libraries/utilities/include"
-            "../array-io-core/libraries/db/include"
-            "../array-io-core/libraries/chain/include"
-            "../array-io-core/libraries/fc/include"
             "../libraries/fc_light/include"
+            "../libraries/secp256k1/include"
+            "../libraries/secp256k1_ext/include"
+            "../libraries/ethereum/include"
             "${OPENSSL_ROOT_DIR}/include"
             ${Boost_INCLUDE_DIR})
 else ( MSVC )
     include_directories(
             "./include/keychain_lib"
-            "../array-io-core/libraries/utilities/include"
-            "../array-io-core/libraries/db/include"
-            "../array-io-core/libraries/chain/include"
-            "../array-io-core/libraries/fc/include"
             "../libraries/fc_light/include"
+            "../libraries/secp256k1/include"
+            "../libraries/secp256k1_ext/include"
+            "../libraries/ethereum/include"
             "${OPENSSL_ROOT_DIR}/include"
             "/usr/include/libcxxabi"
             ${Boost_INCLUDE_DIR})
@@ -45,4 +43,5 @@ endif( MSVC )
 file(GLOB KEYCHAIN_LIB_SOURCES "./src/*.cpp" )
 file(GLOB KEYCHAIN_LIB_INCLUDE "./include/keychain_lib/*.hpp" )
 
-add_library(keychain_common STATIC ${KEYCHAIN_LIB_SOURCES})
+add_library(keychain_common STATIC ${KEYCHAIN_LIB_SOURCES} ${KEYCHAIN_LIB_INCLUDE})
+

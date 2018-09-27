@@ -18,16 +18,19 @@
 #include <fc_light/variant.hpp>
 #include <fc_light/io/json.hpp>
 #include <fc_light/exception/exception.hpp>
-#include <fc/crypto/hex.hpp>
+#include <fc_light/crypto/hex.hpp>
 
 #include <fc_light/reflect/variant.hpp>
 
-#include <graphene/utilities/key_conversion.hpp>
 #include <boost/signals2.hpp>
 
 #include "key_file_parser.hpp"
 #include "key_encryptor.hpp"
 #include "sign_define.hpp"
+#include <ethereum/core/FixedHash.h>
+#include <ethereum/crypto/Common.h>
+#include <secp256k1_ext.hpp>
+
 
 namespace keychain_app {
 
@@ -78,10 +81,10 @@ fc_light::variant open_keyfile(const char_t* filename)
 }
 
 void create_keyfile(const char* filename, const fc_light::variant& keyfile_var);
-secp256_private_key get_priv_key_from_str(const std::string& str);
-fc::sha256 get_hash(const keychain_app::unit_list_t &list);
+std::vector<unsigned char> get_hash(const keychain_app::unit_list_t &list);
 size_t from_hex(const std::string& hex_str, unsigned char* out_data, size_t out_data_len );
 std::string to_hex(const uint8_t* data, size_t length);
+
 /*{
   using out_map = std::map<std::string, nlohmann::json>;
   using out_map_val = out_map::value_type;
@@ -89,6 +92,8 @@ std::string to_hex(const uint8_t* data, size_t length);
   result.insert(out_map_val(json_parser::json_keys::RESULT,to_hex(signature.begin(),signature.size())));
   return result;
 }*/
+
+
 
 struct json_response
 {
@@ -197,18 +202,24 @@ struct keychain_command<command_te::sign> : keychain_command_base
     try {
       auto params = params_variant.as<params_t>();
       unit_list_t unit_list;
-      fc::ecc::private_key private_key;
+
+      dev::Secret private_key;
+
       if (!params.chainid.empty())
-        unit_list.push_back(fc::sha256(params.chainid));
+      {
+          std::vector<char> chain(32);
+          auto chain_len = keychain_app::from_hex(params.chainid, (unsigned  char*) chain.data(), chain.size());
+          unit_list.push_back(std::move(chain));
+      }
 
       //NOTE: using vector instead array because move semantic is implemented in the vector
       std::vector<char> buf(1024);
-      auto trans_len = fc::from_hex(params.transaction, buf.data(), buf.size());
+      auto trans_len = keychain_app::from_hex(params.transaction, (unsigned  char*) buf.data(), buf.size());
       buf.resize(trans_len);
+      unit_list.push_back(buf);
 
       keyfile_format::keyfile_t keyfile;
 
-      unit_list.push_back(buf);
       if (params.keyname.empty())
         std::runtime_error("Error: keyname is not specified");
       
@@ -239,9 +250,15 @@ struct keychain_command<command_te::sign> : keychain_command_base
       {
         key_data = std::move(keyfile.keyinfo.priv_key_data.as<std::string>());
       }
-      private_key = get_priv_key_from_str(key_data);
-      auto signature = private_key.sign_compact(get_hash(unit_list));
-  
+      int pk_len = keychain_app::from_hex(key_data, (unsigned char*) private_key.data(), 32);
+      std::array<unsigned char, 65> signature = {0};
+
+      sign_bitshares(
+              signature,
+              get_hash(unit_list).data(),
+              (unsigned char *) private_key.data()
+              );
+
       json_response response(to_hex(signature.begin(), signature.size()).c_str(), id);
       fc_light::variant res(response);
       return fc_light::json::to_pretty_string(res);
@@ -278,15 +295,14 @@ struct keychain_command<command_te::create>: keychain_command_base
       {
         auto params = params_variant.as<params_t>();
         keyfile_format::keyfile_t keyfile;
-        std::string wif_key;
-        fc::ecc::public_key_data public_key_data;
+        std::string pr_hex, pb_hex;
         switch (params.curve)
         {
           case keyfile_format::keyfile_t::keyinfo_t::curve_etype::secp256k1:
           {
-            auto priv_key = fc::ecc::private_key::generate();
-            public_key_data = priv_key.get_public_key().serialize();
-            wif_key = std::move(graphene::utilities::key_to_wif(priv_key));
+            dev::KeyPair keys = dev::KeyPair::create();
+            pb_hex = keys.pub().hex();
+            pr_hex = to_hex(reinterpret_cast<const uint8_t *>(keys.secret().data()), 32);
           }
             break;
           default:
@@ -300,15 +316,15 @@ struct keychain_command<command_te::create>: keychain_command_base
           if (passwd.empty())
             throw std::runtime_error("Error: can't get password");
           auto& encryptor = encryptor_singletone::instance();
-          auto enc_data = encryptor.encrypt_keydata(params.cipher, passwd, wif_key);
+          auto enc_data = encryptor.encrypt_keydata(params.cipher, passwd, pr_hex);
           keyfile.keyinfo.priv_key_data = fc_light::variant(enc_data);
           keyfile.keyinfo.encrypted = true;
         }
         else{
-          keyfile.keyinfo.priv_key_data = std::move(wif_key);
+          keyfile.keyinfo.priv_key_data = std::move(pr_hex);
           keyfile.keyinfo.encrypted = false;
         }
-        keyfile.keyinfo.public_key = to_hex(reinterpret_cast<const uint8_t *>(public_key_data.begin()), public_key_data.size());
+        keyfile.keyinfo.public_key = pb_hex;
         keyfile.keyname = params.keyname;
         keyfile.uid_hash = keychain->uid_hash;
         keyfile.filetype = keyfile_format::TYPE_KEY;

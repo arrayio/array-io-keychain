@@ -5,12 +5,9 @@
 #include "keychain.hpp"
 #include "key_file_parser.hpp"
 #include "keychain_commands.hpp"
-#include <fc/crypto/sha256.hpp>
-#include <fc/crypto/elliptic.hpp>
 
 //TODO: it is unclear
 //      why if we do not include this file we cannot compile reflect parser for keychain_app::keyfile_format::key_file
-#include <graphene/chain/protocol/transaction.hpp>
 
 #include <boost/hana/for_each.hpp>
 

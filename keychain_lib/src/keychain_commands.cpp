@@ -6,10 +6,10 @@
 #include <iostream>
 #include <array>
 
-#include <graphene/utilities/key_conversion.hpp>
 #include <fc_light/io/json.hpp>
 
 #include "keychain_commands.hpp"
+#include <openssl/sha.h>
 
 std::string keychain_app::to_hex(const uint8_t* data, size_t length)
 {
@@ -48,39 +48,33 @@ size_t keychain_app::from_hex( const std::string& hex_str, unsigned char* out_da
   return out_pos - out_data;
 }
 
-fc::sha256 keychain_app::get_hash(const keychain_app::unit_list_t &list)
+std::vector<unsigned char> keychain_app::get_hash(const keychain_app::unit_list_t &list)
 {
   class unit_visitor: public boost::static_visitor<>
   {
   public:
-      unit_visitor(fc::sha256::encoder& enc): m_enc(enc){}
-
-      void operator()(const fc::sha256& val)
-      {
-        m_enc << val;
-      }
+      unit_visitor() {SHA256_Init( &ctx); }
 
       void operator()(const std::vector<char>& val)
       {
-        return m_enc.write(static_cast<const char*>(val.data()), val.size());
+          SHA256_Update( &ctx, static_cast<const char*>(val.data()), val.size());
       }
-      fc::sha256::encoder& m_enc;
+
+      std::vector<unsigned char>  result()
+      {
+          std::vector<unsigned char>  out(32);
+          SHA256_Final(out.data(), &ctx);
+          return out;
+      }
+      SHA256_CTX ctx;
   };
 
-  fc::sha256::encoder enc;
-  unit_visitor var_visitor(enc);
+
+  unit_visitor var_visitor;
   std::for_each(list.begin(), list.end(),[&var_visitor](const unit_t& val){
       boost::apply_visitor(var_visitor, val );
   });
-  return enc.result();
-}
-
-keychain_app::secp256_private_key keychain_app::get_priv_key_from_str(const std::string& str)
-{
-  auto result = graphene::utilities::wif_to_key(str);
-  if(!result)
-    throw std::runtime_error("Error: can't get private key from wif string");
-  return *result;
+  return var_visitor.result();
 }
 
 namespace bfs = keychain_app::bfs;

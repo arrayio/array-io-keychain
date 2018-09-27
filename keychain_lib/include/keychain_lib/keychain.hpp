@@ -10,10 +10,8 @@
 #include <iostream>
 #include <fstream>
 
-#include <fc/crypto/elliptic.hpp>
-#include <fc/crypto/hex.hpp>
+#include <fc_light/crypto/hex.hpp>
 #include <fc_light/variant.hpp>
-#include <graphene/utilities/key_conversion.hpp>
 
 #include <boost/filesystem.hpp>
 #include <boost/signals2.hpp>

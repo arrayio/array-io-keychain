@@ -10,6 +10,7 @@
 #include <random>
 #include "key_encryptor.hpp"
 #include "keychain_commands.hpp"
+#include <openssl/sha.h>
 
 using namespace keychain_app;
 
@@ -50,9 +51,13 @@ keyfile_format::encrypted_data encryptor_singletone::encrypt_keydata(keyfile_for
   // to find out reason)
   //The solution (from lib/fc) is to create hash from password string and encrypt data on hash key
   const char* key_data = key.data();
-  auto key_hash = fc::sha512::hash(key_data, key.size());
-  
-  if(1 != EVP_EncryptInit_ex(m_ctx, get_cipher(etype), NULL, reinterpret_cast<const uint8_t*>(&key_hash),
+  unsigned char key_hash[64];
+  SHA512_CTX ctx;
+  SHA512_Init( &ctx);
+  SHA512_Update( &ctx, key_data, key.size());
+  SHA512_Final(key_hash, &ctx);
+
+  if(1 != EVP_EncryptInit_ex(m_ctx, get_cipher(etype), NULL, reinterpret_cast<const uint8_t*>(key_hash),
                              reinterpret_cast<const uint8_t*>(enc_data.iv.c_str())))
   {
     ERR_print_errors_fp(stderr);
@@ -96,9 +101,13 @@ std::string encryptor_singletone::decrypt_keydata(const byte_seq_t& key, keyfile
   // to find out reason)
   //The solution (from lib/fc) is to create hash from password string and encrypt data on hash key
   const char* key_data =key.data();
-  auto key_hash = fc::sha512::hash(key_data, key.size());
-  
-  if(1 != EVP_DecryptInit_ex(m_ctx, get_cipher(data.cipher_type), NULL, reinterpret_cast<const uint8_t*>(&key_hash),
+  unsigned char key_hash[64];
+  SHA512_CTX ctx;
+  SHA512_Init( &ctx);
+  SHA512_Update( &ctx, key_data, key.size());
+  SHA512_Final(key_hash, &ctx);
+
+  if(1 != EVP_DecryptInit_ex(m_ctx, get_cipher(data.cipher_type), NULL, reinterpret_cast<const uint8_t*>(key_hash),
                              reinterpret_cast<const uint8_t*>(data.iv.c_str())))
   {
 //    ERR_print_errors_fp(stderr);

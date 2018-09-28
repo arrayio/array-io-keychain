@@ -65,3 +65,11 @@ else ( MSVC )
     target_link_libraries(keychain keychain_common ${LIB_PTHREAD} fc_light ether ${LIB_OPENSSL} ${Boost_LIBRARIES} ${X11_LIBRARIES} ${LIB_XI})
 endif ( MSVC )
 
+if( NOT MSVC )
+    set(GUI_BINARY ${CMAKE_BINARY_DIR}/keychain_linux/passentry_gui/passentry_gui)
+    set(KEYCHAIN_BINARY_DIR ${CMAKE_BINARY_DIR}/keychain_cmd_app)
+    ADD_CUSTOM_COMMAND(TARGET keychain
+            POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy ${GUI_BINARY} ${KEYCHAIN_BINARY_DIR}
+            )
+endif (NOT MSVC )

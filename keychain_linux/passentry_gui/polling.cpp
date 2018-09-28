@@ -9,8 +9,8 @@ void Polling::Select()
     struct timeval to ={0, 1000};
     int res;
 
-    auto begin  = [this](buf_it &i) { if (i>=buf.end()) i=buf.begin(); return &(*i); };
-    auto remain = [this](buf_it &i) { if (i>=buf.end()) i=buf.begin(); return std::distance(i, buf.end());};
+    auto begin  = [this](buf_it &i) { if (i==buf.end()) i=buf.begin(); if (i>buf.end()) abort; return &(*i); };
+    auto remain = [this](buf_it &i) { if (i==buf.end()) i=buf.begin(); return std::distance(i, buf.end());};
 
     FD_ZERO(&readfds);
     FD_SET(STDIN_FILENO, &readfds);

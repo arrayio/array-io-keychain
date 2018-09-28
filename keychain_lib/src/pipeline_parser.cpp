@@ -30,9 +30,14 @@ pipeline_parser::pipeline_parser(keychain_invoke_f&& keychain_f, int pipein_desc
 int pipeline_parser::run()
 {
   buf_type read_buf(4096, 0x00);
-  auto ptr_from_it      = [&read_buf](buf_iterator &i) { if (i>=read_buf.end()) i=read_buf.begin(); return &(*i); };
+  auto ptr_from_it      = [&read_buf](buf_iterator &i){
+    assert(i <= read_buf.end());
+    if (i > read_buf.end()) abort();
+    return &(*i);
+  };
   auto bytes_remaining  = [&read_buf](buf_iterator &i) {
-      if (i>=read_buf.end()) i=read_buf.begin(); return std::distance(i, read_buf.end());};
+    return std::distance(i, read_buf.end());
+  };
 
   auto it = read_buf.begin();
     while (true)
@@ -70,7 +75,13 @@ int pipeline_parser::run()
         continue;//try to parse remaining data
       }
       else if(bytes_remaining(it) < 256)
-        read_buf.resize(256, 0x00);
+      {
+        if (read_buf.size() <= 4096*2)
+          read_buf.resize(256, 0x00);
+        else
+          throw std::runtime_error("size of read buffer is too large");
+      }
+
       break;//goto fread()
     }
   }

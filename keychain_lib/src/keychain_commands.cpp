@@ -9,7 +9,6 @@
 #include <fc_light/io/json.hpp>
 
 #include "keychain_commands.hpp"
-#include <openssl/sha.h>
 
 std::string keychain_app::to_hex(const uint8_t* data, size_t length)
 {
@@ -48,34 +47,6 @@ size_t keychain_app::from_hex( const std::string& hex_str, unsigned char* out_da
   return out_pos - out_data;
 }
 
-std::vector<unsigned char> keychain_app::get_hash(const keychain_app::unit_list_t &list)
-{
-  class unit_visitor: public boost::static_visitor<>
-  {
-  public:
-      unit_visitor() {SHA256_Init( &ctx); }
-
-      void operator()(const std::vector<char>& val)
-      {
-          SHA256_Update( &ctx, static_cast<const char*>(val.data()), val.size());
-      }
-
-      std::vector<unsigned char>  result()
-      {
-          std::vector<unsigned char>  out(32);
-          SHA256_Final(out.data(), &ctx);
-          return out;
-      }
-      SHA256_CTX ctx;
-  };
-
-
-  unit_visitor var_visitor;
-  std::for_each(list.begin(), list.end(),[&var_visitor](const unit_t& val){
-      boost::apply_visitor(var_visitor, val );
-  });
-  return var_visitor.result();
-}
 
 namespace bfs = keychain_app::bfs;
 
@@ -100,3 +71,51 @@ keychain_base::keychain_base(std::string&& uid_hash_)
 {}
 
 keychain_base::~keychain_base(){}
+
+
+sha2_256_encoder::sha2_256_encoder()
+{
+  SHA256_Init( &ctx);
+};
+
+sha2_256_encoder::~sha2_256_encoder(){};
+
+void sha2_256_encoder::write(const char * d, uint32_t dlen )
+{
+    SHA256_Update( &ctx, d, dlen);
+}
+
+std::vector<unsigned char> sha2_256_encoder::result ()
+{
+  std::vector<unsigned char> out(32);
+  SHA256_Final(static_cast<unsigned char *>(out.data()), &ctx);
+  return out;
+}
+
+
+sha3_256_encoder::sha3_256_encoder(): ctx(EVP_MD_CTX_create()), m_evp_sha_func (EVP_sha3_256)
+{
+  EVP_DigestInit_ex(ctx, EVP_sha3_256(), NULL);
+};
+
+sha3_256_encoder::~sha3_256_encoder()
+{
+  EVP_MD_CTX_destroy(ctx);
+};
+
+void sha3_256_encoder::write(const char *d, uint32_t dlen)
+{
+  EVP_DigestUpdate(ctx, d, dlen);
+}
+
+std::vector<unsigned char> sha3_256_encoder::result()
+{
+  std::vector<unsigned char> out(32);
+  unsigned int digest_len;
+  int sha_size = EVP_MD_size(m_evp_sha_func());
+  FC_LIGHT_ASSERT(out.size() == sha_size, "Invalid sha3_256 hash size");
+  EVP_DigestFinal_ex(ctx, static_cast<unsigned char*>(out.data()), &digest_len);
+  FC_LIGHT_ASSERT(digest_len == out.size(), "Invalid sha3_256 hash size has been written");
+  return out;
+}
+

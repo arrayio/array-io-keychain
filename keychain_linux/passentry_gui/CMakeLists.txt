@@ -49,3 +49,11 @@ add_executable(passentry_gui ${GUI_SOURCES} ${GUI_INCLUDE})
 # Use the Widgets module from Qt 5
 target_link_libraries(passentry_gui Qt5::Widgets fc_light ${LIB_PTHREAD} ${LIB_OPENSSL} ${Boost_LIBRARIES} )
 
+if( NOT MSVC )
+    set(GUI_BINARY ${CMAKE_BINARY_DIR}/keychain_linux/passentry_gui/passentry_gui)
+    set(KEYCHAIN_BINARY_DIR ${CMAKE_BINARY_DIR}/keychain_cmd_app)
+    ADD_CUSTOM_COMMAND(TARGET passentry_gui
+            POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy ${GUI_BINARY} ${KEYCHAIN_BINARY_DIR}
+            )
+endif (NOT MSVC )

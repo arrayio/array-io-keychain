@@ -10,4 +10,4 @@ void sign_bitshares(
         const unsigned char *seckey
         );
 
-#endif SECP256K1_EXT_H
+#endif //SECP256K1_EXT_H

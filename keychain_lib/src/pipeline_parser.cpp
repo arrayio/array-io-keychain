@@ -36,6 +36,8 @@ int pipeline_parser::run()
     return &(*i);
   };
   auto bytes_remaining  = [&read_buf](buf_iterator &i) {
+    assert(i <= read_buf.end());
+    if (i > read_buf.end()) abort();
     return std::distance(i, read_buf.end());
   };
 

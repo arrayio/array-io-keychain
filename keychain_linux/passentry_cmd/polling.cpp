@@ -13,7 +13,7 @@ void polling::Select()
     int res;
 
     auto begin  = [this](buf_it &i) { if (i==buf.end()) i=buf.begin(); if (i>buf.end()) abort; return &(*i); };
-    auto remain = [this](buf_it &i) { if (i==buf.end()) i=buf.begin(); return std::distance(i, buf.end());};
+    auto remain = [this](buf_it &i) { return std::distance(i, buf.end());};
 
     FD_ZERO(&readfds);
     FD_SET(socket, &readfds);

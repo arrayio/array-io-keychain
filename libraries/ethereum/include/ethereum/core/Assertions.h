@@ -30,7 +30,7 @@
 namespace dev
 {
 
-#if defined(_MSC_VER)
+#if defined( _WIN32)
 #define ETH_FUNC __FUNCSIG__
 #elif defined(__GNUC__)
 #define ETH_FUNC __PRETTY_FUNCTION__

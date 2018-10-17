@@ -729,7 +729,7 @@ string      format_string( const string& format, const variant_object& args )
    return ss.str();
 }
    #ifdef __APPLE__
-   #elif !defined(_MSC_VER)
+   #elif !defined( _WIN32)
    void to_variant( long long int s, variant& v ) { v = variant( int64_t(s) ); }
    void to_variant( unsigned long long int s, variant& v ) { v = variant( uint64_t(s)); }
    #endif

@@ -3,10 +3,10 @@
 #include <fc_light/string.hpp>
 #include <fc_light/optional.hpp>
 
-#ifdef _MSC_VER
+#ifdef  _WIN32
   #pragma warning (push)
   #pragma warning (disable : 4244)
-#endif //// _MSC_VER
+#endif ////  _WIN32
 
 namespace fc_light {
   class microseconds {
@@ -140,6 +140,6 @@ FC_LIGHT_REFLECT_TYPENAME( fc_light::time_point )
 FC_LIGHT_REFLECT_TYPENAME( fc_light::microseconds )
 FC_LIGHT_REFLECT_TYPENAME( fc_light::time_point_sec )
 
-#ifdef _MSC_VER
+#ifdef  _WIN32
   #pragma warning (pop)
-#endif /// #ifdef _MSC_VER
+#endif /// #ifdef  _WIN32

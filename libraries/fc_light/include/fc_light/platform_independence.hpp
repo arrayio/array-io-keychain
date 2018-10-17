@@ -1,4 +1,4 @@
-#ifdef _MSC_VER
+#ifdef  _WIN32
 #include <intrin.h>
     #ifdef _M_X64
     #define __builtin_popcountll __popcnt64

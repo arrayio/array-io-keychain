@@ -164,7 +164,7 @@ namespace fc_light
    template<typename T>
    fc_light::exception_ptr copy_exception( T&& e )
    {
-#if defined(_MSC_VER) && (_MSC_VER < 1700)
+#if defined( _WIN32) && ( _WIN32 < 1700)
      return std::make_shared<unhandled_exception>( log_message(),
                                                    std::copy_exception(fc_light::forward<T>(e)) );
 #else
@@ -448,11 +448,7 @@ namespace fc_light
    catch( fc_light::exception& er ) { \
       FC_LIGHT_RETHROW_EXCEPTION( er, LOG_LEVEL, FORMAT, __VA_ARGS__ ); \
    } catch( const std::exception& e ) {  \
-      fc_light::exception fce( \
-                FC_LIGHT_LOG_MESSAGE( LOG_LEVEL, "${what}: " FORMAT,__VA_ARGS__("what",e.what())), \
-                fc_light::std_exception_code,\
-                typeid(e).name(), \
-                e.what() ) ; throw fce;\
+     throw;\
    } catch( ... ) {  \
       throw fc_light::unhandled_exception( \
                 FC_LIGHT_LOG_MESSAGE( LOG_LEVEL, FORMAT,__VA_ARGS__), \

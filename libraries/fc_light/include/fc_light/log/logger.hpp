@@ -73,7 +73,7 @@ namespace fc_light
 // suppress warning "conditional expression is constant" in the while(0) for visual c++
 // http://cnicholson.net/2009/03/stupid-c-tricks-dowhile0-and-c4127/
 #define FC_LIGHT_MULTILINE_MACRO_BEGIN do {
-#ifdef _MSC_VER
+#ifdef  _WIN32
 # define FC_LIGHT_MULTILINE_MACRO_END \
     __pragma(warning(push)) \
     __pragma(warning(disable:4127)) \

@@ -28,7 +28,8 @@
 #pragma warning(disable:4244)
 #endif
 
-#if _MSC_VER && _MSC_VER < 1900
+#if  _MSC_VER &&  _MSC_VER < 1900
+#error STOP
 #define _ALLOW_KEYWORD_MACROS
 #define noexcept throw()
 #endif
@@ -132,12 +133,12 @@ using u160Set = std::set<u160>;
 // Map types.
 using StringMap = std::map<std::string, std::string>;
 using BytesMap = std::map<bytes, bytes>;
-using u256Map = std::map<u256, u256>;
-using HexMap = std::map<bytes, bytes>;
+//using u256Map = std::map<u256, u256>;
+//using HexMap = std::map<bytes, bytes>;
 
 // Hash types.
 using StringHashMap = std::unordered_map<std::string, std::string>;
-using u256HashMap = std::unordered_map<u256, u256>;
+//using u256HashMap = std::unordered_map<u256, u256>;
 
 // String types.
 using strings = std::vector<std::string>;
@@ -284,7 +285,7 @@ private:
 #define DEV_TIMED_FUNCTION_ABOVE(MS) DEV_TIMED_SCOPE_ABOVE(__PRETTY_FUNCTION__, MS)
 #endif
 
-#ifdef _MSC_VER
+#ifdef  _WIN32
 // TODO.
 #define DEV_UNUSED
 #else

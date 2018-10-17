@@ -24,7 +24,8 @@
 
 #include <ethereum/core/Exceptions.h>
 
-using namespace std;
+using std::string;
+using std::map;
 using namespace dev;
 
 namespace

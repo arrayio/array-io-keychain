@@ -83,7 +83,7 @@ namespace fc_light {
   ostream& operator<<( ostream& o, const uint16_t& v );
   ostream& operator<<( ostream& o, const int8_t& v );
   ostream& operator<<( ostream& o, const uint8_t& v );
-#ifndef _MSC_VER
+#ifndef  _WIN32
   ostream& operator<<( ostream& o, const size_t& v );
 #endif
 

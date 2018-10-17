@@ -4,7 +4,7 @@
 
 
 namespace fc_light {
-#ifdef _MSC_VER
+#ifdef  _WIN32
 # pragma warning(push)
 # pragma warning(disable:4521)  /* multiple copy ctors */
 # pragma warning(disable:4522) /* multiple assignment operators */
@@ -259,7 +259,7 @@ namespace fc_light {
     return !left || *left != u;
   }
 
-#ifdef _MSC_VER
+#ifdef  _WIN32
 # pragma warning(pop)
 #endif
 

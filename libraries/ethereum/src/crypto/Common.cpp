@@ -27,7 +27,7 @@
 #include <secp256k1_ecdh.h>
 #include <secp256k1_recovery.h>
 
-using namespace std;
+//using namespace std;
 using namespace dev;
 using namespace dev::crypto;
 

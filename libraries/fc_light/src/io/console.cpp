@@ -3,7 +3,7 @@
 
 namespace fc_light {
 
-#ifdef WIN32
+#ifdef  _WIN32
 #include <windows.h>
 
 void set_console_echo( bool enable_echo )
@@ -21,7 +21,7 @@ void set_console_echo( bool enable_echo )
    }
 }
 
-#else // NOT WIN32
+#else // _MCS_VER
 #include <termios.h>
 #include <unistd.h>
 
@@ -41,6 +41,6 @@ void set_console_echo( bool enable_echo )
    tcsetattr(STDIN_FILENO, TCSANOW, &newt);
 }
 
-#endif // WIN32
+#endif // _MCS_VER
 
 } // namespace fc_light

@@ -2,7 +2,7 @@
 #include <stdint.h>
 #include <new>
 
-#ifdef _MSC_VER
+#ifdef  _WIN32
 #pragma warning(disable: 4482) // nonstandard extension used enum Name::Val, standard in C++11
 #define NO_RETURN __declspec(noreturn)
 #else

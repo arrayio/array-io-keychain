@@ -82,7 +82,7 @@ fs::path dev::getDefaultDataDir(string _prefix)
 		return fs::path(path) / _prefix;
 	else
 	{
-	#ifndef _MSC_VER // todo?
+	#ifndef  _WIN32 // todo?
 		cwarn << "getDataDir(): SHGetSpecialFolderPathA() failed.";
 	#endif
 		BOOST_THROW_EXCEPTION(std::runtime_error("getDataDir() - SHGetSpecialFolderPathA() failed."));

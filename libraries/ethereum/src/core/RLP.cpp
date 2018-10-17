@@ -20,7 +20,9 @@
  */
 
 #include <ethereum/core/RLP.h>
-using namespace std;
+
+using std::dec;
+
 using namespace dev;
 
 bytes dev::RLPNull = rlp("");

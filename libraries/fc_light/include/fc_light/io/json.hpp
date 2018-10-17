@@ -29,10 +29,10 @@ namespace fc_light
             legacy_generator = 1
          };
 
-         static std::ostream& to_stream( std::ostream& out, const fc_light::string&);
-         static std::ostream& to_stream( std::ostream& out, const variant& v, output_formatting format = stringify_large_ints_and_doubles );
-         static std::ostream& to_stream( std::ostream& out, const variants& v, output_formatting format = stringify_large_ints_and_doubles );
-         static std::ostream& to_stream( std::ostream& out, const variant_object& v, output_formatting format = stringify_large_ints_and_doubles );
+         static ostream& to_stream( ostream& out, const fc_light::string&);
+         static ostream& to_stream( ostream& out, const variant& v, output_formatting format = stringify_large_ints_and_doubles );
+         static ostream& to_stream( ostream& out, const variants& v, output_formatting format = stringify_large_ints_and_doubles );
+         static ostream& to_stream( ostream& out, const variant_object& v, output_formatting format = stringify_large_ints_and_doubles );
 
 //         static variant  from_stream( buffered_istream& in, parse_type ptype = legacy_parser );
 

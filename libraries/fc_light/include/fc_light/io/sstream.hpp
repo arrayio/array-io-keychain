@@ -1,12 +1,10 @@
 #pragma once
-#include <iostream>
+#include <fc_light/io/iostream.hpp>
 #include <fc_light/fwd.hpp>
-#include <fc_light/string.hpp>
-#include <memory>
 
 namespace fc_light {
 
-class stringstream : virtual public std::iostream {
+  class stringstream : virtual public iostream {
     public:
       stringstream();
       stringstream( fc_light::string& s);

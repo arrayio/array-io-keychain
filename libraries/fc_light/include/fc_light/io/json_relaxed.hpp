@@ -25,7 +25,7 @@ namespace fc_light { namespace json_relaxed
    template<typename T>
    fc_light::string tokenFromStream( T& in )
    {
-      std::stringstream token;
+      fc_light::stringstream token;
       try
       {
          char c = in.peek();
@@ -82,7 +82,7 @@ namespace fc_light { namespace json_relaxed
    template<typename T, bool strict, bool allow_escape>
    fc_light::string quoteStringFromStream( T& in )
    {
-       std::stringstream token;
+       fc_light::stringstream token;
        try
        {
            char q = in.get();

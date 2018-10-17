@@ -1,11 +1,11 @@
 #pragma once
 #include <fc_light/shared_ptr.hpp>
 #include <fc_light/filesystem.hpp>
-#include <iostream>
+#include <fc_light/io/iostream.hpp>
 
 namespace fc_light {
   class path;
-class ofstream : virtual public std::ostream {
+class ofstream : virtual public ostream {
     public:
       enum mode { out, binary };
       ofstream();
@@ -24,7 +24,7 @@ class ofstream : virtual public std::ostream {
       fc_light::shared_ptr<impl> my;
   };
 
-class ifstream : virtual public std::istream {
+class ifstream : virtual public istream {
     public:
       enum mode { in, binary };
       enum seekdir { beg, cur, end };
@@ -38,7 +38,7 @@ class ifstream : virtual public std::istream {
       size_t    readsome(const std::shared_ptr<char>& buffer, size_t max, size_t offset);
       ifstream& read( char* buf, size_t len );
       ifstream& seekg( size_t p, seekdir d = beg );
-      using std::istream::get;
+      using istream::get;
       void      get( char& c ) { read( &c, 1 ); }
       void      close();
       bool      eof()const;

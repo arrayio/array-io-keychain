@@ -10,7 +10,9 @@ ENDIF()
 find_package(OpenSSL REQUIRED)
 
 FIND_PACKAGE(Boost 1.65 REQUIRED COMPONENTS ${BOOST_COMPONENTS})
+include_directories (../secp256k1_ext/include)
 include_directories(${Boost_INCLUDE_DIR})
+
 
 add_library( ether ${ETHER_SOURCES} ${ETHER_HEADERS} )
 
@@ -18,7 +20,7 @@ target_link_libraries( ether fc_light secp256k1_btc ${OPENSSL_LIBRARIES}  ${CMAK
 
 target_include_directories( ether
         PUBLIC "${CMAKE_SOURCE_DIR}/libraries/ethereum/include"
-        PUBLIC "${CMAKE_SOURCE_DIR}/libraries/secp256k1/include"
+        PUBLIC "${CMAKE_SOURCE_DIR}/libraries/secp256k1_ext/include"
         PUBLIC "${CMAKE_SOURCE_DIR}/libraries/fc_light/include"
         PRIVATE "${OPENSSL_ROOT_DIR}/include"
         )

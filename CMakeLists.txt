@@ -8,9 +8,9 @@ add_subdirectory(./libraries/fc_light)
 
 if( MSVC )
   add_subdirectory(./keychain_service_win)
-else ( MSVC )
-  add_subdirectory(./keychain_linux/passentry_gui)
 endif ( MSVC )
 add_subdirectory(./keychain_cmd_app)
 
-
+if ( ${CMAKE_HOST_SYSTEM_NAME} MATCHES "Linux")
+  add_subdirectory(./keychain_linux/passentry_gui)
+endif()

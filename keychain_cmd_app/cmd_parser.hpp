@@ -7,6 +7,15 @@
 
 #include <boost/program_options.hpp>
 
+#if (defined(linux) || defined(__linux) || defined(__linux__) || defined(__GNU__) || defined(__GLIBC__)) && !defined(_CRAYC)
+    #define LINUX
+#elif defined(_WIN32) || defined(__WIN32__) || defined(WIN32)
+    #define WIN
+#elif defined(macintosh) || defined(__APPLE__) || defined(__APPLE_CC__)
+    #define APPLE
+#endif
+
+
 namespace po = boost::program_options;
 
 namespace keychain_app

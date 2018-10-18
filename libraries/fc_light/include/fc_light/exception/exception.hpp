@@ -164,7 +164,7 @@ namespace fc_light
    template<typename T>
    fc_light::exception_ptr copy_exception( T&& e )
    {
-#if defined( _WIN32) && ( _WIN32 < 1700)
+#if defined( _MSC_VER) && ( _MSC_VER < 1700)
      return std::make_shared<unhandled_exception>( log_message(),
                                                    std::copy_exception(fc_light::forward<T>(e)) );
 #else

@@ -1,6 +1,12 @@
 file(GLOB ETHER_HEADERS "include/ethereum/core/*.h" "include/ethereum/crypto/*.h")
 file(GLOB ETHER_SOURCES "src/core/*.cpp" "src/crypto/*.cpp")
 
+if (NOT MSVC)
+    if ( LIBCXX_BUILD )
+        set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}  -stdlib=libc++" )
+    endif()
+endif()
+
 IF(NOT "$ENV{OPENSSL_ROOT_DIR}" STREQUAL "")
     set(OPENSSL_ROOT_DIR $ENV{OPENSSL_ROOT_DIR} )
     set(OPENSSL_INCLUDE_DIR ${OPENSSL_ROOT_DIR}/include)

@@ -3,10 +3,15 @@ project( KeychainCmdApp  )
 cmake_minimum_required( VERSION 3.0.2 )
 
 set(CMAKE_CXX_FLAGS "-std=c++14")
-set( CMAKE_EXE_LINKER_FLAGS )
+
+if (NOT MSVC)
+    if ( LIBCXX_BUILD )
+        set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}  -stdlib=libc++" )
+    endif()
+endif()
 
 SET(BOOST_COMPONENTS)
-LIST(APPEND BOOST_COMPONENTS thread date_time system filesystem program_options signals serialization chrono unit_test_framework context locale iostreams)
+LIST(APPEND BOOST_COMPONENTS date_time system filesystem program_options signals serialization chrono unit_test_framework locale iostreams)
 SET( Boost_USE_STATIC_LIBS ON CACHE STRING "ON or OFF" )
 
 SET(BOOST_ROOT $ENV{BOOST_ROOT})
@@ -14,11 +19,7 @@ set(Boost_USE_MULTITHREADED ON)
 set(BOOST_ALL_DYN_LINK OFF)
 
 FIND_PACKAGE(Boost 1.65 REQUIRED COMPONENTS ${BOOST_COMPONENTS})
-SET(BOOST_LIBRARIES_TEMP ${Boost_LIBRARIES})
-FIND_PACKAGE(Boost 1.65 REQUIRED COMPONENTS coroutine)
-LIST(APPEND BOOST_COMPONENTS coroutine)
-SET(Boost_LIBRARIES ${BOOST_LIBRARIES_TEMP} ${Boost_LIBRARIES})
-
+SET(Boost_LIBRARIES ${Boost_LIBRARIES})
 
 find_library(LIB_OPENSSL NAME crypto  HINTS "${OPENSSL_ROOT_DIR}/lib")
 if( NOT MSVC )

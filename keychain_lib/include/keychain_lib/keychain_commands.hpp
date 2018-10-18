@@ -323,7 +323,7 @@ struct keychain_command<command_te::sign> : keychain_command_base
               throw std::runtime_error("unknown blockchain_type");
       }
 
-      json_response response(to_hex(signature.begin(), signature.size()).c_str(), id);
+      json_response response(to_hex(signature.data(), signature.size()).c_str(), id);
       fc_light::variant res(response);
       return fc_light::json::to_pretty_string(res);
     }

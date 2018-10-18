@@ -51,6 +51,7 @@ if ( ${CMAKE_HOST_SYSTEM_NAME} MATCHES "Linux")
     endif()
     find_library(LIB_XI NAME Xi HINTS "/usr/lib/x86_64-linux-gnu/")
     add_executable(keychain ${KEYCHAIN_SOURCES} ${KEYCHAIN_INCLUDE} )
+    add_dependencies(keychain passentry_gui)
     target_link_libraries(keychain keychain_common ${LIB_PTHREAD} fc_light ether ${LIB_OPENSSL} ${Boost_LIBRARIES} ${X11_LIBRARIES} ${LIB_XI})
 
     set(GUI_BINARY ${CMAKE_BINARY_DIR}/keychain_linux/passentry_gui/passentry_gui)

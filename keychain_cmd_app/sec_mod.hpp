@@ -6,7 +6,6 @@
 #define KEYCHAINAPP_SEC_MOD_HPP
 
 #include <keychain_lib/keychain_wrapper.hpp>
-#include <pass_entry_term.hpp>
 
 namespace keychain_app
 {

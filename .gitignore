@@ -8,9 +8,9 @@
 /nmake-build/*
 /3rd-party-components/lib/*
 /3rd-party-components
-/cmake-build-debug/*
-/cmake-debug-build/*
-/cmake-build-release/*
+/cmake-build-debug*
+/cmake-debug-build*
+/cmake-build-release*
 /key_data/*
 /keychain_cmd_app/.idea/*
 /keychain_lib/CMakeFiles/*

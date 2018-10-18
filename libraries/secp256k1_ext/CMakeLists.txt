@@ -4,6 +4,12 @@ project( Secp256k1_bitcon  )
 
 add_definitions(-DENABLE_MODULE_RECOVERY -DENABLE_MODULE_ECDH)
 
+if (NOT MSVC)
+    if ( LIBCXX_BUILD )
+        set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}  -stdlib=libc++" )
+    endif()
+endif()
+
 set( SECP256K1_DIR "../secp256k1" )
 
 file( GLOB SECP256K1_SOURCES

@@ -18,7 +18,7 @@
 //#include <boost/program_options/option.hpp>
 
 #ifdef LINUX
-    #include "sec_mod_linux.hpp"
+    #include "../keychain_linux/passentry_cmd/sec_mod_linux.hpp"
 #endif
 
 using namespace keychain_app;

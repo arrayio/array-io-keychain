@@ -55,10 +55,11 @@ if ( ${CMAKE_HOST_SYSTEM_NAME} MATCHES "Linux")
     target_link_libraries(keychain keychain_common ${LIB_PTHREAD} fc_light ether ${LIB_OPENSSL} ${Boost_LIBRARIES} ${X11_LIBRARIES} ${LIB_XI})
 
     set(GUI_BINARY ${CMAKE_BINARY_DIR}/keychain_linux/passentry_gui/passentry_gui)
-    set(KEYCHAIN_BINARY_DIR ${CMAKE_BINARY_DIR}/keychain_cmd_app)
+    set(KEYCHAIN_BINARY_DIR ${CMAKE_BINARY_DIR}/keychain_cmd_app/passentry_gui)
+
     ADD_CUSTOM_COMMAND(TARGET keychain
             POST_BUILD
-            COMMAND ${CMAKE_COMMAND} -E copy ${GUI_BINARY} ${KEYCHAIN_BINARY_DIR}
+            COMMAND ${CMAKE_COMMAND} -E  copy_if_different   ${GUI_BINARY} ${KEYCHAIN_BINARY_DIR}
             )
 else()
     include_directories(

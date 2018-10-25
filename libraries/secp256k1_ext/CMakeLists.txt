@@ -29,11 +29,11 @@ file( GLOB SECP256K1_HEADERS
         "${SECP256K1_DIR}/src/u*.h"
         "./include/secp256k1_ext.hpp"
         )
-add_library( secp256k1_btc ${SECP256K1_SOURCES} ${SECP256K1_HEADERS})
+add_library( secp256k1 ${SECP256K1_SOURCES} ${SECP256K1_HEADERS})
 
 add_definitions( -DVERIFY )
 
-target_include_directories( secp256k1_btc
+target_include_directories( secp256k1
         PRIVATE "${SECP256K1_DIR}"
         PUBLIC "${SECP256K1_DIR}/include"
         PUBLIC "./include"
@@ -46,6 +46,6 @@ set( SECP256K1_BUILD_DEFINES
         USE_NUM_NONE
         USE_SCALAR_8X32
         USE_SCALAR_INV_BUILTIN )
-set_target_properties( secp256k1_btc PROPERTIES COMPILE_DEFINITIONS "${SECP256K1_BUILD_DEFINES}" LINKER_LANGUAGE C )
+set_target_properties( secp256k1 PROPERTIES COMPILE_DEFINITIONS "${SECP256K1_BUILD_DEFINES}" LINKER_LANGUAGE C )
 # End configure secp256k1-zkp
 

@@ -27,7 +27,7 @@ if( MSVC )
             "../libraries/fc_light/include"
             "../libraries/secp256k1/include"
             "../libraries/secp256k1_ext/include"
-            "../libraries/ethereum/include"
+            "../libraries/eth-crypto/include"
             "${OPENSSL_ROOT_DIR}/include"
             ${Boost_INCLUDE_DIR})
 else ( MSVC )
@@ -36,7 +36,7 @@ else ( MSVC )
             "../libraries/fc_light/include"
             "../libraries/secp256k1/include"
             "../libraries/secp256k1_ext/include"
-            "../libraries/ethereum/include"
+            "../libraries/eth-crypto/include"
             "${OPENSSL_ROOT_DIR}/include"
             "/usr/include/libcxxabi"
             ${Boost_INCLUDE_DIR})

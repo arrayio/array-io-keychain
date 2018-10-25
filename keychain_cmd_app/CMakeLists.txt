@@ -32,7 +32,7 @@ if ( ${CMAKE_HOST_SYSTEM_NAME} MATCHES "Linux")
             "../keychain_lib/include"
             "../keychain_linux/passentry_cmd"
             "../libraries/fc_light/include"
-            "../libraries/ethereum/include"
+            "../libraries/eth-crypto/include"
             "../libraries/secp256k1/include"
             "../libraries/secp256k1_ext/include"
             "${OPENSSL_ROOT_DIR}/include"
@@ -52,7 +52,7 @@ if ( ${CMAKE_HOST_SYSTEM_NAME} MATCHES "Linux")
     find_library(LIB_XI NAME Xi HINTS "/usr/lib/x86_64-linux-gnu/")
     add_executable(keychain ${KEYCHAIN_SOURCES} ${KEYCHAIN_INCLUDE} )
     add_dependencies(keychain passentry_gui)
-    target_link_libraries(keychain keychain_common ${LIB_PTHREAD} fc_light ether ${LIB_OPENSSL} ${Boost_LIBRARIES} ${X11_LIBRARIES} ${LIB_XI})
+    target_link_libraries(keychain keychain_common ${LIB_PTHREAD} fc_light eth-crypto ${LIB_OPENSSL} ${Boost_LIBRARIES} ${X11_LIBRARIES} ${LIB_XI})
 
     set(GUI_BINARY ${CMAKE_BINARY_DIR}/keychain_linux/passentry_gui/passentry_gui)
     set(KEYCHAIN_BINARY_DIR ${CMAKE_BINARY_DIR}/keychain_cmd_app/passentry_gui)
@@ -65,7 +65,7 @@ else()
     include_directories(
             "../keychain_lib/include"
             "../libraries/fc_light/include"
-            "../libraries/ethereum/include"
+            "../libraries/eth-crypto/include"
             "../libraries/secp256k1/include"
             "../libraries/secp256k1_ext/include"
             "${OPENSSL_ROOT_DIR}/include"
@@ -74,6 +74,6 @@ else()
     file(GLOB KEYCHAIN_SOURCES "./*.cpp"  )
     file(GLOB KEYCHAIN_INCLUDE "./*.hpp"  )
     add_executable(keychain ${KEYCHAIN_SOURCES} ${KEYCHAIN_INCLUDE} )
-    target_link_libraries(keychain keychain_common fc_light ether ${LIB_OPENSSL} ${Boost_LIBRARIES})
+    target_link_libraries(keychain keychain_common fc_light eth-crypto ${LIB_OPENSSL} ${Boost_LIBRARIES})
 
 endif()

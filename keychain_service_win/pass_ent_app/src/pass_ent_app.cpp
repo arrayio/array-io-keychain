@@ -23,7 +23,7 @@ DESKTOP_JOURNALPLAYBACK | DESKTOP_ENUMERATE | DESKTOP_WRITEOBJECTS | \
 DESKTOP_SWITCHDESKTOP | STANDARD_RIGHTS_REQUIRED)
 
 #include <stdio.h>
-#include <KeychainServiceExchange.h>
+#include <C:\array-io-keychain\keychain_service_win\pass_ent_app\include\KeychainServiceExchange.h>
 #include "..\resource.h"
 
 using namespace std;

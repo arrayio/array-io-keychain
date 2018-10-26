@@ -1,7 +1,4 @@
-#include <KeychainServiceExchange.h>
-#pragma comment(lib, "advapi32.lib")
-#pragma comment(lib, "Userenv.lib")
-#pragma comment(lib, "Wtsapi32.lib")
+#include <C:\array-io-keychain\keychain_service_win\pass_ent_app\include\KeychainServiceExchange.h>
 
 KeychainServiceExchange::KeychainServiceExchange() 
 {

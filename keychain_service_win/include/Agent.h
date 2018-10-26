@@ -1,5 +1,7 @@
 #ifndef __AGENT_H
 #define __AGENT_H
+#pragma comment(lib, "Crypt32")
+#pragma comment(lib, "Userenv.lib")
 #include <windows.h>
 #include <UserEnv.h>
 #include <Tchar.h>

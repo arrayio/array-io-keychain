@@ -4,6 +4,12 @@ cmake_minimum_required( VERSION 3.0.2 )
 
 set(CMAKE_CXX_FLAGS "-std=c++14")
 
+if(MSVC)
+	set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}  /EHsc" )
+	set( CMAKE_VS_PLATFORM_TOOLSET "LLVM-vs2017")
+endif()
+
+
 if (NOT MSVC)
     if ( LIBCXX_BUILD )
         set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}  -stdlib=libc++" )
@@ -11,7 +17,7 @@ if (NOT MSVC)
 endif()
 
 SET(BOOST_COMPONENTS)
-LIST(APPEND BOOST_COMPONENTS date_time system filesystem program_options signals serialization chrono unit_test_framework locale iostreams)
+LIST(APPEND BOOST_COMPONENTS date_time system filesystem program_options signals serialization chrono unit_test_framework locale thread exception iostreams)
 SET( Boost_USE_STATIC_LIBS ON CACHE STRING "ON or OFF" )
 
 SET(BOOST_ROOT $ENV{BOOST_ROOT})
@@ -77,6 +83,9 @@ else()
     file(GLOB KEYCHAIN_SOURCES "./*.cpp"  )
     file(GLOB KEYCHAIN_INCLUDE "./*.hpp"  )
     add_executable(keychain ${KEYCHAIN_SOURCES} ${KEYCHAIN_INCLUDE} )
-    target_link_libraries(keychain keychain_common fc_light eth-crypto ${LIB_OPENSSL} ${Boost_LIBRARIES})
-
+	if (MSVC)
+		target_link_libraries(keychain keychain_common fc_light eth-crypto ${LIB_OPENSSL} ${Boost_LIBRARIES} Userenv.lib)
+	else()
+		target_link_libraries(keychain keychain_common fc_light eth-crypto ${LIB_OPENSSL} ${Boost_LIBRARIES})
+	endif()
 endif()

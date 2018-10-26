@@ -21,9 +21,12 @@ set(BOOST_ALL_DYN_LINK OFF)
 FIND_PACKAGE(Boost 1.65 REQUIRED COMPONENTS ${BOOST_COMPONENTS})
 SET(Boost_LIBRARIES ${Boost_LIBRARIES})
 
-find_library(LIB_OPENSSL NAME crypto  HINTS "${OPENSSL_ROOT_DIR}/lib")
+
 if( NOT MSVC )
+  find_library(LIB_OPENSSL NAME crypto HINTS "${OPENSSL_ROOT_DIR}/lib")
   find_library(LIB_PTHREAD NAME pthread HINTS "/usr/lib/x86_64-linux-gnu")
+else()
+  find_library(LIB_OPENSSL NAME libcrypto.lib HINTS "${OPENSSL_ROOT_DIR}/lib")
 endif( NOT MSVC )
 
 

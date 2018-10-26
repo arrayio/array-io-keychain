@@ -125,7 +125,7 @@ namespace fc_light {
     {
     std::wstring path = generic_wstring();
 
-#ifdef WIN32
+#ifdef _WIN32
     const size_t maxPath = 32*1024;
     std::vector<wchar_t> short_path;
     short_path.resize(maxPath + 1);
@@ -276,7 +276,7 @@ namespace fc_light {
   // no-op on Windows.
   void chmod( const path& p, int perm )
   {
-#ifndef WIN32
+#ifndef _WIN32
     mode_t actual_perm = 
       ((perm & 0400) ? S_IRUSR : 0)
     | ((perm & 0200) ? S_IWUSR : 0)
@@ -447,7 +447,7 @@ namespace fc_light {
    {
       static fc_light::path p = []()
       {
-#ifdef WIN32
+#ifdef _WIN32
           HANDLE access_token;
           if (!OpenProcessToken(GetCurrentProcess(), TOKEN_READ, &access_token))
             FC_LIGHT_ASSERT(false, "Unable to open an access token for the current process");
@@ -479,7 +479,7 @@ namespace fc_light {
    {
 #ifdef __APPLE__
          static fc_light::path appdir = [](){  return home_path() / "Library" / "Application Support"; }();
-#elif defined( WIN32 )
+#elif defined( _WIN32 )
          static fc_light::path appdir = [](){
            wchar_t app_data_dir[MAX_PATH];
 
@@ -563,7 +563,7 @@ namespace fc_light {
 
   void simple_lock_file::impl::unlock()
   {
-#ifdef WIN32
+#ifdef _WIN32
     CloseHandle(file_handle);
     file_handle = INVALID_HANDLE_VALUE;
     is_locked = false;

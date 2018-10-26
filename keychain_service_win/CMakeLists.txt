@@ -24,7 +24,7 @@ add_definitions(-DUNICODE -D_UNICODE)
 
 include_directories(
 		"./include"
-        "../keychain_lib/include"
+		"../keychain_lib/include"
         "../array-io-core/libraries/utilities/include"
         "../array-io-core/libraries/db/include"
         "../array-io-core/libraries/chain/include"

@@ -130,15 +130,9 @@ BOOL StartInteractiveClientProcess(
     &pi                // receives information about new process
   );
 
+  // Validate the child process creation.
   if (bResult == NULL)
-  {
-    throw std::runtime_error("Could not create child process");
-  }
-  else
-  {
-    std::cout << "[          ] Successfully launched child process" << std::endl;
-  }
-
+    goto Cleanup;
 
 	ServiceLogger::getLogger().Log("Start process");
 	latError = GetLastError();

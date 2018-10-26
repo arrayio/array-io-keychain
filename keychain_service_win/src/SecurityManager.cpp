@@ -32,6 +32,10 @@ void SecurityManager::CreateSecureDesktop(const std::string& transId) {
 	LPCWSTR appToStart = dst;
 	LPTSTR app_args = args;
 	ServiceLogger::getLogger().Log("CreateSecureDescktop function StartInteractiveClientProcess to enter credentials");
-	StartInteractiveClientProcess(appToStart, (LPTSTR)app_args);
+  
+  if (!StartInteractiveClientProcess(appToStart, (LPTSTR)app_args))
+  {
+    throw std::runtime_error("Could not create child client process");
+  }
 }
 

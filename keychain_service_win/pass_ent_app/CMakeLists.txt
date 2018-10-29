@@ -25,5 +25,7 @@ file(GLOB KEYCHAIN_PASS_ENT_INCLUDES "./*.h")
 file(GLOB KEYCHAIN_PASS_ENT_RESOURCES "./*.rc")
 
 add_executable(keychain_pass_entry_app ${KEYCHAIN_PASS_ENT_SOURCES} ${KEYCHAIN_PASS_ENT_INCLUDES} ${KEYCHAIN_PASS_ENT_RESOURCES} ${KEYCHAIN_PASS_ENT_APPS})
+target_include_directories( keychain_pass_entry_app PRIVATE "./include/")
+        
 target_link_libraries(keychain_pass_entry_app Crypt32.lib)
 

@@ -20,7 +20,7 @@
 */
 #if COLOR_CONSOLE
 
-#ifndef _MSC_VER
+#ifndef _WIN32
 
 /**
     @def CONSOLE_DEFAULT

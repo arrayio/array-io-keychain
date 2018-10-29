@@ -4,7 +4,7 @@
 #include <fc_light/string.hpp>
 #include <fc_light/variant.hpp>
 #include <fc_light/reflect/variant.hpp>
-#ifndef  _WIN32
+#ifndef _WIN32
 #include <unistd.h>
 #endif
 #include <boost/thread/mutex.hpp>
@@ -16,6 +16,9 @@
 #include <sstream>
 #include <mutex>
 
+#ifdef _WIN32
+#include <windows.h>
+#endif
 
 namespace fc_light {
 
@@ -23,7 +26,7 @@ namespace fc_light {
    public:
      config                      cfg;
      color::type                 lc[log_level::off+1];
-#ifdef  _WIN32
+#ifdef _WIN32
      HANDLE                      console_handle;
 #endif
    };
@@ -45,11 +48,11 @@ namespace fc_light {
 
    void console_appender::configure( const config& console_appender_config )
    { try {
-#ifdef  _WIN32
+#ifdef _WIN32
       my->console_handle = INVALID_HANDLE_VALUE;
 #endif
       my->cfg = console_appender_config;
-#ifdef  _WIN32
+#ifdef _WIN32
          if (my->cfg.stream = stream::std_error)
            my->console_handle = GetStdHandle(STD_ERROR_HANDLE);
          else if (my->cfg.stream = stream::std_out)
@@ -64,7 +67,7 @@ namespace fc_light {
 
    console_appender::~console_appender() {}
 
-   #ifdef  _WIN32
+   #ifdef _WIN32
    static WORD
    #else
    static const char*
@@ -133,7 +136,7 @@ namespace fc_light {
    {
       FILE* out = stream::std_error ? stderr : stdout;
 
-      #ifdef  _WIN32
+      #ifdef _WIN32
          if (my->console_handle != INVALID_HANDLE_VALUE)
            SetConsoleTextAttribute(my->console_handle, get_console_color(text_color));
       #else
@@ -143,7 +146,7 @@ namespace fc_light {
       if( text.size() )
          fprintf( out, "%s", text.c_str() ); //fmt_str.c_str() );
 
-      #ifdef  _WIN32
+      #ifdef _WIN32
       if (my->console_handle != INVALID_HANDLE_VALUE)
         SetConsoleTextAttribute(my->console_handle, CONSOLE_DEFAULT);
       #else

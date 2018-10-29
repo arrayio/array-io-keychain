@@ -27,8 +27,8 @@
 #include "key_file_parser.hpp"
 #include "key_encryptor.hpp"
 #include "sign_define.hpp"
-#include <ethereum/core/FixedHash.h>
-#include <ethereum/crypto/Common.h>
+#include <eth-crypto/core/FixedHash.h>
+#include <eth-crypto/crypto/Common.h>
 #include <secp256k1_ext.hpp>
 
 #include <openssl/sha.h>

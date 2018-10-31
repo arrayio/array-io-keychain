@@ -43,29 +43,41 @@ int cmd_parser::run(int argc, const char* const argv [])
           ("help,h", "Show help")
           ("mode", po::value<std::string>(&task_type), "Select mode=test_run for test program with \"blank\" password");
 
-  po::variables_map vm;
+  po::variables_map options;
   try
   {
     po::parsed_options parsed = po::command_line_parser(argc, argv).options(desc).allow_unregistered().run();
-    po::store(parsed, vm);
-    po::notify(vm);
+
+    po::store(parsed, options);
+    po::notify(options);
+
+    if( options.count("help") )
+    {
+      std::cout << desc << std::endl;
+      return 0;
+    }
+
     if (task_type == "test_run")
       sec_mod = secure_module<sec_mod_dummy>::instance();
     else if (task_type == "")
     {
 #ifdef LINUX
-       sec_mod = secure_module<sec_mod_linux>::instance();
+      sec_mod = secure_module<sec_mod_linux>::instance();
 #else
        sec_mod = secure_module<sec_mod_mac>::instance();
 #endif
     }
     else
+    {
       std::cout<< desc << std::endl;
+      return 0;
+    }
+
   }
   catch (std::exception& ex)
   {
-    std::cout<< desc << std::endl;
-    return 0;
+      std::cout<< desc << std::endl;
+      return 0;
   }
 
   keychain_invoke_f f = std::bind(&keychain_wrapper, sec_mod, std::placeholders::_1);

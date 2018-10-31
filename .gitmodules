@@ -4,3 +4,6 @@
 [submodule "libraries/secp256k1"]
 	path = libraries/secp256k1
 	url = https://github.com/bitcoin-core/secp256k1
+[submodule "libraries/eth-crypto"]
+	path = libraries/eth-crypto
+	url = git@github.com:arrayio/eth-crypto.git

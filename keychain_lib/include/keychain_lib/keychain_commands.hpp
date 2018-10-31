@@ -27,8 +27,8 @@
 #include "key_file_parser.hpp"
 #include "key_encryptor.hpp"
 #include "sign_define.hpp"
-#include <ethereum/core/FixedHash.h>
-#include <ethereum/crypto/Common.h>
+#include <eth-crypto/core/FixedHash.h>
+#include <eth-crypto/crypto/Common.h>
 #include <secp256k1_ext.hpp>
 
 #include <openssl/sha.h>
@@ -323,7 +323,7 @@ struct keychain_command<command_te::sign> : keychain_command_base
               throw std::runtime_error("unknown blockchain_type");
       }
 
-      json_response response(to_hex(signature.begin(), signature.size()).c_str(), id);
+      json_response response(to_hex(signature.data(), signature.size()).c_str(), id);
       fc_light::variant res(response);
       return fc_light::json::to_pretty_string(res);
     }

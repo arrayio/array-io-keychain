@@ -1,7 +1,6 @@
 #include "Agent.h"
 #include "ServiceLogger.h"
 
-#include <iostream>
 
 BOOL StartInteractiveClientProcess(
 	LPCWSTR lpAppStart,
@@ -102,37 +101,37 @@ BOOL StartInteractiveClientProcess(
 
 	// Initialize the STARTUPINFO structure.
 	// Specify that the process runs in the interactive desktop.
-  ZeroMemory(&si, sizeof(STARTUPINFO));
-  si.cb = sizeof(STARTUPINFO);
-  si.lpDesktop = (LPTSTR)TEXT("winsta0\\default");
-  si.dwX = 500;
-  si.dwY = 500;
-  si.wShowWindow = true;
-  si.hStdError = false;
-  si.hStdInput = false;
-  si.hStdOutput = false;
+    ZeroMemory(&si, sizeof(STARTUPINFO));
+    si.cb = sizeof(STARTUPINFO);
+    si.lpDesktop = (LPTSTR)TEXT("winsta0\\default");
+    si.dwX = 500;
+    si.dwY = 500;
+    si.wShowWindow = true;
+    si.hStdError = false;
+    si.hStdInput = false;
+    si.hStdOutput = false;
 
 	// Launch the process in the client's logon session.
 	if (!CreateEnvironmentBlock(&enviroment, hToken, FALSE))
 		goto Cleanup;
 
-  bResult = CreateProcessAsUser(
-    hToken,            // client's access token
-    lpAppStart, // file to execute (LPCWSTR)pathToExecute,//
-    lpCommandLine,     // command line
-    NULL,              // pointer to process SECURITY_ATTRIBUTES
-    NULL,              // pointer to thread SECURITY_ATTRIBUTES
-    FALSE,             // handles are not inheritable
-    NORMAL_PRIORITY_CLASS | CREATE_UNICODE_ENVIRONMENT | 0x00400000,   // creation flags
-    enviroment,              // pointer to new environment block 
-    NULL,              // name of current directory 
-    &si,               // pointer to STARTUPINFO structure
-    &pi                // receives information about new process
-  );
+    bResult = CreateProcessAsUser(
+        hToken,            // client's access token
+        lpAppStart, // file to execute (LPCWSTR)pathToExecute,//
+        lpCommandLine,     // command line
+        NULL,              // pointer to process SECURITY_ATTRIBUTES
+        NULL,              // pointer to thread SECURITY_ATTRIBUTES
+        FALSE,             // handles are not inheritable
+        NORMAL_PRIORITY_CLASS | CREATE_UNICODE_ENVIRONMENT | 0x00400000,   // creation flags
+        enviroment,              // pointer to new environment block 
+        NULL,              // name of current directory 
+        &si,               // pointer to STARTUPINFO structure
+        &pi                // receives information about new process
+    );
 
-  // Validate the child process creation.
-  if (bResult == NULL)
-    goto Cleanup;
+    // Validate the child process creation.
+    if (bResult == NULL)
+        goto Cleanup;
 
 	ServiceLogger::getLogger().Log("Start process");
 	latError = GetLastError();
@@ -140,11 +139,7 @@ BOOL StartInteractiveClientProcess(
 	RevertToSelf();
 
 	if (bResult && pi.hProcess != INVALID_HANDLE_VALUE)
-	{
-		//WaitForSingleObject(pi.hProcess, INFINITE);
-    auto dbg_err_code = GetLastError();
 		CloseHandle(pi.hProcess);
-	}
 
 	if (pi.hThread != INVALID_HANDLE_VALUE)
 		CloseHandle(pi.hThread);

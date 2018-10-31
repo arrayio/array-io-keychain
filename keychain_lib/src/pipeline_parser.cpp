@@ -44,7 +44,6 @@ int pipeline_parser::run()
   auto it = read_buf.begin();
     while (true)
   {
-
     size_t bytes_read = read(m_pipein_desc, ptr_from_it(it), bytes_remaining(it));
 	if ( bytes_read == 0 )
 		break;

@@ -24,3 +24,5 @@
 *.orig
 *cpk
 .idea/*
+.DS_Store
+

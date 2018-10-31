@@ -9,6 +9,9 @@ if (NOT MSVC)
         set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}  -stdlib=libc++" )
     endif()
 endif()
+if(APPLE)
+	SET(CMAKE_EXE_LINKER_FLAGS "-framework Cocoa")
+endif()
 
 SET(BOOST_COMPONENTS)
 LIST(APPEND BOOST_COMPONENTS date_time system filesystem program_options signals serialization chrono unit_test_framework locale iostreams)
@@ -72,7 +75,20 @@ else()
 
     file(GLOB KEYCHAIN_SOURCES "./*.cpp"  )
     file(GLOB KEYCHAIN_INCLUDE "./*.hpp"  )
+    if(APPLE) 
+	file(GLOB KEYCHAIN_INCLUDE "./*.h*"  )
+	file(GLOB KEYCHAIN_SOURCES ("./*.m*" "./*.cpp" ) )
+    endif()
     add_executable(keychain ${KEYCHAIN_SOURCES} ${KEYCHAIN_INCLUDE} )
     target_link_libraries(keychain keychain_common fc_light ether ${LIB_OPENSSL} ${Boost_LIBRARIES})
-
+	if(APPLE) 
+		set_property (TARGET keychain APPEND_STRING PROPERTY 
+              	COMPILE_FLAGS "-fobjc-arc")
+	set_target_properties(
+    		${APP_NAME}
+		PROPERTIES
+    		MACOSX_BUNDLE YES
+    		XCODE_ATTRIBUTE_CLANG_ENABLE_OBJC_ARC YES  
+	)
+	endif()
 endif()

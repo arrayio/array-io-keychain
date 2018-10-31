@@ -21,6 +21,9 @@
     #include "../keychain_linux/passentry_cmd/sec_mod_linux.hpp"
 #endif
 
+#ifdef APPLE
+    #include "sec_mod_mac.hpp"
+#endif
 using namespace keychain_app;
 
 
@@ -46,7 +49,6 @@ int cmd_parser::run(int argc, const char* const argv [])
     po::parsed_options parsed = po::command_line_parser(argc, argv).options(desc).allow_unregistered().run();
     po::store(parsed, vm);
     po::notify(vm);
-
     if (task_type == "test_run")
       sec_mod = secure_module<sec_mod_dummy>::instance();
     else if (task_type == "")
@@ -54,7 +56,7 @@ int cmd_parser::run(int argc, const char* const argv [])
 #ifdef LINUX
        sec_mod = secure_module<sec_mod_linux>::instance();
 #else
-       sec_mod = secure_module<sec_mod_dummy>::instance();
+       sec_mod = secure_module<sec_mod_mac>::instance();
 #endif
     }
     else

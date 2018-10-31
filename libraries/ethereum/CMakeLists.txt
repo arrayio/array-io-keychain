@@ -1,3 +1,4 @@
+set(CMAKE_CXX_FLAGS "-std=c++14")
 file(GLOB ETHER_HEADERS "include/ethereum/core/*.h" "include/ethereum/crypto/*.h")
 file(GLOB ETHER_SOURCES "src/core/*.cpp" "src/crypto/*.cpp")
 

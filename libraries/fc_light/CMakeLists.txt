@@ -2,7 +2,7 @@ project( fc_light  )
 
 cmake_minimum_required( VERSION 3.0.2 )
 
-set(CMAKE_CXX_FLAGS "-std=c++14 ")
+set(CMAKE_CXX_FLAGS "-std=c++11 ")
 
 if (NOT MSVC)
     if ( LIBCXX_BUILD )

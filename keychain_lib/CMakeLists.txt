@@ -28,6 +28,7 @@ if( MSVC )
             "../libraries/secp256k1/include"
             "../libraries/secp256k1_ext/include"
             "../libraries/eth-crypto/include"
+            "../libraries/eth-crypto/ethash/src/libethash"
             "${OPENSSL_ROOT_DIR}/include"
             ${Boost_INCLUDE_DIR})
 else ( MSVC )
@@ -37,6 +38,7 @@ else ( MSVC )
             "../libraries/secp256k1/include"
             "../libraries/secp256k1_ext/include"
             "../libraries/eth-crypto/include"
+            "../libraries/eth-crypto/ethash/src/libethash"
             "${OPENSSL_ROOT_DIR}/include"
             "/usr/include/libcxxabi"
             ${Boost_INCLUDE_DIR})

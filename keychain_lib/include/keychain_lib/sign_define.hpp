@@ -10,7 +10,7 @@
 namespace keychain_app
 {
 
-using unit_t =  std::vector<char> ;
+using unit_t =  std::vector<unsigned char> ;
 using unit_list_t = std::vector< unit_t >;
 static const char* KEY_DEFAULT_PATH = "./key_data";
 

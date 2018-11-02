@@ -1,0 +1,67 @@
+<?xml version='1.0'?>
+<Wix xmlns='http://schemas.microsoft.com/wix/2006/wi'>
+
+	<!-- Set product information -->
+   <Product Id='*' UpgradeCode="11111111-2222-3333-4444-555555555555" 
+        Name='Setup' Language='1033' Version='1.0.0.1' 
+        Manufacturer='Array.IO'>
+	
+	<!-- Set package and media information -->
+    <Package Description='pak' InstallerVersion='301' Compressed='yes' Platform = "x64" />
+    <Media Id='1' Cabinet='setup.cab' EmbedCab='yes' />
+	
+	<!-- Override root install directory path -->
+	<SetDirectory Id="RootInstallDrive" Value="C:\Program Files" />
+
+    <Directory Id='TARGETDIR' Name='SourceDir'>
+		<Directory Id="RootInstallDrive">
+			<Directory Id="INSTALLLOCATION" Name="KeyChainService">
+				<Component Id='GlobalComponent' DiskId='1' Guid='b6ce2a80-e1b8-40bb-9695-79b4d3a56cdf'>
+					<File Id="File0" Name="keychain_service_win.exe" Source="keychain_service_win.exe" />
+					<File Id="File1" Name="keychain_pass_entry_app.exe" Source="keychain_pass_entry_app.exe" />
+					<File Id="File2" Name="libcrypto-1_1-x64.dll" Source="libcrypto-1_1-x64.dll" />
+					<File Id="File3" Name="service_manager.bat" Source="service_manager.bat" />
+					<File Id="File4" Name="delete_service.bat" Source="delete_service.bat" />
+				</Component>
+			</Directory>
+		</Directory>
+    </Directory>
+	
+	<!-- Install directory source text override -->
+	<Property Id="WIXUI_INSTALLDIR" Value="INSTALLLOCATION" />
+	<UIRef Id="WixUI_InstallDir" />
+	
+	<!-- License source text override -->
+	<WixVariable Id="WixUILicenseRtf" Value="license.rtf" />
+
+    <Feature Id='InstallFeature' Title='Install Feature' Level='1'>
+        <ComponentRef Id='GlobalComponent' />
+    </Feature>
+	
+    <!-- Global Run Action -->
+    <CustomAction Id="RunWrapExe" Return="ignore" Execute="deferred" 
+                  FileKey="File0" ExeCommand="setup.exe param here"  
+                  HideTarget="no" Impersonate="no" />
+				  
+				  
+	<!-- Additional action after installation -->			  
+	<CustomAction Id="RunBat" Directory="INSTALLLOCATION"
+    ExeCommand='"[INSTALLLOCATION]service_manager.BAT"'
+    Execute='deferred' Impersonate='no' Return='ignore'/>
+	
+	
+	<!-- Additional action after uninstall -->	
+	<CustomAction Id="BeforeUninstallService" Directory="INSTALLLOCATION"
+    ExeCommand='"[INSTALLLOCATION]delete_service.BAT"'
+    Execute='deferred' Impersonate='no' Return='ignore'/>
+	
+	
+	<!-- Overall install & uninstall actions execution block -->	
+    <InstallExecuteSequence>
+        <Custom Action="RunWrapExe" After="InstallFiles">NOT REMOVE~="ALL"</Custom>
+		<Custom Action="RunBat" Before="InstallFinalize">NOT (REMOVE~="ALL")</Custom>
+		<Custom Action='BeforeUninstallService' After='InstallInitialize'>REMOVE="ALL"</Custom>
+    </InstallExecuteSequence>
+
+   </Product>
+</Wix>

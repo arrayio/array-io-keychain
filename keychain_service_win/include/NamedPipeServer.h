@@ -15,7 +15,7 @@ class NamedPipeServer {
 public: 
 	NamedPipeServer();
 	~NamedPipeServer();
-	void ListenChannel();
+	void ListenChannel(void);
 private:
 	BOOL fConnected = FALSE;
 	DWORD  dwThreadId = 0;

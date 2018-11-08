@@ -40,7 +40,7 @@ namespace keychain_app {
 
 using byte_seq_t = std::vector<char>;
 
-enum struct blockchain_te {unknown=0, bitshares, array, ethereum};
+enum struct blockchain_te {unknown=0, bitshares, array, ethereum, bitcoin};
 
 
 class sha2_256_encoder
@@ -257,21 +257,16 @@ struct keychain_command<command_te::sign> : keychain_command_base
     try {
       auto params = params_variant.as<params_t>();
       unit_list_t unit_list;
-
       dev::Secret private_key;
 
       std::vector<unsigned char> chain(32);
       if (!params.chainid.empty())
-      {
           auto chain_len = keychain_app::from_hex(params.chainid, chain.data(), chain.size());
-          unit_list.push_back(chain);
-      }
 
       //NOTE: using vector instead array because move semantic is implemented in the vector
-      std::vector<unsigned char> buf(1024);
-      auto trans_len = keychain_app::from_hex(params.transaction, buf.data(), buf.size());
-      buf.resize(trans_len);
-      unit_list.push_back(buf);
+      std::vector<unsigned char> raw_tx(1024);
+      auto trans_len = keychain_app::from_hex(params.transaction, raw_tx.data(), raw_tx.size());
+      raw_tx.resize(trans_len);
 
       keyfile_format::keyfile_t keyfile;
 
@@ -311,10 +306,20 @@ struct keychain_command<command_te::sign> : keychain_command_base
       switch (params.blockchain_type)
       {
           case blockchain_te::bitshares:
+          {
+              if (chain.size())
+                  unit_list.push_back(chain);
+              unit_list.push_back(raw_tx);
+
               sign_bitshares(signature, get_hash(unit_list, sha2_256_encoder()).data(),(unsigned char *) private_key.data() );
               break;
+          }
           case blockchain_te::array:
           {
+            if (chain.size())
+                unit_list.push_back(chain);
+            unit_list.push_back(raw_tx);
+
             signature = dev::sign(
                     private_key,
                     dev::FixedHash<32>(((byte const*) get_hash(unit_list, sha3_256_encoder()).data()),
@@ -324,11 +329,27 @@ struct keychain_command<command_te::sign> : keychain_command_base
           }
           case blockchain_te::ethereum:
           {
-            auto hash = dev::ethash::sha3_ethash(buf);
+            auto hash = dev::ethash::sha3_ethash(raw_tx);
             signature = dev::sign(
                     private_key,
                     hash
             ).asArray();
+            break;
+          }
+          case blockchain_te::bitcoin:
+          {
+            unit_list.push_back(raw_tx);
+            auto hash = get_hash(unit_list, sha2_256_encoder());
+            unit_list.clear();
+            unit_list.push_back(hash);
+            auto hash2 = get_hash(unit_list, sha2_256_encoder());
+            std::cerr << to_hex(hash2.data(), hash2.size() ) <<std::endl;
+            signature = dev::sign(
+                    private_key,
+                    dev::FixedHash<32>(((byte const*) hash2.data()),
+                                       dev::FixedHash<32>::ConstructFromPointerType::ConstructFromPointer)
+            ).asArray();
+
             break;
           }
           default:
@@ -578,6 +599,6 @@ FC_LIGHT_REFLECT(keychain_app::keychain_command<keychain_app::command_te::public
 FC_LIGHT_REFLECT(keychain_app::keychain_command_common, (command)(id)(params))
 FC_LIGHT_REFLECT(keychain_app::json_response, (id)(result))
 FC_LIGHT_REFLECT(keychain_app::json_error, (id)(error))
-FC_LIGHT_REFLECT_ENUM(keychain_app::blockchain_te, (unknown)(bitshares)(array)(ethereum))
+FC_LIGHT_REFLECT_ENUM(keychain_app::blockchain_te, (unknown)(bitshares)(array)(ethereum)(bitcoin))
 
 #endif //KEYCHAINAPP_KEYCHAIN_COMMANDS_HPP

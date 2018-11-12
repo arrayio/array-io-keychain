@@ -84,7 +84,7 @@ int secp256k1_ecdsa_sign_with_recid(
     return ret;
 }
 
-void sign_bitshares(
+void sign_canonical(
         std::array<unsigned char, 65> &signature,
         const unsigned char *msg32,
         const unsigned char *seckey

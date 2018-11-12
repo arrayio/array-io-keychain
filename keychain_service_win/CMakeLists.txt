@@ -1,6 +1,7 @@
 project( KeychainWinService  )
 
 add_subdirectory(./pass_ent_app)
+add_subdirectory(./service_installer)
 
 cmake_minimum_required( VERSION 3.0.2 )
 
@@ -22,6 +23,7 @@ SET(Boost_LIBRARIES ${BOOST_LIBRARIES_TEMP} ${Boost_LIBRARIES})
 
 add_definitions(-DUNICODE -D_UNICODE)
 
+
 include_directories(
 		"./include"
 		"../keychain_lib/include"
@@ -38,4 +40,4 @@ file(GLOB KEYCHAIN_WIN_SERVICE_INCLUDES "./include/keychain_lib/*.hpp")
 
 add_executable(keychain_service_win ${KEYCHAIN_WIN_SERVICE_SOURCES} ${KEYCHAIN_WIN_SERVICE_INCLUDES})
 target_link_libraries(keychain_service_win keychain_common fc_light secp256k1 eth-crypto ${LIB_OPENSSL} ${Boost_LIBRARIES} Crypt32.lib Userenv.lib Wtsapi32.lib)
-
+add_custom_command(TARGET keychain_service_win POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_BINARY_DIR}/debug/keychain_service_win.exe ${CMAKE_CURRENT_BINARY_DIR}/service_installer/installer/keychain_service_win.exe)

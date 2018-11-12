@@ -31,17 +31,19 @@ BOOL StartInteractiveClientProcess(
 	{
 	goto Cleanup;
 	}*/
-
+	ServiceLogger::getLogger().Log("Start WTSQueryUserToken access");
 	if (!WTSQueryUserToken(WTSGetActiveConsoleSessionId(), &hToken))
 	{
 		goto Cleanup;
 	}
+	ServiceLogger::getLogger().Log("WTS Query init pass");
 
-	// Save a handle to the caller's current window station.
+	// Save a handle to the calle`r's current window station.
 
 	if ((hwinstaSave = GetProcessWindowStation()) == NULL)
 		goto Cleanup;
 
+	ServiceLogger::getLogger().Log("Get proccess window station");
 	// Get a handle to the interactive window station.
 
 	hwinsta = OpenWindowStation(
@@ -49,14 +51,16 @@ BOOL StartInteractiveClientProcess(
 		FALSE,                       // handle is not inheritable
 		READ_CONTROL | WRITE_DAC);   // rights to read/write the DACL
 
+	ServiceLogger::getLogger().Log("Window station succesfully created");
 	if (hwinsta == NULL)
 		goto Cleanup;
-
+	ServiceLogger::getLogger().Log("Window station succesfully created 1");
 	// To get the correct default desktop, set the caller's 
 	// window station to the interactive window station.
 
 	if (!SetProcessWindowStation(hwinsta))
 		goto Cleanup;
+	ServiceLogger::getLogger().Log("Set proccess window station");
 	// Get a handle to the interactive desktop.
 
 	hdesk = OpenDesktop(
@@ -120,7 +124,7 @@ BOOL StartInteractiveClientProcess(
 		NULL,              // pointer to process SECURITY_ATTRIBUTES
 		NULL,              // pointer to thread SECURITY_ATTRIBUTES
 		FALSE,             // handles are not inheritable
-		NORMAL_PRIORITY_CLASS | CREATE_UNICODE_ENVIRONMENT | 0x00400000,   // creation flags
+		NORMAL_PRIORITY_CLASS | CREATE_UNICODE_ENVIRONMENT,   // creation flags
 		enviroment,              // pointer to new environment block 
 		NULL,              // name of current directory 
 		&si,               // pointer to STARTUPINFO structure

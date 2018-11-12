@@ -15,6 +15,7 @@ SecurityManager::~SecurityManager() {
 }
 
 void SecurityManager::CreateSecureDesktop(const std::string& transId) {
+	ServiceLogger::getLogger().Log("Start secure desktop");
 	HINSTANCE hInst = GetModuleHandle(NULL);
 	TCHAR curDirectory[500];
 	GetCurrentDirectory(500, curDirectory);
@@ -27,11 +28,17 @@ void SecurityManager::CreateSecureDesktop(const std::string& transId) {
 	wcscat_s(args, 400, L"-transId ");
 	std::wstring _tId(400, L'#');
 	size_t outSize;
+	ServiceLogger::getLogger().Log("Create path for start application");
 	mbstowcs_s(&outSize, &_tId[0], 400, transId.c_str(), 400);
 	wcscat_s(args, 400, _tId.c_str());
 	LPCWSTR appToStart = dst;
 	LPTSTR app_args = args;
-	ServiceLogger::getLogger().Log("CreateSecureDescktop function StartInteractiveClientProcess to enter credentials");
-	StartInteractiveClientProcess(appToStart, (LPTSTR)app_args);
+	ServiceLogger::getLogger().Log("CreateSecureDesktop function StartInteractiveClientProcess to enter credentials");
+	process = new QProcess();
+	QString qtAppStart = QString::fromWCharArray(dst);
+	QString qtAppArgs = QString::fromWCharArray(args);
+	QStringList argList = { qtAppArgs };
+	process->startDetached(qtAppStart, argList);
+	//StartInteractiveClientProcess(appToStart, (LPTSTR)app_args);
 }
 

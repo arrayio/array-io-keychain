@@ -444,7 +444,7 @@ struct keychain_command<command_te::sign_hash> : keychain_command_base
                     sign_canonical(signature, hash.data(),(unsigned char *) private_key.data() );
                     break;
                 }
-                case sign_te::non_canonical:
+                default:
                 {
                     signature = dev::sign(
                             private_key,
@@ -452,10 +452,7 @@ struct keychain_command<command_te::sign_hash> : keychain_command_base
                                                dev::FixedHash<32>::ConstructFromPointerType::ConstructFromPointer)
                     ).asArray();
 
-                    break;
                 }
-                default:
-                    throw std::runtime_error("unknown sign_type");
             }
 
             json_response response(to_hex(signature.data(), signature.size()).c_str(), id);

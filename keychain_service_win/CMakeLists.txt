@@ -7,6 +7,7 @@ cmake_minimum_required( VERSION 3.0.2 )
 
 set(CMAKE_CXX_FLAGS "-std=c++11 /EHsc")
 
+set(_boost_COMPILER "-vc141;-vc140")
 SET(BOOST_COMPONENTS)
 LIST(APPEND BOOST_COMPONENTS log)
 SET( Boost_USE_STATIC_LIBS ON CACHE STRING "ON or OFF" )

@@ -47,13 +47,13 @@
 	<!-- Additional action after installation -->			  
 	<CustomAction Id="RunBat" Directory="INSTALLLOCATION"
     ExeCommand='"[INSTALLLOCATION]service_manager.BAT"'
-    Execute='deferred' Impersonate='no' Return='ignore'/>
+    Execute="deferred" Impersonate="no" Return="ignore"/>
 	
 	
 	<!-- Additional action after uninstall -->	
 	<CustomAction Id="BeforeUninstallService" Directory="INSTALLLOCATION"
     ExeCommand='"[INSTALLLOCATION]delete_service.BAT"'
-    Execute='deferred' Impersonate='no' Return='ignore'/>
+    Execute="deferred" Impersonate="no" Return="check"/>
 	
 	
 	<!-- Overall install & uninstall actions execution block -->	

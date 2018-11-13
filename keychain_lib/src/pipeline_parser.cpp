@@ -9,7 +9,7 @@
 #include <iostream>
 #include <stdexcept>
 #include <fc_light/io/json.hpp>
-//#include "logger.hpp"
+#include <logger.hpp>
 
 #ifdef _MSC_VER
 #include <io.h>
@@ -30,6 +30,8 @@ pipeline_parser::pipeline_parser(keychain_invoke_f&& keychain_f, int pipein_desc
 
 int pipeline_parser::run()
 {
+  auto log = logger_singletone::instance();
+
   buf_type read_buf(4096, 0x00);
   auto ptr_from_it      = [&read_buf](buf_iterator &i){
     assert(i <= read_buf.end());
@@ -47,9 +49,7 @@ int pipeline_parser::run()
   {
 
     size_t bytes_read = read(m_pipein_desc, ptr_from_it(it), bytes_remaining(it));
-
-  //    BOOST_LOG_SEV(lg, warning) << "A warning severity message";
-    //  BOOST_LOG_SEV(lg, error) << "An error severity message";
+    BOOST_LOG_SEV(log.lg, info) <<"stdin:" << std::string (ptr_from_it(it), ptr_from_it(it) + bytes_read );
 
 	if ( bytes_read == 0 )
 		break;
@@ -69,6 +69,7 @@ int pipeline_parser::run()
           std::stringstream strbuf(std::ios_base::out);
           strbuf << res << std::endl;
           write(m_pipeout_desc, static_cast<const void*>(strbuf.str().c_str()), res.size());
+          BOOST_LOG_SEV(log.lg, info) <<"stdout:" << res;
         }
         catch(fc_light::exception& exc)
         {
@@ -77,6 +78,7 @@ int pipeline_parser::run()
           std::stringstream strbuf(std::ios_base::out);
           strbuf << res << std::endl;
           write(m_pipeout_desc, static_cast<const void*>(strbuf.str().c_str()), res.size());
+          BOOST_LOG_SEV(log.lg, error) <<"stdout:" << res;
         }
         it = std::copy(buf_range.second, it, read_buf.begin());
         continue;//try to parse remaining data

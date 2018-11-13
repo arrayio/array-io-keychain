@@ -5,22 +5,24 @@
 #include "cmd_parser.hpp"
 #include <keychain_lib/logger.hpp>
 
-using namespace keychain_app;
 
+using namespace keychain_app;
+namespace attrs = boost::log::attributes;
 
 
 int main(int argc, char* argv[])
 {
-  boost::shared_ptr< logging::core > core = logging::core::get();
-  init();
-  logging::add_common_attributes();
+  auto log = logger_singletone::instance();
 
+  BOOST_LOG_SEV(log.lg, info) << "Start";
 
-  BOOST_LOG_SEV(lg, trace) << "A trace severity message";
-  BOOST_LOG_SEV(lg, debug) << "A debug severity message";
-  BOOST_LOG_SEV(lg, info) << "An informational severity message";
-
-  core->flush();
+#ifdef LINUX
+  BOOST_LOG_SEV(log.lg, info) << "OS: Linux";
+#elif defined(_MSC_VER)
+  BOOST_LOG_SEV(log.lg, info) << "OS: Win";
+#else
+  BOOST_LOG_SEV(log.lg, info) << "OS: unknown";
+#endif
 
   cmd_parser cmd_parser_;
   return cmd_parser_.run(argc, argv);

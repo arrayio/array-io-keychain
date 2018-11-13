@@ -1,22 +1,22 @@
-<?xml version='1.0'?>
-<Wix xmlns='http://schemas.microsoft.com/wix/2006/wi'>
+<?xml version="1.0"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
 
 	<!-- Set product information -->
-   <Product Id='*' UpgradeCode="11111111-2222-3333-4444-555555555555" 
-        Name='Setup' Language='1033' Version='1.0.0.1' 
-        Manufacturer='Array.IO'>
+   <Product Id="*" UpgradeCode="{c374e108-be86-4d6e-a509-5b07902ab1e3}" 	 
+			Name="Setup" Language="1033" Version="1.0.0.2" 
+			Manufacturer="Array.IO">
 	
 	<!-- Set package and media information -->
-    <Package Description='pak' InstallerVersion='301' Compressed='yes' Platform = "x64" />
-    <Media Id='1' Cabinet='setup.cab' EmbedCab='yes' />
+    <Package Description="pak" InstallerVersion="301" Compressed="yes" Platform = "x64" />
+    <Media Id="1" Cabinet="setup.cab" EmbedCab="yes" />
 	
 	<!-- Override root install directory path -->
 	<SetDirectory Id="RootInstallDrive" Value="C:\Program Files" />
 
-    <Directory Id='TARGETDIR' Name='SourceDir'>
+    <Directory Id="TARGETDIR" Name="SourceDir">
 		<Directory Id="RootInstallDrive">
 			<Directory Id="INSTALLLOCATION" Name="KeyChainService">
-				<Component Id='GlobalComponent' DiskId='1' Guid='b6ce2a80-e1b8-40bb-9695-79b4d3a56cdf'>
+				<Component Id="GlobalComponent" DiskId="1" Guid="a2c2a62b-d70a-46c3-81f4-27af646a0ef8">
 					<File Id="File0" Name="keychain_service_win.exe" Source="keychain_service_win.exe" />
 					<File Id="File1" Name="keychain_pass_entry_app.exe" Source="keychain_pass_entry_app.exe" />
 					<File Id="File2" Name="libcrypto-1_1-x64.dll" Source="libcrypto-1_1-x64.dll" />
@@ -34,8 +34,8 @@
 	<!-- License source text override -->
 	<WixVariable Id="WixUILicenseRtf" Value="license.rtf" />
 
-    <Feature Id='InstallFeature' Title='Install Feature' Level='1'>
-        <ComponentRef Id='GlobalComponent' />
+    <Feature Id="InstallFeature" Title="Install Feature" Level="1">
+        <ComponentRef Id="GlobalComponent" />
     </Feature>
 	
     <!-- Global Run Action -->
@@ -46,8 +46,8 @@
 				  
 	<!-- Additional action after installation -->			  
 	<CustomAction Id="RunBat" Directory="INSTALLLOCATION"
-    ExeCommand='"[INSTALLLOCATION]service_manager.BAT"'
-    Execute="deferred" Impersonate="no" Return="ignore"/>
+	ExeCommand='"[INSTALLLOCATION]service_manager.BAT"'
+    Execute="deferred" Impersonate="no" Return="check"/>
 	
 	
 	<!-- Additional action after uninstall -->	
@@ -60,7 +60,7 @@
     <InstallExecuteSequence>
         <Custom Action="RunWrapExe" After="InstallFiles">NOT REMOVE~="ALL"</Custom>
 		<Custom Action="RunBat" Before="InstallFinalize">NOT (REMOVE~="ALL")</Custom>
-		<Custom Action='BeforeUninstallService' After='InstallInitialize'>REMOVE="ALL"</Custom>
+		<Custom Action="BeforeUninstallService" After="InstallInitialize">REMOVE="ALL"</Custom>
     </InstallExecuteSequence>
 
    </Product>

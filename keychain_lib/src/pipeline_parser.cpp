@@ -9,6 +9,7 @@
 #include <iostream>
 #include <stdexcept>
 #include <fc_light/io/json.hpp>
+//#include "logger.hpp"
 
 #ifdef _MSC_VER
 #include <io.h>
@@ -46,6 +47,10 @@ int pipeline_parser::run()
   {
 
     size_t bytes_read = read(m_pipein_desc, ptr_from_it(it), bytes_remaining(it));
+
+  //    BOOST_LOG_SEV(lg, warning) << "A warning severity message";
+    //  BOOST_LOG_SEV(lg, error) << "An error severity message";
+
 	if ( bytes_read == 0 )
 		break;
     if( bytes_read == -1 )

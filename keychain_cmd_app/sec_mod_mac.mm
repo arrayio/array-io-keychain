@@ -48,7 +48,21 @@ byte_seq_t sec_mod_mac::get_passwd_trx_raw(const std::string& raw_trx) const
 
 byte_seq_t sec_mod_mac::get_passwd_on_create() const
 {
-    std::string str = "blank";
+//    std::string str = "blank";
+//    keychain_app::byte_seq_t pass(str.begin(), str.end());
+    [NSApplication sharedApplication];
+    //    ProcessSerialNumber psn;
+    //    GetCurrentProcess( &psn );
+    //    TransformProcessType(&psn,kProcessTransformToForegroundApplication);
+    //    SetFrontProcess( &psn );
+    [NSApp setActivationPolicy:NSApplicationActivationPolicyRegular];
+    [NSApp activateIgnoringOtherApps:YES];
+    
+    NSRect frame = NSMakeRect(0, 0, 200, 200);
+    MyDialog *dialog = [[MyDialog alloc] initWithFrame:frame];
+    [dialog runModal];
+    std::string str = std::string([[[PassSyncStore sharedInstance] pass] UTF8String]);
+    [[PassSyncStore sharedInstance] setPass:@""];
     keychain_app::byte_seq_t pass(str.begin(), str.end());
     return pass;
 }

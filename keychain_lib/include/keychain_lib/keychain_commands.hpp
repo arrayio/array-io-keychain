@@ -41,7 +41,7 @@ namespace keychain_app {
 using byte_seq_t = std::vector<char>;
 
 enum struct blockchain_te {unknown=0, bitshares, array, ethereum, bitcoin};
-enum struct sign_te {unknown=0, canonical, non_canonical};
+enum struct sign_te {unknown=0, VRS_canonical, RSV_noncanonical};
 
 class sha2_256_encoder
 {
@@ -439,7 +439,7 @@ struct keychain_command<command_te::sign_hash> : keychain_command_base
 
             switch (params.sign_type)
             {
-                case sign_te::canonical:
+                case sign_te::VRS_canonical:
                 {
                     sign_canonical(signature, hash.data(),(unsigned char *) private_key.data() );
                     break;
@@ -701,6 +701,6 @@ FC_LIGHT_REFLECT(keychain_app::keychain_command_common, (command)(id)(params))
 FC_LIGHT_REFLECT(keychain_app::json_response, (id)(result))
 FC_LIGHT_REFLECT(keychain_app::json_error, (id)(error))
 FC_LIGHT_REFLECT_ENUM(keychain_app::blockchain_te, (unknown)(bitshares)(array)(ethereum)(bitcoin))
-FC_LIGHT_REFLECT_ENUM(keychain_app::sign_te, (unknown)(canonical)(non_canonical))
+FC_LIGHT_REFLECT_ENUM(keychain_app::sign_te, (unknown)(VRS_canonical)(RSV_noncanonical))
 
 #endif //KEYCHAINAPP_KEYCHAIN_COMMANDS_HPP

@@ -6,34 +6,29 @@ if(WIN32)
 	find_path(WIX_PATH candle.exe)
 
 	if(NOT WIX_PATH)
-
-		message(WARNING "Unable to find WiX in the PATH. The WiX installer will be disabled.")
-	  
+		message(FATAL_ERROR "Unable to find WiX in the PATH. The WiX installer will be disabled.")
 	else(WIX_PATH)
 
 	set(wixsrcpath "${CMAKE_CURRENT_SOURCE_DIR}")
 	set(wixoutputpath "installer")
 	message(STATUS "wixsrcpath: ${wixsrcpath}")
 
-	add_custom_command(TARGET deploy PRE_BUILD COMMAND ${CMAKE_COMMAND} -E copy_if_different
-						"${wixsrcpath}/wix_app_entry.wxs"
-						"${wixoutputpath}/wix_app_entry.wxs")
+	#set copy files to alias
+	set( PREBUILD_FILES
+	   "${wixsrcpath}/wix_app_entry.wxs"
+	   "${wixsrcpath}/service_manager.bat"
+	   "${wixsrcpath}/delete_service.bat"
+	   "${wixsrcpath}/license.rtf"
+	   "${wixsrcpath}/libcrypto-1_1-x64.dll"
+	)
 
-	add_custom_command(TARGET deploy PRE_BUILD COMMAND ${CMAKE_COMMAND} -E copy_if_different
-						"${wixsrcpath}/service_manager.bat"
-						"${wixoutputpath}/service_manager.bat")
+	message(STATUS "PREBUILD_FILES: ${PREBUILD_FILES}")
 
-	add_custom_command(TARGET deploy PRE_BUILD COMMAND ${CMAKE_COMMAND} -E copy_if_different
-						"${wixsrcpath}/delete_service.bat"
-						"${wixoutputpath}/delete_service.bat")
-
-	add_custom_command(TARGET deploy PRE_BUILD COMMAND ${CMAKE_COMMAND} -E copy_if_different
-						"${wixsrcpath}/license.rtf"
-						"${wixoutputpath}/license.rtf")
-
-	add_custom_command(TARGET deploy PRE_BUILD COMMAND ${CMAKE_COMMAND} -E copy_if_different
-					   "${wixsrcpath}/libcrypto-1_1-x64.dll"
-					   "${wixoutputpath}/libcrypto-1_1-x64.dll")
+	#copy files in build folder
+	foreach( file_to_copy ${PREBUILD_FILES})
+		add_custom_command(TARGET deploy PRE_BUILD COMMAND ${CMAKE_COMMAND}
+		ARGS -E copy_if_different ${file_to_copy} "${wixoutputpath}")
+	endforeach( file_to_copy )
 
 	#TODO
 	#if keychain_common target will correctly build with clang-cl compiler

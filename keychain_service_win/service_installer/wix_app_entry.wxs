@@ -16,7 +16,7 @@
     <Directory Id="TARGETDIR" Name="SourceDir">
 		<Directory Id="RootInstallDrive">
 			<Directory Id="INSTALLLOCATION" Name="KeyChainService">
-				<Component Id="GlobalComponent" DiskId="1" Guid="a2c2a62b-d70a-46c3-81f4-27af646a0ef8">
+				<Component Id="GlobalComponent" DiskId="1" Guid="">
 					<File Id="File0" Name="keychain_service_win.exe" Source="keychain_service_win.exe" />
 					<File Id="File1" Name="keychain_pass_entry_app.exe" Source="keychain_pass_entry_app.exe" />
 					<File Id="File2" Name="libcrypto-1_1-x64.dll" Source="libcrypto-1_1-x64.dll" />

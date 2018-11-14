@@ -9,7 +9,7 @@
 #include <iostream>
 #include <stdexcept>
 #include <fc_light/io/json.hpp>
-#include <logger.hpp>
+#include <keychain_logger.hpp>
 
 #ifdef _MSC_VER
 #include <io.h>

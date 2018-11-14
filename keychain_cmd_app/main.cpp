@@ -3,7 +3,7 @@
 //
 
 #include "cmd_parser.hpp"
-#include <keychain_lib/logger.hpp>
+#include <keychain_lib/keychain_logger.hpp>
 
 
 using namespace keychain_app;

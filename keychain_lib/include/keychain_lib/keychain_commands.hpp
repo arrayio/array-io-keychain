@@ -34,7 +34,7 @@
 #include <openssl/sha.h>
 #include <openssl/evp.h>
 #include <eth-crypto/core/sha3_wrap.h>
-
+#include "keychain_logger.hpp"
 
 namespace keychain_app {
 

@@ -14,7 +14,7 @@
 #include "sec_mod.hpp"
 
 #include <boost/program_options.hpp>
-#include <keychain_lib/logger.hpp>
+#include <keychain_lib/keychain_logger.hpp>
 
 //#include <boost/program_options/options_description.hpp>
 //#include <boost/program_options/option.hpp>

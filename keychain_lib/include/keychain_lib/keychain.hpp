@@ -26,11 +26,12 @@ namespace bfs = boost::filesystem;
 class keychain : public keychain_base
 {
 public:
-  keychain(std::string&& uid_hash, const char* default_key_dir = KEY_DEFAULT_PATH);
+  static keychain& instance(std::string&& uid_hash);
   virtual ~keychain();
   virtual std::string operator()(const fc_light::variant& command) override;
 private:
   bfs::path m_init_path;
+  keychain(std::string&& uid_hash, const char* default_key_dir = KEY_DEFAULT_PATH);
 };
 
 struct keychain_commands_singletone

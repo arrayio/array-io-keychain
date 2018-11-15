@@ -36,6 +36,10 @@
 #include <eth-crypto/core/sha3_wrap.h>
 #include "keychain_logger.hpp"
 
+// after password entry the decrypted private key stored in memory  during this time
+// This allow sing transaction without password entry.
+#define DEF_UNLOCK_SECONDS 0
+
 namespace keychain_app {
 
 using byte_seq_t = std::vector<char>;
@@ -102,12 +106,15 @@ class keychain_base
 public:
     using string_list = std::list<std::wstring>;
     keychain_base(std::string&& uid_hash_);
+    keychain_base(){};
     virtual ~keychain_base();
     virtual std::string operator()(const fc_light::variant& command) = 0;
     boost::signals2::signal<byte_seq_t(const std::string&)> get_passwd_trx_raw;
     boost::signals2::signal<byte_seq_t(void)> get_passwd_on_create;
     boost::signals2::signal<void(const string_list&)> print_mnemonic;
     std::string uid_hash;
+    int unlock_time;
+    std::unordered_map<std::string, std::string> key_map;
 };
 
 template <typename char_t>
@@ -182,7 +189,11 @@ enum struct command_te {
     restore,
     seed,
     public_key,
+    lock,
+    unlock,
+    set_unlock_time,
     last
+
 };
 
 struct find_keyfile_by_username
@@ -302,6 +313,7 @@ struct keychain_command<command_te::sign_hex> : keychain_command_base
         key_data = std::move(keyfile.keyinfo.priv_key_data.as<std::string>());
       }
       int pk_len = keychain_app::from_hex(key_data, (unsigned char*) private_key.data(), 32);
+      keychain->key_map.insert({keyfile.keyname, key_data });
       std::array<unsigned char, 65> signature = {0};
 
       switch (params.blockchain_type)
@@ -428,6 +440,7 @@ struct keychain_command<command_te::sign_hash> : keychain_command_base
             }
 
             int pk_len = keychain_app::from_hex(key_data, (unsigned char*) private_key.data(), 32);
+            keychain->key_map.insert({keyfile.keyname, key_data });
 
             //NOTE: using vector instead array because move semantic is implemented in the vector
             std::vector<unsigned char> hash(1024);
@@ -492,13 +505,20 @@ struct keychain_command<command_te::create>: keychain_command_base
         auto params = params_variant.as<params_t>();
         keyfile_format::keyfile_t keyfile;
         std::string pr_hex, pb_hex;
+        dev::h256 hash;
+        std::string filename, keyname;
         switch (params.curve)
         {
           case keyfile_format::keyfile_t::keyinfo_t::curve_etype::secp256k1:
           {
             dev::KeyPair keys = dev::KeyPair::create();
             pb_hex = keys.pub().hex();
+            hash = dev::ethash::sha3_ethash(keys.pub());
             pr_hex = to_hex(reinterpret_cast<const uint8_t *>(keys.secret().data()), 32);
+
+            filename    = hash.hex().substr(0,16);
+            keyname     = params.keyname + "@"+ filename;
+            keychain->key_map.insert({keyname, to_hex(keys.secret().data(),  32) });
           }
             break;
           default:
@@ -506,6 +526,7 @@ struct keychain_command<command_te::create>: keychain_command_base
             throw std::runtime_error("Error: unsupported curve format");
           }
         }
+
         if (params.encrypted)
         {
           auto passwd = *keychain->get_passwd_on_create();
@@ -520,15 +541,17 @@ struct keychain_command<command_te::create>: keychain_command_base
           keyfile.keyinfo.priv_key_data = std::move(pr_hex);
           keyfile.keyinfo.encrypted = false;
         }
+
         keyfile.keyinfo.public_key = pb_hex;
-        keyfile.keyname = params.keyname;
+        keyfile.keyname = keyname;
         keyfile.uid_hash = keychain->uid_hash;
         keyfile.filetype = keyfile_format::TYPE_KEY;
         keyfile.keyinfo.format = keyfile_format::keyfile_t::keyinfo_t::FORMAT_ARRAYIO;
         keyfile.keyinfo.curve_type = params.curve;
-        std::string filename(keyfile.keyname);
+
         if(filename.empty())
           throw std::runtime_error("Error: keyname (filename) is empty");
+        auto reply =  filename;
         filename += ".json";
         auto first = bfs::directory_iterator(bfs::path("./"));
         auto it = std::find_if(first, bfs::directory_iterator(),find_keyfile_by_username(keyfile.keyname.c_str()));
@@ -536,7 +559,7 @@ struct keychain_command<command_te::create>: keychain_command_base
           throw std::runtime_error("Error: keyfile for this user is already exist");
         create_keyfile(filename.c_str(), fc_light::variant(keyfile));
 
-        json_response response(true, id);
+        json_response response(reply, id);
         return fc_light::json::to_pretty_string(fc_light::variant(response));
       }
       catch (const std::exception &exc)
@@ -669,6 +692,62 @@ struct keychain_command<command_te::public_key>: keychain_command_base
   }
 };
 
+    template<>
+    struct keychain_command<command_te::lock>: keychain_command_base
+    {
+        keychain_command(): keychain_command_base(command_te::lock){}
+        virtual ~keychain_command(){}
+        using  params_t = void;
+        virtual std::string operator()(keychain_base* keychain, const fc_light::variant& params_variant, int id) const override
+        {
+
+            json_response response(true, id);
+            return fc_light::json::to_pretty_string(fc_light::variant(response));
+        }
+    };
+
+    template<>
+    struct keychain_command<command_te::unlock>: keychain_command_base
+    {
+        keychain_command(): keychain_command_base(command_te::lock){}
+        virtual ~keychain_command(){}
+        using  params_t = void;
+        virtual std::string operator()(keychain_base* keychain, const fc_light::variant& params_variant, int id) const override
+        {
+
+            json_response response(true, id);
+            return fc_light::json::to_pretty_string(fc_light::variant(response));
+        }
+    };
+
+    template<>
+    struct keychain_command<command_te::set_unlock_time>: keychain_command_base
+    {
+        keychain_command(): keychain_command_base(command_te::lock){}
+        virtual ~keychain_command(){}
+        struct params
+        {
+            int seconds;
+        };
+        using  params_t = params;
+        virtual std::string operator()(keychain_base* keychain, const fc_light::variant& params_variant, int id) const override
+        {
+            try
+            {
+                auto params = params_variant.as<params_t>();
+                keychain->unlock_time =  params.seconds;
+                json_response response(true, id);
+                return fc_light::json::to_pretty_string(fc_light::variant(response));
+            }
+            catch (std::exception& exc)
+            {
+                std::cerr << fc_light::json::to_pretty_string(fc_light::variant(json_error(id, exc.what()))) << std::endl;
+                return fc_light::json::to_pretty_string(fc_light::variant(json_error(id, exc.what())));
+            }
+        }
+    };
+
+
 constexpr auto cmd_static_list =
     hana::make_range(
         hana::int_c<static_cast<int>(command_te::null)>,
@@ -690,6 +769,9 @@ FC_LIGHT_REFLECT_ENUM(
     (restore)
     (seed)
     (public_key)
+    (lock)
+    (unlock)
+    (set_unlock_time)
     (last))
 
 FC_LIGHT_REFLECT(keychain_app::keychain_command<keychain_app::command_te::sign_hex>::params_t, (chainid)(transaction)(blockchain_type)(keyname))
@@ -697,6 +779,7 @@ FC_LIGHT_REFLECT(keychain_app::keychain_command<keychain_app::command_te::sign_h
 FC_LIGHT_REFLECT(keychain_app::keychain_command<keychain_app::command_te::create>::params_t, (keyname)(encrypted)(cipher)(curve))
 FC_LIGHT_REFLECT(keychain_app::keychain_command<keychain_app::command_te::remove>::params_t, (keyname))
 FC_LIGHT_REFLECT(keychain_app::keychain_command<keychain_app::command_te::public_key>::params_t, (keyname))
+FC_LIGHT_REFLECT(keychain_app::keychain_command<keychain_app::command_te::set_unlock_time>::params_t, (seconds))
 FC_LIGHT_REFLECT(keychain_app::keychain_command_common, (command)(id)(params))
 FC_LIGHT_REFLECT(keychain_app::json_response, (id)(result))
 FC_LIGHT_REFLECT(keychain_app::json_error, (id)(error))

@@ -30,6 +30,14 @@ keychain_commands_singletone::keychain_commands_singletone()
   });
 }
 
+
+keychain& keychain::instance(std::string&& uid_hash)
+{
+  static keychain _instance (std::move(uid_hash));
+  return _instance;
+}
+
+
 keychain::keychain(std::string&& uid_hash_, const char* default_key_dir)
   : keychain_base(std::move(uid_hash_))
   , m_init_path(bfs::current_path())

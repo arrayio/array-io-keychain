@@ -15,9 +15,10 @@ using namespace logging::trivial;
 class logger_singletone
 {
 public:
-    logger_singletone();
     static const logger_singletone& instance();
     src::severity_logger< severity_level > lg;
+private:
+    logger_singletone();
 };
 
 #endif //KEYCHAIN_LOGGER

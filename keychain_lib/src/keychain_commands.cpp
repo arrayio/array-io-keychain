@@ -68,7 +68,9 @@ using namespace keychain_app;
 
 keychain_base::keychain_base(std::string&& uid_hash_)
   : uid_hash(std::move(uid_hash_))
-{}
+{
+  unlock_time =DEF_UNLOCK_SECONDS;
+}
 
 keychain_base::~keychain_base(){}
 

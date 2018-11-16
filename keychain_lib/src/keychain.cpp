@@ -69,8 +69,8 @@ std::string keychain::operator()(const fc_light::variant& command) {
   }
   catch(fc_light::exception& exc)
   {
-    std::cerr << fc_light::json::to_pretty_string(fc_light::variant(json_error(0, exc.to_detail_string().c_str()))) << std::endl;
-	return fc_light::json::to_pretty_string(fc_light::variant(json_error(0, exc.what())));
+    std::cerr << fc_light::json::to_string(fc_light::variant(json_error(0, exc.to_detail_string().c_str()))) << std::endl;
+	return fc_light::json::to_string(fc_light::variant(json_error(0, exc.what())));
   }
 }
 

@@ -68,16 +68,18 @@ int pipeline_parser::run()
           std::string res = m_keychain_func(fc_light::json::from_string(std::string(buf_range.first, buf_range.second)));
           std::stringstream strbuf(std::ios_base::out);
           strbuf << res << std::endl;
-          write(m_pipeout_desc, static_cast<const void*>(strbuf.str().c_str()), res.size());
+          std::string output = strbuf.str();
+          write(m_pipeout_desc, static_cast<const void*>(output.c_str()), output.size());
           BOOST_LOG_SEV(log.lg, info) <<"stdout:" << res;
         }
         catch(fc_light::exception& exc)
         {
-          std::cerr << fc_light::json::to_pretty_string(fc_light::variant(json_error(0, exc.to_detail_string().c_str()))) << std::endl;
-          std::string res = fc_light::json::to_pretty_string(fc_light::variant(json_error(0, exc.what())));
+          std::cerr << fc_light::json::to_string(fc_light::variant(json_error(0, exc.to_detail_string().c_str()))) << std::endl;
+          std::string res = fc_light::json::to_string(fc_light::variant(json_error(0, exc.what())));
           std::stringstream strbuf(std::ios_base::out);
           strbuf << res << std::endl;
-          write(m_pipeout_desc, static_cast<const void*>(strbuf.str().c_str()), res.size());
+          std::string output = strbuf.str();
+          write(m_pipeout_desc, static_cast<const void*>(output.c_str()), output.size());
           BOOST_LOG_SEV(log.lg, error) <<"stdout:" << res;
         }
         it = std::copy(buf_range.second, it, read_buf.begin());

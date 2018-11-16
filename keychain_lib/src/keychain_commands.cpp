@@ -10,6 +10,69 @@
 
 #include "keychain_commands.hpp"
 
+
+std::pair<std::string, std::string> keychain_app::read_private_key_file(
+        keychain_base * keychain, std::string filename, std::string text)
+{
+  keyfile_format::keyfile_t keyfile;
+  auto curdir = bfs::current_path();
+  auto first = bfs::directory_iterator(bfs::path("./"));
+  auto it = std::find_if(first, bfs::directory_iterator(),find_keyfile_by_username(filename.c_str(), &keyfile));
+  if (it == bfs::directory_iterator())
+    throw std::runtime_error("Error: keyfile could not found by keyname");
+
+  if(keyfile.uid_hash != keychain->uid_hash)
+    std::runtime_error("Error: user is not keyfile owner");
+
+  if(keyfile.keyinfo.encrypted)
+  {
+    auto encrypted_data = keyfile.keyinfo.priv_key_data.as<keyfile_format::encrypted_data>();
+    auto& encryptor = encryptor_singletone::instance();
+//TODO: need to try to parse transaction.
+// If we can parse transaction we need to use get_passwd_trx function
+// else use get_passwd_trx_raw()
+// At this moment parsing of transaction is not implemented
+    byte_seq_t passwd = *(keychain->get_passwd_trx_raw(text.empty() ? keyfile.keyname: text));
+    if (passwd.empty())
+      throw std::runtime_error("Error: can't get password");
+    return  std::make_pair(encryptor.decrypt_keydata(passwd, encrypted_data), keyfile.keyname);
+  }
+  else
+    return  std::make_pair(keyfile.keyinfo.priv_key_data.as<std::string>(), keyfile.keyname);
+}
+
+
+std::string keychain_app::read_private_key(keychain_base * keychain, std::string keyname, std::string text)
+{
+  bool locked = true;
+  auto map = keychain->key_map.find(keyname);
+  if (map != keychain->key_map.end())
+  {
+    if ((std::time(nullptr) -  map->second.second) > keychain->unlock_time )
+      keychain->key_map.erase(map);
+    else
+      locked = false;
+  }
+
+  if (locked)
+    return read_private_key_file(keychain, keyname_to_filename(keyname), text).first;
+  else
+  {
+    // reset key timer after each key use
+    keychain->key_map[keyname].second = std::time(nullptr);
+    return keychain->key_map[keyname].first;
+  }
+}
+
+std::string keychain_app::keyname_to_filename(std::string keyname)
+{
+    auto delim  = keyname.find('@');
+    if (delim == std::string::npos || delim == keyname.length() || delim == 1 )
+        throw ("Invalid keyname: "+ keyname);
+    return keyname.substr(delim +1) + ".json";
+
+}
+
 std::string keychain_app::to_hex(const uint8_t* data, size_t length)
 {
   std::string r;
@@ -71,6 +134,7 @@ keychain_base::keychain_base(std::string&& uid_hash_)
 {
   unlock_time =DEF_UNLOCK_SECONDS;
 }
+
 
 keychain_base::~keychain_base(){}
 

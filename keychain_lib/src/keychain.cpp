@@ -31,15 +31,16 @@ keychain_commands_singletone::keychain_commands_singletone()
 }
 
 
-keychain& keychain::instance(std::string&& uid_hash)
+keychain& keychain::instance(const secure_dlg_mod_base* secure_dlg )
 {
-  static keychain _instance (std::move(uid_hash));
+  static keychain _instance (secure_dlg);
+
   return _instance;
 }
 
 
-keychain::keychain(std::string&& uid_hash_, const char* default_key_dir)
-  : keychain_base(std::move(uid_hash_))
+keychain::keychain(const secure_dlg_mod_base* secure_dlg, const char* default_key_dir)
+  : keychain_base(std::move(secure_dlg->get_uid()))
   , m_init_path(bfs::current_path())
 {
   std::string user_dir(default_key_dir);
@@ -60,6 +61,11 @@ keychain::keychain(std::string&& uid_hash_, const char* default_key_dir)
       throw std::runtime_error("Error: can not create default key directory");
   }
   bfs::current_path(path_);
+
+  get_passwd_trx_raw.connect(std::bind(&secure_dlg_mod_base::get_passwd_trx_raw, secure_dlg, std::placeholders::_1));
+  get_passwd_on_create.connect(std::bind(&secure_dlg_mod_base::get_passwd_on_create, secure_dlg));
+  print_mnemonic.connect(std::bind(&secure_dlg_mod_base::print_mnemonic, secure_dlg, std::placeholders::_1));
+
 }
 
 keychain::~keychain()

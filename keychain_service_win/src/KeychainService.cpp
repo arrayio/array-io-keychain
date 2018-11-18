@@ -6,7 +6,7 @@
 using namespace  std;
 
 KeychainService::KeychainService(int argc, char **argv)
-	: QtService<QCoreApplication>(argc, argv, "Qt Interactive ServiceR")
+	: QtService<QCoreApplication>(argc, argv, "KeyChainService")
 {
 	std::cout << "Service consttructor" << endl;
 	//ServiceLogger::getLogger().Log("keychain service conc=strctor");

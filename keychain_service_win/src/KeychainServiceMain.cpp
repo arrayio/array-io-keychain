@@ -18,7 +18,7 @@ int main(int argc, char **argv)
 	qWarning("(Example uses dummy settings file: %s/QtSoftware.conf)", QDir::tempPath().toLatin1().constData());
 #endif
 	//ServiceLogger::getLogger().Log("main soft thread");
-	std::cout << "Service start" << endl;
+	std::cout << "Service start main" << endl;
 	KeychainService service(argc, argv);
 	service.exec();
 }

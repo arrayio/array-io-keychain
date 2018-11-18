@@ -1,6 +1,7 @@
 #include "Agent.h"
 #include "ServiceLogger.h"
 
+
 BOOL StartInteractiveClientProcess(
 	LPCWSTR lpAppStart,
 	/*LPTSTR lpszUsername,    // client to log on
@@ -131,16 +132,18 @@ BOOL StartInteractiveClientProcess(
 		&pi                // receives information about new process
 	);
 
+
+    // Validate the child process creation.
+    if (bResult == NULL)
+        goto Cleanup;
+
 	ServiceLogger::getLogger().Log("Start process");
 	latError = GetLastError();
 	ServiceLogger::getLogger().Log(std::to_string(latError));
 	RevertToSelf();
 
 	if (bResult && pi.hProcess != INVALID_HANDLE_VALUE)
-	{
-		//WaitForSingleObject(pi.hProcess, INFINITE);
 		CloseHandle(pi.hProcess);
-	}
 
 	if (pi.hThread != INVALID_HANDLE_VALUE)
 		CloseHandle(pi.hThread);

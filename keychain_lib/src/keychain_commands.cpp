@@ -80,7 +80,7 @@ sha2_256_encoder::sha2_256_encoder()
 
 sha2_256_encoder::~sha2_256_encoder(){};
 
-void sha2_256_encoder::write(const char * d, uint32_t dlen )
+void sha2_256_encoder::write(const unsigned char * d, uint32_t dlen )
 {
     SHA256_Update( &ctx, d, dlen);
 }
@@ -103,7 +103,7 @@ sha3_256_encoder::~sha3_256_encoder()
   EVP_MD_CTX_destroy(ctx);
 };
 
-void sha3_256_encoder::write(const char *d, uint32_t dlen)
+void sha3_256_encoder::write(const unsigned char *d, uint32_t dlen)
 {
   EVP_DigestUpdate(ctx, d, dlen);
 }

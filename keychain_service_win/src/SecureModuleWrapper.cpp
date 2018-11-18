@@ -66,38 +66,50 @@ keychain_app::byte_seq_t SecureModuleWrapper::_startSecureDesktop(const std::str
 	std::vector<wchar_t> password(256, 0x00);
 	if (hPipe == INVALID_HANDLE_VALUE)
 		throw std::runtime_error("Error: can't receive password: INVALID_HANDLE_VALUE");
-	if (ConnectNamedPipe(hPipe, NULL) != FALSE)   // wait for someone to connect to the pipe
-	{
-		while (ReadFile(hPipe, buffer, sizeof(buffer) - 1, &dwRead, NULL) != FALSE)
-		{
-			buffer[dwRead] = '\0';
-			LPWSTR pDescrOut = NULL;
-			DATA_BLOB DataOut;
-			DataOut.cbData = sizeof(buffer) - 1;
-			DataOut.pbData = (BYTE*)buffer;
-			DATA_BLOB DataVerify;
-			if (CryptUnprotectData(
-				&DataOut,
-				&pDescrOut,
-				NULL,                 // Optional entropy
-				NULL,                 // Reserved
-				NULL,        // Optional PromptStruct
-				CRYPTPROTECT_LOCAL_MACHINE,
-				&DataVerify))
-			{
-				//here is decrypted password
-				printf("The decrypted data is: %s\n", DataVerify.pbData);
-				result_pass.resize(DataVerify.cbData);
-				std::strncpy(result_pass.data(), (char*)DataVerify.pbData, result_pass.size());
-				//printf("The description of the data was: %S\n", pDescrOut);
-			}
-			else {
-				DWORD lastError = GetLastError();
-			}
-		}
-		FlushFileBuffers(hPipe);
-		DisconnectNamedPipe(hPipe);
-		CloseHandle(hPipe);
+
+    const int MAX_WAIT_TIME = 1000;
+    if (WaitForSingleObject(hPipe, MAX_WAIT_TIME) == WAIT_OBJECT_0)
+    {
+        FlushFileBuffers(hPipe);
+        DisconnectNamedPipe(hPipe);
+        CloseHandle(hPipe);
+        throw std::runtime_error("Cannot connect to pipe");
+    }
+    else
+    {
+        if (ConnectNamedPipe(hPipe, NULL) != FALSE)   // wait for someone to connect to the pipe
+        {
+            while (ReadFile(hPipe, buffer, sizeof(buffer) - 1, &dwRead, NULL) != FALSE)
+            {
+                buffer[dwRead] = '\0';
+                LPWSTR pDescrOut = NULL;
+                DATA_BLOB DataOut;
+                DataOut.cbData = sizeof(buffer) - 1;
+                DataOut.pbData = (BYTE*)buffer;
+                DATA_BLOB DataVerify;
+                if (CryptUnprotectData(
+                    &DataOut,
+                    &pDescrOut,
+                    NULL,                 // Optional entropy
+                    NULL,                 // Reserved
+                    NULL,        // Optional PromptStruct
+                    CRYPTPROTECT_LOCAL_MACHINE,
+                    &DataVerify))
+                {
+                    //here is decrypted password
+                    printf("The decrypted data is: %s\n", DataVerify.pbData);
+                    result_pass.resize(DataVerify.cbData);
+                    std::strncpy(result_pass.data(), (char*)DataVerify.pbData, result_pass.size());
+                    //printf("The description of the data was: %S\n", pDescrOut);
+                }
+                else {
+                    DWORD lastError = GetLastError();
+                }
+            }
+            FlushFileBuffers(hPipe);
+            DisconnectNamedPipe(hPipe);
+            CloseHandle(hPipe);
+        }
 
 	}
 	return result_pass;

@@ -33,21 +33,22 @@
 
 #include <openssl/sha.h>
 #include <openssl/evp.h>
-
+#include <eth-crypto/core/sha3_wrap.h>
+#include "keychain_logger.hpp"
 
 namespace keychain_app {
 
 using byte_seq_t = std::vector<char>;
 
-enum struct blockchain_te {unknown=0, bitshares, array};
-
+enum struct blockchain_te {unknown=0, bitshares, array, ethereum, bitcoin};
+enum struct sign_te {unknown=0, VRS_canonical, RSV_noncanonical};
 
 class sha2_256_encoder
 {
 public:
     sha2_256_encoder();
     ~sha2_256_encoder();
-    void write(const char * d, uint32_t dlen );
+    void write(const unsigned  char * d, uint32_t dlen );
     std::vector<unsigned char> result ();
 private:
     SHA256_CTX ctx;
@@ -58,7 +59,7 @@ class sha3_256_encoder
 public:
     sha3_256_encoder();
     ~sha3_256_encoder();
-    void write(const char *d, uint32_t dlen);
+    void write(const unsigned  char *d, uint32_t dlen);
     std::vector<unsigned char> result();
 private:
     EVP_MD_CTX* ctx;
@@ -73,9 +74,9 @@ std::vector<unsigned char> get_hash( const unit_list_t &list, encoder_t encoder 
   public:
       unit_visitor(encoder_t* enc_): m_enc(enc_){}
 
-      void operator()(const std::vector<char>& val)
+      void operator()(const std::vector<unsigned char>& val)
       {
-        m_enc->write( static_cast<const char*>(val.data()), val.size());
+        m_enc->write( static_cast<const unsigned char*>(val.data()), val.size());
       }
       encoder_t * m_enc;
   };
@@ -172,7 +173,8 @@ enum struct command_te {
     null = 0,
     help,
     list,
-    sign,
+    sign_hex,
+    sign_hash,
     create,
     import_cmd,
     export_cmd,
@@ -237,9 +239,9 @@ struct keychain_command: keychain_command_base
 };
 
 template<>
-struct keychain_command<command_te::sign> : keychain_command_base
+struct keychain_command<command_te::sign_hex> : keychain_command_base
 {
-  keychain_command():keychain_command_base(command_te::sign){}
+  keychain_command():keychain_command_base(command_te::sign_hex){}
   virtual ~keychain_command(){}
   struct params
   {
@@ -256,21 +258,16 @@ struct keychain_command<command_te::sign> : keychain_command_base
     try {
       auto params = params_variant.as<params_t>();
       unit_list_t unit_list;
-
       dev::Secret private_key;
 
+      std::vector<unsigned char> chain(32);
       if (!params.chainid.empty())
-      {
-          std::vector<char> chain(32);
-          auto chain_len = keychain_app::from_hex(params.chainid, (unsigned  char*) chain.data(), chain.size());
-          unit_list.push_back(std::move(chain));
-      }
+          auto chain_len = keychain_app::from_hex(params.chainid, chain.data(), chain.size());
 
       //NOTE: using vector instead array because move semantic is implemented in the vector
-      std::vector<char> buf(1024);
-      auto trans_len = keychain_app::from_hex(params.transaction, (unsigned  char*) buf.data(), buf.size());
-      buf.resize(trans_len);
-      unit_list.push_back(buf);
+      std::vector<unsigned char> raw_tx(1024);
+      auto trans_len = keychain_app::from_hex(params.transaction, raw_tx.data(), raw_tx.size());
+      raw_tx.resize(trans_len);
 
       keyfile_format::keyfile_t keyfile;
 
@@ -310,15 +307,51 @@ struct keychain_command<command_te::sign> : keychain_command_base
       switch (params.blockchain_type)
       {
           case blockchain_te::bitshares:
-              sign_bitshares(signature, get_hash(unit_list, sha2_256_encoder()).data(),(unsigned char *) private_key.data() );
+          {
+              if (chain.size())
+                  unit_list.push_back(chain);
+              unit_list.push_back(raw_tx);
+
+              sign_canonical(signature, get_hash(unit_list, sha2_256_encoder()).data(),(unsigned char *) private_key.data() );
               break;
+          }
           case blockchain_te::array:
-              signature = dev::sign(
-                      private_key,
-                      dev::FixedHash<32>(((byte const*) get_hash(unit_list, sha3_256_encoder()).data()),
-                                         dev::FixedHash<32>::ConstructFromPointerType::ConstructFromPointer)
-              ).asArray();
-              break;
+          {
+            if (chain.size())
+                unit_list.push_back(chain);
+            unit_list.push_back(raw_tx);
+
+            signature = dev::sign(
+                    private_key,
+                    dev::FixedHash<32>(((byte const*) get_hash(unit_list, sha3_256_encoder()).data()),
+                                       dev::FixedHash<32>::ConstructFromPointerType::ConstructFromPointer)
+            ).asArray();
+            break;
+          }
+          case blockchain_te::ethereum:
+          {
+            auto hash = dev::ethash::sha3_ethash(raw_tx);
+            signature = dev::sign(
+                    private_key,
+                    hash
+            ).asArray();
+            break;
+          }
+          case blockchain_te::bitcoin:
+          {
+            unit_list.push_back(raw_tx);
+            auto hash = get_hash(unit_list, sha2_256_encoder());
+            unit_list.clear();
+            unit_list.push_back(hash);
+            auto hash2 = get_hash(unit_list, sha2_256_encoder());
+            signature = dev::sign(
+                    private_key,
+                    dev::FixedHash<32>(((byte const*) hash2.data()),
+                                       dev::FixedHash<32>::ConstructFromPointerType::ConstructFromPointer)
+            ).asArray();
+
+            break;
+          }
           default:
               throw std::runtime_error("unknown blockchain_type");
       }
@@ -338,6 +371,105 @@ struct keychain_command<command_te::sign> : keychain_command_base
       return fc_light::json::to_pretty_string(fc_light::variant(json_error(0, exc.what())));
     }
   }
+};
+
+
+template<>
+struct keychain_command<command_te::sign_hash> : keychain_command_base
+{
+    keychain_command():keychain_command_base(command_te::sign_hash){}
+    virtual ~keychain_command(){}
+    struct params
+    {
+        std::string hash;
+        sign_te sign_type;
+        std::string keyname;
+    };
+
+    using params_t = params;
+
+    virtual std::string operator()(keychain_base* keychain, const fc_light::variant& params_variant, int id) const override
+    {
+        try {
+            auto params = params_variant.as<params_t>();
+            dev::Secret private_key;
+
+            keyfile_format::keyfile_t keyfile;
+
+            if (params.keyname.empty())
+                std::runtime_error("Error: keyname is not specified");
+
+            auto curdir = bfs::current_path();
+            auto first = bfs::directory_iterator(bfs::path("./"));
+            auto it = std::find_if(first, bfs::directory_iterator(),find_keyfile_by_username(params.keyname.c_str(), &keyfile));
+            if (it == bfs::directory_iterator())
+                throw std::runtime_error("Error: keyfile could not found by keyname");
+
+            if(keyfile.uid_hash != keychain->uid_hash)
+                std::runtime_error("Error: user is not keyfile owner");
+
+            std::string key_data;
+            if(keyfile.keyinfo.encrypted)
+            {
+                auto encrypted_data = keyfile.keyinfo.priv_key_data.as<keyfile_format::encrypted_data>();
+                auto& encryptor = encryptor_singletone::instance();
+                //TODO: need to try to parse transaction.
+                // If we can parse transaction we need to use get_passwd_trx function
+                // else use get_passwd_trx_raw()
+                // At this moment parsing of transaction is not implemented
+                byte_seq_t passwd = *(keychain->get_passwd_trx_raw(params.hash));
+                if (passwd.empty())
+                    throw std::runtime_error("Error: can't get password");
+                key_data = std::move(encryptor.decrypt_keydata(passwd, encrypted_data));
+            }
+            else
+            {
+                key_data = std::move(keyfile.keyinfo.priv_key_data.as<std::string>());
+            }
+
+            int pk_len = keychain_app::from_hex(key_data, (unsigned char*) private_key.data(), 32);
+
+            //NOTE: using vector instead array because move semantic is implemented in the vector
+            std::vector<unsigned char> hash(1024);
+            auto trans_len = keychain_app::from_hex(params.hash, hash.data(), hash.size());
+            hash.resize(trans_len);
+
+
+            std::array<unsigned char, 65> signature = {0};
+
+            switch (params.sign_type)
+            {
+                case sign_te::VRS_canonical:
+                {
+                    sign_canonical(signature, hash.data(),(unsigned char *) private_key.data() );
+                    break;
+                }
+                default:
+                {
+                    signature = dev::sign(
+                            private_key,
+                            dev::FixedHash<32>(((byte const*) hash.data()),
+                                               dev::FixedHash<32>::ConstructFromPointerType::ConstructFromPointer)
+                    ).asArray();
+
+                }
+            }
+
+            json_response response(to_hex(signature.data(), signature.size()).c_str(), id);
+            fc_light::variant res(response);
+            return fc_light::json::to_pretty_string(res);
+        }
+        catch (const std::exception &exc)
+        {
+            std::cerr << fc_light::json::to_pretty_string(fc_light::variant(json_error(id, exc.what()))) << std::endl;
+            return fc_light::json::to_pretty_string(fc_light::variant(json_error(id, exc.what())));
+        }
+        catch (const fc_light::exception& exc)
+        {
+            std::cerr << fc_light::json::to_pretty_string(fc_light::variant(json_error(0, exc.to_detail_string().c_str()))) << std::endl;
+            return fc_light::json::to_pretty_string(fc_light::variant(json_error(0, exc.what())));
+        }
+    }
 };
 
 template <>
@@ -549,7 +681,8 @@ FC_LIGHT_REFLECT_ENUM(
     (null)
     (help)
     (list)
-    (sign)
+    (sign_hex)
+    (sign_hash)
     (create)
     (import_cmd)
     (export_cmd)
@@ -559,13 +692,15 @@ FC_LIGHT_REFLECT_ENUM(
     (public_key)
     (last))
 
-FC_LIGHT_REFLECT(keychain_app::keychain_command<keychain_app::command_te::sign>::params_t, (chainid)(transaction)(blockchain_type)(keyname))
+FC_LIGHT_REFLECT(keychain_app::keychain_command<keychain_app::command_te::sign_hex>::params_t, (chainid)(transaction)(blockchain_type)(keyname))
+FC_LIGHT_REFLECT(keychain_app::keychain_command<keychain_app::command_te::sign_hash>::params_t, (hash)(sign_type)(keyname))
 FC_LIGHT_REFLECT(keychain_app::keychain_command<keychain_app::command_te::create>::params_t, (keyname)(encrypted)(cipher)(curve))
 FC_LIGHT_REFLECT(keychain_app::keychain_command<keychain_app::command_te::remove>::params_t, (keyname))
 FC_LIGHT_REFLECT(keychain_app::keychain_command<keychain_app::command_te::public_key>::params_t, (keyname))
 FC_LIGHT_REFLECT(keychain_app::keychain_command_common, (command)(id)(params))
 FC_LIGHT_REFLECT(keychain_app::json_response, (id)(result))
 FC_LIGHT_REFLECT(keychain_app::json_error, (id)(error))
-FC_LIGHT_REFLECT_ENUM(keychain_app::blockchain_te, (unknown)(bitshares)(array))
+FC_LIGHT_REFLECT_ENUM(keychain_app::blockchain_te, (unknown)(bitshares)(array)(ethereum)(bitcoin))
+FC_LIGHT_REFLECT_ENUM(keychain_app::sign_te, (unknown)(VRS_canonical)(RSV_noncanonical))
 
 #endif //KEYCHAINAPP_KEYCHAIN_COMMANDS_HPP

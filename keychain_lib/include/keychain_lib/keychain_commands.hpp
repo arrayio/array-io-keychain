@@ -47,7 +47,6 @@ using byte_seq_t = std::vector<char>;
 enum struct blockchain_te {unknown=0, bitshares, array, ethereum, bitcoin};
 enum struct sign_te {unknown=0, VRS_canonical, RSV_noncanonical};
 
-
 class sha2_256_encoder
 {
 public:
@@ -106,15 +105,14 @@ class keychain_base
 {
 public:
     using string_list = std::list<std::wstring>;
-    keychain_base(std::string&& uid_hash_);
-    keychain_base(){};
+    keychain_base();
     virtual ~keychain_base();
     virtual std::string operator()(const fc_light::variant& command) = 0;
-    boost::signals2::signal<byte_seq_t(const std::string&)> get_passwd_trx_raw;
-    boost::signals2::signal<byte_seq_t(void)> get_passwd_on_create;
+    boost::signals2::signal<byte_seq_t(const std::string&, std::string)> get_passwd_trx_raw;
+    boost::signals2::signal<byte_seq_t(std::string)> get_passwd_on_create;
     boost::signals2::signal<void(const string_list&)> print_mnemonic;
-    std::string uid_hash;
     int unlock_time;
+    std::string binary_dir;
 
     std::unordered_map<std::string, std::pair<std::string, std::time_t>> key_map;
 };
@@ -198,7 +196,6 @@ enum struct command_te {
     unlock,
     set_unlock_time,
     last
-
 };
 
 struct find_keyfile_by_username
@@ -384,7 +381,6 @@ struct keychain_command<command_te::sign_hash> : keychain_command_base
         try {
             auto params = params_variant.as<params_t>();
             dev::Secret private_key;
-            keyfile_format::keyfile_t keyfile;
 
             if (params.keyname.empty())
                 std::runtime_error("Error: keyname is not specified");
@@ -479,7 +475,7 @@ struct keychain_command<command_te::create>: keychain_command_base
 
         if (params.encrypted)
         {
-          auto passwd = *keychain->get_passwd_on_create();
+          auto passwd = *keychain->get_passwd_on_create(keychain->binary_dir);
           if (passwd.empty())
             throw std::runtime_error("Error: can't get password");
           auto& encryptor = encryptor_singletone::instance();
@@ -494,7 +490,6 @@ struct keychain_command<command_te::create>: keychain_command_base
 
         keyfile.keyinfo.public_key = pb_hex;
         keyfile.keyname = keyname;
-        keyfile.uid_hash = keychain->uid_hash;
         keyfile.filetype = keyfile_format::TYPE_KEY;
         keyfile.keyinfo.format = keyfile_format::keyfile_t::keyinfo_t::FORMAT_ARRAYIO;
         keyfile.keyinfo.curve_type = params.curve;
@@ -575,16 +570,13 @@ struct keychain_command<command_te::remove>: keychain_command_base
   using params_t = params;
   virtual std::string operator()(keychain_base* keychain, const fc_light::variant& params_variant, int id) const override {
     try {
-      auto params = params_variant.as<params_t>();
-      keyfile_format::keyfile_t keyfile;
-      auto first = bfs::directory_iterator(bfs::path("./"));
-      auto it = std::find_if(first, bfs::directory_iterator(),find_keyfile_by_username(params.keyname.c_str(), &keyfile));
-      if(it != bfs::directory_iterator())
-      {
-        if(keyfile.uid_hash != keychain->uid_hash)
-          throw std::runtime_error("Error: can't remove keyfile because of it is owned by different user");
-        bfs::remove(*it);
-      }
+        auto params = params_variant.as<params_t>();
+        keyfile_format::keyfile_t keyfile;
+        auto first = bfs::directory_iterator(bfs::path("./"));
+        auto it = std::find_if(first, bfs::directory_iterator(),find_keyfile_by_username(params.keyname.c_str(), &keyfile));
+        if(it != bfs::directory_iterator())
+            bfs::remove(*it);
+
 	    json_response response(true, id);
 	    return fc_light::json::to_pretty_string(fc_light::variant(response));
 	  }
@@ -676,7 +668,8 @@ struct keychain_command<command_te::public_key>: keychain_command_base
                     std::string key_data = read_private_key(keychain, params.keyname, "");
                     keychain->key_map[params.keyname] = std::make_pair(key_data, std::time(nullptr));
 
-                } else
+                }
+/*                else
                 {
                     bfs::path p (bfs::current_path());
                     p =  "./";
@@ -702,6 +695,7 @@ struct keychain_command<command_te::public_key>: keychain_command_base
                     }
 
                 }
+  */
                 json_response response(true, id);
                 return fc_light::json::to_pretty_string(fc_light::variant(response));
             }

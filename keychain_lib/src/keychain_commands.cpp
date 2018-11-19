@@ -21,9 +21,6 @@ std::pair<std::string, std::string> keychain_app::read_private_key_file(
   if (it == bfs::directory_iterator())
     throw std::runtime_error("Error: keyfile could not found by keyname");
 
-  if(keyfile.uid_hash != keychain->uid_hash)
-    std::runtime_error("Error: user is not keyfile owner");
-
   if(keyfile.keyinfo.encrypted)
   {
     auto encrypted_data = keyfile.keyinfo.priv_key_data.as<keyfile_format::encrypted_data>();
@@ -32,7 +29,7 @@ std::pair<std::string, std::string> keychain_app::read_private_key_file(
 // If we can parse transaction we need to use get_passwd_trx function
 // else use get_passwd_trx_raw()
 // At this moment parsing of transaction is not implemented
-    byte_seq_t passwd = *(keychain->get_passwd_trx_raw(text.empty() ? keyfile.keyname: text));
+    byte_seq_t passwd = *(keychain->get_passwd_trx_raw(text.empty() ? keyfile.keyname: text,  keychain->binary_dir));
     if (passwd.empty())
       throw std::runtime_error("Error: can't get password");
     return  std::make_pair(encryptor.decrypt_keydata(passwd, encrypted_data), keyfile.keyname);
@@ -67,8 +64,8 @@ std::string keychain_app::read_private_key(keychain_base * keychain, std::string
 std::string keychain_app::keyname_to_filename(std::string keyname)
 {
     auto delim  = keyname.find('@');
-    if (delim == std::string::npos || delim == keyname.length() || delim == 1 )
-        throw ("Invalid keyname: "+ keyname);
+    if (delim == std::string::npos || delim == 0 || delim == keyname.length()-1 )
+        throw std::runtime_error("Invalid keyname: "+keyname);
     return keyname.substr(delim +1) + ".json";
 
 }
@@ -129,8 +126,7 @@ void keychain_app::create_keyfile(const char* filename, const fc_light::variant&
 
 using namespace keychain_app;
 
-keychain_base::keychain_base(std::string&& uid_hash_)
-  : uid_hash(std::move(uid_hash_))
+keychain_base::keychain_base()
 {
   unlock_time =DEF_UNLOCK_SECONDS;
 }

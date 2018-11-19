@@ -18,6 +18,12 @@
 
 #include "keychain_commands.hpp"
 
+#ifdef __linux__
+#define KEY_DEFAULT_PATH  "/var/keychain/key_data"
+#else
+#error "Need to define path to KEYCHAIN_DATA"
+#endif
+
 
 namespace keychain_app
 {
@@ -31,11 +37,10 @@ public:
     using string_list = std::list<std::wstring>;
 
     virtual ~secure_dlg_mod_base(){}
-    virtual byte_seq_t get_passwd_trx_raw(const std::string& raw_trx) const = 0;
+    virtual byte_seq_t get_passwd_trx_raw(const std::string& raw_trx,  std::string binary_dir) const = 0;
 //  virtual std::wstring get_passwd_trx(const graphene::chain::transaction& trx) const = 0;
-    virtual byte_seq_t get_passwd_on_create() const = 0;
+    virtual byte_seq_t get_passwd_on_create(std::string binary_dir) const = 0;
     virtual void print_mnemonic(const string_list& mnemonic) const = 0;
-    virtual std::string get_uid() const = 0;
 };
 
 

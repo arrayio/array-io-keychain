@@ -504,7 +504,7 @@ struct keychain_command<command_te::create>: keychain_command_base
         create_keyfile(filename.c_str(), fc_light::variant(keyfile));
 
         json_response response(keyname, id);
-        return fc_light::json::to_pretty_string(fc_light::variant(response));
+        return fc_light::json::to_string(fc_light::variant(response));
       }
       catch (const std::exception &exc)
       {
@@ -578,7 +578,7 @@ struct keychain_command<command_te::remove>: keychain_command_base
             bfs::remove(*it);
 
 	    json_response response(true, id);
-	    return fc_light::json::to_pretty_string(fc_light::variant(response));
+	    return fc_light::json::to_string(fc_light::variant(response));
 	  }
     catch (const std::exception &exc)
     {
@@ -643,7 +643,7 @@ struct keychain_command<command_te::public_key>: keychain_command_base
         {
             keychain->key_map.clear();
             json_response response(true, id);
-            return fc_light::json::to_pretty_string(fc_light::variant(response));
+            return fc_light::json::to_string(fc_light::variant(response));
         }
     };
 
@@ -689,7 +689,7 @@ struct keychain_command<command_te::public_key>: keychain_command_base
                         }
                         catch (const std::exception & exc)
                         {
-                            std::cerr << fc_light::json::to_pretty_string(fc_light::variant(json_error(id, exc.what()))) << std::endl;
+                            std::cerr << fc_light::json::to_string(fc_light::variant(json_error(id, exc.what()))) << std::endl;
                             return fc_light::json::to_pretty_string(fc_light::variant(json_error(id, exc.what())));
                         }
                     }
@@ -697,12 +697,12 @@ struct keychain_command<command_te::public_key>: keychain_command_base
                 }
   */
                 json_response response(true, id);
-                return fc_light::json::to_pretty_string(fc_light::variant(response));
+                return fc_light::json::to_string(fc_light::variant(response));
             }
             catch (std::exception& exc)
             {
-                std::cerr << fc_light::json::to_pretty_string(fc_light::variant(json_error(id, exc.what()))) << std::endl;
-                return fc_light::json::to_pretty_string(fc_light::variant(json_error(id, exc.what())));
+                std::cerr << fc_light::json::to_string(fc_light::variant(json_error(id, exc.what()))) << std::endl;
+                return fc_light::json::to_string(fc_light::variant(json_error(id, exc.what())));
             }
         }
     };
@@ -724,12 +724,12 @@ struct keychain_command<command_te::public_key>: keychain_command_base
                 auto params = params_variant.as<params_t>();
                 keychain->unlock_time =  params.seconds;
                 json_response response(true, id);
-                return fc_light::json::to_pretty_string(fc_light::variant(response));
+                return fc_light::json::to_string(fc_light::variant(response));
             }
             catch (std::exception& exc)
             {
-                std::cerr << fc_light::json::to_pretty_string(fc_light::variant(json_error(id, exc.what()))) << std::endl;
-                return fc_light::json::to_pretty_string(fc_light::variant(json_error(id, exc.what())));
+                std::cerr << fc_light::json::to_string(fc_light::variant(json_error(id, exc.what()))) << std::endl;
+                return fc_light::json::to_string(fc_light::variant(json_error(id, exc.what())));
             }
         }
     };

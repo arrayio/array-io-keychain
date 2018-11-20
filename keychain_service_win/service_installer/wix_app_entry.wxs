@@ -2,7 +2,7 @@
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
 
 	<!-- Set product information -->
-   <Product Id="*" UpgradeCode="{c374e108-be86-4d6e-a509-5b07902ab1e3}" 	 
+   <Product Id="*" UpgradeCode="{DFC12350-8A12-4C52-9342-5DB584B313BF}" 	 
 			Name="Setup" Language="1033" Version="1.0.0.2" 
 			Manufacturer="Array.IO">
 	
@@ -13,14 +13,23 @@
 	<!-- Override root install directory path -->
 	<SetDirectory Id="RootInstallDrive" Value="C:\Program Files" />
 
+	<!-- Fragment of sources to install -->
     <Directory Id="TARGETDIR" Name="SourceDir">
 		<Directory Id="RootInstallDrive">
 			<Directory Id="INSTALLLOCATION" Name="KeyChainService">
-				<Component Id="GlobalComponent" DiskId="1" Guid="">
+				<Component Id="Component1" DiskId="1" Guid="{DFC12350-8A12-4C52-9342-5DB584B313BA}">
 					<File Id="File0" Name="keychain_service_win.exe" Source="keychain_service_win.exe" />
+				</Component>
+				<Component Id="Component2" DiskId="1" Guid="{DFC12350-8A12-4C52-9342-5DB584B313BB}">
 					<File Id="File1" Name="keychain_pass_entry_app.exe" Source="keychain_pass_entry_app.exe" />
+				</Component>
+				<Component Id="Component3" DiskId="1" Guid="{DFC12350-8A12-4C52-9342-5DB584B313BC}">
 					<File Id="File2" Name="libcrypto-1_1-x64.dll" Source="libcrypto-1_1-x64.dll" />
+				</Component>
+				<Component Id="Component4" DiskId="1" Guid="{DFC12350-8A12-4C52-9342-5DB584B313BD}">
 					<File Id="File3" Name="service_manager.bat" Source="service_manager.bat" />
+				</Component>
+				<Component Id="Component5" DiskId="1" Guid="{DFC12350-8A12-4C52-9342-5DB584B313BE}">
 					<File Id="File4" Name="delete_service.bat" Source="delete_service.bat" />
 				</Component>
 			</Directory>
@@ -34,28 +43,30 @@
 	<!-- License source text override -->
 	<WixVariable Id="WixUILicenseRtf" Value="license.rtf" />
 
+	<!-- Group components as components referencies -->
     <Feature Id="InstallFeature" Title="Install Feature" Level="1">
-        <ComponentRef Id="GlobalComponent" />
+        <ComponentRef Id="Component1" />
+		<ComponentRef Id="Component2" />
+		<ComponentRef Id="Component3" />
+		<ComponentRef Id="Component4" />
+		<ComponentRef Id="Component5" />
     </Feature>
 	
     <!-- Global Run Action -->
     <CustomAction Id="RunWrapExe" Return="ignore" Execute="deferred" 
                   FileKey="File0" ExeCommand="setup.exe param here"  
                   HideTarget="no" Impersonate="no" />
-				  
-				  
+				  			  
 	<!-- Additional action after installation -->			  
 	<CustomAction Id="RunBat" Directory="INSTALLLOCATION"
 	ExeCommand='"[INSTALLLOCATION]service_manager.BAT"'
     Execute="deferred" Impersonate="no" Return="check"/>
 	
-	
 	<!-- Additional action after uninstall -->	
 	<CustomAction Id="BeforeUninstallService" Directory="INSTALLLOCATION"
     ExeCommand='"[INSTALLLOCATION]delete_service.BAT"'
     Execute="deferred" Impersonate="no" Return="check"/>
-	
-	
+
 	<!-- Overall install & uninstall actions execution block -->	
     <InstallExecuteSequence>
         <Custom Action="RunWrapExe" After="InstallFiles">NOT REMOVE~="ALL"</Custom>

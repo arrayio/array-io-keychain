@@ -28,4 +28,5 @@ add_executable(keychain_pass_entry_app ${KEYCHAIN_PASS_ENT_SOURCES} ${KEYCHAIN_P
 target_include_directories( keychain_pass_entry_app PRIVATE "./include/")
         
 target_link_libraries(keychain_pass_entry_app Crypt32.lib)
+add_custom_command(TARGET keychain_pass_entry_app POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_BINARY_DIR}/debug/keychain_pass_entry_app.exe ../service_installer/installer/keychain_pass_entry_app.exe)
 

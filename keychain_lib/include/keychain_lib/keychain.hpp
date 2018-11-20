@@ -20,6 +20,7 @@
 
 #ifdef __linux__
 #define KEY_DEFAULT_PATH  "/var/keychain/key_data"
+#define LOG_DEFAULT_PATH  "/var/keychain/logs"
 #else
 #error "Need to define path to KEYCHAIN_DATA"
 #endif

@@ -43,7 +43,6 @@ void SecurityManager::CreateSecureDesktop(const std::string& transId) {
 	{
 		throw std::runtime_error("Could not create child client process");
 	}
-	process->startDetached(qtAppStart, argList);
 	//StartInteractiveClientProcess(appToStart, (LPTSTR)app_args);
 }
 

@@ -38,7 +38,7 @@ void KeychainService::start()
 	//{
 		// Perform main service function here...
 	std::bind(&NamedPipeServer::ListenChannel, _server);
-	auto server_result = std::async(std::launch::async, &NamedPipeServer::ListenChannel, _server);
+	std::async(std::launch::async, &NamedPipeServer::ListenChannel, _server);
 	ServiceLogger::getLogger().Log("pipeserver has been started");
 	
 	//}

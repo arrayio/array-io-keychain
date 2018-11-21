@@ -23,6 +23,9 @@
     #include "sec_mod_linux.hpp"
 #endif
 
+#ifdef APPLE
+    #include "../keychain_mac/sec_mod_mac.hpp"
+#endif
 using namespace keychain_app;
 
 
@@ -47,6 +50,7 @@ int cmd_parser::run(int argc, const char* const argv [])
   try
   {
     po::parsed_options parsed = po::command_line_parser(argc, argv).options(desc).allow_unregistered().run();
+
     po::store(parsed, options);
     po::notify(options);
 
@@ -67,8 +71,8 @@ int cmd_parser::run(int argc, const char* const argv [])
       BOOST_LOG_SEV(log.lg, info) << "secure_module: <sec_mod_linux>";
       sec_mod = secure_module<sec_mod_linux>::instance();
 #else
-      BOOST_LOG_SEV(log.lg, info) << "secure_module: <sec_mod_dummy>";
-      sec_mod = secure_module<sec_mod_dummy>::instance();
+      BOOST_LOG_SEV(log.lg, info) << "secure_module: <sec_mod_mac>";
+      sec_mod = secure_module<sec_mod_mac>::instance();
 #endif
     }
     else

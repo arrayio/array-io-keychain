@@ -24,7 +24,7 @@
 #endif
 
 #ifdef APPLE
-    #include "sec_mod_mac.hpp"
+    #include "../keychain_mac/sec_mod_mac.hpp"
 #endif
 using namespace keychain_app;
 

@@ -166,7 +166,8 @@ std::list<std::string> pass_entry_term::parse_device_file()
     return std::move( devices);
 }
 
-keychain_app::byte_seq_t pass_entry_term::ww(const KeySym * map, const std::string& raw_trx ){
+keychain_app::byte_seq_t pass_entry_term::fork_gui(const KeySym * map, const std::string& raw_trx,
+        std::string  binary_dir ){
     int sockets[2];
     if (socketpair(AF_UNIX, SOCK_STREAM, 0, sockets) < 0)   throw std::runtime_error("opening stream socket pair");
     switch (fork())
@@ -180,7 +181,8 @@ keychain_app::byte_seq_t pass_entry_term::ww(const KeySym * map, const std::stri
                     if (close(sockets[0]) == -1) throw std::runtime_error("close socket[0]");
                 }
                 if (setresuid(oruid, oruid, oruid) == -1) throw std::runtime_error("GUI: setresuid()");
-                execlp(path_, path_, (char *) NULL);
+                std::string  path = binary_dir+"/passentry_gui";
+                execlp(path.c_str(), path.c_str(), (char *) NULL);
                 throw std::runtime_error("execlp()");
             }
         default: break;

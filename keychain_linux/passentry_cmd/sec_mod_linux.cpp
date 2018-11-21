@@ -14,27 +14,23 @@ sec_mod_linux::sec_mod_linux()
 sec_mod_linux::~sec_mod_linux()
 {}
 
-std::string sec_mod_linux::get_uid() const
-{
-    return std::string("uid");
-}
 
 void sec_mod_linux::print_mnemonic(const string_list& mnemonic) const
 {
 }
 
-byte_seq_t sec_mod_linux::get_passwd_trx_raw(const std::string& raw_trx) const
+byte_seq_t sec_mod_linux::get_passwd_trx_raw(const std::string& raw_trx, std::string binary_dir) const
 {
     auto pass_entry = pass_entry_term();
     auto map_instance = map_translate_singletone::instance(pass_entry._display);
-    auto pass = pass_entry.fork_gui(map_instance.map, raw_trx);
+    auto pass = pass_entry.fork_gui(map_instance.map, raw_trx, binary_dir);
     return pass;
 }
 
-byte_seq_t sec_mod_linux::get_passwd_on_create() const
+byte_seq_t sec_mod_linux::get_passwd_on_create(std::string binary_dir) const
 {
     auto pass_entry = pass_entry_term();
     auto map_instance = map_translate_singletone::instance(pass_entry._display);
-    auto pass = pass_entry.fork_gui(map_instance.map, "");
+    auto pass = pass_entry.fork_gui(map_instance.map, "", binary_dir);
     return pass;
 }

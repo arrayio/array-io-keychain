@@ -14,11 +14,13 @@
 #include "sec_mod.hpp"
 
 #include <boost/program_options.hpp>
+#include <keychain_lib/keychain_logger.hpp>
+
 //#include <boost/program_options/options_description.hpp>
 //#include <boost/program_options/option.hpp>
 
 #ifdef LINUX
-    #include "../keychain_linux/passentry_cmd/sec_mod_linux.hpp"
+    #include "sec_mod_linux.hpp"
 #endif
 
 #ifdef APPLE
@@ -36,6 +38,7 @@ int cmd_parser::run(int argc, const char* const argv [])
 {
 
   const secure_dlg_mod_base* sec_mod;
+  auto log = logger_singletone::instance();
 
   std::string task_type;
   po::options_description desc("Options");
@@ -58,13 +61,18 @@ int cmd_parser::run(int argc, const char* const argv [])
     }
 
     if (task_type == "test_run")
-      sec_mod = secure_module<sec_mod_dummy>::instance();
+    {
+        BOOST_LOG_SEV(log.lg, info) << "secure_module: <sec_mod_dummy>";
+        sec_mod = secure_module<sec_mod_dummy>::instance();
+    }
     else if (task_type == "")
     {
 #ifdef LINUX
+      BOOST_LOG_SEV(log.lg, info) << "secure_module: <sec_mod_linux>";
       sec_mod = secure_module<sec_mod_linux>::instance();
 #else
-       sec_mod = secure_module<sec_mod_mac>::instance();
+      BOOST_LOG_SEV(log.lg, info) << "secure_module: <sec_mod_mac>";
+      sec_mod = secure_module<sec_mod_mac>::instance();
 #endif
     }
     else

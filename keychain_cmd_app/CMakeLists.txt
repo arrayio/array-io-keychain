@@ -20,7 +20,7 @@ if(APPLE)
 endif()
 
 SET(BOOST_COMPONENTS)
-LIST(APPEND BOOST_COMPONENTS date_time system filesystem program_options signals serialization chrono unit_test_framework locale thread exception iostreams)
+LIST(APPEND BOOST_COMPONENTS log date_time system filesystem program_options signals serialization chrono unit_test_framework locale thread exception iostreams)
 SET( Boost_USE_STATIC_LIBS ON CACHE STRING "ON or OFF" )
 
 SET(BOOST_ROOT $ENV{BOOST_ROOT})

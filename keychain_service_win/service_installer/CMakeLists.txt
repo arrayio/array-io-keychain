@@ -13,16 +13,27 @@ if(WIN32)
 	set(wixoutputpath "installer")
 	message(STATUS "wixsrcpath: ${wixsrcpath}")
 
+	#find libcrypto.dll file inside openssl installed folder
+	if("$ENV{OPENSSL_ROOT_DIR}" OR "${OPENSSL_ROOT_DIR}" STREQUAL "")
+		message(FATAL_ERROR "CANNOT FIND OPENSSL LIBRARY")
+	else()
+		set(openssl_path "${OPENSSL_ROOT_DIR}")
+		message(STATUS "OPENSSL PATH: ${openssl_path}")
+		file(GLOB_RECURSE globalcrypto FOLLOW_SYMLINKS ${OPENSSL_ROOT_DIR}/libcrypto*.dll)
+		list(GET globalcrypto 1 cryptolib)
+		message(STATUS "FOUND LIBCRYPTO: ${cryptolib}")
+	endif()
+
 	#set copy files to alias
 	set( PREBUILD_FILES
 	   "${wixsrcpath}/wix_app_entry.wxs"
 	   "${wixsrcpath}/service_manager.bat"
 	   "${wixsrcpath}/delete_service.bat"
 	   "${wixsrcpath}/license.rtf"
-	   "${wixsrcpath}/libcrypto-1_1-x64.dll"
+	   ${cryptolib}
 	)
 
-	message(STATUS "PREBUILD_FILES: ${PREBUILD_FILES}")
+	message(STATUS "PREBUILD FILES: ${PREBUILD_FILES}")
 
 	#copy files in build folder
 	foreach( file_to_copy ${PREBUILD_FILES})

@@ -3,7 +3,7 @@
 
 	<!-- Set product information -->
    <Product Id="*" UpgradeCode="{DFC12350-8A12-4C52-9342-5DB584B313BF}" 	 
-			Name="Setup" Language="1033" Version="1.0.0.2" 
+			Name="Install Keychain Services" Language="1033" Version="1.0.0.3" 
 			Manufacturer="Array.IO">
 	
 	<!-- Set package and media information -->

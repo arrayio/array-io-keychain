@@ -81,6 +81,8 @@ logger_singletone::logger_singletone()
             );
 
     // Add the sink to the core
+    logging::add_common_attributes();
+
     logging::core::get()->add_sink(sink);
 
 }

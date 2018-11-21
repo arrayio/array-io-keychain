@@ -19,7 +19,7 @@
 #include "keychain_commands.hpp"
 
 #ifdef __linux__
-#define KEY_DEFAULT_PATH  "/var/keychain/key_data"
+#define KEY_DEFAULT_PATH  "/var/keychain"
 #define LOG_DEFAULT_PATH  "/var/keychain/logs"
 #else
 

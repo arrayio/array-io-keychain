@@ -36,13 +36,28 @@
 #include "keychain_logger.hpp"
 #include <ctime>
 
+#ifdef __linux__
+#define KEY_DEFAULT_PATH  "/var/keychain"
+#define LOG_DEFAULT_PATH  "/var/keychain/logs"
+#define KEY_DEFAULT_PATH_ KEY_DEFAULT_PATH "/key_data"
+#else
+
+#if defined(macintosh) || defined(__APPLE__) || defined(__APPLE_CC__)
+    //#error "Need to define path to KEYCHAIN_DATA"
+        #define KEY_DEFAULT_PATH  "data/keychain"
+        #define LOG_DEFAULT_PATH  "data/keychain/logs"
+        #define KEY_DEFAULT_PATH_ KEY_DEFAULT_PATH "/key_data"
+    #else
+        #error "Need to define path to KEYCHAIN_DATA"
+    #endif
+#endif
+
+
 // after password entry the decrypted private key stored in memory  during this time
 // This allow sing transaction without password entry.
 #define DEF_UNLOCK_SECONDS 0
 
 namespace keychain_app {
-
-namespace bfs = boost::filesystem;
 
 using byte_seq_t = std::vector<char>;
 
@@ -110,11 +125,10 @@ public:
     keychain_base();
     virtual ~keychain_base();
     virtual std::string operator()(const fc_light::variant& command) = 0;
-    boost::signals2::signal<byte_seq_t(const std::string&, std::string)> get_passwd_trx_raw;
-    boost::signals2::signal<byte_seq_t(std::string)> get_passwd_on_create;
+    boost::signals2::signal<byte_seq_t(const std::string&)> get_passwd_trx_raw;
+    boost::signals2::signal<byte_seq_t(void)> get_passwd_on_create;
     boost::signals2::signal<void(const string_list&)> print_mnemonic;
     int unlock_time;
-    bfs::path binary_dir;
 
     std::unordered_map<std::string, std::pair<std::string, std::time_t>> key_map;
 };
@@ -149,7 +163,6 @@ size_t from_hex(const std::string& hex_str, unsigned char* out_data, size_t out_
 std::string to_hex(const uint8_t* data, size_t length);
 std::string read_private_key(keychain_base *, std::string , std::string);
 std::pair<std::string, std::string> read_private_key_file( keychain_base * , std::string , std::string );
-std::string keyname_to_filename (std::string);
 
 /*{
   using out_map = std::map<std::string, nlohmann::json>;
@@ -212,16 +225,14 @@ struct find_keyfile_by_username
   {
     if (!bfs::is_regular_file(unit.status()))
       return false;
-    const auto &file_path = unit.path().filename();
-    
-    auto j_keyfile = open_keyfile(file_path.c_str());
+
+    auto j_keyfile = open_keyfile(unit.path().c_str());
     auto keyfile = j_keyfile.as<keyfile_format::keyfile_t>();
     if(m_keyfile)
       *m_keyfile = keyfile;//NOTE: move semantic is not implemented in fc_light::variant in fact
-    return strcmp(m_keyname, keyname_to_filename(keyfile.keyname).c_str()) == 0;
+    return strcmp(m_keyname, keyfile.keyname.c_str()) == 0;
   }
   const char* m_keyname;
-  keychain_base* m_pkeychain;
   keyfile_format::keyfile_t* m_keyfile;
 };
 
@@ -477,7 +488,7 @@ struct keychain_command<command_te::create>: keychain_command_base
 
         if (params.encrypted)
         {
-          auto passwd = *keychain->get_passwd_on_create(keychain->binary_dir.string());
+          auto passwd = *keychain->get_passwd_on_create();
           if (passwd.empty())
             throw std::runtime_error("Error: can't get password");
           auto& encryptor = encryptor_singletone::instance();
@@ -499,7 +510,7 @@ struct keychain_command<command_te::create>: keychain_command_base
         if(filename.empty())
           throw std::runtime_error("Error: keyname (filename) is empty");
 
-        auto first = bfs::directory_iterator(bfs::path("./"));
+        auto first = bfs::directory_iterator(bfs::path(KEY_DEFAULT_PATH_));
         auto it = std::find_if(first, bfs::directory_iterator(),find_keyfile_by_username(keyfile.keyname.c_str()));
         if(it != bfs::directory_iterator())
           throw std::runtime_error("Error: keyfile for this user is already exist");

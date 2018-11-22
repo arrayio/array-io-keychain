@@ -21,6 +21,15 @@
 
 using namespace keychain_app;
 
+
+keychain_base::keychain_base()
+{
+  unlock_time =DEF_UNLOCK_SECONDS;
+}
+
+keychain_base::~keychain_base(){}
+
+
 keychain_commands_singletone::keychain_commands_singletone()
 {
   m_command_list.reserve(32);//TODO: it is may be possible to get size info from boost::hana::tuple
@@ -39,14 +48,11 @@ keychain& keychain::instance(const secure_dlg_mod_base* secure_dlg )
 }
 
 
-keychain::keychain(const secure_dlg_mod_base* secure_dlg, const char* default_key_dir)
-  : keychain_base()
+keychain::keychain(const secure_dlg_mod_base* secure_dlg)
+  : keychain_base(),
+    m_init_path(bfs::current_path())
 {
-  binary_dir = bfs::current_path();
-  std::string dir(default_key_dir);
-  bfs::path key_dir(dir);
-
-  key_dir +=  "/key_data";
+  bfs::path key_dir(KEY_DEFAULT_PATH_);
 
   if(!bfs::exists(key_dir))
   {
@@ -56,17 +62,15 @@ keychain::keychain(const secure_dlg_mod_base* secure_dlg, const char* default_ke
   }
 
   get_passwd_trx_raw.connect(std::bind(&secure_dlg_mod_base::get_passwd_trx_raw, secure_dlg,
-          std::placeholders::_1,  std::placeholders::_2));
-  get_passwd_on_create.connect(std::bind(&secure_dlg_mod_base::get_passwd_on_create, secure_dlg,
           std::placeholders::_1));
+  get_passwd_on_create.connect(std::bind(&secure_dlg_mod_base::get_passwd_on_create, secure_dlg));
   print_mnemonic.connect(std::bind(&secure_dlg_mod_base::print_mnemonic, secure_dlg,
           std::placeholders::_1));
-  bfs::current_path(key_dir);
 }
 
 keychain::~keychain()
 {
-  bfs::current_path(binary_dir);
+  bfs::current_path(m_init_path);
 }
 
 std::string keychain::operator()(const fc_light::variant& command) {

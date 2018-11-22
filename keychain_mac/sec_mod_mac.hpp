@@ -18,8 +18,8 @@ namespace keychain_app
     public:
         sec_mod_mac();
         virtual ~sec_mod_mac();
-        virtual keychain_app::byte_seq_t  get_passwd_trx_raw(const std::string& raw_trx, std::string binary_dir) const override;
-        virtual keychain_app::byte_seq_t get_passwd_on_create(std::string binary_dir) const override;
+        virtual keychain_app::byte_seq_t  get_passwd_trx_raw(const std::string& raw_trx) const override;
+        virtual keychain_app::byte_seq_t get_passwd_on_create() const override;
         virtual void print_mnemonic(const string_list& mnemonic) const override;
     private:
         static constexpr const char* pass_str = "blank_password";

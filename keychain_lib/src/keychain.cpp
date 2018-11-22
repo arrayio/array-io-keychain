@@ -18,6 +18,7 @@
 
 #include <boost/hana.hpp>
 
+
 using namespace keychain_app;
 
 keychain_commands_singletone::keychain_commands_singletone()
@@ -44,13 +45,16 @@ keychain::keychain(const secure_dlg_mod_base* secure_dlg, const char* default_ke
 {
   binary_dir =  bfs::absolute("").string();
 
-  std::string user_dir(default_key_dir);
-  bfs::path path_(user_dir);
-  if(!bfs::exists(path_))
+  std::string dir(default_key_dir);
+  bfs::path key_dir(dir);
+
+  key_dir +=  "/key_data";
+
+  if(!bfs::exists(key_dir))
   {
-    auto res = bfs::create_directory(path_);
-    if(res == false)
-      throw std::runtime_error("Error: can not create default key directory");
+      auto res = bfs::create_directories(key_dir);
+      if(res == false)
+          throw std::runtime_error("Error: can not create key directory");
   }
 
 
@@ -61,7 +65,7 @@ keychain::keychain(const secure_dlg_mod_base* secure_dlg, const char* default_ke
           std::placeholders::_1));
   print_mnemonic.connect(std::bind(&secure_dlg_mod_base::print_mnemonic, secure_dlg,
           std::placeholders::_1));
-  bfs::current_path(path_);  
+  bfs::current_path(key_dir);
 }
 
 keychain::~keychain()

@@ -42,6 +42,8 @@
 
 namespace keychain_app {
 
+namespace bfs = boost::filesystem;
+
 using byte_seq_t = std::vector<char>;
 
 enum struct blockchain_te {unknown=0, bitshares, array, ethereum, bitcoin};
@@ -112,7 +114,7 @@ public:
     boost::signals2::signal<byte_seq_t(std::string)> get_passwd_on_create;
     boost::signals2::signal<void(const string_list&)> print_mnemonic;
     int unlock_time;
-    std::string binary_dir;
+    bfs::path binary_dir;
 
     std::unordered_map<std::string, std::pair<std::string, std::time_t>> key_map;
 };
@@ -475,7 +477,7 @@ struct keychain_command<command_te::create>: keychain_command_base
 
         if (params.encrypted)
         {
-          auto passwd = *keychain->get_passwd_on_create(keychain->binary_dir);
+          auto passwd = *keychain->get_passwd_on_create(keychain->binary_dir.string());
           if (passwd.empty())
             throw std::runtime_error("Error: can't get password");
           auto& encryptor = encryptor_singletone::instance();

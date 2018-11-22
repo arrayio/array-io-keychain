@@ -41,10 +41,8 @@ keychain& keychain::instance(const secure_dlg_mod_base* secure_dlg )
 
 keychain::keychain(const secure_dlg_mod_base* secure_dlg, const char* default_key_dir)
   : keychain_base()
-  , m_init_path(bfs::current_path())
 {
-  binary_dir =  bfs::absolute("").string();
-
+  binary_dir = bfs::current_path();
   std::string dir(default_key_dir);
   bfs::path key_dir(dir);
 
@@ -68,7 +66,7 @@ keychain::keychain(const secure_dlg_mod_base* secure_dlg, const char* default_ke
 
 keychain::~keychain()
 {
-  bfs::current_path(m_init_path);
+  bfs::current_path(binary_dir);
 }
 
 std::string keychain::operator()(const fc_light::variant& command) {

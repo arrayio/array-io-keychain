@@ -59,7 +59,6 @@ public:
   virtual ~keychain();
   virtual std::string operator()(const fc_light::variant& command) override;
 private:
-  bfs::path m_init_path;
   keychain(const secure_dlg_mod_base* , const char* default_key_dir = KEY_DEFAULT_PATH);
 };
 

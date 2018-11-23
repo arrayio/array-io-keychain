@@ -43,6 +43,7 @@ std::pair<std::string, std::string> keychain_app::read_private_key_file(
 std::string keychain_app::read_private_key(keychain_base * keychain, std::string keyname, std::string text)
 {
   bool locked = true;
+
   auto map = keychain->key_map.find(keyname);
   if (map != keychain->key_map.end())
   {
@@ -53,13 +54,14 @@ std::string keychain_app::read_private_key(keychain_base * keychain, std::string
   }
 
   if (locked)
-    return read_private_key_file(keychain, keyname, text).first;
-  else
-  {
-    // reset key timer after each key use
-    keychain->key_map[keyname].second = std::time(nullptr);
-    return keychain->key_map[keyname].first;
+  {// unlock key
+    auto key_data = read_private_key_file(keychain, keyname, text).first;
+    keychain->key_map[keyname] = std::make_pair(key_data, std::time(nullptr));
   }
+  else   //  reset key timer after each key use
+    keychain->key_map[keyname].second = std::time(nullptr);
+
+  return keychain->key_map[keyname].first;
 }
 
 std::string keychain_app::to_hex(const uint8_t* data, size_t length)

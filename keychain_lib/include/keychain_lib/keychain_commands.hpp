@@ -544,13 +544,12 @@ struct keychain_command<command_te::list>: keychain_command_base {
     try {
       fc_light::variants keyname_list;
       keyname_list.reserve(128);
-      auto first = bfs::directory_iterator(bfs::path("./"));
+      auto first = bfs::directory_iterator(bfs::path(KEY_DEFAULT_PATH_));
       std::for_each(first, bfs::directory_iterator(), [&keyname_list](bfs::directory_entry &unit){
         if (!bfs::is_regular_file(unit.status()))
           return;
-        const auto &file_path = unit.path().filename();
-  
-        auto j_keyfile = open_keyfile(file_path.c_str());
+
+        auto j_keyfile = open_keyfile(unit.path().c_str());
         auto keyfile = j_keyfile.as<keyfile_format::keyfile_t>();
         keyname_list.push_back(fc_light::variant(std::move(keyfile.keyname)));
         return;
@@ -585,10 +584,11 @@ struct keychain_command<command_te::remove>: keychain_command_base
     try {
         auto params = params_variant.as<params_t>();
         keyfile_format::keyfile_t keyfile;
-        auto first = bfs::directory_iterator(bfs::path("./"));
+        auto first = bfs::directory_iterator(bfs::path(KEY_DEFAULT_PATH_));
         auto it = std::find_if(first, bfs::directory_iterator(),find_keyfile_by_username(params.keyname.c_str(), &keyfile));
         if(it != bfs::directory_iterator())
             bfs::remove(*it);
+        keychain->key_map.erase(params.keyname);
 
 	    json_response response(true, id);
 	    return fc_light::json::to_string(fc_light::variant(response));
@@ -625,7 +625,7 @@ struct keychain_command<command_te::public_key>: keychain_command_base
         std::runtime_error("Error: keyname is not specified");
   
       auto curdir = bfs::current_path();
-      auto first = bfs::directory_iterator(bfs::path("./"));
+      auto first = bfs::directory_iterator(bfs::path(KEY_DEFAULT_PATH_));
       auto it = std::find_if(first, bfs::directory_iterator(),find_keyfile_by_username(params.keyname.c_str(), &keyfile));
       if (it == bfs::directory_iterator())
         throw std::runtime_error("Error: keyfile could not found by keyname");
@@ -663,7 +663,7 @@ struct keychain_command<command_te::public_key>: keychain_command_base
     template<>
     struct keychain_command<command_te::unlock>: keychain_command_base
     {
-        keychain_command(): keychain_command_base(command_te::lock){}
+        keychain_command(): keychain_command_base(command_te::unlock){}
         virtual ~keychain_command(){}
         struct params
         {
@@ -677,38 +677,8 @@ struct keychain_command<command_te::public_key>: keychain_command_base
             {
                 auto params = params_variant.as<params_t>();
                 if (!params.keyname.empty())
-                {
-                    std::string key_data = read_private_key(keychain, params.keyname, "");
-                    keychain->key_map[params.keyname] = std::make_pair(key_data, std::time(nullptr));
+                    read_private_key(keychain, params.keyname, "");
 
-                }
-/*                else
-                {
-                    bfs::path p (bfs::current_path());
-                    p =  "./";
-                    bfs::directory_iterator end_itr;
-                    for (bfs::directory_iterator dir_itr(p);
-                            dir_itr != end_itr;
-                            ++dir_itr)
-                    {
-                        try
-                        {
-                            if (bfs::is_regular_file(dir_itr->status()))
-                            {
-                                std::string keyname;
-                                auto pair = read_private_key_file(keychain,  dir_itr->path().filename().string(), "");
-                                keychain->key_map[keyname] = std::make_pair(pair.first, std::time(nullptr));
-                            }
-                        }
-                        catch (const std::exception & exc)
-                        {
-                            std::cerr << fc_light::json::to_string(fc_light::variant(json_error(id, exc.what()))) << std::endl;
-                            return fc_light::json::to_pretty_string(fc_light::variant(json_error(id, exc.what())));
-                        }
-                    }
-
-                }
-  */
                 json_response response(true, id);
                 return fc_light::json::to_string(fc_light::variant(response));
             }

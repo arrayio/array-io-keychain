@@ -39,19 +39,18 @@
 #ifdef __linux__
 #define KEY_DEFAULT_PATH  "/var/keychain"
 #define LOG_DEFAULT_PATH  "/var/keychain/logs"
-#define KEY_DEFAULT_PATH_ KEY_DEFAULT_PATH "/key_data"
 #else
 
 #if defined(macintosh) || defined(__APPLE__) || defined(__APPLE_CC__)
     //#error "Need to define path to KEYCHAIN_DATA"
         #define KEY_DEFAULT_PATH  "data/keychain"
         #define LOG_DEFAULT_PATH  "data/keychain/logs"
-        #define KEY_DEFAULT_PATH_ KEY_DEFAULT_PATH "/key_data"
     #else
         #error "Need to define path to KEYCHAIN_DATA"
     #endif
 #endif
 
+#define KEY_DEFAULT_PATH_ KEY_DEFAULT_PATH "/key_data"
 
 // after password entry the decrypted private key stored in memory  during this time
 // This allow sing transaction without password entry.

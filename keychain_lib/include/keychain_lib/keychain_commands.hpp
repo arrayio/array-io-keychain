@@ -335,13 +335,33 @@ struct keychain_command<command_te::sign> : keychain_command_base
             //auto rawtx_len = keychain_app::from_hex(rawtx, rawtx_vec.data(), rawtx_vec.size() );
             //rawtx_vec.resize(rawtx_len);
 
-/*
+
             auto _value     = dev::u256 ("0x038d7ea4c68000");  //  (1000000000000000) ;
             auto _gasPrice  = dev::u256 ("0x098bca5a00");     //  (41000000000) ;
             auto _gas       = dev::u256 ("0x5208");           //  (21000);
             auto _to = dev::FixedHash<20> (std::string("8ec6977B1255854169e5f9f8F163F371BCf1FFd2"));
             auto _data = dev::bytes();
             int chainID = 3;
+
+            auto b = dev::rlpList(_value, _gasPrice, _gas, _to, _data, chainID );
+
+            auto b_rlp = dev::RLP(b);
+
+
+            std::string hex = "eb0885098bca5a00825208948ec6977b1255854169e5f9f8f163f371bcf1ffd287038d7ea4c6800080038080";
+            dev::bytes data(1000);
+            auto size = from_hex(hex, data.data(), data.size());
+            data.resize(size);
+
+            auto r = dev::RLP(data);
+            auto str = r.toString();
+            auto vec = r.toVector<byte>();
+
+            auto by = r.toBytes();
+
+            auto tr = dev::eth::TransactionBase(data, 0);
+
+            //dev::Converter::convert
 
             auto trx = dev::eth::TransactionBase(_value,
                     _gasPrice,
@@ -352,14 +372,25 @@ struct keychain_command<command_te::sign> : keychain_command_base
                     private_key,
                     chainID
             );
-*/
-            auto hash = dev::ethash::sha3_ethash(buf);
+
+
+            auto nonce = trx.nonce();
+            auto  t_gas = trx.gas();
+            auto  t_gasPrice = trx.gasPrice();
+            auto to = trx.to();
+            auto ra = trx.receiveAddress();
+            auto value = trx.value();
+
+              auto value1 = trx.value();
+
+/*            auto hash = dev::ethash::sha3_ethash(buf);
             std::cerr << "hash: "  << to_hex( reinterpret_cast<const unsigned char *>(hash.data()), 32) << std::endl;
             signature = dev::sign(
                     private_key,
                     hash
             ).asArray();
             break;
+*/
           }
           default:
               throw std::runtime_error("unknown blockchain_type");

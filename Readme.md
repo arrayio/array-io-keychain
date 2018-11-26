@@ -1,4 +1,5 @@
-![alt text](https://github.com/arrayio/array-io-keychain/blob/master/img/ltl1.png "KeyChain") # KeyChain
+![alt text](https://github.com/arrayio/array-io-keychain/blob/master/img/ltl1%20(2).png) 
+# KeyChain
 
 ## Overview
 

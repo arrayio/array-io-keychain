@@ -29,7 +29,7 @@ byte_seq_t sec_mod_mac::get_passwd_trx_raw(const std::string& raw_trx, std::stri
     [NSApp setActivationPolicy:NSApplicationActivationPolicyRegular];
     [NSApp activateIgnoringOtherApps:YES];
     
-    NSRect frame = NSMakeRect(0, 0, 200, 200);
+    NSRect frame = NSMakeRect(0, 0, 575, 361);
     MyDialog *dialog = [[MyDialog alloc] initWithFrame:frame];
     [dialog runModal];
     std::string str = std::string([[[PassSyncStore sharedInstance] pass] UTF8String]);
@@ -44,7 +44,7 @@ byte_seq_t sec_mod_mac::get_passwd_on_create(std::string binary_dir) const
     [NSApp setActivationPolicy:NSApplicationActivationPolicyRegular];
     [NSApp activateIgnoringOtherApps:YES];
     
-    NSRect frame = NSMakeRect(0, 0, 200, 200);
+    NSRect frame = NSMakeRect(0, 0, 575, 361);
     MyDialog *dialog = [[MyDialog alloc] initWithFrame:frame];
     [dialog runModal];
     std::string str = std::string([[[PassSyncStore sharedInstance] pass] UTF8String]);

@@ -16,7 +16,7 @@ if (NOT MSVC)
     endif()
 endif()
 if(APPLE)
-	SET(CMAKE_EXE_LINKER_FLAGS "-framework Cocoa")
+	SET(CMAKE_EXE_LINKER_FLAGS "-framework Cocoa" "-weak_framework QuartzCore")
 endif()
 
 SET(BOOST_COMPONENTS)

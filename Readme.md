@@ -1,5 +1,5 @@
 # KeyChain
-
+![alt text](https://github.com/arrayio/array-io-keychain/blob/master/img/ltl1.png)
 ## Overview
 
 **KeyChain** is a standalone app for signing transactions and generating key pairs. It stores private keys in an isolated environment where no logger, debugger or spyware can intercept them because of the three-layer security protecting each action of the system.

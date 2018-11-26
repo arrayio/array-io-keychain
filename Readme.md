@@ -1,5 +1,5 @@
 # KeyChain
-![alt text](https://github.com/arrayio/array-io-keychain/blob/master/img/LOGOkeyHockey.png "KeyChain")
+![alt text][logo]
 
 ## Overview
 

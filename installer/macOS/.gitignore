@@ -1,32 +1,3 @@
-################################################################################
-# Данный GITIGNORE-файл был автоматически создан Microsoft(R) Visual Studio.
-################################################################################
-
-/sec_win_passwd/pass_ent_app/x64/Debug
-/.project
-/build*
-/nmake-build/*
-/3rd-party-components/lib/*
-/3rd-party-components
-/cmake-build-debug*
-/cmake-debug-build*
-/cmake-build-release*
-/key_data/*
-/keychain_cmd_app/.idea/*
-/keychain_lib/CMakeFiles/*
-/passentry_gui/cmake-build-debug/*
-/passentry_gui/.idea/*
-*.user
-*.a
-*.cbp
-*Makefile
-*.cmake
-*.orig
-*cpk
-.idea/*
-.DS_Store
-*.tar.gz
-
 # Xcode
 #
 # gitignore contributors: remember to update Global/Xcode.gitignore, Objective-C.gitignore & Swift.gitignore

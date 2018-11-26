@@ -59,4 +59,4 @@ The request, transmitted to the **Signing module** which holds the private keys,
 
 ## How to use
 
-For more information, see corresponding wiki https://github.com/arrayio/array-io-keychain/wiki#how-it-works
+For more information, see corresponding wiki https://github.com/arrayio/array-io-keychain/wiki

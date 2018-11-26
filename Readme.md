@@ -1,5 +1,4 @@
 # KeyChain
-![alt text][logo]
 
 ## Overview
 

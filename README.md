@@ -10,7 +10,7 @@ You can integrate **KeyChain** as a service through `pipe` or `websocket` method
 
 Read full [KeyChain API](https://github.com/arrayio/array-io-keychain/wiki/KeyChain-API) with comprehensive descriptions of JSON requests broken down into simple commands and parameters. 
 
-You can find the detailed technical specification of the KeyChain system below if you refer to [How it works](# How it works) section. 
+You can find the detailed technical specification of the KeyChain system below if you refer to *How it works* section. 
 
 ## Installation
 

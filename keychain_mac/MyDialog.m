@@ -32,10 +32,8 @@
                                            selector:@selector(windowWillClose:)
                                                name:NSWindowWillCloseNotification
                                              object:nil];
-//    window.titleVisibility = NSWindowTitleHidden;
     window.titlebarAppearsTransparent = YES;
     [window center];
-//    [window setBackgroundColor:[NSColor whiteColor]];
     return [super initWithWindow:window];
 }
 
@@ -64,12 +62,14 @@
     [self setupSignButton];
     [self setupCancelButton];
     [[NSApplication sharedApplication] runModalForWindow:self.window];
+    
+    
 }
 
 - (void) setupLabelPassphrase {
     NSTextField *label = [NSTextField labelWithString:@"Passphrase"];
     label.appearance = [NSAppearance appearanceNamed:NSAppearanceNameAqua];
-    label.textColor = [HexToRgbColor colorWithHexColorString:@"434343"];
+    label.textColor = [HexToRgbColor colorWithHexColorString:@"4f4e4e"];
     label.font = [NSFont systemFontOfSize:18];
     label.frame = NSMakeRect(22, 67, 100, 30);
     [self.window.contentView addSubview:label];

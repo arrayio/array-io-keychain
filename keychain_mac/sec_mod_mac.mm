@@ -43,17 +43,17 @@ byte_seq_t sec_mod_mac::get_passwd_on_create(std::string binary_dir) const
     @autoreleasepool {
         [NSApplication sharedApplication];
         [NSApp setActivationPolicy:NSApplicationActivationPolicyRegular];
-        id menubar = [NSMenu new];
-        id appMenuItem = [NSMenuItem new];
-        [menubar addItem:appMenuItem];
-        [NSApp setMainMenu:menubar];
-        id appMenu = [NSMenu new];
-        id appName = [[NSProcessInfo processInfo] processName];
-        id quitTitle = @"Quit Keychain";
-        id quitMenuItem = [[NSMenuItem alloc] initWithTitle:quitTitle
-                                                      action:@selector(terminate:) keyEquivalent:@"q"];
-        [appMenu addItem:quitMenuItem];
-        [appMenuItem setSubmenu:appMenu];
+//        id menubar = [NSMenu new];
+//        id appMenuItem = [NSMenuItem new];
+//        [menubar addItem:appMenuItem];
+//        [NSApp setMainMenu:menubar];
+//        id appMenu = [NSMenu new];
+//        id appName = [[NSProcessInfo processInfo] processName];
+//        id quitTitle = @"Quit Keychain";
+//        id quitMenuItem = [[NSMenuItem alloc] initWithTitle:quitTitle
+//                                                      action:@selector(terminate:) keyEquivalent:@"q"];
+//        [appMenu addItem:quitMenuItem];
+//        [appMenuItem setSubmenu:appMenu];
         
         [NSApp activateIgnoringOtherApps:YES];
         [NSApp finishLaunching];

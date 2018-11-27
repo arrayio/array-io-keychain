@@ -1,0 +1,2 @@
+servicewrapper stop
+servicewrapper uninstall

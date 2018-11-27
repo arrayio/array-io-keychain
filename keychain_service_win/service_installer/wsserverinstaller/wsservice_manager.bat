@@ -1,0 +1,2 @@
+servicewrapper install
+servicewrapper start

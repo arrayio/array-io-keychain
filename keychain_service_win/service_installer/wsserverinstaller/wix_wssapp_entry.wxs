@@ -1,0 +1,82 @@
+<?xml version="1.0"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+
+	<!-- Set product information -->
+   <Product Id="*" UpgradeCode="{46840884-EDE8-4425-B0E9-6EEECE8C1E9F}" 	 
+			Name="Install WSKeychain Services" Language="1033" Version="1.0.0.1" 
+			Manufacturer="Array.IO">
+	
+	<!-- Set package and media information -->
+    <Package Description="pak" InstallerVersion="301" Compressed="yes" Platform = "x64" />
+    <Media Id="1" Cabinet="setup.cab" EmbedCab="yes" />
+	
+	<!-- Override root install directory path -->
+	<SetDirectory Id="RootInstallDrive" Value="C:\Program Files" />
+
+	<!-- Fragment of sources to install -->
+    <Directory Id="TARGETDIR" Name="SourceDir">
+		<Directory Id="RootInstallDrive">
+			<Directory Id="INSTALLLOCATION" Name="WSKeychain">
+				<Component Id="Component1" DiskId="1" Guid="{46840884-EDE8-4425-B0E9-6EEECE8C1E9A}">
+					<File Id="File0" Name="websocketwrapper.exe" Source="websocketwrapper.exe" />
+				</Component>
+				<Component Id="Component2" DiskId="1" Guid="{46840884-EDE8-4425-B0E9-6EEECE8C1E9B}">
+					<File Id="File1" Name="servicewrapper.exe" Source="servicewrapper.exe" />
+				</Component>
+				<Component Id="Component3" DiskId="1" Guid="{46840884-EDE8-4425-B0E9-6EEECE8C1E9C}">
+					<File Id="File2" Name="servicewrapper.xml" Source="servicewrapper.xml" />
+				</Component>
+				<Component Id="Component4" DiskId="1" Guid="{46840884-EDE8-4425-B0E9-6EEECE8C1E9D}">
+					<File Id="File3" Name="wsservicerunner.bat" Source="wsservicerunner.bat" />
+				</Component>
+				<Component Id="Component5" DiskId="1" Guid="{46840884-EDE8-4425-B0E9-6EEECE8C1E9E}">
+					<File Id="File4" Name="delete_wsservice.bat" Source="delete_wsservice.bat" />
+				</Component>
+				<Component Id="Component6" DiskId="1" Guid="{46840884-EDE8-4425-B0E9-6EEECE8C1E91}">
+					<File Id="File5" Name="wsservice_manager.bat" Source="wsservice_manager.bat" />
+				</Component>
+			</Directory>
+		</Directory>
+    </Directory>
+	
+	<!-- Install directory source text override -->
+	<Property Id="WIXUI_INSTALLDIR" Value="INSTALLLOCATION" />
+	<UIRef Id="WixUI_InstallDir" />
+	
+	<!-- License source text override -->
+	<WixVariable Id="WixUILicenseRtf" Value="license.rtf" />
+
+	<!-- Group components as components referencies -->
+    <Feature Id="InstallFeature" Title="Install Feature" Level="1">
+        <ComponentRef Id="Component1" />
+		<ComponentRef Id="Component2" />
+		<ComponentRef Id="Component3" />
+		<ComponentRef Id="Component4" />
+		<ComponentRef Id="Component5" />
+		<ComponentRef Id="Component6" />
+    </Feature>
+	
+    <!-- Global Run Action -->
+    <CustomAction Id="RunWrapExe" Return="ignore" Execute="deferred" 
+                  FileKey="File0" ExeCommand="setup.exe param here"  
+                  HideTarget="no" Impersonate="no" />
+				  			  
+	<!-- Additional action after installation -->			  
+	<CustomAction Id="RunBat" Directory="INSTALLLOCATION"
+	ExeCommand='"[INSTALLLOCATION]wsservice_manager.BAT"'
+    Execute="deferred" Impersonate="no" Return="check"/>
+	
+	<!-- Additional action after uninstall -->	
+	<CustomAction Id="BeforeUninstallService" Directory="INSTALLLOCATION"
+    ExeCommand='"[INSTALLLOCATION]delete_wsservice.BAT"'
+    Execute="deferred" Impersonate="no" Return="check"/>
+
+	<!-- Overall install & uninstall actions execution block -->	
+    <InstallExecuteSequence>
+        <Custom Action="RunWrapExe" After="InstallFiles">NOT REMOVE~="ALL"</Custom>
+		<Custom Action="RunBat" Before="InstallFinalize">NOT (REMOVE~="ALL")</Custom>
+		<Custom Action="BeforeUninstallService" After="InstallInitialize">REMOVE="ALL"</Custom>
+    </InstallExecuteSequence>
+
+   </Product>
+</Wix>

@@ -26,6 +26,11 @@
 #ifdef APPLE
     #include "../keychain_mac/sec_mod_mac.hpp"
 #endif
+
+#ifdef _WIN32
+    #include <SecureModuleWrapper.h>
+#endif
+
 using namespace keychain_app;
 
 
@@ -71,9 +76,16 @@ int cmd_parser::run(int argc, const char* const argv [])
       BOOST_LOG_SEV(log.lg, info) << "secure_module: <sec_mod_linux>";
       sec_mod = secure_module<sec_mod_linux>::instance();
 #else
+#	if defined(macintosh) || defined(__APPLE__) || defined(__APPLE_CC__)
       BOOST_LOG_SEV(log.lg, info) << "secure_module: <sec_mod_mac>";
       sec_mod = secure_module<sec_mod_mac>::instance();
-#endif
+#	else
+#		ifdef _WIN32
+	  BOOST_LOG_SEV(log.lg, info) << "secure_module: <SecureModuleWrapper>";
+	  sec_mod = secure_module<SecureModuleWrapper>::instance();
+#		endif //_WIN32
+#	endif //APPLE
+#endif //LINUX
     }
     else
     {

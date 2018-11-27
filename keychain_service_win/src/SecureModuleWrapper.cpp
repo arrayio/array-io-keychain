@@ -27,14 +27,6 @@ void SecureModuleWrapper::print_mnemonic(const string_list& mnemonic) const
 	//TODO: need implementation
 }
 
-std::string SecureModuleWrapper::get_uid() const
-{
-	//TODO: need implementation
-	//
-	return std::string("user_sid");
-}
-
-
 keychain_app::byte_seq_t SecureModuleWrapper::_startSecureDesktop(const std::string& str) const
 {
 	std::vector<char> result_pass;

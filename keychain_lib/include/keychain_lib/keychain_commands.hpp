@@ -37,18 +37,22 @@
 #include <ctime>
 
 #ifdef __linux__
-#define KEY_DEFAULT_PATH  "/var/keychain"
-#define LOG_DEFAULT_PATH  "/var/keychain/logs"
+#  define KEY_DEFAULT_PATH  "/var/keychain"
+#  define LOG_DEFAULT_PATH  "/var/keychain/logs"
 #else
 
 #if defined(macintosh) || defined(__APPLE__) || defined(__APPLE_CC__)
-    //#error "Need to define path to KEYCHAIN_DATA"
-        #define KEY_DEFAULT_PATH  "data/keychain"
-        #define LOG_DEFAULT_PATH  "data/keychain/logs"
-    #else
-        #error "Need to define path to KEYCHAIN_DATA"
-    #endif
-#endif
+#  define KEY_DEFAULT_PATH  "data/keychain"
+#  define LOG_DEFAULT_PATH  "data/keychain/logs"
+#else
+
+#ifdef _WIN32
+#  define KEY_DEFAULT_PATH  "./"
+#  define LOG_DEFAULT_PATH  "./logs"
+#endif //_WIN32
+
+#endif //APPLE
+#endif //LINUX
 
 #define KEY_DEFAULT_PATH_ KEY_DEFAULT_PATH "/key_data"
 
@@ -254,7 +258,7 @@ struct keychain_command_base {
 template<command_te cmd>
 struct keychain_command: keychain_command_base
 {
-    keychain_command():keychain_command_base(cmd){}
+    keychain_command():keychain_command_base(static_cast<keychain_app::command_te>(cmd)){}
     virtual ~keychain_command(){}
     virtual std::string operator()(keychain_base* keychain, const fc_light::variant& params_variant, int id) const override
     {

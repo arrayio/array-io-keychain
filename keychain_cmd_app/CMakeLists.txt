@@ -74,6 +74,9 @@ if ( ${CMAKE_HOST_SYSTEM_NAME} MATCHES "Linux")
             COMMAND ${CMAKE_COMMAND} -E  copy_if_different   ${GUI_BINARY} ${KEYCHAIN_BINARY_DIR}
             )
 else()
+	if(MSVC)
+	  include_directories("../keychain_service_win/include")
+	endif(MSVC)
     include_directories(
             "../keychain_lib/include"
             "../libraries/fc_light/include"

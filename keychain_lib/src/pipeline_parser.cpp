@@ -47,6 +47,7 @@ int pipeline_parser::run()
   auto it = read_buf.begin();
     while (true)
   {
+
     size_t bytes_read = read(m_pipein_desc, ptr_from_it(it), bytes_remaining(it));
     BOOST_LOG_SEV(log.lg, info) <<"stdin:" << std::string (ptr_from_it(it), ptr_from_it(it) + bytes_read );
 

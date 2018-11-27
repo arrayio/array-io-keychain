@@ -11,7 +11,7 @@
 #include "pass_entry_term.hpp"
 #include "cmd.hpp"
 
-#define path_ "../../passentry_gui"
+#define path_ "./passentry_gui"
 
 pass_entry_term::pass_entry_term()
 {
@@ -166,8 +166,7 @@ std::list<std::string> pass_entry_term::parse_device_file()
     return std::move( devices);
 }
 
-keychain_app::byte_seq_t pass_entry_term::fork_gui(const KeySym * map, const std::string& raw_trx,
-        std::string  binary_dir ){
+keychain_app::byte_seq_t pass_entry_term::fork_gui(const KeySym * map, const std::string& raw_trx ){
     int sockets[2];
     if (socketpair(AF_UNIX, SOCK_STREAM, 0, sockets) < 0)   throw std::runtime_error("opening stream socket pair");
     switch (fork())
@@ -181,8 +180,7 @@ keychain_app::byte_seq_t pass_entry_term::fork_gui(const KeySym * map, const std
                     if (close(sockets[0]) == -1) throw std::runtime_error("close socket[0]");
                 }
                 if (setresuid(oruid, oruid, oruid) == -1) throw std::runtime_error("GUI: setresuid()");
-                std::string  path = binary_dir+"/passentry_gui";
-                execlp(path.c_str(), path.c_str(), (char *) NULL);
+                execlp(path_, path_, (char *) NULL);
                 throw std::runtime_error("execlp()");
             }
         default: break;

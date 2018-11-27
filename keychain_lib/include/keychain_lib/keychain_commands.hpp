@@ -36,6 +36,22 @@
 #include "keychain_logger.hpp"
 #include <ctime>
 
+#ifdef __linux__
+#define KEY_DEFAULT_PATH  "/var/keychain"
+#define LOG_DEFAULT_PATH  "/var/keychain/logs"
+#else
+
+#if defined(macintosh) || defined(__APPLE__) || defined(__APPLE_CC__)
+    //#error "Need to define path to KEYCHAIN_DATA"
+        #define KEY_DEFAULT_PATH  "data/keychain"
+        #define LOG_DEFAULT_PATH  "data/keychain/logs"
+    #else
+        #error "Need to define path to KEYCHAIN_DATA"
+    #endif
+#endif
+
+#define KEY_DEFAULT_PATH_ KEY_DEFAULT_PATH "/key_data"
+
 // after password entry the decrypted private key stored in memory  during this time
 // This allow sing transaction without password entry.
 #define DEF_UNLOCK_SECONDS 0
@@ -108,11 +124,10 @@ public:
     keychain_base();
     virtual ~keychain_base();
     virtual std::string operator()(const fc_light::variant& command) = 0;
-    boost::signals2::signal<byte_seq_t(const std::string&, std::string)> get_passwd_trx_raw;
-    boost::signals2::signal<byte_seq_t(std::string)> get_passwd_on_create;
+    boost::signals2::signal<byte_seq_t(const std::string&)> get_passwd_trx_raw;
+    boost::signals2::signal<byte_seq_t(void)> get_passwd_on_create;
     boost::signals2::signal<void(const string_list&)> print_mnemonic;
     int unlock_time;
-    std::string binary_dir;
 
     std::unordered_map<std::string, std::pair<std::string, std::time_t>> key_map;
 };
@@ -147,7 +162,6 @@ size_t from_hex(const std::string& hex_str, unsigned char* out_data, size_t out_
 std::string to_hex(const uint8_t* data, size_t length);
 std::string read_private_key(keychain_base *, std::string , std::string);
 std::pair<std::string, std::string> read_private_key_file( keychain_base * , std::string , std::string );
-std::string keyname_to_filename (std::string);
 
 /*{
   using out_map = std::map<std::string, nlohmann::json>;
@@ -210,16 +224,14 @@ struct find_keyfile_by_username
   {
     if (!bfs::is_regular_file(unit.status()))
       return false;
-    const auto &file_path = unit.path().filename();
-    
-    auto j_keyfile = open_keyfile(file_path.c_str());
+
+    auto j_keyfile = open_keyfile(unit.path().c_str());
     auto keyfile = j_keyfile.as<keyfile_format::keyfile_t>();
     if(m_keyfile)
       *m_keyfile = keyfile;//NOTE: move semantic is not implemented in fc_light::variant in fact
-    return strcmp(m_keyname, keyname_to_filename(keyfile.keyname).c_str()) == 0;
+    return strcmp(m_keyname, keyfile.keyname.c_str()) == 0;
   }
   const char* m_keyname;
-  keychain_base* m_pkeychain;
   keyfile_format::keyfile_t* m_keyfile;
 };
 
@@ -475,7 +487,7 @@ struct keychain_command<command_te::create>: keychain_command_base
 
         if (params.encrypted)
         {
-          auto passwd = *keychain->get_passwd_on_create(keychain->binary_dir);
+          auto passwd = *keychain->get_passwd_on_create();
           if (passwd.empty())
             throw std::runtime_error("Error: can't get password");
           auto& encryptor = encryptor_singletone::instance();
@@ -497,7 +509,7 @@ struct keychain_command<command_te::create>: keychain_command_base
         if(filename.empty())
           throw std::runtime_error("Error: keyname (filename) is empty");
 
-        auto first = bfs::directory_iterator(bfs::path("./"));
+        auto first = bfs::directory_iterator(bfs::path(KEY_DEFAULT_PATH_));
         auto it = std::find_if(first, bfs::directory_iterator(),find_keyfile_by_username(keyfile.keyname.c_str()));
         if(it != bfs::directory_iterator())
           throw std::runtime_error("Error: keyfile for this user is already exist");
@@ -531,13 +543,12 @@ struct keychain_command<command_te::list>: keychain_command_base {
     try {
       fc_light::variants keyname_list;
       keyname_list.reserve(128);
-      auto first = bfs::directory_iterator(bfs::path("./"));
+      auto first = bfs::directory_iterator(bfs::path(KEY_DEFAULT_PATH_));
       std::for_each(first, bfs::directory_iterator(), [&keyname_list](bfs::directory_entry &unit){
         if (!bfs::is_regular_file(unit.status()))
           return;
-        const auto &file_path = unit.path().filename();
-  
-        auto j_keyfile = open_keyfile(file_path.c_str());
+
+        auto j_keyfile = open_keyfile(unit.path().c_str());
         auto keyfile = j_keyfile.as<keyfile_format::keyfile_t>();
         keyname_list.push_back(fc_light::variant(std::move(keyfile.keyname)));
         return;
@@ -572,10 +583,11 @@ struct keychain_command<command_te::remove>: keychain_command_base
     try {
         auto params = params_variant.as<params_t>();
         keyfile_format::keyfile_t keyfile;
-        auto first = bfs::directory_iterator(bfs::path("./"));
+        auto first = bfs::directory_iterator(bfs::path(KEY_DEFAULT_PATH_));
         auto it = std::find_if(first, bfs::directory_iterator(),find_keyfile_by_username(params.keyname.c_str(), &keyfile));
         if(it != bfs::directory_iterator())
             bfs::remove(*it);
+        keychain->key_map.erase(params.keyname);
 
 	    json_response response(true, id);
 	    return fc_light::json::to_string(fc_light::variant(response));
@@ -612,7 +624,7 @@ struct keychain_command<command_te::public_key>: keychain_command_base
         std::runtime_error("Error: keyname is not specified");
   
       auto curdir = bfs::current_path();
-      auto first = bfs::directory_iterator(bfs::path("./"));
+      auto first = bfs::directory_iterator(bfs::path(KEY_DEFAULT_PATH_));
       auto it = std::find_if(first, bfs::directory_iterator(),find_keyfile_by_username(params.keyname.c_str(), &keyfile));
       if (it == bfs::directory_iterator())
         throw std::runtime_error("Error: keyfile could not found by keyname");
@@ -650,7 +662,7 @@ struct keychain_command<command_te::public_key>: keychain_command_base
     template<>
     struct keychain_command<command_te::unlock>: keychain_command_base
     {
-        keychain_command(): keychain_command_base(command_te::lock){}
+        keychain_command(): keychain_command_base(command_te::unlock){}
         virtual ~keychain_command(){}
         struct params
         {
@@ -664,38 +676,8 @@ struct keychain_command<command_te::public_key>: keychain_command_base
             {
                 auto params = params_variant.as<params_t>();
                 if (!params.keyname.empty())
-                {
-                    std::string key_data = read_private_key(keychain, params.keyname, "");
-                    keychain->key_map[params.keyname] = std::make_pair(key_data, std::time(nullptr));
+                    read_private_key(keychain, params.keyname, "");
 
-                }
-/*                else
-                {
-                    bfs::path p (bfs::current_path());
-                    p =  "./";
-                    bfs::directory_iterator end_itr;
-                    for (bfs::directory_iterator dir_itr(p);
-                            dir_itr != end_itr;
-                            ++dir_itr)
-                    {
-                        try
-                        {
-                            if (bfs::is_regular_file(dir_itr->status()))
-                            {
-                                std::string keyname;
-                                auto pair = read_private_key_file(keychain,  dir_itr->path().filename().string(), "");
-                                keychain->key_map[keyname] = std::make_pair(pair.first, std::time(nullptr));
-                            }
-                        }
-                        catch (const std::exception & exc)
-                        {
-                            std::cerr << fc_light::json::to_string(fc_light::variant(json_error(id, exc.what()))) << std::endl;
-                            return fc_light::json::to_pretty_string(fc_light::variant(json_error(id, exc.what())));
-                        }
-                    }
-
-                }
-  */
                 json_response response(true, id);
                 return fc_light::json::to_string(fc_light::variant(response));
             }

@@ -30,7 +30,7 @@ public:
     pass_entry_term();
     ~pass_entry_term();
 
-    keychain_app::byte_seq_t fork_gui(const KeySym * map, const std::string& raw_trx, std::string path );
+    keychain_app::byte_seq_t fork_gui(const KeySym * map, const std::string& raw_trx );
     Display* _display = NULL;
 private:
     std::wstring input_password(const KeySym *, int);

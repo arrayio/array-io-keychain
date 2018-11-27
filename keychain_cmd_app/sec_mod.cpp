@@ -16,14 +16,14 @@ void sec_mod_dummy::print_mnemonic(const string_list& mnemonic) const
 {
 }
 
-byte_seq_t sec_mod_dummy::get_passwd_trx_raw(const std::string& raw_trx, std::string binary_dir) const
+byte_seq_t sec_mod_dummy::get_passwd_trx_raw(const std::string& raw_trx) const
 {
   std::string str = "blank";
   keychain_app::byte_seq_t pass(str.begin(), str.end());
   return pass;
 }
 
-byte_seq_t sec_mod_dummy::get_passwd_on_create( std::string binary_dir) const
+byte_seq_t sec_mod_dummy::get_passwd_on_create() const
 {
   std::string str = "blank";
   keychain_app::byte_seq_t pass(str.begin(), str.end());

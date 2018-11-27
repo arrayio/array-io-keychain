@@ -18,7 +18,17 @@
 
 #include <boost/hana.hpp>
 
+
 using namespace keychain_app;
+
+
+keychain_base::keychain_base()
+{
+  unlock_time =DEF_UNLOCK_SECONDS;
+}
+
+keychain_base::~keychain_base(){}
+
 
 keychain_commands_singletone::keychain_commands_singletone()
 {
@@ -38,30 +48,24 @@ keychain& keychain::instance(const secure_dlg_mod_base* secure_dlg )
 }
 
 
-keychain::keychain(const secure_dlg_mod_base* secure_dlg, const char* default_key_dir)
-  : keychain_base()
-  , m_init_path(bfs::current_path())
+keychain::keychain(const secure_dlg_mod_base* secure_dlg)
+  : keychain_base(),
+    m_init_path(bfs::current_path())
 {
-  binary_dir =  bfs::absolute("").string();
+  bfs::path key_dir(KEY_DEFAULT_PATH_);
 
-  std::string user_dir(default_key_dir);
-  bfs::path path_(user_dir);
-  if(!bfs::exists(path_))
+  if(!bfs::exists(key_dir))
   {
-    auto res = bfs::create_directory(path_);
-    if(res == false)
-      throw std::runtime_error("Error: can not create default key directory");
+      auto res = bfs::create_directories(key_dir);
+      if(res == false)
+          throw std::runtime_error("Error: can not create key directory");
   }
 
-
-
   get_passwd_trx_raw.connect(std::bind(&secure_dlg_mod_base::get_passwd_trx_raw, secure_dlg,
-          std::placeholders::_1,  std::placeholders::_2));
-  get_passwd_on_create.connect(std::bind(&secure_dlg_mod_base::get_passwd_on_create, secure_dlg,
           std::placeholders::_1));
+  get_passwd_on_create.connect(std::bind(&secure_dlg_mod_base::get_passwd_on_create, secure_dlg));
   print_mnemonic.connect(std::bind(&secure_dlg_mod_base::print_mnemonic, secure_dlg,
           std::placeholders::_1));
-  bfs::current_path(path_);  
 }
 
 keychain::~keychain()

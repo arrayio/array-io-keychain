@@ -23,7 +23,7 @@ void sec_mod_mac::print_mnemonic(const string_list& mnemonic) const
 {
 }
 
-byte_seq_t sec_mod_mac::get_passwd_trx_raw(const std::string& raw_trx, std::string binary_dir) const
+byte_seq_t sec_mod_mac::get_passwd_trx_raw(const std::string& raw_trx) const
 {
     [NSApplication sharedApplication];
     [NSApp setActivationPolicy:NSApplicationActivationPolicyRegular];
@@ -38,7 +38,7 @@ byte_seq_t sec_mod_mac::get_passwd_trx_raw(const std::string& raw_trx, std::stri
     return pass;
 }
 
-byte_seq_t sec_mod_mac::get_passwd_on_create(std::string binary_dir) const
+byte_seq_t sec_mod_mac::get_passwd_on_create() const
 {
     @autoreleasepool {
         [NSApplication sharedApplication];

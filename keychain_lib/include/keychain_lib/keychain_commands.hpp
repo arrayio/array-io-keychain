@@ -359,9 +359,9 @@ struct keychain_command<command_te::sign> : keychain_command_base
 
             auto by = r.toBytes();
 
-            auto tr = dev::eth::TransactionBase(data, 0);
 
-            //dev::Converter::convert
+            auto tr = dev::eth::TransactionBase(data, dev::eth::CheckTransaction::none);
+           //dev::Converter::convert
 
             auto trx = dev::eth::TransactionBase(_value,
                     _gasPrice,
@@ -380,6 +380,9 @@ struct keychain_command<command_te::sign> : keychain_command_base
             auto to = trx.to();
             auto ra = trx.receiveAddress();
             auto value = trx.value();
+
+//            auto value_str1  = to.str();
+            auto value_str2  = t_gasPrice.str();
 
               auto value1 = trx.value();
 

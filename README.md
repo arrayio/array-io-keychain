@@ -25,7 +25,10 @@ Follow the steps of the graphic installer.
 1. Click "next" to start installation
 ![text](https://github.com/arrayio/array-io-keychain/blob/master/img/keychain%20mac.png)
 
-2. Click "Install" and wait till it is complete
+2. Choose a folder and click "next"
+![text](https://github.com/arrayio/array-io-keychain/blob/master/img/keychain%202.png)
+
+3. Click "Install" and wait till it is complete
 ![alt text](https://github.com/arrayio/array-io-keychain/blob/master/img/%D0%A1%D0%BD%D0%B8%D0%BC%D0%BE%D0%BA%20%D1%8D%D0%BA%D1%80%D0%B0%D0%BD%D0%B0%202018-11-23%20%D0%B2%2015.02.15.png)
 
 #### Windows

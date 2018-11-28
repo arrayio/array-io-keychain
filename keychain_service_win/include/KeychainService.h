@@ -1,7 +1,7 @@
 #ifndef DUMMY_SERVICE_H
 #define DUMMY_SERVICE_H
 #include "ServiceBase.h" 
-#include "NamedPipeServer.h" 
+#include <secmodlib/NamedPipeServer.h>
 
 
 class KeychainService : public CServiceBase

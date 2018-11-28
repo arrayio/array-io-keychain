@@ -1,5 +1,5 @@
 #pragma once
-#include "NamedPipeServer.h"
+#include "../include/secmodlib/NamedPipeServer.h"
 
 #include <keychain_lib/keychain_wrapper.hpp>
 #include <keychain_lib/pipeline_parser.hpp>
@@ -10,8 +10,8 @@
 #include <iostream>
 #include <future>
 
-#include "SecureModuleWrapper.h"
-#include <ServiceLogger.h>
+#include <secmodlib/SecureModuleWrapper.h>
+#include <keychain_lib/keychain_logger.hpp>
 
 NamedPipeServer::NamedPipeServer() {
 	//_secManage = new SecurityManager();
@@ -26,7 +26,9 @@ using namespace keychain_app;
 void NamedPipeServer::ListenChannel(/*LPTSTR channelName*/) {
 	
 	lpszPipename = (LPTSTR)__TEXT("\\\\.\\pipe\\keychainservice");//channelName;
-	ServiceLogger::getLogger().Log("Creating NamedPipe object");
+    auto log = logger_singletone::instance();
+    BOOST_LOG_SEV(log.lg, info) << "Creating NamedPipe object";
+
 	hPipe = CreateNamedPipe(
 		lpszPipename,             // pipe name 
 		PIPE_ACCESS_DUPLEX,       // read/write access 
@@ -39,14 +41,15 @@ void NamedPipeServer::ListenChannel(/*LPTSTR channelName*/) {
 		0,                        // client time-out 
 		NULL);                    // default security attribute 
 
-	ServiceLogger::getLogger().Log("NamedPipe object is created");
+    BOOST_LOG_SEV(log.lg, info) << "NamedPipe object is created";
+
 	fConnected = ConnectNamedPipe(hPipe, NULL) ?
 		TRUE : (GetLastError() == ERROR_PIPE_CONNECTED);
-	ServiceLogger::getLogger().Log("ConnectingNamePipe");
+    BOOST_LOG_SEV(log.lg, info) << "ConnectingNamePipe";
 	if (!fConnected)
 	{
-		ServiceLogger::getLogger().Log("Connection error");
-		ServiceLogger::getLogger().Log(std::to_string(GetLastError()));
+        BOOST_LOG_SEV(log.lg, error) << "Connection error";
+        BOOST_LOG_SEV(log.lg, error) << std::to_string(GetLastError());
 		// The client could not connect, so close the pipe. 
 		CloseHandle(hPipe);
 		return;
@@ -54,7 +57,7 @@ void NamedPipeServer::ListenChannel(/*LPTSTR channelName*/) {
 		
 	auto fd = _open_osfhandle(reinterpret_cast<intptr_t>(hPipe), _O_APPEND | _O_RDWR);
 		
-	ServiceLogger::getLogger().Log("Client connected, creating a processing thread."); //std::cout << "Client connected, creating a processing thread." << std::endl;
+    BOOST_LOG_SEV(log.lg, info) << "Client connected, creating a processing thread.";
 	auto res = std::async(std::launch::async, [this](int fd)->int {
 		SecureModuleWrapper secureModuleWrapper;
 		keychain_invoke_f f = std::bind(&keychain_wrapper, &secureModuleWrapper, std::placeholders::_1);
@@ -68,11 +71,11 @@ void NamedPipeServer::ListenChannel(/*LPTSTR channelName*/) {
 	try
 	{
 		if (res.get() == -1)
-			ServiceLogger::getLogger().Log("Error: cannot read from pipe"); //std::cerr << "Error: cannot read from pipe" << std::endl;
+            BOOST_LOG_SEV(log.lg, error) << "Error: cannot read from pipe";
 	}
 	catch (const std::exception& e)
 	{
-		ServiceLogger::getLogger().Log("Error: cannot read from pipe");//std::cerr << e.what() << std::endl;
-		ServiceLogger::getLogger().Log(e.what());
+        BOOST_LOG_SEV(log.lg, error) << "Error: cannot read from pipe";
+        BOOST_LOG_SEV(log.lg, error) << e.what();
 	}	
 };

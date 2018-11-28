@@ -1,5 +1,5 @@
-#include "SecurityManager.h"
-#include <ServiceLogger.h>
+#include <secmodlib/SecurityManager.h>
+#include <keychain_lib/keychain_logger.hpp>
 
 using namespace std;
 
@@ -36,7 +36,8 @@ void SecurityManager::CreateSecureDesktop(const std::string& transId) {
 	wcscat_s(args, 400, _tId.c_str());
 	LPCWSTR appToStart = dst;
 	LPTSTR app_args = args;
-	ServiceLogger::getLogger().Log("CreateSecureDescktop function StartInteractiveClientProcess to enter credentials");
+    auto log = logger_singletone::instance();
+    BOOST_LOG_SEV(log.lg, info) << "CreateSecureDescktop function StartInteractiveClientProcess to enter credentials";
 	if (!StartInteractiveClientProcess(appToStart, (LPTSTR)app_args))
 	{
 		throw std::runtime_error("Could not create child client process");

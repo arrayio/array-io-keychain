@@ -1,6 +1,6 @@
 #include "KeychainService.h" 
 #include "ThreadPool.h"
-#include <ServiceLogger.h>
+#include <keychain_lib/keychain_logger.hpp>
 
 
 KeychainService::KeychainService(PWSTR pszServiceName,

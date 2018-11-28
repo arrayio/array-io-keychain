@@ -75,7 +75,7 @@ if ( ${CMAKE_HOST_SYSTEM_NAME} MATCHES "Linux")
             )
 else()
 	if(MSVC)
-	  include_directories("../keychain_service_win/include")
+	  include_directories("../keychain_cmd_app/secmodlib/include")
 	endif(MSVC)
     include_directories(
             "../keychain_lib/include"
@@ -95,7 +95,7 @@ else()
     add_executable(keychain ${KEYCHAIN_SOURCES} ${KEYCHAIN_INCLUDE} )
 
 	if (MSVC)
-		target_link_libraries(keychain keychain_common fc_light eth-crypto ${LIB_OPENSSL} ${Boost_LIBRARIES} Userenv.lib)
+		target_link_libraries(keychain keychain_common secmodlib fc_light eth-crypto ${LIB_OPENSSL} ${Boost_LIBRARIES} Crypt32.lib Userenv.lib Wtsapi32.lib)
 	else()
 		target_link_libraries(keychain keychain_common fc_light eth-crypto ${LIB_OPENSSL} ${Boost_LIBRARIES})
 		if(APPLE) 

@@ -1,0 +1,11 @@
+<RCC>
+    <qresource prefix="/keychain_gui_win">
+        <file>Resources/background.png</file>
+        <file>Resources/bg_edit.png</file>
+        <file>Resources/bg_ephir.png</file>
+        <file>Resources/but_cancel.png</file>
+        <file>Resources/but_ok.png</file>
+        <file>Resources/lock.png</file>
+        <file>Resources/notify_back.png</file>
+    </qresource>
+</RCC>

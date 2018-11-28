@@ -14,7 +14,7 @@ You can find the detailed technical specification of the KeyChain system below i
 
 ## Installation
 
-Download KeyChain and run the graphic installer if you are using Windows or MacOs. If you are using Linux, run the commands that you find in the Linux installation guide after downloading the KeyChain package. 
+Download KeyChain and run the graphic installer if you are using [Windows](#windows) or [MacOs](#macos). If you are using [Linux](#linux), run the commands that you find in the Linux installation guide after downloading the KeyChain package. 
 
 #### Linux
 
@@ -24,21 +24,50 @@ For Linux installation, follow the steps:
 ```
 $ wget -q -O - https://array.io/keychain/keychain_signing_key.pub | Sudo apt-key add -
 ``` 
-2. Install KeyChain from our repository and install it
+2. [Download](https://github.com/arrayio/array-io-keychain/releases/download/0.3/keychain_linux.zip) KeyChain from our repository and install it
 ```
 $ sudo sh -c 'echo "deb http://array.io/keychain/deb/ stable main" >> /etc/apt/sources.list.d/array.list'
 $ sudo apt-get update
 $ sudo apt-get install keychain
 ``` 
 #### MacOs
-Follow the steps of the graphic installer. All you will need to do is choose a folder and wait until the KeyChain is successfully installed.
 
-![Choose a folder and press "next"](https://github.com/arrayio/array-io-keychain/blob/master/img/%D0%A1%D0%BD%D0%B8%D0%BC%D0%BE%D0%BA%20%D1%8D%D0%BA%D1%80%D0%B0%D0%BD%D0%B0%202018-11-23%20%D0%B2%2014.24.25.png)
+Download MacOs installer [here](https://github.com/arrayio/array-io-keychain/releases/download/0.3/keychain.zip).
 
-![Press "Install" and wait till it is complete](https://github.com/arrayio/array-io-keychain/blob/master/img/%D0%A1%D0%BD%D0%B8%D0%BC%D0%BE%D0%BA%20%D1%8D%D0%BA%D1%80%D0%B0%D0%BD%D0%B0%202018-11-23%20%D0%B2%2015.02.15.png)
+Follow the steps of the graphic installer. 
+
+1. Click "next" to start installation
+![text](https://github.com/arrayio/array-io-keychain/blob/master/img/keychain%20mac.png)
+
+2. Click "Install" and wait till it is complete
+![alt text](https://github.com/arrayio/array-io-keychain/blob/master/img/%D0%A1%D0%BD%D0%B8%D0%BC%D0%BE%D0%BA%20%D1%8D%D0%BA%D1%80%D0%B0%D0%BD%D0%B0%202018-11-23%20%D0%B2%2015.02.15.png)
 
 #### Windows
 Run the installer and follow the steps.
+
+
+Run the installer and follow the steps. 
+
+1. Click "next" to prepare installation
+
+![alt text](https://github.com/arrayio/array-io-keychain/blob/master/img/win1.png)
+
+2. Accept the terms of the License and click "next"
+
+![alt text](https://github.com/arrayio/array-io-keychain/blob/master/img/win2.png)
+
+3. Choose a folder, click "next"
+
+![alt text](https://github.com/arrayio/array-io-keychain/blob/master/img/win3.png)
+
+4. Click "install" for installation to start
+
+![alt text](
+https://github.com/arrayio/array-io-keychain/blob/master/img/win4.png)
+
+5. Wait until the setup is done
+
+![alt text](https://github.com/arrayio/array-io-keychain/blob/master/img/win5.png)
 
 After successful installation you will be returned to the web page or app you started from. The WebSocket server will be ready to work.
 

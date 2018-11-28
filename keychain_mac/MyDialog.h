@@ -10,6 +10,10 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @interface MyDialog : NSWindowController
+
+@property (nonatomic, strong) NSString *jsonString;
+@property (readwrite) BOOL isSignTransaction;
+
 - (instancetype)initWithFrame:(NSRect)frame;
 - (void)runModal;
 @end

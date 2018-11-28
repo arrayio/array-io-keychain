@@ -9,9 +9,15 @@
 #import "PassSyncStore.h"
 #import "SYFlatButton.h"
 #import "HexToRgbColor.h"
+#import "ResponseModel.h"
+#include <unistd.h>
+#include <stdio.h>
+#include <limits.h>
+
 
 @interface MyDialog () {
     NSSecureTextField *pass;
+    NSSecureTextField *passConfirm;
 }
 
 @end
@@ -24,7 +30,7 @@
                                                    styleMask:windowMask
                                                      backing:NSBackingStoreBuffered
                                                        defer:NO];
-    [window setTitle:@"Keychain"];
+    [window setTitle:@"KeyChain"];
     [window makeKeyAndOrderFront:self];
     [window orderFront:self];
 
@@ -44,8 +50,18 @@
 }
 
 - (void) clickButton {
-    [[PassSyncStore sharedInstance] setPass:pass.stringValue];
-    [self.window close];
+    if (!self.isSignTransaction && ![pass.stringValue isEqualToString:passConfirm.stringValue]) {
+        NSAlert *alert = [NSAlert new];
+        alert.messageText = @"Error";
+        alert.informativeText = @"Passphrases must match";
+        [alert addButtonWithTitle:@"OK"];
+        [alert beginSheetModalForWindow:[self.window.contentView window] completionHandler:^(NSInteger result) {
+            NSLog(@"Success");
+        }];
+    } else {
+        [[PassSyncStore sharedInstance] setPass:pass.stringValue];
+        [self.window close];
+    }
 }
 
 - (void)dealloc {
@@ -59,32 +75,60 @@
     cover.state = NSVisualEffectStateFollowsWindowActiveState;
     [cover setAppearance:[NSAppearance appearanceNamed:NSAppearanceNameVibrantLight]];
     [self.window.contentView addSubview:cover];
-    [self setupTitleLabel];
+    NSLog(@"jsonString %@", _jsonString);
+//    [self setupTitleLabel];
     [self setupLogoiew];
     [self setupLabelPassphrase];
     [self setupPassField];
     [self setupSignButton];
     [self setupCancelButton];
+    if (_isSignTransaction) {
+        NSError *error;
+        ResponseModel *model = [[ResponseModel alloc] initWithString:self.jsonString error:&error];
+        [self setupLogoBlockhain:model.blockchain];
+        [self setupTo];
+        [self setupFrom];
+        [self setupAmount];
+        if (error == nil) {
+            [self setupTextTo:model.data.to];
+            [self setupTextFrom:model.data.from];
+            [self setupTextAmount:model.data.value];
+        }
+    } else {
+        [self setupTitleLabel:@"Enter the password for the new key"];
+        [self setupPassConfirmField];
+        [self setupLabelConfirmPassphrase];
+    }
     [[NSApplication sharedApplication] runModalForWindow:self.window];
 }
 
-- (void) setupTitleLabel {
-    NSTextField *label = [NSTextField labelWithString:@"\"CryptoKitties\" requires a passphrase to sign transaction with keyname \"test1\". Are you shure you want to sign?"];
+- (void) setupLogoBlockhain:(NSString *)blockhain {
+    if ([blockhain isEqualToString:@"ethereum"]) {
+        NSImageView *imageView = [[NSImageView alloc] initWithFrame:NSMakeRect(22, 224, 25, 39)];
+        NSImage *image = [[NSImage alloc] initWithContentsOfFile:@"resources/ethereum.png"];
+        imageView.image = image;
+        [self.window.contentView addSubview:imageView];
+    }
+}
+
+- (void) setupTitleLabel:(NSString *)string {
+    NSTextField *label = [NSTextField labelWithString:string];
     label.appearance = [NSAppearance appearanceNamed:NSAppearanceNameAqua];
     label.textColor = [HexToRgbColor colorWithHexColorString:@"4f4e4e"];
     label.font = [NSFont systemFontOfSize:14];
-    label.frame = NSMakeRect(190, 265, 330, 54);
+    label.frame = NSMakeRect(190, 263, 330, 54);
     
     [self.window.contentView addSubview:label];
 }
 
 - (void) setupLogoiew {
+    
     NSImageView *imageView = [[NSImageView alloc] initWithFrame:NSMakeRect(22, 280, 64, 54)];
     NSImage *image = [[NSImage alloc] initWithContentsOfFile:@"resources/logo.png"];
     imageView.image = image;
     [self.window.contentView addSubview:imageView];
     
-    NSTextField *label = [NSTextField labelWithString:@"Keychain"];
+    NSTextField *label = [NSTextField labelWithString:@"KeyChain"];
     label.appearance = [NSAppearance appearanceNamed:NSAppearanceNameAqua];
     label.textColor = [HexToRgbColor colorWithHexColorString:@"4f4e4e"];
     label.font = [NSFont systemFontOfSize:18];
@@ -93,8 +137,17 @@
     [self.window.contentView addSubview:label];
 }
 
-- (void) setupLabelPassphrase {
+- (void) setupLabelConfirmPassphrase {
     NSTextField *label = [NSTextField labelWithString:@"Passphrase"];
+    label.appearance = [NSAppearance appearanceNamed:NSAppearanceNameAqua];
+    label.textColor = [HexToRgbColor colorWithHexColorString:@"4f4e4e"];
+    label.font = [NSFont systemFontOfSize:18];
+    label.frame = NSMakeRect(22, 117, 100, 30);
+    [self.window.contentView addSubview:label];
+}
+
+- (void) setupLabelPassphrase {
+    NSTextField *label = [NSTextField labelWithString:self.isSignTransaction ? @"Passphrase" : @"Confirm"];
     label.appearance = [NSAppearance appearanceNamed:NSAppearanceNameAqua];
     label.textColor = [HexToRgbColor colorWithHexColorString:@"4f4e4e"];
     label.font = [NSFont systemFontOfSize:18];
@@ -102,8 +155,62 @@
     [self.window.contentView addSubview:label];
 }
 
+- (void) setupTo {
+    NSTextField *label = [NSTextField labelWithString:@"To"];
+    label.appearance = [NSAppearance appearanceNamed:NSAppearanceNameAqua];
+    label.textColor = [HexToRgbColor colorWithHexColorString:@"4f4e4e"];
+    label.font = [NSFont systemFontOfSize:18];
+    label.frame = NSMakeRect(22, 107, 100, 30);
+    [self.window.contentView addSubview:label];
+}
+
+- (void) setupFrom {
+    NSTextField *label = [NSTextField labelWithString:@"From"];
+    label.appearance = [NSAppearance appearanceNamed:NSAppearanceNameAqua];
+    label.textColor = [HexToRgbColor colorWithHexColorString:@"4f4e4e"];
+    label.font = [NSFont systemFontOfSize:18];
+    label.frame = NSMakeRect(22, 147, 100, 30);
+    [self.window.contentView addSubview:label];
+}
+
+- (void) setupAmount {
+    NSTextField *label = [NSTextField labelWithString:@"Amount"];
+    label.appearance = [NSAppearance appearanceNamed:NSAppearanceNameAqua];
+    label.textColor = [HexToRgbColor colorWithHexColorString:@"4f4e4e"];
+    label.font = [NSFont systemFontOfSize:18];
+    label.frame = NSMakeRect(22, 187, 100, 30);
+    [self.window.contentView addSubview:label];
+}
+
+- (void) setupTextTo:(NSString*)string {
+    NSTextField *label = [NSTextField labelWithString:string];
+    label.appearance = [NSAppearance appearanceNamed:NSAppearanceNameAqua];
+    label.textColor = [HexToRgbColor colorWithHexColorString:@"7b8da7"];
+    label.font = [NSFont systemFontOfSize:18];
+    label.frame = NSMakeRect(130, 107, 450, 30);
+    [self.window.contentView addSubview:label];
+}
+
+- (void) setupTextFrom:(NSString*)string {
+    NSTextField *label = [NSTextField labelWithString:string];
+    label.appearance = [NSAppearance appearanceNamed:NSAppearanceNameAqua];
+    label.textColor = [HexToRgbColor colorWithHexColorString:@"7b8da7"];
+    label.font = [NSFont systemFontOfSize:18];
+    label.frame = NSMakeRect(130, 147, 450, 30);
+    [self.window.contentView addSubview:label];
+}
+
+- (void) setupTextAmount:(NSString*)string {
+    NSTextField *label = [NSTextField labelWithString:string];
+    label.appearance = [NSAppearance appearanceNamed:NSAppearanceNameAqua];
+    label.textColor = [HexToRgbColor colorWithHexColorString:@"7b8da7"];
+    label.font = [NSFont systemFontOfSize:18];
+    label.frame = NSMakeRect(130, 187, 450, 30);
+    [self.window.contentView addSubview:label];
+}
+
 - (void) setupPassField {
-    pass = [[NSSecureTextField alloc] initWithFrame:CGRectMake(130, 70, 320, 30)];
+    pass = [[NSSecureTextField alloc] initWithFrame:CGRectMake(130, 70, 420, 30)];
     pass.backgroundColor = [NSColor whiteColor];
     pass.font = [NSFont systemFontOfSize:20];
     pass.layer.cornerRadius = 4.0;
@@ -111,11 +218,20 @@
     [self.window.contentView addSubview:pass];
 }
 
+- (void) setupPassConfirmField {
+    passConfirm = [[NSSecureTextField alloc] initWithFrame:CGRectMake(130, 120, 420, 30)];
+    passConfirm.backgroundColor = [NSColor whiteColor];
+    passConfirm.font = [NSFont systemFontOfSize:20];
+    passConfirm.layer.cornerRadius = 4.0;
+    passConfirm.appearance = [NSAppearance appearanceNamed:NSAppearanceNameAqua];
+    [self.window.contentView addSubview:passConfirm];
+}
+
 - (void) setupSignButton {
     SYFlatButton *button = [[SYFlatButton alloc] initWithFrame:NSMakeRect(450, 20, 100, 35)];
     button.target = self;
     button.action = @selector(clickButton);
-    button.title = @"SIGN";
+    button.title = self.isSignTransaction ? @"SIGN" : @"CREATE";
     button.titleNormalColor = [NSColor whiteColor];
     button.momentary = YES;
     button.cornerRadius = 4.0;

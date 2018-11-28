@@ -800,6 +800,57 @@
             </objects>
             <point key="canvasLocation" x="594" y="692"/>
         </scene>
+        <!--WelcomeVC-->
+        <scene sceneID="OQ3-iJ-CuJ">
+            <objects>
+                <viewController storyboardIdentifier="WelcomeVC" id="iIV-0J-O9j" customClass="WelcomeVC" customModule="Keychain_Installer" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" id="Cdp-We-zDz">
+                        <rect key="frame" x="0.0" y="0.0" width="450" height="300"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                        <subviews>
+                            <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="LAX-f6-bTN">
+                                <rect key="frame" x="161" y="176" width="128" height="108"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="108" id="NgY-sJ-VB0"/>
+                                    <constraint firstAttribute="width" constant="128" id="goD-UL-I4j"/>
+                                </constraints>
+                                <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="logo" id="Kja-h5-Rhl"/>
+                            </imageView>
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="qCw-tT-n9B">
+                                <rect key="frame" x="175" y="141" width="100" height="27"/>
+                                <textFieldCell key="cell" lineBreakMode="clipping" alignment="center" title="KeyChain" id="Hhk-Pz-olf">
+                                    <font key="font" metaFont="system" size="22"/>
+                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                            <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="mG7-WL-tA9">
+                                <rect key="frame" x="18" y="49" width="414" height="68"/>
+                                <textFieldCell key="cell" selectable="YES" alignment="center" id="S8Q-a2-CyK">
+                                    <font key="font" metaFont="system"/>
+                                    <string key="title">You’re trying to install KeyChain – a standalone app for signing transactions and generating key pairs. It provides secure key storage protected with three security layers. 
+Enjoy the new level of security!</string>
+                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                        </subviews>
+                        <constraints>
+                            <constraint firstItem="qCw-tT-n9B" firstAttribute="top" secondItem="LAX-f6-bTN" secondAttribute="bottom" constant="8" id="68p-kt-0vS"/>
+                            <constraint firstItem="LAX-f6-bTN" firstAttribute="leading" secondItem="Cdp-We-zDz" secondAttribute="leading" constant="161" id="6BP-hI-vw6"/>
+                            <constraint firstItem="mG7-WL-tA9" firstAttribute="leading" secondItem="Cdp-We-zDz" secondAttribute="leading" constant="20" id="Bm3-nb-OQ5"/>
+                            <constraint firstAttribute="trailing" secondItem="mG7-WL-tA9" secondAttribute="trailing" constant="20" id="Q9z-5N-7wL"/>
+                            <constraint firstItem="qCw-tT-n9B" firstAttribute="centerX" secondItem="Cdp-We-zDz" secondAttribute="centerX" id="Yq7-yG-zLQ"/>
+                            <constraint firstItem="LAX-f6-bTN" firstAttribute="top" secondItem="Cdp-We-zDz" secondAttribute="top" constant="16" id="eAv-Nm-47P"/>
+                            <constraint firstAttribute="trailing" secondItem="LAX-f6-bTN" secondAttribute="trailing" constant="161" id="h8a-ft-7up"/>
+                            <constraint firstItem="mG7-WL-tA9" firstAttribute="top" secondItem="qCw-tT-n9B" secondAttribute="bottom" constant="24" id="vVO-PB-B4R"/>
+                        </constraints>
+                    </view>
+                </viewController>
+                <customObject id="sWX-uP-vau" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="594" y="1048"/>
+        </scene>
         <!--ProgressVC-->
         <scene sceneID="pS0-Y0-mKy">
             <objects>
@@ -849,4 +900,7 @@
             <point key="canvasLocation" x="1105" y="692"/>
         </scene>
     </scenes>
+    <resources>
+        <image name="logo" width="128" height="108"/>
+    </resources>
 </document>

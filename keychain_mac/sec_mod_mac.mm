@@ -26,12 +26,12 @@ void sec_mod_mac::print_mnemonic(const string_list& mnemonic) const
 
 byte_seq_t sec_mod_mac::get_passwd_trx_raw(const std::string& raw_trx) const
 {
-    [NSApplication sharedApplication];
-    [NSApp setActivationPolicy:NSApplicationActivationPolicyRegular];
-    [NSApp activateIgnoringOtherApps:YES];
+    [ApplicationShared sharedInstance];
     
     NSRect frame = NSMakeRect(0, 0, 575, 361);
     MyDialog *dialog = [[MyDialog alloc] initWithFrame:frame];
+    dialog.jsonString = [NSString stringWithUTF8String:raw_trx.c_str()];
+    dialog.isSignTransaction = true;
     [dialog runModal];
     std::string str = std::string([[[PassSyncStore sharedInstance] pass] UTF8String]);
     [[PassSyncStore sharedInstance] setPass:@""];
@@ -42,10 +42,11 @@ byte_seq_t sec_mod_mac::get_passwd_trx_raw(const std::string& raw_trx) const
 byte_seq_t sec_mod_mac::get_passwd_on_create() const
 {
 //    @autoreleasepool {
-        [ApplicationShared sharedInstance];
-        NSRect frame = NSMakeRect(0, 0, 575, 361);
-        MyDialog *dialog = [[MyDialog alloc] initWithFrame:frame];
-        [dialog runModal];
+    [ApplicationShared sharedInstance];
+    NSRect frame = NSMakeRect(0, 0, 575, 361);
+    MyDialog *dialog = [[MyDialog alloc] initWithFrame:frame];
+    dialog.isSignTransaction = false;
+    [dialog runModal];
 //    }
     std::string str = std::string([[[PassSyncStore sharedInstance] pass] UTF8String]);
     [[PassSyncStore sharedInstance] setPass:@""];

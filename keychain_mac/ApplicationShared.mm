@@ -6,6 +6,7 @@
 //
 
 #import "ApplicationShared.h"
+#import "PassSyncStore.h"
 
 @implementation ApplicationShared
 
@@ -13,9 +14,13 @@
 {
     static ApplicationShared *sharedInstance = nil;
     static dispatch_once_t onceToken;
+    [NSApplication sharedApplication];
+    [NSApp setActivationPolicy:NSApplicationActivationPolicyRegular];
+    [[PassSyncStore sharedInstance] setPass:@""];
     dispatch_once(&onceToken, ^{
         sharedInstance = [[ApplicationShared alloc] init];
     });
+    [NSApp activateIgnoringOtherApps:YES];
     return sharedInstance;
 }
 
@@ -29,21 +34,17 @@
 }
 
 - (void) setAppMenu {
-    [NSApplication sharedApplication];
-    [NSApp setActivationPolicy:NSApplicationActivationPolicyRegular];
     id menubar = [NSMenu new];
     id appMenuItem = [NSMenuItem new];
     [menubar addItem:appMenuItem];
     [NSApp setMainMenu:menubar];
     id appMenu = [NSMenu new];
     id appName = [[NSProcessInfo processInfo] processName];
-    id quitTitle = @"Quit Keychain";
+    id quitTitle = @"Quit KeyChain";
     id quitMenuItem = [[NSMenuItem alloc] initWithTitle:quitTitle
                                                   action:@selector(terminate:) keyEquivalent:@"q"];
     [appMenu addItem:quitMenuItem];
     [appMenuItem setSubmenu:appMenu];
-    
-    [NSApp activateIgnoringOtherApps:YES];
     [NSApp finishLaunching];
 }
 

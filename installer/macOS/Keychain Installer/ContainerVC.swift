@@ -10,7 +10,7 @@ import Cocoa
 
 class ContainerVC: NSPageController, NSPageControllerDelegate {
     
-    var viewArray = ["one", "two"]
+    var viewArray = ["one", "two", "three"]
     @IBOutlet weak var nextButton: NSButton!
     
     override func viewDidLoad() {
@@ -34,8 +34,10 @@ class ContainerVC: NSPageController, NSPageControllerDelegate {
 //        print(identifier.rawValue)
         switch identifier {
         case "one":
-            return self.storyboard?.instantiateController(withIdentifier: "SelectPathVC") as! SelectPathVC
+            return self.storyboard?.instantiateController(withIdentifier: "WelcomeVC") as! WelcomeVC
         case "two":
+            return self.storyboard?.instantiateController(withIdentifier: "SelectPathVC") as! SelectPathVC
+        case "three":
             return self.storyboard?.instantiateController(withIdentifier: "ProgressVC") as! ProgressVC
         default:
             return self.storyboard?.instantiateController(withIdentifier: identifier) as! NSViewController
@@ -56,6 +58,8 @@ class ContainerVC: NSPageController, NSPageControllerDelegate {
         case 0:
             break
         case 1:
+            break
+        case 2:
             self.nextButton.isHidden = true
         default:
             break

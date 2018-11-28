@@ -32,7 +32,7 @@ $ sudo apt-get install keychain
 ``` 
 #### MacOs
 
-Download MacOs installer [here](https://github.com/arrayio/array-io-keychain/releases/download/0.3/keychain.zip).
+Download MacOs installer [here](https://github.com/arrayio/array-io-keychain/releases/download/0.4/Keychain.Installer.zip).
 
 Follow the steps of the graphic installer. 
 

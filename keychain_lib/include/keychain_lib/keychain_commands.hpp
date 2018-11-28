@@ -43,8 +43,8 @@
 
 #if defined(macintosh) || defined(__APPLE__) || defined(__APPLE_CC__)
     //#error "Need to define path to KEYCHAIN_DATA"
-        #define KEY_DEFAULT_PATH  "data/keychain"
-        #define LOG_DEFAULT_PATH  "data/keychain/logs"
+        #define KEY_DEFAULT_PATH  "/var/keychain"
+        #define LOG_DEFAULT_PATH  "/var/keychain/logs"
     #else
         #error "Need to define path to KEYCHAIN_DATA"
     #endif

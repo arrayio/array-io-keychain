@@ -37,7 +37,7 @@ class ProgressVC: NSViewController {
             job.label = Consts.LABEL_JOB
             job.programArguments = [
                 dataPath + "/websocketd",
-                "--port=8080",
+                "--port=16384",
                 "--devconsole",
                 dataPath+"/keychain"
             ]

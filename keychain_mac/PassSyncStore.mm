@@ -1,5 +1,5 @@
 //
-//  PassSyncStore.m
+//  PassSyncStore.mm
 //  keychain
 //
 //  Created by Mikhail Lutskiy on 31/10/2018.

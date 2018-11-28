@@ -33,6 +33,8 @@
                                                name:NSWindowWillCloseNotification
                                              object:nil];
     window.titlebarAppearsTransparent = YES;
+    window.titleVisibility = NSWindowTitleHidden;
+    window.backgroundColor = [NSColor whiteColor];
     [window center];
     return [super initWithWindow:window];
 }
@@ -57,13 +59,38 @@
     cover.state = NSVisualEffectStateFollowsWindowActiveState;
     [cover setAppearance:[NSAppearance appearanceNamed:NSAppearanceNameVibrantLight]];
     [self.window.contentView addSubview:cover];
+    [self setupTitleLabel];
+    [self setupLogoiew];
     [self setupLabelPassphrase];
     [self setupPassField];
     [self setupSignButton];
     [self setupCancelButton];
     [[NSApplication sharedApplication] runModalForWindow:self.window];
+}
+
+- (void) setupTitleLabel {
+    NSTextField *label = [NSTextField labelWithString:@"\"CryptoKitties\" requires a passphrase to sign transaction with keyname \"test1\". Are you shure you want to sign?"];
+    label.appearance = [NSAppearance appearanceNamed:NSAppearanceNameAqua];
+    label.textColor = [HexToRgbColor colorWithHexColorString:@"4f4e4e"];
+    label.font = [NSFont systemFontOfSize:14];
+    label.frame = NSMakeRect(190, 265, 330, 54);
     
+    [self.window.contentView addSubview:label];
+}
+
+- (void) setupLogoiew {
+    NSImageView *imageView = [[NSImageView alloc] initWithFrame:NSMakeRect(22, 280, 64, 54)];
+    NSImage *image = [[NSImage alloc] initWithContentsOfFile:@"resources/logo.png"];
+    imageView.image = image;
+    [self.window.contentView addSubview:imageView];
     
+    NSTextField *label = [NSTextField labelWithString:@"Keychain"];
+    label.appearance = [NSAppearance appearanceNamed:NSAppearanceNameAqua];
+    label.textColor = [HexToRgbColor colorWithHexColorString:@"4f4e4e"];
+    label.font = [NSFont systemFontOfSize:18];
+    label.frame = NSMakeRect(90, 265, 100, 54);
+    
+    [self.window.contentView addSubview:label];
 }
 
 - (void) setupLabelPassphrase {

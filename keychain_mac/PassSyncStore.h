@@ -14,6 +14,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (atomic, strong) NSString *pass;
 
 + (instancetype)sharedInstance;
+
 @end
 
 NS_ASSUME_NONNULL_END

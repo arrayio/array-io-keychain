@@ -14,22 +14,8 @@ You can find the detailed technical specification of the KeyChain system below i
 
 ## Installation
 
-Download KeyChain and run the graphic installer if you are using [Windows](#windows) or [MacOs](#macos). If you are using [Linux](#linux), run the commands that you find in the Linux installation guide after downloading the KeyChain package. 
+Download KeyChain and run the graphic installer if you are using [Windows](#windows) or [MacOs](#macos). [Linux](#linux) installer is coming soon.
 
-#### Linux
-
-For Linux installation, follow the steps:
-
-1. There is an official KeyChain repository that is protected with the key. To download and install KeyChain, first you need to get the key
-```
-$ wget -q -O - https://array.io/keychain/keychain_signing_key.pub | Sudo apt-key add -
-``` 
-2. [Download](https://github.com/arrayio/array-io-keychain/releases/download/0.3/keychain_linux.zip) KeyChain from our repository and install it
-```
-$ sudo sh -c 'echo "deb http://array.io/keychain/deb/ stable main" >> /etc/apt/sources.list.d/array.list'
-$ sudo apt-get update
-$ sudo apt-get install keychain
-``` 
 #### MacOs
 
 Download MacOs installer [here](https://github.com/arrayio/array-io-keychain/releases/download/0.4/Keychain.Installer.zip).
@@ -66,6 +52,10 @@ https://github.com/arrayio/array-io-keychain/blob/master/img/win4.png)
 5. Wait until the setup is done
 
 ![alt text](https://github.com/arrayio/array-io-keychain/blob/master/img/win5.png)
+
+#### Linux
+
+Coming soon
 
 After successful installation you will be returned to the web page or app you started from. The WebSocket server will be ready to work.
 

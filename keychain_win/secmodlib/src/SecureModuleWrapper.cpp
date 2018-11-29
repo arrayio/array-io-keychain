@@ -1,6 +1,6 @@
 
-#include <secmodlib/SecureModuleWrapper.h>
-#include <secmodlib/NamedPipeServer.h>
+#include "SecureModuleWrapper.h"
+#include "NamedPipeServer.h"
 #include <sddl.h>
 #include <algorithm>
 

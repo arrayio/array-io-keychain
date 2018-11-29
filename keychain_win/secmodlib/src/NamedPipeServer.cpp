@@ -1,5 +1,5 @@
 #pragma once
-#include "../include/secmodlib/NamedPipeServer.h"
+#include "NamedPipeServer.h"
 
 #include <keychain_lib/keychain_wrapper.hpp>
 #include <keychain_lib/pipeline_parser.hpp>
@@ -10,7 +10,7 @@
 #include <iostream>
 #include <future>
 
-#include <secmodlib/SecureModuleWrapper.h>
+#include "SecureModuleWrapper.h"
 #include <keychain_lib/keychain_logger.hpp>
 
 NamedPipeServer::NamedPipeServer() {

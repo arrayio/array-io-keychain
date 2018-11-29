@@ -74,11 +74,9 @@ if ( ${CMAKE_HOST_SYSTEM_NAME} MATCHES "Linux")
             COMMAND ${CMAKE_COMMAND} -E  copy_if_different   ${GUI_BINARY} ${KEYCHAIN_BINARY_DIR}
             )
 else()
-	if(MSVC)
-	  include_directories("../keychain_cmd_app/secmodlib/include")
-	endif(MSVC)
-    include_directories(
-            "../keychain_lib/include"
+	include_directories(
+            "../keychain_lib/include"			
+			"../keychain_lib/secmodlib/include"
             "../libraries/fc_light/include"
             "../libraries/eth-crypto/include"
             "../libraries/secp256k1/include"

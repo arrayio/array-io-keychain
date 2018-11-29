@@ -50,11 +50,11 @@ int main(int argc, char *argv[])
 		}
 		else if (_stricmp("r", argv[1] + 1) == 0) {
 			KeychainService service((PWSTR)SERVICE_NAME);
-			ServiceLogger::getLogger().Log("KeychainService started");
+			//ServiceLogger::getLogger().Log("KeychainService started");
 			if (!CServiceBase::Run(service))
 			{
-				ServiceLogger::getLogger().Log("Starting Error");
-				ServiceLogger::getLogger().Log(std::to_string(GetLastError()));
+				//ServiceLogger::getLogger().Log("Starting Error");
+				//ServiceLogger::getLogger().Log(std::to_string(GetLastError()));
 				wprintf(L"Service failed to run w/err 0x%08lx\n", GetLastError());
 			}
 		}

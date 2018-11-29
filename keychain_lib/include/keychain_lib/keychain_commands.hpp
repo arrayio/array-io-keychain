@@ -4,6 +4,7 @@
 #ifndef KEYCHAINAPP_KEYCHAIN_COMMANDS_HPP
 #define KEYCHAINAPP_KEYCHAIN_COMMANDS_HPP
 
+
 #include <string.h>
 #include <iostream>
 
@@ -37,6 +38,9 @@
 #include <ctime>
 #include <eth-crypto/core/TransactionBase.h>
 #include <eth-crypto/core/Common.h>
+
+#include <kaitai/kaitaistream.h>
+#include "bitcoin_transaction.hpp"
 
 #ifdef __linux__
 #  define KEY_DEFAULT_PATH  "/var/keychain"
@@ -476,46 +480,76 @@ static   std::string parse(std::vector<unsigned char> raw, blockchain_te blockch
         std::string json;
         auto log  =logger_singletone::instance();
 
-        if (blockchain != blockchain_te::ethereum)
+
+        switch (blockchain)
         {
-            not_parsed_tx  not_parsed( blockchain, to_hex(raw.data(), raw.size()));
-            json = fc_light::json::to_pretty_string(fc_light::variant(static_cast<tx_common&>(not_parsed)));
-            BOOST_LOG_SEV(log.lg, info) << " transaction parse is not implementated: \n" + json;
-            return json;
-        }
-
-        try
-        {
-            auto tx = dev::eth::TransactionBase(raw, dev::eth::CheckTransaction::none);
-            auto nonce     = tx.nonce().str();
-            auto gasPrice  = tx.gasPrice().str();
-            auto gas       = tx.gas().str();
-            auto chainId   = tx.ChainId();
-            auto to        = tx.to().hex();
-            auto value     = tx.value().str();
-
-            auto data = to_hex(tx.data().data(), tx.data().size() );
-
-            fc_light::variant swap;
-            if (swap_action(data, swap))
+            case (blockchain_te::bitcoin):
             {
-                eth_swap_tx  parsed(blockchain_te::ethereum,  nonce, gasPrice, gas, chainId, from, to, value, swap);
-                json = fc_light::json::to_pretty_string(fc_light::variant(static_cast<tx_swap_common&>(parsed)));
-                BOOST_LOG_SEV(log.lg, info) << "ethereum transaction swap-on-line specific-fields parse complete: \n" + json;
+                try
+                {
+                    std::ifstream fsstr("trans.bin", std::ifstream::binary);
+                    if (!fsstr.is_open()) {
+                        std::cout << "ERROR" << std::endl;
+                        return 0;
+                    } else {
+//			std::cout << "Ok" << std::endl;
+                    }
+                    kaitai::kstream ks(&fsstr);
+                    bitcoin_transaction_t data(&ks);
+//		std::cout << data.version() << std::endl;
+                    std::cout << data.toJSON() << std::endl;
+                    fsstr.close();
+                } catch (std::exception &err) {
+                    std::cout << err.what() << std::endl;
+                }
+
+                break;
             }
-            else
+            case (blockchain_te::ethereum):
             {
-                eth_tx  parsed(blockchain_te::ethereum,  nonce, gasPrice, gas, chainId, from, to, value);
-                json = fc_light::json::to_pretty_string(fc_light::variant(static_cast<tx_common&>(parsed)));
-                BOOST_LOG_SEV(log.lg, info) << "ethereum transaction parse complete: \n" + json;
+                try
+                {
+                    auto tx = dev::eth::TransactionBase(raw, dev::eth::CheckTransaction::none);
+                    auto nonce     = tx.nonce().str();
+                    auto gasPrice  = tx.gasPrice().str();
+                    auto gas       = tx.gas().str();
+                    auto chainId   = tx.ChainId();
+                    auto to        = tx.to().hex();
+                    auto value     = tx.value().str();
+
+                    auto data = to_hex(tx.data().data(), tx.data().size() );
+
+                    fc_light::variant swap;
+                    if (swap_action(data, swap))
+                    {
+                        eth_swap_tx  parsed(blockchain_te::ethereum,  nonce, gasPrice, gas, chainId, from, to, value, swap);
+                        json = fc_light::json::to_pretty_string(fc_light::variant(static_cast<tx_swap_common&>(parsed)));
+                        BOOST_LOG_SEV(log.lg, info) << "ethereum transaction swap-on-line specific-fields parse complete: \n" + json;
+                    }
+                    else
+                    {
+                        eth_tx  parsed(blockchain_te::ethereum,  nonce, gasPrice, gas, chainId, from, to, value);
+                        json = fc_light::json::to_pretty_string(fc_light::variant(static_cast<tx_common&>(parsed)));
+                        BOOST_LOG_SEV(log.lg, info) << "ethereum transaction parse complete: \n" + json;
+                    }
+                }
+                catch (const std::exception& exc)
+                {
+                    not_parsed_tx  not_parsed( blockchain_te::ethereum, to_hex(raw.data(), raw.size()));
+                    json = fc_light::json::to_pretty_string(fc_light::variant(static_cast<tx_common&>(not_parsed)));
+                    BOOST_LOG_SEV(log.lg, info) << "ethereum transaction parse is not complete: \n" + json;
+                }
+
+                break;
+            }
+            default:
+            {
+                not_parsed_tx  not_parsed( blockchain, to_hex(raw.data(), raw.size()));
+                json = fc_light::json::to_pretty_string(fc_light::variant(static_cast<tx_common&>(not_parsed)));
+                BOOST_LOG_SEV(log.lg, info) << " transaction parse is not implementated: \n" + json;
             }
         }
-        catch (const std::exception& exc)
-        {
-            not_parsed_tx  not_parsed( blockchain_te::ethereum, to_hex(raw.data(), raw.size()));
-            json = fc_light::json::to_pretty_string(fc_light::variant(static_cast<tx_common&>(not_parsed)));
-            BOOST_LOG_SEV(log.lg, info) << "ethereum transaction parse is not complete: \n" + json;
-        }
+
         return json;
     }
 

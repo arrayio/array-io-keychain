@@ -47,6 +47,7 @@ if ( ${CMAKE_HOST_SYSTEM_NAME} MATCHES "Linux")
             "../libraries/eth-crypto/include"
             "../libraries/secp256k1/include"
             "../libraries/secp256k1_ext/include"
+            "${CMAKE_SOURCE_DIR}/libraries/kaitai_struct_cpp_stl_runtime"
             "${OPENSSL_ROOT_DIR}/include"
             "/usr/include/libcxxabi"
             ${Boost_INCLUDE_DIR})
@@ -83,6 +84,7 @@ else()
             "../libraries/eth-crypto/include"
             "../libraries/secp256k1/include"
             "../libraries/secp256k1_ext/include"
+            "${CMAKE_SOURCE_DIR}/libraries/kaitai_struct_cpp_stl_runtime"
             "${OPENSSL_ROOT_DIR}/include"
             ${Boost_INCLUDE_DIR})
 

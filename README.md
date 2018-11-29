@@ -28,8 +28,17 @@ Follow the steps of the graphic installer.
 2. Choose a folder and click "next"
 ![text](https://github.com/arrayio/array-io-keychain/blob/master/img/keychain%202.png)
 
-3. Click "Install" and wait till it is complete
-![alt text](https://github.com/arrayio/array-io-keychain/blob/master/img/%D0%A1%D0%BD%D0%B8%D0%BC%D0%BE%D0%BA%20%D1%8D%D0%BA%D1%80%D0%B0%D0%BD%D0%B0%202018-11-23%20%D0%B2%2015.02.15.png)
+3. Click "install" for installation to start
+
+![alt text](https://github.com/arrayio/array-io-keychain/blob/master/img/keychain%20install.png)
+
+4. Wait until the setup is done
+![alt text](
+https://github.com/arrayio/array-io-keychain/blob/master/img/keychain%20direct.png)
+
+5. Congratulations! You have installed KeyChain.
+
+![alt text](https://github.com/arrayio/array-io-keychain/blob/master/img/keychain%20complete.png)
 
 #### Windows
 
@@ -49,15 +58,11 @@ Run the installer and follow the steps.
 
 4. Click "install" for installation to start
 
-![alt text](https://github.com/arrayio/array-io-keychain/blob/master/img/keychain%20install.png)
+![alt text](https://github.com/arrayio/array-io-keychain/blob/master/img/win4.png)
 
 5. Wait until the setup is done
 ![alt text](
-https://github.com/arrayio/array-io-keychain/blob/master/img/keychain%20direct.png)
-
-6. Congratulations! You have installed KeyChain.
-
-![alt text](https://github.com/arrayio/array-io-keychain/blob/master/img/keychain%20complete.png)
+https://github.com/arrayio/array-io-keychain/blob/master/img/win5.png)
 
 #### Linux
 

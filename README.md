@@ -49,12 +49,15 @@ Run the installer and follow the steps.
 
 4. Click "install" for installation to start
 
-![alt text](
-https://github.com/arrayio/array-io-keychain/blob/master/img/win4.png)
+![alt text](https://github.com/arrayio/array-io-keychain/blob/master/img/keychain%20install.png)
 
 5. Wait until the setup is done
+![alt text](
+https://github.com/arrayio/array-io-keychain/blob/master/img/keychain%20direct.png)
 
-![alt text](https://github.com/arrayio/array-io-keychain/blob/master/img/win5.png)
+6. Congratulations! You have installed KeyChain.
+
+![alt text](https://github.com/arrayio/array-io-keychain/blob/master/img/keychain%20complete.png)
 
 #### Linux
 

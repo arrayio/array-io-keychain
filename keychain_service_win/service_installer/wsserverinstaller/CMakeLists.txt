@@ -16,8 +16,7 @@ if(WIN32)
 	message(STATUS "wixsrcpath: ${wixsrcpath}")
 
 	#TODO
-	#1. add keychain executable copy to wsservice folder ~ global path
-	#2. add correct icon, background image to installer menu
+	#add keychain executable copy to wsservice folder ~ global path
 
 	#set copy files to alias
 	set( PREBUILD_FILES
@@ -29,7 +28,10 @@ if(WIN32)
 	   "${wixsrcpath}/delete_wsservice.bat"
 	   "${wixsrcpath}/wsservicerunner.bat"
 	   "${wixsrcpath}/license.rtf"
-	   "${wixsrcpath}/keychain_icon.ico"
+	   "${wixsrcpath}/keychain_banner.jpg"
+	   "${wixsrcpath}/keychain_logo_maximal.ico"
+	   "${wixsrcpath}/keychain_logo_minimal.ico"
+	   "${wixsrcpath}/keychain_dialog_banner.jpg"
 	)
 
 	message(STATUS "PREBUILD FILES: ${PREBUILD_FILES}")

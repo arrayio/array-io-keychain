@@ -43,6 +43,14 @@
 	<Property Id="WIXUI_INSTALLDIR" Value="INSTALLLOCATION" />
 	<UIRef Id="WixUI_InstallDir" />
 	
+	<!-- Set custom icons and images in dialogs -->
+	<WixVariable Id="WixUIBannerBmp" Value="keychain_banner.jpg" />
+	<WixVariable Id="WixUIDialogBmp" Value="keychain_dialog_banner.jpg" /> 
+	<WixVariable Id="WixUIExclamationIco" Value="keychain_logo_maximal.ico" />
+	<WixVariable Id="WixUIInfoIco" Value="keychain_logo_maximal.ico" />
+	<WixVariable Id="WixUINewIco" Value="keychain_logo_minimal.ico" />
+	<WixVariable Id="WixUIUpIco" Value="keychain_logo_minimal.ico" />
+	
 	<!-- License source text override -->
 	<WixVariable Id="WixUILicenseRtf" Value="license.rtf" />
 

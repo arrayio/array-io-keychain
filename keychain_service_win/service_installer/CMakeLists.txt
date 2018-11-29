@@ -30,6 +30,10 @@ if(WIN32)
 	   "${wixsrcpath}/service_manager.bat"
 	   "${wixsrcpath}/delete_service.bat"
 	   "${wixsrcpath}/license.rtf"
+	   "${wixsrcpath}/keychain_banner.jpg"
+	   "${wixsrcpath}/keychain_logo_maximal.ico"
+	   "${wixsrcpath}/keychain_logo_minimal.ico"
+	   "${wixsrcpath}/keychain_dialog_banner.jpg"
 	   ${cryptolib}
 	)
 

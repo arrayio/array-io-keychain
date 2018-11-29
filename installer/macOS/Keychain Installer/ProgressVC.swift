@@ -11,6 +11,7 @@ import AHLaunchCtl
 
 class ProgressVC: NSViewController {
     
+    let ahLaunchCtl = AHLaunchCtl()
     let fileManager = FileManager.default
     @IBOutlet weak var progressSpinning: NSProgressIndicator!
     @IBOutlet weak var infoTextField: NSTextField!
@@ -29,10 +30,10 @@ class ProgressVC: NSViewController {
     fileprivate func jobWorker(dataPath: String) {
         self.infoTextField.stringValue = "Searching old versions..."
         self.stopJobs()
-        self.deleteFileAtPath(self.fileManager.homeDirectoryForCurrentUser.appendingPathComponent("Library/LaunchAgents/" + Consts.JOB_PLIST).path)
+        self.deleteFileAtPath("/Library/LaunchDaemons/" + Consts.JOB_PLIST)
         self.addRpathToBinary(path: dataPath)
         if LocalStorage.shared.isAutoStart {
-            self.infoTextField.stringValue = "Create autoload daemon..."
+            self.infoTextField.stringValue = "Creating autoload daemon..."
             let job = AHLaunchJob()
             job.label = Consts.LABEL_JOB
             job.programArguments = [
@@ -48,7 +49,7 @@ class ProgressVC: NSViewController {
             job.runAtLoad = true
             job.keepAlive = true
             do {
-                try AHLaunchCtl.sharedController()?.add(job, to: .globalLaunchDaemon)
+                try ahLaunchCtl.add(job, to: .globalLaunchDaemon)
             } catch {
                 print(error.localizedDescription)
             }
@@ -72,7 +73,7 @@ class ProgressVC: NSViewController {
         let path = Bundle.main.path(forResource: Consts.BuildArchivePath.NAME, ofType: Consts.BuildArchivePath.EXTENSION)
         print(dataPath)
         do {
-            self.infoTextField.stringValue = "Create directory..."
+            self.infoTextField.stringValue = "Creating directory..."
             try fileManager.createDirectory(atPath: dataPath, withIntermediateDirectories: true, attributes: nil)
         } catch {
             print(error)
@@ -83,7 +84,7 @@ class ProgressVC: NSViewController {
             print(dataPath)
             self.jobWorker(dataPath: dataPath)
             self.infoTextField.stringValue = "Installation complete!"
-            self.installText("Install successfull")
+            self.installText("Installation complete!")
         }) { (error) in
             print("ERROR: \(error)")
             self.installText(error.description)
@@ -93,19 +94,17 @@ class ProgressVC: NSViewController {
     /// Function stop launchd job
     func stopJobs() {
         do {
-            try AHLaunchCtl.sharedController()?.stop(Consts.LABEL_JOB, in: .userLaunchAgent)
+            try ahLaunchCtl.stop(Consts.LABEL_JOB, in: .globalLaunchDaemon)
         } catch {
             print(error.localizedDescription)
         }
-        
         do {
-            try AHLaunchCtl.sharedController()?.unload(Consts.LABEL_JOB, in: .userLaunchAgent)
+            try ahLaunchCtl.unload(Consts.LABEL_JOB, in: .globalLaunchDaemon)
         } catch {
             print(error.localizedDescription)
         }
-        
         do {
-            try AHLaunchCtl.sharedController()?.remove(Consts.LABEL_JOB, from: .userLaunchAgent)
+            try ahLaunchCtl.remove(Consts.LABEL_JOB, from: .globalLaunchDaemon)
         } catch {
             print(error.localizedDescription)
         }
@@ -127,6 +126,8 @@ class ProgressVC: NSViewController {
     @IBAction func installAction(_ sender: Any) {
         self.progressSpinning.isHidden = false
         self.infoTextField.isHidden = false
+        print("Authorize")
+        ahLaunchCtl.authorize()
         self.untar()
     }
     

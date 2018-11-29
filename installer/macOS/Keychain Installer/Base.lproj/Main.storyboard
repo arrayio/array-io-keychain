@@ -740,7 +740,7 @@
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="dVL-Ck-nfh">
-                                <rect key="frame" x="18" y="263" width="414" height="17"/>
+                                <rect key="frame" x="18" y="104" width="414" height="17"/>
                                 <textFieldCell key="cell" lineBreakMode="clipping" title="Select path directory for installation" id="YSw-2X-5jG">
                                     <font key="font" usesAppearanceFont="YES"/>
                                     <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -748,14 +748,14 @@
                                 </textFieldCell>
                             </textField>
                             <pathControl verticalHuggingPriority="750" allowsExpansionToolTips="YES" translatesAutoresizingMaskIntoConstraints="NO" id="8bq-7x-LW1">
-                                <rect key="frame" x="20" y="217" width="320" height="22"/>
+                                <rect key="frame" x="20" y="66" width="320" height="22"/>
                                 <pathCell key="cell" selectable="YES" editable="YES" alignment="left" id="c11-gN-FJV">
                                     <font key="font" metaFont="system"/>
                                     <url key="url" string="file:///~/Keychain"/>
                                 </pathCell>
                             </pathControl>
                             <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="v8X-Yk-ypN">
-                                <rect key="frame" x="18" y="185" width="260" height="18"/>
+                                <rect key="frame" x="18" y="34" width="260" height="18"/>
                                 <buttonCell key="cell" type="check" title="Automatic start when the system boots" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="fiM-PH-BgQ">
                                     <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                     <font key="font" metaFont="system"/>
@@ -765,7 +765,7 @@
                                 </connections>
                             </button>
                             <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="V9G-UG-Iom">
-                                <rect key="frame" x="342" y="210" width="94" height="32"/>
+                                <rect key="frame" x="342" y="51" width="94" height="32"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="82" id="X5f-pA-T93"/>
                                 </constraints>
@@ -777,15 +777,36 @@
                                     <action selector="selectPathAction:" target="hd9-Qg-Rxp" id="iwl-YD-Ywe"/>
                                 </connections>
                             </button>
+                            <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="Bog-LI-xFU">
+                                <rect key="frame" x="161" y="176" width="128" height="108"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="128" id="O8g-Vp-Hpn"/>
+                                    <constraint firstAttribute="height" constant="108" id="SFq-dG-K7m"/>
+                                </constraints>
+                                <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="logo" id="1EX-Jr-HRd"/>
+                            </imageView>
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="2J7-dJ-Rk4">
+                                <rect key="frame" x="175" y="141" width="100" height="27"/>
+                                <textFieldCell key="cell" lineBreakMode="clipping" alignment="center" title="KeyChain" id="s9x-D3-VjZ">
+                                    <font key="font" metaFont="system" size="22"/>
+                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
                         </subviews>
                         <constraints>
                             <constraint firstItem="V9G-UG-Iom" firstAttribute="leading" secondItem="8bq-7x-LW1" secondAttribute="trailing" constant="8" id="E57-6h-Zfo"/>
-                            <constraint firstItem="8bq-7x-LW1" firstAttribute="top" secondItem="dVL-Ck-nfh" secondAttribute="bottom" constant="24" id="HNR-Zo-zKw"/>
+                            <constraint firstItem="dVL-Ck-nfh" firstAttribute="top" secondItem="2J7-dJ-Rk4" secondAttribute="bottom" constant="20" id="Geo-Yk-nmo"/>
+                            <constraint firstItem="8bq-7x-LW1" firstAttribute="top" secondItem="dVL-Ck-nfh" secondAttribute="bottom" constant="16" id="HNR-Zo-zKw"/>
+                            <constraint firstItem="Bog-LI-xFU" firstAttribute="leading" secondItem="nX7-7N-2dt" secondAttribute="leading" constant="161" id="SM3-sL-spq"/>
                             <constraint firstItem="v8X-Yk-ypN" firstAttribute="top" secondItem="8bq-7x-LW1" secondAttribute="bottom" constant="16" id="WhJ-pr-zib"/>
+                            <constraint firstAttribute="trailing" secondItem="Bog-LI-xFU" secondAttribute="trailing" constant="161" id="Y39-UQ-beP"/>
+                            <constraint firstItem="Bog-LI-xFU" firstAttribute="top" secondItem="nX7-7N-2dt" secondAttribute="top" constant="16" id="aOz-OO-32A"/>
                             <constraint firstItem="V9G-UG-Iom" firstAttribute="top" secondItem="dVL-Ck-nfh" secondAttribute="bottom" constant="25" id="ajV-hV-Oz0"/>
                             <constraint firstItem="8bq-7x-LW1" firstAttribute="leading" secondItem="nX7-7N-2dt" secondAttribute="leading" constant="20" id="c1U-bv-Dca"/>
+                            <constraint firstItem="2J7-dJ-Rk4" firstAttribute="centerX" secondItem="nX7-7N-2dt" secondAttribute="centerX" id="n4U-SA-SqD"/>
                             <constraint firstAttribute="trailing" secondItem="V9G-UG-Iom" secondAttribute="trailing" constant="20" id="noN-0A-gqP"/>
-                            <constraint firstItem="dVL-Ck-nfh" firstAttribute="top" secondItem="nX7-7N-2dt" secondAttribute="top" constant="20" id="po1-Md-qex"/>
+                            <constraint firstItem="2J7-dJ-Rk4" firstAttribute="top" secondItem="Bog-LI-xFU" secondAttribute="bottom" constant="8" id="tMg-28-66D"/>
                             <constraint firstItem="v8X-Yk-ypN" firstAttribute="leading" secondItem="nX7-7N-2dt" secondAttribute="leading" constant="20" id="thc-U8-WTJ"/>
                             <constraint firstAttribute="trailing" secondItem="dVL-Ck-nfh" secondAttribute="trailing" constant="20" id="vM0-xG-pyA"/>
                             <constraint firstItem="dVL-Ck-nfh" firstAttribute="leading" secondItem="nX7-7N-2dt" secondAttribute="leading" constant="20" id="wNU-DE-Jjl"/>
@@ -860,7 +881,7 @@ Enjoy the new level of security!</string>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="cdC-9J-Svi">
-                                <rect key="frame" x="187" y="133" width="76" height="32"/>
+                                <rect key="frame" x="187" y="13" width="76" height="32"/>
                                 <buttonCell key="cell" type="push" title="Install" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="c9d-nL-qiH">
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                     <font key="font" metaFont="system"/>
@@ -870,10 +891,26 @@ Enjoy the new level of security!</string>
                                 </connections>
                             </button>
                             <progressIndicator wantsLayer="YES" horizontalHuggingPriority="750" verticalHuggingPriority="750" maxValue="100" bezeled="NO" indeterminate="YES" controlSize="small" style="spinning" translatesAutoresizingMaskIntoConstraints="NO" id="iEN-O1-8Hp">
-                                <rect key="frame" x="217" y="84" width="16" height="16"/>
+                                <rect key="frame" x="217" y="61" width="16" height="16"/>
                             </progressIndicator>
+                            <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="3pT-tS-DUq">
+                                <rect key="frame" x="161" y="176" width="128" height="108"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="108" id="Gzb-Vx-W31"/>
+                                    <constraint firstAttribute="width" constant="128" id="Net-vO-vCE"/>
+                                </constraints>
+                                <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="logo" id="lZk-PF-nXj"/>
+                            </imageView>
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="tL8-Mo-Wgr">
+                                <rect key="frame" x="175" y="141" width="100" height="27"/>
+                                <textFieldCell key="cell" lineBreakMode="clipping" alignment="center" title="KeyChain" id="Bt7-Rc-9Pe">
+                                    <font key="font" metaFont="system" size="22"/>
+                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="BTw-Au-wCi">
-                                <rect key="frame" x="190" y="27" width="70" height="17"/>
+                                <rect key="frame" x="190" y="93" width="70" height="17"/>
                                 <textFieldCell key="cell" lineBreakMode="clipping" title="Installing..." id="b59-ri-3N5">
                                     <font key="font" metaFont="system"/>
                                     <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -882,12 +919,17 @@ Enjoy the new level of security!</string>
                             </textField>
                         </subviews>
                         <constraints>
-                            <constraint firstItem="cdC-9J-Svi" firstAttribute="centerX" secondItem="q5J-NA-DPF" secondAttribute="centerX" id="1rG-mG-EfB"/>
-                            <constraint firstItem="iEN-O1-8Hp" firstAttribute="top" secondItem="cdC-9J-Svi" secondAttribute="bottom" constant="40" id="JmT-PQ-0vh"/>
-                            <constraint firstItem="BTw-Au-wCi" firstAttribute="top" secondItem="iEN-O1-8Hp" secondAttribute="bottom" constant="40" id="QsH-ba-D0r"/>
-                            <constraint firstItem="BTw-Au-wCi" firstAttribute="centerX" secondItem="q5J-NA-DPF" secondAttribute="centerX" id="XnO-fy-nJj"/>
-                            <constraint firstItem="iEN-O1-8Hp" firstAttribute="centerX" secondItem="q5J-NA-DPF" secondAttribute="centerX" id="lP4-Ld-Ydh"/>
-                            <constraint firstItem="cdC-9J-Svi" firstAttribute="centerY" secondItem="q5J-NA-DPF" secondAttribute="centerY" id="vj1-LS-bM0"/>
+                            <constraint firstAttribute="bottom" secondItem="cdC-9J-Svi" secondAttribute="bottom" constant="20" id="6iR-TB-Zh1"/>
+                            <constraint firstItem="iEN-O1-8Hp" firstAttribute="centerX" secondItem="q5J-NA-DPF" secondAttribute="centerX" id="D2J-iB-qH3"/>
+                            <constraint firstItem="iEN-O1-8Hp" firstAttribute="top" secondItem="BTw-Au-wCi" secondAttribute="bottom" constant="16" id="HdB-ny-WGb"/>
+                            <constraint firstItem="tL8-Mo-Wgr" firstAttribute="centerX" secondItem="q5J-NA-DPF" secondAttribute="centerX" id="SRT-nS-5aj"/>
+                            <constraint firstItem="cdC-9J-Svi" firstAttribute="centerX" secondItem="q5J-NA-DPF" secondAttribute="centerX" id="Uxi-Nr-9zH"/>
+                            <constraint firstAttribute="trailing" secondItem="3pT-tS-DUq" secondAttribute="trailing" constant="161" id="Xth-OJ-PNK"/>
+                            <constraint firstItem="cdC-9J-Svi" firstAttribute="top" secondItem="iEN-O1-8Hp" secondAttribute="bottom" constant="20" id="Z2H-x2-G8y"/>
+                            <constraint firstItem="tL8-Mo-Wgr" firstAttribute="top" secondItem="3pT-tS-DUq" secondAttribute="bottom" constant="8" id="b2T-e2-FJd"/>
+                            <constraint firstItem="3pT-tS-DUq" firstAttribute="leading" secondItem="q5J-NA-DPF" secondAttribute="leading" constant="161" id="dhU-g4-OLD"/>
+                            <constraint firstItem="3pT-tS-DUq" firstAttribute="top" secondItem="q5J-NA-DPF" secondAttribute="top" constant="16" id="t8w-9D-SOu"/>
+                            <constraint firstItem="BTw-Au-wCi" firstAttribute="centerX" secondItem="q5J-NA-DPF" secondAttribute="centerX" id="to7-Td-lkY"/>
                         </constraints>
                     </view>
                     <connections>

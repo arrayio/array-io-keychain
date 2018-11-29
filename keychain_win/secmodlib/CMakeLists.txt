@@ -21,7 +21,8 @@ SET(Boost_LIBRARIES ${BOOST_LIBRARIES_TEMP} ${Boost_LIBRARIES})
 add_definitions(-DUNICODE -D_UNICODE)
 
 include_directories(
-		"./include"
+		"${CMAKE_SOURCE_DIR}/keychain_win/keychain_agent/include"
+		"${CMAKE_SOURCE_DIR}/keychain_win/secmodlib/include"
 		"${CMAKE_SOURCE_DIR}/keychain_lib/include"
 	    "${CMAKE_SOURCE_DIR}/libraries/fc_light/include"
 		"${CMAKE_SOURCE_DIR}/libraries/eth-crypto/include"

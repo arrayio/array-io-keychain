@@ -93,6 +93,10 @@ else()
     add_executable(keychain ${KEYCHAIN_SOURCES} ${KEYCHAIN_INCLUDE} )
 
 	if (MSVC)
+	    target_include_directories(keychain 
+			PUBLIC "${CMAKE_SOURCE_DIR}/keychain_win/secmodlib/include"
+			PUBLIC "${CMAKE_SOURCE_DIR}/keychain_win/keychain_agent/include"
+		)
 		target_link_libraries(keychain keychain_common secmodlib fc_light eth-crypto ${LIB_OPENSSL} ${Boost_LIBRARIES} Crypt32.lib Userenv.lib Wtsapi32.lib)
 	else()
 		target_link_libraries(keychain keychain_common fc_light eth-crypto ${LIB_OPENSSL} ${Boost_LIBRARIES})

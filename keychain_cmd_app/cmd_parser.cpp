@@ -28,7 +28,7 @@
 #endif
 
 #ifdef _WIN32
-    #include <secmodlib/SecureModuleWrapper.h>
+    #include <SecureModuleWrapper.h>
 #endif
 
 using namespace keychain_app;

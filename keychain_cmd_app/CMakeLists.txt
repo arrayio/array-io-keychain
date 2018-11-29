@@ -97,7 +97,7 @@ else()
 			PUBLIC "${CMAKE_SOURCE_DIR}/keychain_win/secmodlib/include"
 			PUBLIC "${CMAKE_SOURCE_DIR}/keychain_win/keychain_agent/include"
 		)
-		target_link_libraries(keychain keychain_common secmodlib fc_light eth-crypto ${LIB_OPENSSL} ${Boost_LIBRARIES} Crypt32.lib Userenv.lib Wtsapi32.lib)
+		target_link_libraries(keychain keychain_common secmodlib keychain_agent fc_light eth-crypto ${LIB_OPENSSL} ${Boost_LIBRARIES} Crypt32.lib Userenv.lib Wtsapi32.lib)
 	else()
 		target_link_libraries(keychain keychain_common fc_light eth-crypto ${LIB_OPENSSL} ${Boost_LIBRARIES})
 		if(APPLE) 

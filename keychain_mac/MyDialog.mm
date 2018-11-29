@@ -76,7 +76,7 @@
     [cover setAppearance:[NSAppearance appearanceNamed:NSAppearanceNameVibrantLight]];
     [self.window.contentView addSubview:cover];
     NSLog(@"jsonString %@", _jsonString);
-//    [self setupTitleLabel];
+    NSLog(@"currentPath %@", _currentPath);
     [self setupLogoiew];
     [self setupLabelPassphrase];
     [self setupPassField];
@@ -105,7 +105,9 @@
 - (void) setupLogoBlockhain:(NSString *)blockhain {
     if ([blockhain isEqualToString:@"ethereum"]) {
         NSImageView *imageView = [[NSImageView alloc] initWithFrame:NSMakeRect(22, 224, 25, 39)];
-        NSImage *image = [[NSImage alloc] initWithContentsOfFile:@"resources/ethereum.png"];
+        NSString *path = [NSString stringWithFormat:@"%@/%@", self.currentPath, @"resources/ethereum.png"];
+        NSImage *image = [[NSImage alloc] initWithContentsOfFile:path];
+        NSLog(@"path %@", path);
         imageView.image = image;
         [self.window.contentView addSubview:imageView];
     }
@@ -124,7 +126,7 @@
 - (void) setupLogoiew {
     
     NSImageView *imageView = [[NSImageView alloc] initWithFrame:NSMakeRect(22, 280, 64, 54)];
-    NSImage *image = [[NSImage alloc] initWithContentsOfFile:@"resources/logo.png"];
+    NSImage *image = [[NSImage alloc] initWithContentsOfFile:[NSString stringWithFormat:@"%@/%@", self.currentPath, @"resources/logo.png"]];
     imageView.image = image;
     [self.window.contentView addSubview:imageView];
     
@@ -223,6 +225,7 @@
     passConfirm.backgroundColor = [NSColor whiteColor];
     passConfirm.font = [NSFont systemFontOfSize:20];
     passConfirm.layer.cornerRadius = 4.0;
+    passConfirm.nextKeyView = pass;
     passConfirm.appearance = [NSAppearance appearanceNamed:NSAppearanceNameAqua];
     [self.window.contentView addSubview:passConfirm];
 }

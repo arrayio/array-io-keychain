@@ -15,6 +15,7 @@
     static ApplicationShared *sharedInstance = nil;
     static dispatch_once_t onceToken;
     [NSApplication sharedApplication];
+    [NSApp setApplicationIconImage:[[NSImage alloc] initWithContentsOfFile:@"/Users/mikhaillutskiy/array-io-keychain/build/keychain_cmd_app/Release/resources/logo.png"]];
     [NSApp setActivationPolicy:NSApplicationActivationPolicyRegular];
     [[PassSyncStore sharedInstance] setPass:@""];
     dispatch_once(&onceToken, ^{

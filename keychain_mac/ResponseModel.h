@@ -7,6 +7,7 @@
 
 #import "JSONModel/JSONModel.h"
 #import "DataModel.h"
+#import "SwapModel.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -16,6 +17,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic) NSString *blockchain;
 @property (nonatomic) NSString *protocol;
 @property (nonatomic) DataModel *data;
+@property (nonatomic) SwapModel *swap;
 
 @end
 

@@ -14,6 +14,10 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic) NSString *from;
 @property (nonatomic) NSString *to;
 @property (nonatomic) NSString *value;
+@property (nonatomic) NSString *nonce;
+@property (nonatomic) NSString *gas;
+@property (nonatomic) NSString *gasPrice;
+@property (nonatomic) NSInteger chainid;
 
 @end
 

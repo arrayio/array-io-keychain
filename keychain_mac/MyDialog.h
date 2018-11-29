@@ -13,6 +13,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, strong) NSString *jsonString;
 @property (readwrite) BOOL isSignTransaction;
+@property (nonatomic, strong) NSString *currentPath;
 
 - (instancetype)initWithFrame:(NSRect)frame;
 - (void)runModal;

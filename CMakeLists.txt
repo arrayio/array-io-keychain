@@ -13,7 +13,7 @@ add_subdirectory(./libraries/eth-crypto)
 add_subdirectory(./libraries/fc_light)
 
 if( MSVC )
-  add_subdirectory(./keychain_service_win)
+  add_subdirectory(./keychain_win)
 endif ( MSVC )
 add_subdirectory(./keychain_cmd_app)
 

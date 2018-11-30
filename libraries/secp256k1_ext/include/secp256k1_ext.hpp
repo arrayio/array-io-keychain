@@ -4,7 +4,7 @@
 #include "secp256k1.h"
 #include <array>
 
-void sign_bitshares(
+void sign_canonical(
         std::array<unsigned char, 65> &signature,
         const unsigned char *msg32,
         const unsigned char *seckey

@@ -15,9 +15,12 @@ if (NOT MSVC)
         set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}  -stdlib=libc++" )
     endif()
 endif()
+if(APPLE)
+	SET(CMAKE_EXE_LINKER_FLAGS "-framework Cocoa" "-weak_framework QuartzCore")
+endif()
 
 SET(BOOST_COMPONENTS)
-LIST(APPEND BOOST_COMPONENTS date_time system filesystem program_options signals serialization chrono unit_test_framework locale thread exception iostreams)
+LIST(APPEND BOOST_COMPONENTS log date_time system filesystem program_options signals serialization chrono unit_test_framework locale thread exception iostreams)
 SET( Boost_USE_STATIC_LIBS ON CACHE STRING "ON or OFF" )
 
 SET(BOOST_ROOT $ENV{BOOST_ROOT})
@@ -71,8 +74,9 @@ if ( ${CMAKE_HOST_SYSTEM_NAME} MATCHES "Linux")
             COMMAND ${CMAKE_COMMAND} -E  copy_if_different   ${GUI_BINARY} ${KEYCHAIN_BINARY_DIR}
             )
 else()
-    include_directories(
-            "../keychain_lib/include"
+	include_directories(
+            "../keychain_lib/include"			
+			"../keychain_lib/secmodlib/include"
             "../libraries/fc_light/include"
             "../libraries/eth-crypto/include"
             "../libraries/secp256k1/include"
@@ -82,10 +86,29 @@ else()
 
     file(GLOB KEYCHAIN_SOURCES "./*.cpp"  )
     file(GLOB KEYCHAIN_INCLUDE "./*.hpp"  )
+    if(APPLE) 
+	file(GLOB KEYCHAIN_INCLUDE "./*.h*" "../keychain_mac/*.h*"  )
+	file(GLOB KEYCHAIN_SOURCES ("./*.m*" "./*.cpp" "../keychain_mac/*.m*" "../keychain_mac/*.cpp" ) )
+    endif()
     add_executable(keychain ${KEYCHAIN_SOURCES} ${KEYCHAIN_INCLUDE} )
+
 	if (MSVC)
-		target_link_libraries(keychain keychain_common fc_light eth-crypto ${LIB_OPENSSL} ${Boost_LIBRARIES} Userenv.lib)
+	    target_include_directories(keychain 
+			PUBLIC "${CMAKE_SOURCE_DIR}/keychain_win/secmodlib/include"
+			PUBLIC "${CMAKE_SOURCE_DIR}/keychain_win/keychain_agent/include"
+		)
+		target_link_libraries(keychain keychain_common secmodlib keychain_agent fc_light eth-crypto ${LIB_OPENSSL} ${Boost_LIBRARIES} Crypt32.lib Userenv.lib Wtsapi32.lib)
 	else()
 		target_link_libraries(keychain keychain_common fc_light eth-crypto ${LIB_OPENSSL} ${Boost_LIBRARIES})
+		if(APPLE) 
+		set_property (TARGET keychain APPEND_STRING PROPERTY 
+              	COMPILE_FLAGS "-fobjc-arc")
+		set_target_properties(
+    		${APP_NAME}
+		PROPERTIES
+    		MACOSX_BUNDLE YES
+    		XCODE_ATTRIBUTE_CLANG_ENABLE_OBJC_ARC YES  
+		)
+		endif()
 	endif()
 endif()

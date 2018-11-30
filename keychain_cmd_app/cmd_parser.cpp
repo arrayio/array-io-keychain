@@ -14,11 +14,21 @@
 #include "sec_mod.hpp"
 
 #include <boost/program_options.hpp>
+#include <keychain_lib/keychain_logger.hpp>
+
 //#include <boost/program_options/options_description.hpp>
 //#include <boost/program_options/option.hpp>
 
 #ifdef LINUX
-    #include "../keychain_linux/passentry_cmd/sec_mod_linux.hpp"
+    #include "sec_mod_linux.hpp"
+#endif
+
+#ifdef APPLE
+    #include "../keychain_mac/sec_mod_mac.hpp"
+#endif
+
+#ifdef _WIN32
+    #include <SecureModuleWrapper.h>
 #endif
 
 using namespace keychain_app;
@@ -33,6 +43,7 @@ int cmd_parser::run(int argc, const char* const argv [])
 {
 
   const secure_dlg_mod_base* sec_mod;
+  auto log = logger_singletone::instance();
 
   std::string task_type;
   po::options_description desc("Options");
@@ -44,6 +55,7 @@ int cmd_parser::run(int argc, const char* const argv [])
   try
   {
     po::parsed_options parsed = po::command_line_parser(argc, argv).options(desc).allow_unregistered().run();
+
     po::store(parsed, options);
     po::notify(options);
 
@@ -54,14 +66,26 @@ int cmd_parser::run(int argc, const char* const argv [])
     }
 
     if (task_type == "test_run")
-      sec_mod = secure_module<sec_mod_dummy>::instance();
+    {
+        BOOST_LOG_SEV(log.lg, info) << "secure_module: <sec_mod_dummy>";
+        sec_mod = secure_module<sec_mod_dummy>::instance();
+    }
     else if (task_type == "")
     {
 #ifdef LINUX
+      BOOST_LOG_SEV(log.lg, info) << "secure_module: <sec_mod_linux>";
       sec_mod = secure_module<sec_mod_linux>::instance();
 #else
-      sec_mod = secure_module<sec_mod_dummy>::instance();
-#endif
+#	if defined(macintosh) || defined(__APPLE__) || defined(__APPLE_CC__)
+      BOOST_LOG_SEV(log.lg, info) << "secure_module: <sec_mod_mac>";
+      sec_mod = secure_module<sec_mod_mac>::instance();
+#	else
+#		ifdef _WIN32
+	  BOOST_LOG_SEV(log.lg, info) << "secure_module: <SecureModuleWrapper>";
+	  sec_mod = secure_module<SecureModuleWrapper>::instance();
+#		endif //_WIN32
+#	endif //APPLE
+#endif //LINUX
     }
     else
     {

@@ -14,10 +14,6 @@ sec_mod_linux::sec_mod_linux()
 sec_mod_linux::~sec_mod_linux()
 {}
 
-std::string sec_mod_linux::get_uid() const
-{
-    return std::string("uid");
-}
 
 void sec_mod_linux::print_mnemonic(const string_list& mnemonic) const
 {

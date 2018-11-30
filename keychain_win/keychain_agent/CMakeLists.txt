@@ -1,0 +1,32 @@
+project( keychain_agent  )
+
+cmake_minimum_required( VERSION 3.0.2 )
+
+set(CMAKE_CXX_FLAGS "-std=c++11 /EHsc")
+
+SET(BOOST_COMPONENTS)
+LIST(APPEND BOOST_COMPONENTS log)
+SET( Boost_USE_STATIC_LIBS ON CACHE STRING "ON or OFF" )
+
+SET(BOOST_ROOT $ENV{BOOST_ROOT})
+set(Boost_USE_MULTITHREADED ON)
+set(BOOST_ALL_DYN_LINK OFF)
+
+FIND_PACKAGE(Boost 1.65 REQUIRED COMPONENTS ${BOOST_COMPONENTS})
+SET(BOOST_LIBRARIES_TEMP ${Boost_LIBRARIES})
+FIND_PACKAGE(Boost 1.65 REQUIRED COMPONENTS coroutine)
+LIST(APPEND BOOST_COMPONENTS coroutine)
+SET(Boost_LIBRARIES ${BOOST_LIBRARIES_TEMP} ${Boost_LIBRARIES})
+
+add_definitions(-DUNICODE -D_UNICODE)
+
+include_directories(
+		"./include"
+		"${CMAKE_SOURCE_DIR}/keychain_lib/include"
+        ${Boost_INCLUDE_DIR})
+
+
+file(GLOB KEYCHAIN_AGENT_SOURCES "./src/*.cpp")
+
+add_library(keychain_agent ${KEYCHAIN_AGENT_SOURCES})
+

@@ -12,11 +12,6 @@ sec_mod_dummy::sec_mod_dummy()
 sec_mod_dummy::~sec_mod_dummy()
 {}
 
-std::string sec_mod_dummy::get_uid() const
-{
-  return std::string("uid");
-}
-
 void sec_mod_dummy::print_mnemonic(const string_list& mnemonic) const
 {
 }

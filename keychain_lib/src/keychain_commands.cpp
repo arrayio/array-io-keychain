@@ -9,6 +9,60 @@
 #include <fc_light/io/json.hpp>
 
 #include "keychain_commands.hpp"
+#include "keychain.hpp"
+
+
+std::pair<std::string, std::string> keychain_app::read_private_key_file(
+        keychain_base * keychain, std::string keyname, std::string text)
+{
+  keyfile_format::keyfile_t keyfile;
+  auto curdir = bfs::current_path();
+  auto first = bfs::directory_iterator(bfs::path(KEY_DEFAULT_PATH_));
+  auto it = std::find_if(first, bfs::directory_iterator(),find_keyfile_by_username(keyname.c_str(), &keyfile));
+  if (it == bfs::directory_iterator())
+    throw std::runtime_error("Error: keyfile could not found by keyname");
+
+  if(keyfile.keyinfo.encrypted)
+  {
+    auto encrypted_data = keyfile.keyinfo.priv_key_data.as<keyfile_format::encrypted_data>();
+    auto& encryptor = encryptor_singletone::instance();
+//TODO: need to try to parse transaction.
+// If we can parse transaction we need to use get_passwd_trx function
+// else use get_passwd_trx_raw()
+// At this moment parsing of transaction is not implemented
+    byte_seq_t passwd = *(keychain->get_passwd_trx_raw(text.empty() ? keyfile.keyname: text));
+    if (passwd.empty())
+      throw std::runtime_error("Error: can't get password");
+    return  std::make_pair(encryptor.decrypt_keydata(passwd, encrypted_data), keyfile.keyname);
+  }
+  else
+    return  std::make_pair(keyfile.keyinfo.priv_key_data.as<std::string>(), keyfile.keyname);
+}
+
+
+std::string keychain_app::read_private_key(keychain_base * keychain, std::string keyname, std::string text)
+{
+  bool locked = true;
+
+  auto map = keychain->key_map.find(keyname);
+  if (map != keychain->key_map.end())
+  {
+    if ((std::time(nullptr) -  map->second.second) > keychain->unlock_time )
+      keychain->key_map.erase(map);
+    else
+      locked = false;
+  }
+
+  if (locked)
+  {// unlock key
+    auto key_data = read_private_key_file(keychain, keyname, text).first;
+    keychain->key_map[keyname] = std::make_pair(key_data, std::time(nullptr));
+  }
+  else   //  reset key timer after each key use
+    keychain->key_map[keyname].second = std::time(nullptr);
+
+  return keychain->key_map[keyname].first;
+}
 
 std::string keychain_app::to_hex(const uint8_t* data, size_t length)
 {
@@ -52,25 +106,17 @@ namespace bfs = keychain_app::bfs;
 
 void keychain_app::create_keyfile(const char* filename, const fc_light::variant& keyfile_var)
 {
-  bfs::path filepath(filename);
+  bfs::path filepath(std::string(KEY_DEFAULT_PATH_"/") +std::string(filename));
   if(bfs::exists(filepath))
     throw std::runtime_error("Error: can not create keyfile, file is currently exist");
-  auto path = bfs::current_path();
-  path += bfs::path("/");
-  path += filepath;
-  auto fout = std::ofstream(filename);
+
+  auto fout = std::ofstream(filepath.c_str());
   if(!fout.is_open())
     throw std::runtime_error("Error: cannot open keyfile");
   fout << fc_light::json::to_pretty_string(keyfile_var) << std::endl;
 }
 
 using namespace keychain_app;
-
-keychain_base::keychain_base(std::string&& uid_hash_)
-  : uid_hash(std::move(uid_hash_))
-{}
-
-keychain_base::~keychain_base(){}
 
 
 sha2_256_encoder::sha2_256_encoder()
@@ -80,7 +126,7 @@ sha2_256_encoder::sha2_256_encoder()
 
 sha2_256_encoder::~sha2_256_encoder(){};
 
-void sha2_256_encoder::write(const char * d, uint32_t dlen )
+void sha2_256_encoder::write(const unsigned char * d, uint32_t dlen )
 {
     SHA256_Update( &ctx, d, dlen);
 }
@@ -103,7 +149,7 @@ sha3_256_encoder::~sha3_256_encoder()
   EVP_MD_CTX_destroy(ctx);
 };
 
-void sha3_256_encoder::write(const char *d, uint32_t dlen)
+void sha3_256_encoder::write(const unsigned char *d, uint32_t dlen)
 {
   EVP_DigestUpdate(ctx, d, dlen);
 }

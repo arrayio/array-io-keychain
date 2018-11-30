@@ -9,7 +9,7 @@ if (NOT MSVC)
     endif()
 endif()
 
-set (CMAKE_PREFIX_PATH "${QT_ROOT}/5.11.1/gcc_64/lib/cmake/Qt5Widgets/")
+set (CMAKE_PREFIX_PATH "${QT_ROOT}/gcc_64/lib/cmake/Qt5Widgets/")
 
 project(passentrygui)
 # Find includes in corresponding build directories

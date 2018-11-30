@@ -1,0 +1,16 @@
+PODS:
+  - AHLaunchCtl (0.5.4)
+
+DEPENDENCIES:
+  - AHLaunchCtl
+
+SPEC REPOS:
+  https://github.com/cocoapods/specs.git:
+    - AHLaunchCtl
+
+SPEC CHECKSUMS:
+  AHLaunchCtl: 696233a41a9b968e0683ce2cc1b8686ff25ca5c7
+
+PODFILE CHECKSUM: 5723484c142903d54df99222284e935a22adc2f0
+
+COCOAPODS: 1.5.3

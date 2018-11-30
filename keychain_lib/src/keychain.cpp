@@ -18,7 +18,17 @@
 
 #include <boost/hana.hpp>
 
+
 using namespace keychain_app;
+
+
+keychain_base::keychain_base()
+{
+  unlock_time =DEF_UNLOCK_SECONDS;
+}
+
+keychain_base::~keychain_base(){}
+
 
 keychain_commands_singletone::keychain_commands_singletone()
 {
@@ -30,28 +40,32 @@ keychain_commands_singletone::keychain_commands_singletone()
   });
 }
 
-keychain::keychain(std::string&& uid_hash_, const char* default_key_dir)
-  : keychain_base(std::move(uid_hash_))
-  , m_init_path(bfs::current_path())
+
+keychain& keychain::instance(const secure_dlg_mod_base* secure_dlg )
 {
-  std::string user_dir(default_key_dir);
-  bfs::path path_(user_dir);
-  if(!bfs::exists(path_))
+  static keychain _instance (secure_dlg);
+  return _instance;
+}
+
+
+keychain::keychain(const secure_dlg_mod_base* secure_dlg)
+  : keychain_base(),
+    m_init_path(bfs::current_path())
+{
+  bfs::path key_dir(KEY_DEFAULT_PATH_);
+
+  if(!bfs::exists(key_dir))
   {
-    auto res = bfs::create_directory(path_);
-    if(res == false)
-      throw std::runtime_error("Error: can not create default key directory");
+      auto res = bfs::create_directories(key_dir);
+      if(res == false)
+          throw std::runtime_error("Error: can not create key directory");
   }
-  user_dir += "/";
-  user_dir += uid_hash;
-  path_ = bfs::path(user_dir);
-  if(!bfs::exists(path_))
-  {
-    auto res = bfs::create_directory(path_);
-    if(res == false)
-      throw std::runtime_error("Error: can not create default key directory");
-  }
-  bfs::current_path(path_);
+
+  get_passwd_trx_raw.connect(std::bind(&secure_dlg_mod_base::get_passwd_trx_raw, secure_dlg,
+          std::placeholders::_1));
+  get_passwd_on_create.connect(std::bind(&secure_dlg_mod_base::get_passwd_on_create, secure_dlg));
+  print_mnemonic.connect(std::bind(&secure_dlg_mod_base::print_mnemonic, secure_dlg,
+          std::placeholders::_1));
 }
 
 keychain::~keychain()
@@ -69,8 +83,8 @@ std::string keychain::operator()(const fc_light::variant& command) {
   }
   catch(fc_light::exception& exc)
   {
-    std::cerr << fc_light::json::to_pretty_string(fc_light::variant(json_error(0, exc.to_detail_string().c_str()))) << std::endl;
-	return fc_light::json::to_pretty_string(fc_light::variant(json_error(0, exc.what())));
+    std::cerr << fc_light::json::to_string(fc_light::variant(json_error(0, exc.to_detail_string().c_str()))) << std::endl;
+	return fc_light::json::to_string(fc_light::variant(json_error(0, exc.what())));
   }
 }
 

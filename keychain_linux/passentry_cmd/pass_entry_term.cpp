@@ -11,7 +11,7 @@
 #include "pass_entry_term.hpp"
 #include "cmd.hpp"
 
-#define path_ "../../passentry_gui"
+#define path_ "./passentry_gui"
 
 pass_entry_term::pass_entry_term()
 {

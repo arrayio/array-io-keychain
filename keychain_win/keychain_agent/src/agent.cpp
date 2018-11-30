@@ -19,6 +19,11 @@ BOOL StartInteractiveClientProcess(
     BOOL bResult = FALSE;
     LPVOID enviroment = NULL;
     DWORD latError = NULL;
+	DWORD groupLength = 50;
+	SID_IDENTIFIER_AUTHORITY siaNt = SECURITY_NT_AUTHORITY;
+	PSID InteractiveSid = NULL;
+	PSID ServiceSid = NULL;
+	BOOL fromServcie = FALSE;
 
     // Log the client on to the local computer.
 
@@ -33,28 +38,101 @@ BOOL StartInteractiveClientProcess(
     goto Cleanup;
     }*/
 
+	auto log = logger_singletone::instance();
     do
     {
 
         if (!WTSQueryUserToken(WTSGetActiveConsoleSessionId(), &hToken))
         {
-            break;
+			latError = GetLastError();
+			if (!OpenProcessToken(GetCurrentProcess(), TOKEN_QUERY,
+				&hToken))
+				latError = GetLastError();
+			PTOKEN_GROUPS groupInfo = (PTOKEN_GROUPS)LocalAlloc(0,
+				groupLength);
+			//if (groupInfo == NULL)
+				//latError = GetLastError();
+			if (groupInfo == NULL) {
+				latError = GetLastError();
+				break;
+			}
+
+			if (!GetTokenInformation(hToken, TokenGroups, groupInfo,
+				groupLength, &groupLength))
+			{
+				if (GetLastError() != ERROR_INSUFFICIENT_BUFFER) 
+					break;
+
+				LocalFree(groupInfo);
+				groupInfo = NULL;
+
+				groupInfo = (PTOKEN_GROUPS)LocalAlloc(0, groupLength);
+				
+				latError = GetLastError();
+				
+				if (groupInfo == NULL)
+					break;
+
+				if (!GetTokenInformation(hToken, TokenGroups, groupInfo,
+					groupLength, &groupLength))
+				{
+					
+					break;
+				}
+			}
+			if (!AllocateAndInitializeSid(&siaNt, 1, SECURITY_INTERACTIVE_RID, 0,
+				0,
+				0, 0, 0, 0, 0, &InteractiveSid))
+			{
+				latError = GetLastError();
+				break;
+			}
+
+			if (!AllocateAndInitializeSid(&siaNt, 1, SECURITY_SERVICE_RID, 0, 0, 0,
+				0, 0, 0, 0, &ServiceSid))
+			{
+				latError = GetLastError();
+				break;
+			}
+			for (DWORD i = 0; i < groupInfo->GroupCount; i += 1)
+			{
+				SID_AND_ATTRIBUTES sanda = groupInfo->Groups[i];
+				PSID Sid = sanda.Sid;
+
+				//
+				//  Check to see if the group we're looking at is one of
+				//  the 2 groups we're interested in.
+				//
+
+				if (EqualSid(Sid, InteractiveSid))
+				{
+					break;
+				}
+				else if (EqualSid(Sid, ServiceSid))
+				{
+					fromServcie = TRUE;
+					break;
+				}
+			}
+			latError = GetLastError();
+//            break;
         }
 
+		if (fromServcie == TRUE) {
         // Save a handle to the caller's current window station.
 
-        if ((hwinstaSave = GetProcessWindowStation()) == NULL)
-            break;
+			if ((hwinstaSave = GetProcessWindowStation()) == NULL)
+				break;
 
-        // Get a handle to the interactive window station.
+			// Get a handle to the interactive window station.
 
-        hwinsta = OpenWindowStation(
-            _T("winsta0"),                   // the interactive window station 
-            FALSE,                       // handle is not inheritable
-            READ_CONTROL | WRITE_DAC);   // rights to read/write the DACL
+			hwinsta = OpenWindowStation(
+				_T("winsta0"),                   // the interactive window station 
+				FALSE,                       // handle is not inheritable
+				READ_CONTROL | WRITE_DAC);   // rights to read/write the DACL
 
-        if (hwinsta == NULL)
-            break;
+			if (hwinsta == NULL)
+				break;
 
         // To get the correct default desktop, set the caller's 
         // window station to the interactive window station.
@@ -71,8 +149,6 @@ BOOL StartInteractiveClientProcess(
             WRITE_DAC |
             DESKTOP_WRITEOBJECTS |
             DESKTOP_READOBJECTS);
-
-        auto log = logger_singletone::instance();
 
         BOOST_LOG_SEV(log.lg, info) << "Create secure desktop";
 
@@ -101,14 +177,21 @@ BOOL StartInteractiveClientProcess(
 
         // Impersonate client to ensure access to executable file.
 
-        if (!ImpersonateLoggedOnUser(hToken))
-            break;
+
+			if (!ImpersonateLoggedOnUser(hToken))
+			{
+				latError = GetLastError();
+				break;
+			}
+		
+			
+		}
 
         // Initialize the STARTUPINFO structure.
         // Specify that the process runs in the interactive desktop.
         ZeroMemory(&si, sizeof(STARTUPINFO));
         si.cb = sizeof(STARTUPINFO);
-        si.lpDesktop = (LPTSTR)TEXT("winsta0\\default");
+        //si.lpDesktop = (LPTSTR)TEXT("winsta0\\default");
         si.dwX = 500;
         si.dwY = 500;
         si.wShowWindow = true;
@@ -119,19 +202,33 @@ BOOL StartInteractiveClientProcess(
         // Launch the process in the client's logon session.
         if (!CreateEnvironmentBlock(&enviroment, hToken, FALSE))
             break;
-        bResult = CreateProcessAsUser(
-            hToken,            // client's access token
-            lpAppStart, // file to execute (LPCWSTR)pathToExecute,//
-            lpCommandLine,     // command line
-            NULL,              // pointer to process SECURITY_ATTRIBUTES
-            NULL,              // pointer to thread SECURITY_ATTRIBUTES
-            FALSE,             // handles are not inheritable
-            NORMAL_PRIORITY_CLASS | CREATE_UNICODE_ENVIRONMENT | 0x00400000,   // creation flags
-            enviroment,              // pointer to new environment block 
-            NULL,              // name of current directory 
-            &si,               // pointer to STARTUPINFO structure
-            &pi                // receives information about new process
-        );
+		if (fromServcie == FALSE) {
+			bResult = CreateProcessWithTokenW(hToken,     
+				LOGON_WITH_PROFILE,
+				lpAppStart, // file to execute (LPCWSTR)pathToExecute,//
+				lpCommandLine,     // command line
+				NORMAL_PRIORITY_CLASS | CREATE_UNICODE_ENVIRONMENT,              // pointer to process SECURITY_ATTRIBUTES
+				enviroment,              // pointer to new environment block 
+				NULL,              // name of current directory 
+				&si,               // pointer to STARTUPINFO structure
+				&pi                // receives information about new process
+			);
+		}
+		if (fromServcie == TRUE) {
+			bResult = CreateProcessAsUser(
+				hToken,            // client's access token
+				lpAppStart, // file to execute (LPCWSTR)pathToExecute,//
+				lpCommandLine,     // command line
+				NULL,              // pointer to process SECURITY_ATTRIBUTES
+				NULL,              // pointer to thread SECURITY_ATTRIBUTES
+				FALSE,             // handles are not inheritable
+				NORMAL_PRIORITY_CLASS | CREATE_UNICODE_ENVIRONMENT | 0x00400000,   // creation flags
+				enviroment,              // pointer to new environment block 
+				NULL,              // name of current directory 
+				&si,               // pointer to STARTUPINFO structure
+				&pi                // receives information about new process
+			);
+		}
 
 
         // Validate the child process creation.

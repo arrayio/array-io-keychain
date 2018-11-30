@@ -6,6 +6,8 @@
 #include "ServiceBase.h"
 #include <keychain_lib/keychain_logger.hpp>
 
+#define KEYCHAIN_SERVICE
+
 // Internal name of the service 
 #define SERVICE_NAME             L"KeyChainService" 
 

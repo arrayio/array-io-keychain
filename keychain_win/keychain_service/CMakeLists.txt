@@ -27,6 +27,7 @@ include_directories(
 		"${CMAKE_SOURCE_DIR}/libraries/eth-crypto/include"
 		"${CMAKE_SOURCE_DIR}/libraries/secp256k1/include"
 		"${CMAKE_SOURCE_DIR}/libraries/secp256k1_ext/include"
+		"${CMAKE_SOURCE_DIR}/keychain_win/secmodlib/include"
         "${OPENSSL_ROOT_DIR}/include"
         ${Boost_INCLUDE_DIR})
 

@@ -3,6 +3,8 @@
 
 using namespace std;
 
+
+
 static INT_PTR CALLBACK PasswordProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
 
 SecurityManager::SecurityManager() {
@@ -24,11 +26,12 @@ void SecurityManager::CreateSecureDesktop(const std::string& transId) {
 		rem.erase(fSymb, 1);
 		fSymb = rem.find('\"');
 	}
-	wchar_t* found = wcsstr((wchar_t*)rem.c_str(), L"keychain_service_win.exe");
+	size_t lastOfSlash = rem.find_last_of('\\');
+	//wchar_t* found = wcsstr((wchar_t*)rem.c_str(), );
 	wchar_t dst[400] = { 0 };
 	wchar_t args[400] = { 0 };
-	wcsncpy_s(dst, 400, rem.c_str(), (found - (wchar_t*)rem.c_str()));
-	wcscat_s(dst, 400, L"keychain_pass_entry_app.exe");
+	wcsncpy_s(dst, 400, rem.c_str(), lastOfSlash+1);
+	wcscat_s(dst, 400, _passEntryAppName.c_str());
 	wcscat_s(args, 400, L"-transId ");
 	std::wstring _tId(400, L'#');
 	size_t outSize;

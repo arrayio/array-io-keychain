@@ -15,9 +15,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic) BOOL json;
 @property (nonatomic) NSString *blockchain;
-@property (nonatomic) NSString *protocol;
+@property (nonatomic) NSString <Optional> *protocol;
 @property (nonatomic) DataModel *data;
-@property (nonatomic) SwapModel *swap;
+@property (nonatomic) SwapModel <Optional> *swap;
 
 @end
 

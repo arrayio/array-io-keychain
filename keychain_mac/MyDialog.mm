@@ -13,7 +13,7 @@
 #include <unistd.h>
 #include <stdio.h>
 #include <limits.h>
-
+#import "keychain-Swift.h"
 
 @interface MyDialog () {
     NSSecureTextField *pass;
@@ -89,10 +89,17 @@
         [self setupTo];
         [self setupFrom];
         [self setupAmount];
+        [self setupExpertModeButton];
         if (error == nil) {
             [self setupTextTo:model.data.to];
             [self setupTextFrom:model.data.from];
             [self setupTextAmount:model.data.value];
+            if (model.swap != NULL) {
+                [self setupSwapButton];
+                NSLog(@" null %@", model.swap);
+            }
+        } else {
+            NSLog(@"Error %@", error);
         }
     } else {
         [self setupTitleLabel:@"Enter the password for the new key"];
@@ -104,8 +111,15 @@
 
 - (void) setupLogoBlockhain:(NSString *)blockhain {
     if ([blockhain isEqualToString:@"ethereum"]) {
-        NSImageView *imageView = [[NSImageView alloc] initWithFrame:NSMakeRect(22, 224, 25, 39)];
+        ImageAspectView *imageView = [[ImageAspectView alloc] initWithFrame:NSMakeRect(22, 224, 25, 39)];
         NSString *path = [NSString stringWithFormat:@"%@/%@", self.currentPath, @"resources/ethereum.png"];
+        NSImage *image = [[NSImage alloc] initWithContentsOfFile:path];
+        NSLog(@"path %@", path);
+        imageView.image = image;
+        [self.window.contentView addSubview:imageView];
+    } else if ([blockhain isEqualToString:@"bitcoun"]) {
+        ImageAspectView *imageView = [[ImageAspectView alloc] initWithFrame:NSMakeRect(22, 224, 25, 35)];
+        NSString *path = [NSString stringWithFormat:@"%@/%@", self.currentPath, @"resources/bitcoin.png"];
         NSImage *image = [[NSImage alloc] initWithContentsOfFile:path];
         NSLog(@"path %@", path);
         imageView.image = image;
@@ -125,7 +139,7 @@
 
 - (void) setupLogoiew {
     
-    NSImageView *imageView = [[NSImageView alloc] initWithFrame:NSMakeRect(22, 280, 64, 54)];
+    ImageAspectView *imageView = [[ImageAspectView alloc] initWithFrame:NSMakeRect(22, 280, 64, 54)];
     NSImage *image = [[NSImage alloc] initWithContentsOfFile:[NSString stringWithFormat:@"%@/%@", self.currentPath, @"resources/logo.png"]];
     imageView.image = image;
     [self.window.contentView addSubview:imageView];
@@ -252,6 +266,54 @@
     button.cornerRadius = 4;
     button.momentary = YES;
     [self.window.contentView addSubview:button];
+}
+
+- (void) setupExpertModeButton {
+    SYFlatButton *button = [[SYFlatButton alloc] initWithFrame:NSMakeRect(22, 20, 100, 35)];
+    button.target = self;
+    button.action = @selector(expertModeAlert);
+    button.title = @"EXPERT MODE";
+    button.backgroundNormalColor = [NSColor whiteColor];
+    button.titleNormalColor = [HexToRgbColor colorWithHexColorString:@"939497"];
+    button.cornerRadius = 4;
+    button.momentary = YES;
+    [self.window.contentView addSubview:button];
+}
+
+- (void) setupSwapButton {
+    SYFlatButton *button = [[SYFlatButton alloc] initWithFrame:NSMakeRect(142, 20, 100, 35)];
+    button.target = self;
+    button.action = @selector(swapAlert);
+    button.title = @"SWAP";
+    button.backgroundNormalColor = [NSColor whiteColor];
+    button.titleNormalColor = [HexToRgbColor colorWithHexColorString:@"939497"];
+    button.cornerRadius = 4;
+    button.momentary = YES;
+    [self.window.contentView addSubview:button];
+}
+
+
+- (void) expertModeAlert {
+    NSAlert *alert = [NSAlert new];
+    alert.messageText = @"Expert mode";
+    alert.informativeText = self.jsonString;
+    [alert addButtonWithTitle:@"OK"];
+    [alert beginSheetModalForWindow:[self.window.contentView window] completionHandler:^(NSInteger result) {
+        NSLog(@"Success");
+    }];
+}
+
+- (void) swapAlert {
+    NSError *error;
+    ResponseModel *model = [[ResponseModel alloc] initWithString:self.jsonString error:&error];
+
+    NSAlert *alert = [NSAlert new];
+    alert.messageText = @"Swap";
+    alert.informativeText = model.swap.toJSONString;
+    [alert addButtonWithTitle:@"OK"];
+    [alert beginSheetModalForWindow:[self.window.contentView window] completionHandler:^(NSInteger result) {
+        NSLog(@"Success");
+    }];
 }
 
 - (void)windowWillClose:(NSNotification *)notification {

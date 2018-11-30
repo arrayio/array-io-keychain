@@ -11,12 +11,12 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface DataModel : JSONModel
 
-@property (nonatomic) NSString *from;
-@property (nonatomic) NSString *to;
-@property (nonatomic) NSString *value;
-@property (nonatomic) NSString *nonce;
-@property (nonatomic) NSString *gas;
-@property (nonatomic) NSString *gasPrice;
+@property (nonatomic) NSString <Optional> *from;
+@property (nonatomic) NSString <Optional> *to;
+@property (nonatomic) NSString <Optional> *value;
+@property (nonatomic) NSString <Optional> *nonce;
+@property (nonatomic) NSString <Optional> *gas;
+@property (nonatomic) NSString <Optional> *gasPrice;
 @property (nonatomic) NSInteger chainid;
 
 @end

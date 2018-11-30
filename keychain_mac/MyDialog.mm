@@ -69,7 +69,7 @@
 }
 
 - (void)runModal {
-    NSVisualEffectView *cover = [[NSVisualEffectView alloc] initWithFrame:NSMakeRect(0, 0, 575, 270)];
+    NSVisualEffectView *cover = [[NSVisualEffectView alloc] initWithFrame:NSMakeRect(0, 0, self.window.frame.size.width, self.window.frame.size.height - 91)];
     cover.blendingMode = NSVisualEffectBlendingModeBehindWindow;
     cover.material = NSVisualEffectMaterialAppearanceBased;
     cover.state = NSVisualEffectStateFollowsWindowActiveState;
@@ -132,14 +132,14 @@
     label.appearance = [NSAppearance appearanceNamed:NSAppearanceNameAqua];
     label.textColor = [HexToRgbColor colorWithHexColorString:@"4f4e4e"];
     label.font = [NSFont systemFontOfSize:14];
-    label.frame = NSMakeRect(190, 263, 330, 54);
+    label.frame = NSMakeRect(190, self.window.frame.size.height - 98, 330, 54);
     
     [self.window.contentView addSubview:label];
 }
 
 - (void) setupLogoiew {
     
-    ImageAspectView *imageView = [[ImageAspectView alloc] initWithFrame:NSMakeRect(22, 280, 64, 54)];
+    ImageAspectView *imageView = [[ImageAspectView alloc] initWithFrame:NSMakeRect(22, self.window.frame.size.height - 81, 64, 54)];
     NSImage *image = [[NSImage alloc] initWithContentsOfFile:[NSString stringWithFormat:@"%@/%@", self.currentPath, @"resources/logo.png"]];
     imageView.image = image;
     [self.window.contentView addSubview:imageView];
@@ -148,7 +148,7 @@
     label.appearance = [NSAppearance appearanceNamed:NSAppearanceNameAqua];
     label.textColor = [HexToRgbColor colorWithHexColorString:@"4f4e4e"];
     label.font = [NSFont systemFontOfSize:18];
-    label.frame = NSMakeRect(90, 265, 100, 54);
+    label.frame = NSMakeRect(90, self.window.frame.size.height - 96, 100, 54);
     
     [self.window.contentView addSubview:label];
 }

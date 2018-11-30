@@ -54,7 +54,7 @@ byte_seq_t sec_mod_mac::get_passwd_on_create() const
     auto a = get_path();
     
     [ApplicationShared sharedInstance];
-    NSRect frame = NSMakeRect(0, 0, 575, 361);
+    NSRect frame = NSMakeRect(0, 0, 575, 261);
     MyDialog *dialog = [[MyDialog alloc] initWithFrame:frame];
     dialog.isSignTransaction = false;
     dialog.currentPath = [NSString stringWithUTF8String:a.parent_path().c_str()];

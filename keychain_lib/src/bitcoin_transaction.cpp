@@ -169,7 +169,7 @@ std::string bitcoin_transaction_t::toJSON() const {
 std::string bitcoin_transaction_t::vin_t::toJSON() const {
 	std::string res;
 	res = " { ";
-	res += "\"txid\" : \"0x" + bintohex(txid(), true) + "\", ";
+	res += "\"txid\" : \"" + bintohex(txid(), false) + "\", ";
 	res += "\"output_id\" : \"" + std::to_string(output_id()) + "\", ";
 	res += "\"script_len\" : \"" + std::to_string((uint32_t)script_len()) + "\", ";
 	res += "\"script_sig\" : \"" + bintohex(script_sig(), false) + "\", ";

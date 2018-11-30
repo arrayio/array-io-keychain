@@ -41,6 +41,7 @@
 
 #include <kaitai/kaitaistream.h>
 #include "bitcoin_transaction.hpp"
+#include <regex>
 
 #ifdef __linux__
 #  define KEY_DEFAULT_PATH  "/var/keychain"
@@ -71,12 +72,24 @@
 // This allow sing transaction without password entry.
 #define DEF_UNLOCK_SECONDS 0
 
+
 namespace keychain_app {
+
 
 using byte_seq_t = std::vector<char>;
 
 enum struct blockchain_te {unknown=0, bitshares, array, ethereum, bitcoin};
 enum struct sign_te {unknown=0, VRS_canonical, RSV_noncanonical};
+
+
+class streambuf_derived : public std::basic_streambuf<char>
+{
+public:
+    streambuf_derived(char * beg, char * end)
+    {
+        this->setg(beg, beg, end);
+    }
+};
 
 
 class sha2_256_encoder
@@ -487,20 +500,31 @@ static   std::string parse(std::vector<unsigned char> raw, blockchain_te blockch
             {
                 try
                 {
-                    std::ifstream fsstr("trans.bin", std::ifstream::binary);
-                    if (!fsstr.is_open()) {
-                        std::cout << "ERROR" << std::endl;
-                        return 0;
-                    } else {
-//			std::cout << "Ok" << std::endl;
-                    }
-                    kaitai::kstream ks(&fsstr);
+                    streambuf_derived buf((char*) raw.data(),  (char*)raw.data() + raw.size());
+                    std::istream is(&buf);
+
+                    kaitai::kstream ks(&is);
+
                     bitcoin_transaction_t data(&ks);
-//		std::cout << data.version() << std::endl;
-                    std::cout << data.toJSON() << std::endl;
-                    fsstr.close();
-                } catch (std::exception &err) {
-                    std::cout << err.what() << std::endl;
+                    std::string json = data.toJSON();
+
+                    json = fc_light::json::pretty_print(json, 2);
+
+                    not_parsed_tx  not_parsed( blockchain_te::bitcoin, json);
+                    json = fc_light::json::to_pretty_string(fc_light::variant(static_cast<tx_common&>(not_parsed)));
+
+                    std::regex e ("(\\\\n)");
+                    json =  std::regex_replace (json,e,"\n");
+
+                    std::regex r ("(\\\\)");
+                    json =  std::regex_replace (json,r,"");
+
+                    BOOST_LOG_SEV(log.lg, info) << "bitcoin transaction parse complete: \n" + json;
+
+                } catch (std::exception &exc) {
+                    not_parsed_tx  not_parsed( blockchain_te::bitcoin, to_hex(raw.data(), raw.size()));
+                    json = fc_light::json::to_pretty_string(fc_light::variant(static_cast<tx_common&>(not_parsed)));
+                    BOOST_LOG_SEV(log.lg, info) << "bitcoin transaction parse is not complete: \n" + std::string(exc.what()) +"\n " + json;
                 }
 
                 break;
@@ -537,9 +561,8 @@ static   std::string parse(std::vector<unsigned char> raw, blockchain_te blockch
                 {
                     not_parsed_tx  not_parsed( blockchain_te::ethereum, to_hex(raw.data(), raw.size()));
                     json = fc_light::json::to_pretty_string(fc_light::variant(static_cast<tx_common&>(not_parsed)));
-                    BOOST_LOG_SEV(log.lg, info) << "ethereum transaction parse is not complete: \n" + json;
+                    BOOST_LOG_SEV(log.lg, info) << "ethereum transaction parse is not complete: \n" + std::string(exc.what()) +"\n " + json;
                 }
-
                 break;
             }
             default:
@@ -563,7 +586,7 @@ static   std::string parse(std::vector<unsigned char> raw, blockchain_te blockch
           dev::Secret private_key;
           std::array<unsigned char, 65> signature = {0};
           std::vector<unsigned char> chain(32);
-          std::vector<unsigned char> raw(10000);
+          std::vector<unsigned char> raw(params.transaction.length());
           std::string json;
 
           if (!params.chainid.empty())
@@ -678,7 +701,7 @@ struct keychain_command<command_te::sign_hash> : keychain_command_base
             int pk_len = keychain_app::from_hex(key_data, (unsigned char*) private_key.data(), 32);
 
             //NOTE: using vector instead array because move semantic is implemented in the vector
-            std::vector<unsigned char> hash(1024);
+            std::vector<unsigned char> hash(params.hash.length());
             auto trans_len = keychain_app::from_hex(params.hash, hash.data(), hash.size());
             hash.resize(trans_len);
 

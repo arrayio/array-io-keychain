@@ -1,3 +1,4 @@
+#if 0
 #include <bitcoin_transaction.h>
 
 #include <openssl/sha.h>
@@ -251,3 +252,5 @@ std::string p2sh_to_address(std::string const &str) {
 	SHA256_Final((unsigned char*)(void*)(&(checksum[0])), &ctx);
 	return (_str + std::string(checksum.data(), 4));
 }
+
+#endif //0

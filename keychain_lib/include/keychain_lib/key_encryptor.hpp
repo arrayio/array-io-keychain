@@ -29,7 +29,7 @@ public:
 private:
   EVP_CIPHER_CTX* m_ctx;
   static const EVP_CIPHER * get_cipher(keyfile_format::cipher_etype etype);
-  static std::string random_string(size_t length = 32);
+  static std::vector<uint8_t> random_string(size_t length = 16);
 };
 
 }

@@ -1,6 +1,4 @@
-project( KeychainWinService  )
-
-add_subdirectory(./pass_ent_app)
+project( secmodlib  )
 
 cmake_minimum_required( VERSION 3.0.2 )
 
@@ -23,19 +21,17 @@ SET(Boost_LIBRARIES ${BOOST_LIBRARIES_TEMP} ${Boost_LIBRARIES})
 add_definitions(-DUNICODE -D_UNICODE)
 
 include_directories(
-		"./include"
-		"../keychain_lib/include"
-        "../libraries/fc_light/include"
-		"../libraries/eth-crypto/include"
-		"../libraries/secp256k1/include"
-		"../libraries/secp256k1_ext/include"
+		"${CMAKE_SOURCE_DIR}/keychain_win/keychain_agent/include"
+		"${CMAKE_SOURCE_DIR}/keychain_win/secmodlib/include"
+		"${CMAKE_SOURCE_DIR}/keychain_lib/include"
+	    "${CMAKE_SOURCE_DIR}/libraries/fc_light/include"
+		"${CMAKE_SOURCE_DIR}/libraries/eth-crypto/include"
+		"${CMAKE_SOURCE_DIR}/libraries/secp256k1/include"
+		"${CMAKE_SOURCE_DIR}/libraries/secp256k1_ext/include"
         "${OPENSSL_ROOT_DIR}/include"
         ${Boost_INCLUDE_DIR})
 
 
-file(GLOB KEYCHAIN_WIN_SERVICE_SOURCES "./src/*.cpp")
-file(GLOB KEYCHAIN_WIN_SERVICE_INCLUDES "./include/keychain_lib/*.hpp")
-
-add_executable(keychain_service_win ${KEYCHAIN_WIN_SERVICE_SOURCES} ${KEYCHAIN_WIN_SERVICE_INCLUDES})
-target_link_libraries(keychain_service_win keychain_common fc_light secp256k1 eth-crypto ${LIB_OPENSSL} ${Boost_LIBRARIES} Crypt32.lib Userenv.lib Wtsapi32.lib)
-
+file(GLOB KEYCHAIN_SECMOD_SOURCES "./src/*.cpp")
+file(GLOB KEYCHAIN_SECMOD_INCLUDES "./include/keychain_lib/*.hpp" 	"../keychain_win/secmodlib/include/*.hpp")
+add_library(secmodlib ${KEYCHAIN_SECMOD_SOURCES})

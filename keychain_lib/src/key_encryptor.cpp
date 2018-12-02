@@ -40,7 +40,6 @@ keyfile_format::encrypted_data encryptor_singletone::encrypt_keydata(keyfile_for
   keyfile_format::encrypted_data enc_data;
   int enc_length = 0;
   int length = 0;
-  enc_data.iv = std::move(random_string());
   std::vector<uint8_t > enc_byte_data(2048,0x00);//TODO: memory has been allocated with a stock
   //TODO: need to figure out how much memory need to allocate for encrypted data in dependence of cipher algo type
   
@@ -53,16 +52,18 @@ keyfile_format::encrypted_data encryptor_singletone::encrypt_keydata(keyfile_for
   const char* key_data = key.data();
   unsigned char key_hash[64];
   SHA512_CTX ctx;
+  auto iv = std::move(random_string());
   SHA512_Init( &ctx);
   SHA512_Update( &ctx, key_data, key.size());
   SHA512_Final(key_hash, &ctx);
 
-  if(1 != EVP_EncryptInit_ex(m_ctx, get_cipher(etype), NULL, reinterpret_cast<const uint8_t*>(key_hash),
-                             reinterpret_cast<const uint8_t*>(enc_data.iv.c_str())))
+  if(1 != EVP_EncryptInit_ex(m_ctx, get_cipher(etype), NULL, reinterpret_cast<const uint8_t*>(key_hash), iv.data()))
   {
     ERR_print_errors_fp(stderr);
     throw std::runtime_error("Error: EVP_EncryptInit_ex");
   }
+  iv.resize(EVP_CIPHER_CTX_iv_length(m_ctx));
+  enc_data.iv = to_hex(iv.data(), iv.size());
   if(1 != EVP_EncryptUpdate(m_ctx, enc_byte_data.data(), &length, reinterpret_cast<const uint8_t*>(data.c_str()), data.size()))
   {
     ERR_print_errors_fp(stderr);
@@ -106,9 +107,10 @@ std::string encryptor_singletone::decrypt_keydata(const byte_seq_t& key, keyfile
   SHA512_Init( &ctx);
   SHA512_Update( &ctx, key_data, key.size());
   SHA512_Final(key_hash, &ctx);
-
-  if(1 != EVP_DecryptInit_ex(m_ctx, get_cipher(data.cipher_type), NULL, reinterpret_cast<const uint8_t*>(key_hash),
-                             reinterpret_cast<const uint8_t*>(data.iv.c_str())))
+  std::vector<uint8_t> iv(data.iv.size()/2, 0x00);
+  from_hex(data.iv.data(), iv.data(), iv.size());
+  
+  if(1 != EVP_DecryptInit_ex(m_ctx, get_cipher(data.cipher_type), NULL, reinterpret_cast<const uint8_t*>(key_hash), iv.data()))
   {
 //    ERR_print_errors_fp(stderr);
     throw std::runtime_error("Error: EVP_EncryptInit_ex");
@@ -131,16 +133,15 @@ std::string encryptor_singletone::decrypt_keydata(const byte_seq_t& key, keyfile
   return res;
 }
 
-std::string encryptor_singletone::random_string(size_t length)
+std::vector<uint8_t> encryptor_singletone::random_string(size_t length)
 {
-  static const char* base_str = "0123456789qwertyuiopasfghjklzxcvbbnmQWERTYUIOPASDFGHJKLZXCVBNM";
-  static std::uniform_int_distribution<int> dist(0, 61);
+  static std::uniform_int_distribution<int> dist(0, 255);
   static std::mt19937 rand_dev(
-    std::chrono::duration_cast<std::chrono::hours>(std::chrono::system_clock::now().time_since_epoch()).count());
+    std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::system_clock::now().time_since_epoch()).count());
   
-  std::string res(length, 0x00);
+  std::vector<uint8_t>  res(length, 0x00);
   for (size_t i = 0; i < length; ++i) {
-    res[i] = base_str[dist(rand_dev)];
+    res[i] = dist(rand_dev);
   }
   return res;
 }

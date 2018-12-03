@@ -74,11 +74,9 @@ if ( ${CMAKE_HOST_SYSTEM_NAME} MATCHES "Linux")
             COMMAND ${CMAKE_COMMAND} -E  copy_if_different   ${GUI_BINARY} ${KEYCHAIN_BINARY_DIR}
             )
 else()
-	if(MSVC)
-	  include_directories("../keychain_service_win/include")
-	endif(MSVC)
-    include_directories(
-            "../keychain_lib/include"
+	include_directories(
+            "../keychain_lib/include"			
+			"../keychain_lib/secmodlib/include"
             "../libraries/fc_light/include"
             "../libraries/eth-crypto/include"
             "../libraries/secp256k1/include"
@@ -95,7 +93,11 @@ else()
     add_executable(keychain ${KEYCHAIN_SOURCES} ${KEYCHAIN_INCLUDE} )
 
 	if (MSVC)
-		target_link_libraries(keychain keychain_common fc_light eth-crypto ${LIB_OPENSSL} ${Boost_LIBRARIES} Userenv.lib)
+	    target_include_directories(keychain 
+			PUBLIC "${CMAKE_SOURCE_DIR}/keychain_win/secmodlib/include"
+			PUBLIC "${CMAKE_SOURCE_DIR}/keychain_win/keychain_agent/include"
+		)
+		target_link_libraries(keychain keychain_common secmodlib keychain_agent fc_light eth-crypto ${LIB_OPENSSL} ${Boost_LIBRARIES} Crypt32.lib Userenv.lib Wtsapi32.lib)
 	else()
 		target_link_libraries(keychain keychain_common fc_light eth-crypto ${LIB_OPENSSL} ${Boost_LIBRARIES})
 		if(APPLE) 

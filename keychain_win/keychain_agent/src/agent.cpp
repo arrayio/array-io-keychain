@@ -1,5 +1,5 @@
 #include "Agent.h"
-#include "ServiceLogger.h"
+#include <keychain_lib/keychain_logger.hpp>
 
 
 BOOL StartInteractiveClientProcess(
@@ -12,6 +12,7 @@ BOOL StartInteractiveClientProcess(
 {
 	HANDLE      hToken;
 	HDESK       hdesk = NULL;
+	HDESK secureDesktop = NULL;
 	HWINSTA     hwinsta = NULL, hwinstaSave = NULL;
 	PROCESS_INFORMATION pi;
 	PSID pSid = NULL;
@@ -19,6 +20,11 @@ BOOL StartInteractiveClientProcess(
 	BOOL bResult = FALSE;
 	LPVOID enviroment = NULL;
 	DWORD latError = NULL;
+	DWORD groupLength = 50;
+	SID_IDENTIFIER_AUTHORITY siaNt = SECURITY_NT_AUTHORITY;
+	PSID InteractiveSid = NULL;
+	PSID ServiceSid = NULL;
+	BOOL fromServcie = FALSE;
 
 	// Log the client on to the local computer.
 
@@ -33,118 +39,249 @@ BOOL StartInteractiveClientProcess(
 	goto Cleanup;
 	}*/
 
-	if (!WTSQueryUserToken(WTSGetActiveConsoleSessionId(), &hToken))
+	auto log = logger_singletone::instance();
+	do
 	{
-		goto Cleanup;
-	}
 
-	// Save a handle to the caller's current window station.
+		if (!WTSQueryUserToken(WTSGetActiveConsoleSessionId(), &hToken))
+		{
+			latError = GetLastError();
+			if (!OpenProcessToken(GetCurrentProcess(), TOKEN_QUERY,
+				&hToken))
+				latError = GetLastError();
+			PTOKEN_GROUPS groupInfo = (PTOKEN_GROUPS)LocalAlloc(0,
+				groupLength);
+			//if (groupInfo == NULL)
+				//latError = GetLastError();
+			if (groupInfo == NULL) {
+				latError = GetLastError();
+				break;
+			}
 
-	if ((hwinstaSave = GetProcessWindowStation()) == NULL)
-		goto Cleanup;
+			if (!GetTokenInformation(hToken, TokenGroups, groupInfo,
+				groupLength, &groupLength))
+			{
+				if (GetLastError() != ERROR_INSUFFICIENT_BUFFER)
+					break;
 
-	// Get a handle to the interactive window station.
+				LocalFree(groupInfo);
+				groupInfo = NULL;
 
-	hwinsta = OpenWindowStation(
-		_T("winsta0"),                   // the interactive window station 
-		FALSE,                       // handle is not inheritable
-		READ_CONTROL | WRITE_DAC);   // rights to read/write the DACL
+				groupInfo = (PTOKEN_GROUPS)LocalAlloc(0, groupLength);
 
-	if (hwinsta == NULL)
-		goto Cleanup;
+				latError = GetLastError();
 
-	// To get the correct default desktop, set the caller's 
-	// window station to the interactive window station.
+				if (groupInfo == NULL)
+					break;
 
-	if (!SetProcessWindowStation(hwinsta))
-		goto Cleanup;
-	// Get a handle to the interactive desktop.
+				if (!GetTokenInformation(hToken, TokenGroups, groupInfo,
+					groupLength, &groupLength))
+				{
 
-	hdesk = OpenDesktop(
-		_T("default"),     // the interactive window station 
-		0,             // no interaction with other desktop processes
-		FALSE,         // handle is not inheritable
-		READ_CONTROL | // request the rights to read and write the DACL
-		WRITE_DAC |
-		DESKTOP_WRITEOBJECTS |
-		DESKTOP_READOBJECTS);
+					break;
+				}
+			}
+			if (!AllocateAndInitializeSid(&siaNt, 1, SECURITY_INTERACTIVE_RID, 0,
+				0,
+				0, 0, 0, 0, 0, &InteractiveSid))
+			{
+				latError = GetLastError();
+				break;
+			}
 
-	ServiceLogger::getLogger().Log("Create secure desktop");
+			if (!AllocateAndInitializeSid(&siaNt, 1, SECURITY_SERVICE_RID, 0, 0, 0,
+				0, 0, 0, 0, &ServiceSid))
+			{
+				latError = GetLastError();
+				break;
+			}
+			for (DWORD i = 0; i < groupInfo->GroupCount; i += 1)
+			{
+				SID_AND_ATTRIBUTES sanda = groupInfo->Groups[i];
+				PSID Sid = sanda.Sid;
 
-	// Restore the caller's window station.
+				//
+				//  Check to see if the group we're looking at is one of
+				//  the 2 groups we're interested in.
+				//
 
-	if (!SetProcessWindowStation(hwinstaSave))
-		goto Cleanup;
+				if (EqualSid(Sid, InteractiveSid))
+				{
+					break;
+				}
+				else if (EqualSid(Sid, ServiceSid))
+				{
+					fromServcie = TRUE;
+					break;
+				}
+			}
+			latError = GetLastError();
+			//            break;
+		}
+		else {
+			fromServcie = TRUE;
+		}
 
-	if (hdesk == NULL)
-		goto Cleanup;
+		// Save a handle to the caller's current window station.
 
-	// Get the SID for the client's logon session.
+		if ((hwinstaSave = GetProcessWindowStation()) == NULL)
+			break;
 
-	if (!GetLogonSID(hToken, &pSid))
-		goto Cleanup;
+		// Get a handle to the interactive window station.
 
-	// Allow logon SID full access to interactive window station.
+		hwinsta = OpenWindowStation(
+			_T("winsta0"),                   // the interactive window station 
+			FALSE,                       // handle is not inheritable
+			READ_CONTROL | WRITE_DAC);   // rights to read/write the DACL
 
-	if (!AddAceToWindowStation(hwinsta, pSid))
-		goto Cleanup;
+		if (hwinsta == NULL)
+			break;
 
-	// Allow logon SID full access to interactive desktop.
+		// To get the correct default desktop, set the caller's 
+		// window station to the interactive window station.
 
-	if (!AddAceToDesktop(hdesk, pSid))
-		goto Cleanup;
+		if (!SetProcessWindowStation(hwinsta))
+			break;
+		// Get a handle to the interactive desktop.
 
-	// Impersonate client to ensure access to executable file.
+		hdesk = OpenDesktop(
+			_T("default"),     // the interactive window station 
+			0,             // no interaction with other desktop processes
+			FALSE,         // handle is not inheritable
+			READ_CONTROL | // request the rights to read and write the DACL
+			WRITE_DAC |
+			DESKTOP_WRITEOBJECTS |
+			DESKTOP_READOBJECTS);
 
-	if (!ImpersonateLoggedOnUser(hToken))
-		goto Cleanup;
+		secureDesktop = CreateDesktop(L"secdesktop", 
+			NULL, 
+			NULL, 
+			0, 
+			DESKTOP_ALL, 
+			NULL);
 
-	// Initialize the STARTUPINFO structure.
-	// Specify that the process runs in the interactive desktop.
-	ZeroMemory(&si, sizeof(STARTUPINFO));
-	si.cb = sizeof(STARTUPINFO);
-	si.lpDesktop = (LPTSTR)TEXT("winsta0\\default");
-	si.dwX = 500;
-	si.dwY = 500;
-	si.wShowWindow = true;
-	si.hStdError = false;
-	si.hStdInput = false;
-	si.hStdOutput = false;
+		latError = GetLastError();
 
-	// Launch the process in the client's logon session.
-	if (!CreateEnvironmentBlock(&enviroment, hToken, FALSE))
-		goto Cleanup;
-	bResult = CreateProcessAsUser(
-		hToken,            // client's access token
-		lpAppStart, // file to execute (LPCWSTR)pathToExecute,//
-		lpCommandLine,     // command line
-		NULL,              // pointer to process SECURITY_ATTRIBUTES
-		NULL,              // pointer to thread SECURITY_ATTRIBUTES
-		FALSE,             // handles are not inheritable
-		NORMAL_PRIORITY_CLASS | CREATE_UNICODE_ENVIRONMENT | 0x00400000,   // creation flags
-		enviroment,              // pointer to new environment block 
-		NULL,              // name of current directory 
-		&si,               // pointer to STARTUPINFO structure
-		&pi                // receives information about new process
-	);
+		//SwitchDesktop(secureDesktop);
+
+		BOOST_LOG_SEV(log.lg, info) << "Create secure desktop";
+
+		// Restore the caller's window station.
+
+		if (!SetProcessWindowStation(hwinstaSave))
+			break;
+
+		if (hdesk == NULL)
+			break;
+
+		// Get the SID for the client's logon session.
+
+		if (!GetLogonSID(hToken, &pSid))
+			break;
+
+		// Allow logon SID full access to interactive window station.
+
+		if (!AddAceToWindowStation(hwinsta, pSid))
+			break;
+
+		// Allow logon SID full access to interactive desktop.
+
+		if (fromServcie == TRUE) {
+			if (!AddAceToDesktop(hdesk, pSid))
+				break;
+		} else {
+			if (!AddAceToDesktop(secureDesktop, pSid))
+				break;
+		}
+
+		// Impersonate client to ensure access to executable file.
+
+		if (fromServcie == TRUE) {
+			if (!ImpersonateLoggedOnUser(hToken))
+			{
+				latError = GetLastError();
+				break;
+			}
+		}
+
+		//hOldDesktop = GetThreadDesktop(GetCurrentThreadId());
+
+		// Initialize the STARTUPINFO structure.
+		// Specify that the process runs in the interactive desktop.
+		ZeroMemory(&si, sizeof(STARTUPINFO));
+		si.cb = sizeof(STARTUPINFO);
+		if (fromServcie == TRUE) {
+			si.lpDesktop = (LPTSTR)TEXT("winsta0\\default");
+		}
+		if (fromServcie == FALSE) {
+			si.lpDesktop = (LPTSTR)TEXT("winsta0\\secdesktop");
+		}
+		si.dwX = 500;
+		si.dwY = 500;
+		si.wShowWindow = true;
+		si.hStdError = false;
+		si.hStdInput = false;
+		si.hStdOutput = false;
 
 
-    // Validate the child process creation.
-    if (bResult == NULL)
-        goto Cleanup;
+		// Launch the process in the client's logon session.
+		if (!CreateEnvironmentBlock(&enviroment, hToken, FALSE))
+			break;
+		if (fromServcie == FALSE) {
+			//si.lpDesktop = NULL;
+			bResult = CreateProcessW(/*hToken,*/
+				//LOGON_WITH_PROFILE,
+				lpAppStart, // file to execute (LPCWSTR)pathToExecute,//
+				lpCommandLine,     // command line
+				NULL,
+				NULL,
+				TRUE,
+				NORMAL_PRIORITY_CLASS | CREATE_UNICODE_ENVIRONMENT,              // pointer to process SECURITY_ATTRIBUTES
+				enviroment,              // pointer to new environment block 
+				NULL,              // name of current directory 
+				&si,               // pointer to STARTUPINFO structure
+				&pi                // receives information about new process
+			);
+		}
+		if (fromServcie == TRUE) {
+			bResult = CreateProcessAsUser(
+				hToken,            // client's access token
+				lpAppStart, // file to execute (LPCWSTR)pathToExecute,//
+				lpCommandLine,     // command line
+				NULL,              // pointer to process SECURITY_ATTRIBUTES
+				NULL,              // pointer to thread SECURITY_ATTRIBUTES
+				FALSE,             // handles are not inheritable
+				NORMAL_PRIORITY_CLASS | CREATE_UNICODE_ENVIRONMENT,   // creation flags
+				enviroment,              // pointer to new environment block 
+				NULL,              // name of current directory 
+				&si,               // pointer to STARTUPINFO structure
+				&pi                // receives information about new process
+			);
+		}
 
-	ServiceLogger::getLogger().Log("Start process");
-	latError = GetLastError();
-	ServiceLogger::getLogger().Log(std::to_string(latError));
-	RevertToSelf();
+		//WaitForSingleObject(pi.hProcess, INFINITE);
 
-	if (bResult && pi.hProcess != INVALID_HANDLE_VALUE)
-		CloseHandle(pi.hProcess);
+		// Validate the child process creation.
+		if (bResult == NULL)
+			break;
 
-	if (pi.hThread != INVALID_HANDLE_VALUE)
-		CloseHandle(pi.hThread);
+		BOOST_LOG_SEV(log.lg, info) << "Start process";
+		latError = GetLastError();
+		//TODO
+		//figure out why using GetLastError.
+		//Is it normal case (?)
+		BOOST_LOG_SEV(log.lg, info) << std::to_string(latError);
 
-Cleanup:
+		RevertToSelf();
+
+		if (bResult && pi.hProcess != INVALID_HANDLE_VALUE)
+			CloseHandle(pi.hProcess);
+
+		if (pi.hThread != INVALID_HANDLE_VALUE)
+			CloseHandle(pi.hThread);
+
+	} while (false);
+
 
 	if (hwinstaSave != NULL)
 		SetProcessWindowStation(hwinstaSave);

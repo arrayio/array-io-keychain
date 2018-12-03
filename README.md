@@ -18,7 +18,7 @@ Download KeyChain and run the graphic installer if you are using [Windows](#wind
 
 #### MacOs
 
-Download MacOs installer [here](https://github.com/arrayio/array-io-keychain/releases/download/0.5/Keychain.Installer.zip).
+Download MacOs installer [here](https://github.com/arrayio/array-io-keychain/releases/download/0.6/Keychain.Installer.zip).
 
 Follow the steps of the graphic installer. 
 

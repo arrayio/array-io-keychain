@@ -1,6 +1,6 @@
 #include "KeychainService.h" 
 #include "ThreadPool.h"
-#include <ServiceLogger.h>
+#include <keychain_lib/keychain_logger.hpp>
 
 
 KeychainService::KeychainService(PWSTR pszServiceName,
@@ -41,13 +41,13 @@ void KeychainService::ServiceWorkerThread(void)
 {
 	// Periodically check if the service is stopping. 
 	NamedPipeServer _server;
-	ServiceLogger::getLogger().Log("Start service for listening");
+	//ServiceLogger::getLogger().Log("Start service for listening");
 	while (!m_fStopping)
 	{
 		// Perform main service function here...
 		_server.ListenChannel();
 	}
-	ServiceLogger::getLogger().Log("Stop service for listening");
+	//ServiceLogger::getLogger().Log("Stop service for listening");
 	// Signal the stopped event. 
 	SetEvent(m_hStoppedEvent);
 	_server.~NamedPipeServer();

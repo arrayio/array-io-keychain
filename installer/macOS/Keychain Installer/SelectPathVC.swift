@@ -15,11 +15,16 @@ class SelectPathVC: NSViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        let pathUrl = FileManager.default.homeDirectoryForCurrentUser
-        print("url")
-        print(pathUrl.appendingPathComponent(Consts.Paths.DEFAULT_FOLDER_NAME, isDirectory: true))
-        pathControl.url = pathUrl.appendingPathComponent(Consts.Paths.DEFAULT_FOLDER_NAME, isDirectory: true)
+        if #available(OSX 10.12, *) {
+            let pathUrl = FileManager.default.homeDirectoryForCurrentUser
+            print("url")
+            print(pathUrl.appendingPathComponent(Consts.Paths.DEFAULT_FOLDER_NAME, isDirectory: true))
+            pathControl.url = pathUrl.appendingPathComponent(Consts.Paths.DEFAULT_FOLDER_NAME, isDirectory: true)
+        } else {
+            let pathUrl = NSHomeDirectory()
+            pathControl.url = URL(fileURLWithPath: pathUrl + "/" + Consts.Paths.DEFAULT_FOLDER_NAME)
+            // Fallback on earlier versions
+        }
         LocalStorage.shared.pathForInstall = pathControl.url?.path ?? ""
     }
     

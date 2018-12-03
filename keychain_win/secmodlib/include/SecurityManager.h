@@ -2,6 +2,9 @@
 #define _SECURITY_MANG_H
 #include "Agent.h"
 #include <Windows.h>
+#include <string>
+
+using namespace std;
 
 class SecurityManager {
 public:
@@ -9,6 +12,7 @@ public:
 	~SecurityManager();
 	void CreateSecureDesktop(const std::string& transId);
 private :
-
+	
+	const std::wstring _passEntryAppName = L"keychain_win_gui.exe";
 };
 #endif

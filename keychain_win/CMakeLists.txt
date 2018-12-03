@@ -1,0 +1,4 @@
+add_subdirectory(./keychain_agent)
+add_subdirectory(./keychain_gui)
+add_subdirectory(./keychain_service)
+add_subdirectory(./secmodlib)

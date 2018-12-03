@@ -7,3 +7,6 @@
 [submodule "libraries/eth-crypto"]
 	path = libraries/eth-crypto
 	url = git@github.com:arrayio/eth-crypto.git
+[submodule "libraries/kaitai_struct_cpp_stl_runtime"]
+	path = libraries/kaitai_struct_cpp_stl_runtime
+	url = git@github.com:kaitai-io/kaitai_struct_cpp_stl_runtime.git

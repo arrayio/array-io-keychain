@@ -6,18 +6,17 @@ const rlp = require('rlp');
 let flag = false;
 let buffer;
 
-const API_KEY = 'https://ropsten.infura.io/v3/046804e3dd3240b09834531326f310cf';
-let web3 = new Web3(new Web3.providers.HttpProvider(API_KEY));
-
-const keyname = 'test1@6de493f01bf590c0';
-
-const toAdd = '0xE8899BA12578d60e4D0683a596EDaCbC85eC18CC';
-const publicKey = '0x6a99ea8d33b64610e1c9ff689f3e95b6959a0cc039621154c7b69c019f015f4521bb9f3fc36a4d447002787d4d408da968185fc5116b8ffd385e8ad3196812e2';
-const fromAdd = ethUtil.publicToAddress(publicKey).toString('hex');
-const valueTx = 100;
-console.log('fromAddress ', fromAdd);
-
 window.onload = function () {
+  let web3;
+  let keyname;
+  let toAdd;
+
+  // todo get public key from the key
+  const publicKey = '0x6a99ea8d33b64610e1c9ff689f3e95b6959a0cc039621154c7b69c019f015f4521bb9f3fc36a4d447002787d4d408da968185fc5116b8ffd385e8ad3196812e2';
+  const fromAdd = ethUtil.publicToAddress(publicKey).toString('hex');
+  const valueTx = 100;
+  console.log('fromAddress ', fromAdd);
+
   const ws = new WebSocket('ws://localhost:16384/');
 
   ws.onopen = function() {
@@ -51,6 +50,11 @@ window.onload = function () {
 
 
   document.getElementById('btn_SIGN').addEventListener('click', function() {
+    const endpoint = document.getElementById('input-endpoint').value;
+    web3 = new Web3(new Web3.providers.HttpProvider(endpoint));
+    keyname = document.getElementById('input-keyname').value;
+    toAdd = document.getElementById('input-to-address').value;
+
     signTransacton();
   });
 
@@ -89,86 +93,84 @@ window.onload = function () {
     ws.send(JSON.stringify(command));
     log(`Raw hex: ${rawHex} send to keychain`);
   }
+
+  const buildTxSinature = async (signature, fromAddress, to, value, data = '') => {
+    console.log('buildTxSinature')
+    const nonce = await web3.eth.getTransactionCount(fromAddress);
+    const gasPrice = await web3.eth.getGasPrice().then(wei => Number(wei))
+    const chainIdHere = 3;
+  
+    const draftTxParams = {
+      nonce,
+      gasPrice,
+      to,
+      value,
+      data,
+      // EIP 155 chainId - mainnet: 1, ropsten: 3, rinkeby: 4
+      chainId: chainIdHere
+    }
+  
+    const gasLimit = 21000; // await web3.eth.estimateGas(draftTxParams) ||
+  
+    let txParams = {
+      ...draftTxParams,
+      gasLimit
+    }
+  
+    if (signature) {
+      const ret = rsv(signature, chainIdHere);
+      txParams = { ...txParams,
+        ...ret
+      };
+    }
+  
+    console.log('tx keychain params', txParams)
+  
+    class EthereumTxKeychain extends EthereumTx {
+      hash(includeSignature) {
+        if (includeSignature === undefined) includeSignature = true
+  
+        // EIP155 spec:
+        // when computing the hash of a transaction for purposes of signing or recovering,
+        // instead of hashing only the first six elements (ie. nonce, gasprice, startgas, to, value, data),
+        // hash nine elements, with v replaced by CHAIN_ID, r = 0 and s = 0
+  
+        let items
+        if (includeSignature) {
+          items = this.raw
+        } else {
+          if (this._chainId > 0) {
+            const raw = this.raw.slice()
+            this.v = this._chainId
+            this.r = 0
+            this.s = 0
+            items = this.raw
+            this.raw = raw
+          } else {
+            items = this.raw.slice(0, 6)
+          }
+        }
+        // create hash
+        return rlp.encode(items)
+      }
+    }
+  
+    const tx = new EthereumTxKeychain(txParams);
+    if (flag) {
+      buffer = tx.serialize()
+    } else {
+      buffer = tx.hash(false);
+    }
+  
+    const hex = buffer.toString('hex')
+  
+    console.log('final hex: ', hex); 
+    return hex;
+  }
 }
 
 function saveRawHex(rawHex) {
   document.getElementById('rawHex').innerText = rawHex;
-}
-
-
-
-const buildTxSinature = async (signature, fromAddress, to, value, data = '') => {
-  console.log('buildTxSinature')
-  const nonce = await web3.eth.getTransactionCount(fromAddress);
-  const gasPrice = await web3.eth.getGasPrice().then(wei => Number(wei))
-  const chainIdHere = 3;
-
-  const draftTxParams = {
-    nonce,
-    gasPrice,
-    to,
-    value,
-    data,
-    // EIP 155 chainId - mainnet: 1, ropsten: 3, rinkeby: 4
-    chainId: chainIdHere
-  }
-
-  const gasLimit = 21000; // await web3.eth.estimateGas(draftTxParams) ||
-
-  let txParams = {
-    ...draftTxParams,
-    gasLimit
-  }
-
-  if (signature) {
-    const ret = rsv(signature, chainIdHere);
-    txParams = { ...txParams,
-      ...ret
-    };
-  }
-
-  console.log('tx keychain params', txParams)
-
-  class EthereumTxKeychain extends EthereumTx {
-    hash(includeSignature) {
-      if (includeSignature === undefined) includeSignature = true
-
-      // EIP155 spec:
-      // when computing the hash of a transaction for purposes of signing or recovering,
-      // instead of hashing only the first six elements (ie. nonce, gasprice, startgas, to, value, data),
-      // hash nine elements, with v replaced by CHAIN_ID, r = 0 and s = 0
-
-      let items
-      if (includeSignature) {
-        items = this.raw
-      } else {
-        if (this._chainId > 0) {
-          const raw = this.raw.slice()
-          this.v = this._chainId
-          this.r = 0
-          this.s = 0
-          items = this.raw
-          this.raw = raw
-        } else {
-          items = this.raw.slice(0, 6)
-        }
-      }
-      // create hash
-      return rlp.encode(items)
-    }
-  }
-
-  const tx = new EthereumTxKeychain(txParams);
-  if (flag) {
-    buffer = tx.serialize()
-  } else {
-    buffer = tx.hash(false);
-  }
-
-  const hex = buffer.toString('hex')
-
-  console.log('final hex: ', hex); 
-  return hex;
 }
 
 const rsv = (signature, chainIdHere) => {

@@ -7,7 +7,7 @@ keychain_gui_win::keychain_gui_win(QWidget *parent)
 	setWindowFlags(Qt::FramelessWindowHint);
 	setFixedWidth(500);
 	setFixedHeight(347);
-	setStyleSheet("background-image: url(:/keychain_gui_win/Resources/background.png)");
+	setStyleSheet("background-image: url(:/keychain_gui_win/background.png)");
 
 	OKButton = new QPushButton("SIGN", this);
 	CancelButton = new QPushButton("CANCEL", this);
@@ -18,7 +18,7 @@ keychain_gui_win::keychain_gui_win(QWidget *parent)
 	OKButton->setFixedHeight(25);
 	OKButton->setFlat(true);
 	//OKButton->setStyleSheet("background-image: url(:/keychain_gui_win/Resources/but_ok.png);padding:0px;margin:0px;font:12pt \"Segoe UI\";");
-	OKButton->setStyleSheet("color:white;background-image: url(:/keychain_gui_win/Resources/but_ok.png);border-style:outset;border-width:0px;border-radius:5px;font:9pt \"Segoe UI\"");
+	OKButton->setStyleSheet("color:white;background-image: url(:/keychain_gui_win/but_ok.png);border-style:outset;border-width:0px;border-radius:5px;font:9pt \"Segoe UI\"");
 	OKButton->setWindowFlags(Qt::FramelessWindowHint);
 	CancelButton->move(291, 301);
 	CancelButton->setFixedWidth(89);
@@ -26,7 +26,7 @@ keychain_gui_win::keychain_gui_win(QWidget *parent)
 	CancelButton->setFlat(true);
 	CancelButton->setWindowFlags(Qt::FramelessWindowHint);
 	//CancelButton->setStyleSheet("background-image: url(:/keychain_gui_win/Resources/but_cancel.png);padding:0px;margin:0px;font:12pt \"Segoe UI\";");
-	CancelButton->setStyleSheet("color:rgb(147,148,151);background-image: url(:/keychain_gui_win/Resources/but_cancel.png);border-style:outset;border-width:0px;border-radius:5px;font:9pt \"Segoe UI\"");
+	CancelButton->setStyleSheet("color:rgb(147,148,151);background-image: url(:/keychain_gui_win/but_cancel.png);border-style:outset;border-width:0px;border-radius:5px;font:9pt \"Segoe UI\"");
 
 	descriptionLabel = new QLabel(this);
 	descriptionLabel->setStyleSheet("font:9pt \"Segoe UI\";background:transparent;");
@@ -35,7 +35,7 @@ keychain_gui_win::keychain_gui_win(QWidget *parent)
 
 	cryptoType = new SecureWindowElement(this);
 	cryptoType->SetPosition(0, 96, 116, 346);
-	cryptoType->SetLabelStyle("background-image:url(:/keychain_gui_win/Resources/bg_ephir.png) no-repeat;");
+	cryptoType->SetLabelStyle("background-image:url(:/keychain_gui_win/bg_ephir.png) no-repeat;");
 	cryptoType->SetValueStyle("font:12pt \"Segoe UI\";background:transparent;color:rgb(123,141,167);");
 	cryptoType->SetLabelOffset(100);
 	cryptoType->SetLabelAndValue("empty=etherium");
@@ -113,7 +113,7 @@ keychain_gui_win::keychain_gui_win(QWidget *parent)
 	passPhrase->setAlignment(Qt::AlignBottom | Qt::AlignRight);
 
 	passPhraseValue = new QLineEdit(this);
-	passPhraseValue->setStyleSheet("font:12pt \"Segoe UI\";background-image:url(:/keychain_gui_win/Resources/bg_edit.png);border-style:outset;border-width:0px;");
+	passPhraseValue->setStyleSheet("font:12pt \"Segoe UI\";background-image:url(:/keychain_gui_win/bg_edit.png);border-style:outset;border-width:0px;");
 	passPhraseValue->setText("Passphrase");
 	passPhraseValue->setFixedWidth(346);
 	passPhraseValue->move(131, 274);

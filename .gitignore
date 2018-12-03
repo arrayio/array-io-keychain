@@ -106,3 +106,5 @@ fastlane/test_output
 
 iOSInjectionProject/
 /keychain_win/CMakeFiles*
+/keychain_gui_win/keychain_pass_entry_app.dir*
+/keychain_gui_win/keychain_pass_entry_app.dir/*

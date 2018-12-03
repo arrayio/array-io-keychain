@@ -10,7 +10,7 @@ PopupWindow::PopupWindow(QWidget *parent)
 	header = new QLabel(this);
 	body = new QLabel(this);
 	more = new QLabel(this);
-	this->setStyleSheet("background-image:url(:/keychain_gui_win/Resources/notify_back.png)");
+	this->setStyleSheet("background-image:url(:/keychain_gui_win/notify_back.png)");
 	header->setText("Transaction is secure");
 	header->setStyleSheet("background:transparent;width:150px;height:12px;text-align:center;color:rgb(81,172,74)");
 	header->move(0, 10);

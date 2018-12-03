@@ -7,7 +7,7 @@ LockIcon::LockIcon(QWidget * parent)
 {
 	this->setFixedHeight(25);
 	this->setFixedWidth(25);
-	this->setStyleSheet("background-image:url(:/keychain_gui_win/Resources/lock.png);border-style:outset;border-width:0px;height:22px;width:22px");
+	this->setStyleSheet("background-image:url(:/keychain_gui_win/lock.png);border-style:outset;border-width:0px;height:22px;width:22px");
 	
 }
 

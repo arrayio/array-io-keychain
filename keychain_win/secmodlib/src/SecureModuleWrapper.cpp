@@ -61,7 +61,7 @@ keychain_app::byte_seq_t SecureModuleWrapper::_startSecureDesktop(const std::str
 		throw std::runtime_error("Error: can't receive password: INVALID_HANDLE_VALUE");
 
     const int MAX_WAIT_TIME = 1000;
-    if (WaitForSingleObject(hPipe, MAX_WAIT_TIME) == WAIT_OBJECT_0)
+    /*if (WaitForSingleObject(hPipe, MAX_WAIT_TIME) == WAIT_OBJECT_0)
     {
         FlushFileBuffers(hPipe);
         DisconnectNamedPipe(hPipe);
@@ -69,7 +69,7 @@ keychain_app::byte_seq_t SecureModuleWrapper::_startSecureDesktop(const std::str
         throw std::runtime_error("Cannot connect to pipe");
     }
     else
-    {
+    {*/
         if (ConnectNamedPipe(hPipe, NULL) != FALSE)   // wait for someone to connect to the pipe
         {
             while (ReadFile(hPipe, buffer, sizeof(buffer) - 1, &dwRead, NULL) != FALSE)
@@ -102,8 +102,8 @@ keychain_app::byte_seq_t SecureModuleWrapper::_startSecureDesktop(const std::str
             FlushFileBuffers(hPipe);
             DisconnectNamedPipe(hPipe);
             CloseHandle(hPipe);
-        }
+		};
 
-	}
+	//}
 	return result_pass;
 }

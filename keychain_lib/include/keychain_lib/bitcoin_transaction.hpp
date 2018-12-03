@@ -1,4 +1,3 @@
-#if 0
 #ifndef BITCOIN_TRANSACTION_H_
 #define BITCOIN_TRANSACTION_H_
 
@@ -323,5 +322,3 @@ public:
 };
 
 #endif  // BITCOIN_TRANSACTION_H_
-
-#endif //0

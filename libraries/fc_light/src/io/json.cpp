@@ -690,7 +690,7 @@ namespace fc_light
    }
 
 
-    fc_light::string pretty_print( const fc_light::string& v, uint8_t indent ) {
+    fc_light::string json::pretty_print( const fc_light::string& v, uint8_t indent ) {
       int level = 0;
       fc_light::stringstream ss;
       bool first = false;

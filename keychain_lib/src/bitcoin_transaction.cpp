@@ -1,5 +1,4 @@
-#if 0
-#include <bitcoin_transaction.h>
+#include <bitcoin_transaction.hpp>
 
 #include <openssl/sha.h>
 #include <iostream>

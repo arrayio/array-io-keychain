@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Web3 Signer</title>
+    <link rel="stylesheet" href="/assets/spectre.min.css">
+  </head>
+  <body>
+    <div class="container">
+      <div class="columns">
+        <div class="column col-2">
+          <img src="/assets/logo.png">
+        </div>
+        <div class="column col mx-2 my-2">
+          <h1>Web3 Signer</h1>
+          <h6>On this page you can test all WebSocket commands of Keychain 0.0.4</h6>
+        </div>
+      </div>
+      <div class="columns m-1">
+        <div class="column col-4 ">
+          <button class="btn btn-primary" id="btn_SIGN">Sign</button>
+          <button class="btn btn-primary" id="btn_PUBLISH">Publish</button>
+        </div>
+      </div>
+    </div>  
+    <div class="container">
+      <div class="columns">
+        <div class="column col-6">
+          <label class="form-label" for="rowHex">Row Hex</label>
+          <textarea class="form-input" id="rowHex" placeholder="{}" rows="9"></textarea>
+        </div>
+        <div class="column col-6">
+          <label class="form-label" for="result">Result</label>
+          <textarea class="form-input" id="result" placeholder="{}" rows="9"></textarea>
+        </div>
+      </div>
+      <div class="columns">
+        <div class="column col-6"></div>
+        <div class="column col-6" id="etherscanLink"></div>
+      </div>      
+    </div>
+    <script src="dist/main.js"></script>
+    
+  </body>
+</html>

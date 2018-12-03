@@ -310,16 +310,11 @@ struct keychain_command<command_te::sign_hex> : keychain_command_base
     {
         tx_common(bool json_, blockchain_te blockchain_):
                 json(json_), blockchain(blockchain_){}
-
+        tx_common(bool json_, blockchain_te blockchain_, std::string raw):
+                json(json_), blockchain(blockchain_){data = fc_light::variant(raw);}
         bool json;
         blockchain_te blockchain;
         fc_light::variant data;
-    };
-
-    struct not_parsed_tx : tx_common
-    {
-        not_parsed_tx(blockchain_te blockchain, std::string raw) :
-                tx_common(false, blockchain) { data = fc_light::variant(raw); }
     };
 
     struct eth_tx : tx_common
@@ -510,8 +505,8 @@ static   std::string parse(std::vector<unsigned char> raw, blockchain_te blockch
 
                     json = fc_light::json::pretty_print(json, 2);
 
-                    not_parsed_tx  not_parsed( blockchain_te::bitcoin, json);
-                    json = fc_light::json::to_pretty_string(fc_light::variant(static_cast<tx_common&>(not_parsed)));
+                    tx_common common( true, blockchain_te::bitcoin, json);
+                    json = fc_light::json::to_pretty_string(fc_light::variant(common));
 
                     std::regex e ("(\\\\n)");
                     json =  std::regex_replace (json,e,"\n");
@@ -522,8 +517,8 @@ static   std::string parse(std::vector<unsigned char> raw, blockchain_te blockch
                     BOOST_LOG_SEV(log.lg, info) << "bitcoin transaction parse complete: \n" + json;
 
                 } catch (std::exception &exc) {
-                    not_parsed_tx  not_parsed( blockchain_te::bitcoin, to_hex(raw.data(), raw.size()));
-                    json = fc_light::json::to_pretty_string(fc_light::variant(static_cast<tx_common&>(not_parsed)));
+                    tx_common common( false, blockchain, to_hex(raw.data(), raw.size()));
+                    json = fc_light::json::to_pretty_string(fc_light::variant(common));
                     BOOST_LOG_SEV(log.lg, info) << "bitcoin transaction parse is not complete: \n" + std::string(exc.what()) +"\n " + json;
                 }
 
@@ -546,29 +541,29 @@ static   std::string parse(std::vector<unsigned char> raw, blockchain_te blockch
                     fc_light::variant swap;
                     if (swap_action(data, swap))
                     {
-                        eth_swap_tx  parsed(blockchain_te::ethereum,  nonce, gasPrice, gas, chainId, from, to, value, swap);
+                        eth_swap_tx  parsed(blockchain,  nonce, gasPrice, gas, chainId, from, to, value, swap);
                         json = fc_light::json::to_pretty_string(fc_light::variant(static_cast<tx_swap_common&>(parsed)));
                         BOOST_LOG_SEV(log.lg, info) << "ethereum transaction swap-on-line specific-fields parse complete: \n" + json;
                     }
                     else
                     {
-                        eth_tx  parsed(blockchain_te::ethereum,  nonce, gasPrice, gas, chainId, from, to, value);
+                        eth_tx  parsed(blockchain,  nonce, gasPrice, gas, chainId, from, to, value);
                         json = fc_light::json::to_pretty_string(fc_light::variant(static_cast<tx_common&>(parsed)));
                         BOOST_LOG_SEV(log.lg, info) << "ethereum transaction parse complete: \n" + json;
                     }
                 }
                 catch (const std::exception& exc)
                 {
-                    not_parsed_tx  not_parsed( blockchain_te::ethereum, to_hex(raw.data(), raw.size()));
-                    json = fc_light::json::to_pretty_string(fc_light::variant(static_cast<tx_common&>(not_parsed)));
+                    tx_common common( false, blockchain, to_hex(raw.data(), raw.size()));
+                    json = fc_light::json::to_pretty_string(fc_light::variant(common));
                     BOOST_LOG_SEV(log.lg, info) << "ethereum transaction parse is not complete: \n" + std::string(exc.what()) +"\n " + json;
                 }
                 break;
             }
             default:
             {
-                not_parsed_tx  not_parsed( blockchain, to_hex(raw.data(), raw.size()));
-                json = fc_light::json::to_pretty_string(fc_light::variant(static_cast<tx_common&>(not_parsed)));
+                tx_common common( false, blockchain, to_hex(raw.data(), raw.size()));
+                json = fc_light::json::to_pretty_string(fc_light::variant(common));
                 BOOST_LOG_SEV(log.lg, info) << " transaction parse is not implementated: \n" + json;
             }
         }

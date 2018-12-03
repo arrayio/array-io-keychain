@@ -9,7 +9,6 @@ let buffer;
 const API_KEY = 'https://ropsten.infura.io/v3/046804e3dd3240b09834531326f310cf';
 let web3 = new Web3(new Web3.providers.HttpProvider(API_KEY));
 
-const ws = new WebSocket('ws://localhost:16384/');
 const keyname = 'test1@6de493f01bf590c0';
 
 const toAdd = '0xE8899BA12578d60e4D0683a596EDaCbC85eC18CC';
@@ -18,68 +17,83 @@ const fromAdd = ethUtil.publicToAddress(publicKey).toString('hex');
 const valueTx = 100;
 console.log('fromAddress ', fromAdd);
 
-ws.onopen = function() {
-  document.body.style.backgroundColor = '#cfc';
-};
-ws.onclose = function() {
-  document.body.style.backgroundColor = null;
-};
-
 window.onload = function () {
+  const ws = new WebSocket('ws://localhost:16384/');
+
+  ws.onopen = function() {
+    document.body.style.backgroundColor = '#cfc';
+  };
+  ws.onclose = function() {
+    document.body.style.backgroundColor = null;
+  };
+  ws.onclose = function () {
+    log('Websocket has been closed. Check for errors in the browser console and if KeyChain is installed');
+  }
+
+  ws.onmessage = (async (response) => {
+    console.log(response.data)
+    const data = JSON.parse(response.data);
+    console.log(data.result); // signature
+    log(`Got result from keychain: ${data.result}`);
+    log(`Building transaction with signed by KeyChain transaction`);
+  
+    flag = true;
+    const rawHex = await buildTxSinature(
+      data.result, // signature
+      fromAdd,
+      toAdd,
+      valueTx
+    )
+    log(`Transaction built, rawHex: ${rawHex}`);
+    log(`Please, publish your transaction`);
+    saveRawHex(rawHex);
+  });
+
+
   document.getElementById('btn_SIGN').addEventListener('click', function() {
     signTransacton();
   });
+
   document.getElementById('btn_PUBLISH').addEventListener('click', async function() {
-    const rowHex = document.getElementById('rowHex').value;
+    const rawHex = document.getElementById('rawHex').innerText;
+    console.log('rawHex from element: ', rawHex);
     try {
-      const result = await web3.eth.sendSignedTransaction(`0x${rowHex}`);
-      document.getElementById('result').value = JSON.stringify(result, undefined, 2);
+      document.getElementById('progress').style.display = 'inline-block';
+      const result = await web3.eth.sendSignedTransaction(`0x${rawHex}`);
+      document.getElementById('progress').style.display = 'none';
+      log(`Transfer result: \n${JSON.stringify(result, undefined, 2)}`);
       document.getElementById('etherscanLink').innerHTML = `<a href='https://ropsten.etherscan.io/tx/${result.transactionHash}'>Etherscan Link</a>`;
     } catch (e) {
       console.log(e);
-      document.getElementById('result').value = e;
+      log(e);
     }
   });
-}
 
-function saveRowHex(rowHex) {
-  document.getElementById('rowHex').value = rowHex;
-}
-
-async function signTransacton() {
-  const rawHex = await buildTxSinature(
-    null, // signature
-    fromAdd,
-    toAdd,
-    valueTx
-  )
-  console.log('sign tx:', rawHex);
-  const command = {
-    command: "sign_hex",
-    params: {
-      keyname,
-      transaction: rawHex,
-      blockchain_type: "ethereum",      
+  async function signTransacton() {
+    log('Building transaction signature');
+    const rawHex = await buildTxSinature(
+      null, // signature
+      fromAdd,
+      toAdd,
+      valueTx
+    );
+    console.log('sign tx:', rawHex);
+    const command = {
+      command: "sign_hex",
+      params: {
+        keyname,
+        transaction: rawHex,
+        blockchain_type: "ethereum",      
+      }
     }
+    ws.send(JSON.stringify(command));
+    log(`Raw hex: ${rawHex} send to keychain`);
   }
-  ws.send(JSON.stringify(command));
 }
 
-ws.onmessage = (async (response) => {
-  console.log(response.data)
-  const data = JSON.parse(response.data);
-  console.log(data.result); // signature
-
-  flag = true;
-  const rawHex = await buildTxSinature(
-    data.result, // signature
-    fromAdd,
-    toAdd,
-    valueTx
-  )
-  saveRowHex(rawHex);
-  console.log('keychain tx:', rawHex);  
-});
+function saveRawHex(rawHex) {
+  document.getElementById('rawHex').innerText = rawHex;
+}
 
 
 
@@ -168,4 +182,12 @@ const rsv = (signature, chainIdHere) => {
   }
   ret.v = tmpV;
   return ret;
+}
+
+function log(message) {
+  const loggerElement = document.getElementById('log');
+  if (loggerElement.value) {
+    loggerElement.value += '\n';
+  }
+  loggerElement.value += message;
 }

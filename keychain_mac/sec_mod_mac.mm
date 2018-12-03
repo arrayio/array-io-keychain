@@ -36,9 +36,20 @@ byte_seq_t sec_mod_mac::get_passwd_trx_raw(const std::string& raw_trx) const
     
     [ApplicationShared sharedInstance];
     
-    NSRect frame = NSMakeRect(0, 0, 575, 361);
+    NSError *error;
+    ResponseModel *model = [[ResponseModel alloc] initWithString:[NSString stringWithUTF8String:raw_trx.c_str()] error:&error];
+    NSLog(@"Error %@", error);
+
+//    if (error == nil && model.swap != NULL) {
+//
+//    }
+    
+    NSRect frame = NSMakeRect(0, 0, (error == nil && model.swap != NULL) ? 825 : 575, (error == nil && model.swap != NULL) ? 521 : 361);
     MyDialog *dialog = [[MyDialog alloc] initWithFrame:frame];
     dialog.jsonString = [NSString stringWithUTF8String:raw_trx.c_str()];
+    dialog.jsonModel = model;
+    dialog.isRawTransaction = (error == nil) ? false : true;
+//    dialog.isSwap = (model.swap != NULL) ? true : false;
     dialog.isSignTransaction = true;
     dialog.currentPath = [NSString stringWithUTF8String:a.parent_path().c_str()];
     [dialog runModal];

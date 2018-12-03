@@ -83,23 +83,37 @@
     [self setupSignButton];
     [self setupCancelButton];
     if (_isSignTransaction) {
-        NSError *error;
-        ResponseModel *model = [[ResponseModel alloc] initWithString:self.jsonString error:&error];
-        [self setupLogoBlockhain:model.blockchain];
+//        NSError *error;
+//        ResponseModel *model = [[ResponseModel alloc] initWithString:self.jsonString error:&error];
+        [self setupLogoBlockhain:self.jsonModel.blockchain];
         [self setupTo];
         [self setupFrom];
         [self setupAmount];
         [self setupExpertModeButton];
-        if (error == nil) {
-            [self setupTextTo:model.data.to];
-            [self setupTextFrom:model.data.from];
-            [self setupTextAmount:model.data.value];
-            if (model.swap != NULL) {
-                [self setupSwapButton];
-                NSLog(@" null %@", model.swap);
+        if (!self.isRawTransaction) {
+            [self setupTextTo:self.jsonModel.data.to];
+            [self setupTextFrom:self.jsonModel.data.from];
+            [self setupTextAmount:self.jsonModel.data.value];
+            // TODO: change to swap!!!
+            if (self.jsonModel.swap != NULL) {
+                [self setupSwapAddress];
+                if ([self.jsonModel.swap.action isEqualToString:@"createSwap"]) {
+                    [self setupSwapAdditional:@"Hash"];
+                    [self setupTextSwapAdditional:self.jsonModel.swap.hashVar];
+                } else if ([self.jsonModel.swap.action isEqualToString:@"refund"]) {
+                    [self setupSwapAdditional:@""];
+                    [self setupTextSwapAdditional:@""];
+                } else if ([self.jsonModel.swap.action isEqualToString:@"Withdraw"]) {
+                    [self setupSwapAdditional:@"Secret"];
+                    [self setupTextSwapAdditional:self.jsonModel.swap.secret];
+                }
+                [self setupSwapAction];
+                [self setupLogoSwap];
+                [self setupTextSwapAddress:self.jsonModel.swap.address];
+                [self setupTextSwapAction:self.jsonModel.swap.action];
+                //[self setupSwapButton];
+                NSLog(@" null %@", self.jsonModel.swap);
             }
-        } else {
-            NSLog(@"Error %@", error);
         }
     } else {
         [self setupTitleLabel:@"Enter the password for the new key"];
@@ -107,6 +121,8 @@
         [self setupLabelConfirmPassphrase];
     }
     [[NSApplication sharedApplication] runModalForWindow:self.window];
+    
+    [self.window setFrame:NSMakeRect(0, 0, 575, 500) display:true];
 }
 
 - (void) setupLogoBlockhain:(NSString *)blockhain {
@@ -127,6 +143,15 @@
     }
 }
 
+- (void) setupLogoSwap {
+    ImageAspectView *imageView = [[ImageAspectView alloc] initWithFrame:NSMakeRect(22, 382, 50, 28)];
+    NSString *path = [NSString stringWithFormat:@"%@/%@", self.currentPath, @"resources/swap logo.png"];
+    NSImage *image = [[NSImage alloc] initWithContentsOfFile:path];
+    NSLog(@"path %@", path);
+    imageView.image = image;
+    [self.window.contentView addSubview:imageView];
+}
+
 - (void) setupTitleLabel:(NSString *)string {
     NSTextField *label = [NSTextField labelWithString:string];
     label.appearance = [NSAppearance appearanceNamed:NSAppearanceNameAqua];
@@ -138,7 +163,6 @@
 }
 
 - (void) setupLogoiew {
-    
     ImageAspectView *imageView = [[ImageAspectView alloc] initWithFrame:NSMakeRect(22, self.window.frame.size.height - 81, 64, 54)];
     NSImage *image = [[NSImage alloc] initWithContentsOfFile:[NSString stringWithFormat:@"%@/%@", self.currentPath, @"resources/logo.png"]];
     imageView.image = image;
@@ -198,12 +222,66 @@
     [self.window.contentView addSubview:label];
 }
 
+- (void) setupSwapAddress {
+    NSTextField *label = [NSTextField labelWithString:@"Address"];
+    label.appearance = [NSAppearance appearanceNamed:NSAppearanceNameAqua];
+    label.textColor = [HexToRgbColor colorWithHexColorString:@"4f4e4e"];
+    label.font = [NSFont systemFontOfSize:18];
+    label.frame = NSMakeRect(22, 262, 100, 30);
+    [self.window.contentView addSubview:label];
+}
+
+- (void) setupTextSwapAddress:(NSString*)string {
+    NSTextField *label = [NSTextField labelWithString:[NSString stringWithFormat:@"%@", string]];
+    label.appearance = [NSAppearance appearanceNamed:NSAppearanceNameAqua];
+    label.textColor = [HexToRgbColor colorWithHexColorString:@"7b8da7"];
+    label.font = [NSFont systemFontOfSize:18];
+    label.frame = NSMakeRect(130, 262, self.window.frame.size.width - 150, 30);
+    [self.window.contentView addSubview:label];
+}
+
+- (void) setupSwapAdditional: (NSString *) string {
+    NSTextField *label = [NSTextField labelWithString:[NSString stringWithFormat:@"%@", string]];
+    label.appearance = [NSAppearance appearanceNamed:NSAppearanceNameAqua];
+    label.textColor = [HexToRgbColor colorWithHexColorString:@"4f4e4e"];
+    label.font = [NSFont systemFontOfSize:18];
+    label.frame = NSMakeRect(22, 302, 100, 30);
+    [self.window.contentView addSubview:label];
+}
+
+- (void) setupTextSwapAdditional:(NSString*)string {
+    NSTextField *label = [NSTextField labelWithString:[NSString stringWithFormat:@"%@", string]];
+    label.appearance = [NSAppearance appearanceNamed:NSAppearanceNameAqua];
+    label.textColor = [HexToRgbColor colorWithHexColorString:@"7b8da7"];
+    label.font = [NSFont systemFontOfSize:18];
+    label.frame = NSMakeRect(130, 302, self.window.frame.size.width - 150, 30);
+    [self.window.contentView addSubview:label];
+}
+
+- (void) setupSwapAction {
+    NSTextField *label = [NSTextField labelWithString:@"Action"];
+    label.appearance = [NSAppearance appearanceNamed:NSAppearanceNameAqua];
+    label.textColor = [HexToRgbColor colorWithHexColorString:@"4f4e4e"];
+    label.font = [NSFont systemFontOfSize:18];
+    label.frame = NSMakeRect(22, 342, 100, 30);
+    [self.window.contentView addSubview:label];
+}
+
+- (void) setupTextSwapAction:(NSString*)string {
+    NSTextField *label = [NSTextField labelWithString:[NSString stringWithFormat:@"%@", string]];
+    label.appearance = [NSAppearance appearanceNamed:NSAppearanceNameAqua];
+    label.textColor = [HexToRgbColor colorWithHexColorString:@"7b8da7"];
+    label.font = [NSFont systemFontOfSize:18];
+    label.frame = NSMakeRect(130, 342, self.window.frame.size.width - 150, 30);
+    [self.window.contentView addSubview:label];
+}
+
 - (void) setupTextTo:(NSString*)string {
     NSTextField *label = [NSTextField labelWithString:string];
     label.appearance = [NSAppearance appearanceNamed:NSAppearanceNameAqua];
     label.textColor = [HexToRgbColor colorWithHexColorString:@"7b8da7"];
     label.font = [NSFont systemFontOfSize:18];
-    label.frame = NSMakeRect(130, 107, 450, 30);
+    label.frame = NSMakeRect(130, 107, self.window.frame.size.width - 150, 30);
     [self.window.contentView addSubview:label];
 }
 
@@ -212,7 +290,7 @@
     label.appearance = [NSAppearance appearanceNamed:NSAppearanceNameAqua];
     label.textColor = [HexToRgbColor colorWithHexColorString:@"7b8da7"];
     label.font = [NSFont systemFontOfSize:18];
-    label.frame = NSMakeRect(130, 147, 450, 30);
+    label.frame = NSMakeRect(130, 147, self.window.frame.size.width - 150, 30);
     [self.window.contentView addSubview:label];
 }
 
@@ -221,12 +299,12 @@
     label.appearance = [NSAppearance appearanceNamed:NSAppearanceNameAqua];
     label.textColor = [HexToRgbColor colorWithHexColorString:@"7b8da7"];
     label.font = [NSFont systemFontOfSize:18];
-    label.frame = NSMakeRect(130, 187, 450, 30);
+    label.frame = NSMakeRect(130, 187, self.window.frame.size.width - 150, 30);
     [self.window.contentView addSubview:label];
 }
 
 - (void) setupPassField {
-    pass = [[NSSecureTextField alloc] initWithFrame:CGRectMake(130, 70, 420, 30)];
+    pass = [[NSSecureTextField alloc] initWithFrame:CGRectMake(130, 70, self.window.frame.size.width - 155, 30)];
     pass.backgroundColor = [NSColor whiteColor];
     pass.font = [NSFont systemFontOfSize:20];
     pass.layer.cornerRadius = 4.0;
@@ -235,7 +313,7 @@
 }
 
 - (void) setupPassConfirmField {
-    passConfirm = [[NSSecureTextField alloc] initWithFrame:CGRectMake(130, 120, 420, 30)];
+    passConfirm = [[NSSecureTextField alloc] initWithFrame:CGRectMake(130, 120, self.window.frame.size.width - 155, 30)];
     passConfirm.backgroundColor = [NSColor whiteColor];
     passConfirm.font = [NSFont systemFontOfSize:20];
     passConfirm.layer.cornerRadius = 4.0;
@@ -245,7 +323,7 @@
 }
 
 - (void) setupSignButton {
-    SYFlatButton *button = [[SYFlatButton alloc] initWithFrame:NSMakeRect(450, 20, 100, 35)];
+    SYFlatButton *button = [[SYFlatButton alloc] initWithFrame:NSMakeRect(self.window.frame.size.width - 125, 20, 100, 35)];
     button.target = self;
     button.action = @selector(clickButton);
     button.title = self.isSignTransaction ? @"SIGN" : @"CREATE";
@@ -257,7 +335,7 @@
 }
 
 - (void) setupCancelButton {
-    SYFlatButton *button = [[SYFlatButton alloc] initWithFrame:NSMakeRect(330, 20, 100, 35)];
+    SYFlatButton *button = [[SYFlatButton alloc] initWithFrame:NSMakeRect(self.window.frame.size.width - 245, 20, 100, 35)];
     button.target = self;
     button.action = @selector(clickCloseButton);
     button.title = @"CANCEL";
@@ -279,19 +357,6 @@
     button.momentary = YES;
     [self.window.contentView addSubview:button];
 }
-
-- (void) setupSwapButton {
-    SYFlatButton *button = [[SYFlatButton alloc] initWithFrame:NSMakeRect(142, 20, 100, 35)];
-    button.target = self;
-    button.action = @selector(swapAlert);
-    button.title = @"SWAP";
-    button.backgroundNormalColor = [NSColor whiteColor];
-    button.titleNormalColor = [HexToRgbColor colorWithHexColorString:@"939497"];
-    button.cornerRadius = 4;
-    button.momentary = YES;
-    [self.window.contentView addSubview:button];
-}
-
 
 - (void) expertModeAlert {
     NSAlert *alert = [NSAlert new];

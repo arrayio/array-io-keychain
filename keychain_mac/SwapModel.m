@@ -9,4 +9,14 @@
 
 @implementation SwapModel
 
++ (JSONKeyMapper *)keyMapper
+{
+    return [[JSONKeyMapper alloc] initWithModelToJSONDictionary:@{
+                                                                  @"action": @"action",
+                                                                  @"hashVar": @"hash",
+                                                                  @"address": @"address",
+                                                                  @"secret": @"secret"
+                                                                  }];
+}
+
 @end

@@ -12,9 +12,9 @@ NS_ASSUME_NONNULL_BEGIN
 @interface SwapModel : JSONModel
 
 @property (nonatomic) NSString *action;
-@property (nonatomic) NSString *address;
-@property (nonatomic) NSString *hashVar;
-@property (nonatomic) NSString *secret;
+@property (nonatomic) NSString <Optional> *address;
+@property (nonatomic) NSString <Optional> *hashVar;
+@property (nonatomic) NSString <Optional> *secret;
 
 
 @end

@@ -9,4 +9,12 @@
 
 @implementation DataModel
 
++ (BOOL)propertyIsOptional:(NSString *)propertyName
+{
+    if ([propertyName isEqualToString:@"chainid"])
+        return YES;
+    
+    return YES;
+}
+
 @end

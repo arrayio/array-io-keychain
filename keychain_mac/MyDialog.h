@@ -6,6 +6,7 @@
 //
 
 #import <Cocoa/Cocoa.h>
+#import "ResponseModel.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -14,6 +15,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, strong) NSString *jsonString;
 @property (readwrite) BOOL isSignTransaction;
 @property (nonatomic, strong) NSString *currentPath;
+@property (nonatomic, strong) ResponseModel *jsonModel;
+@property (readwrite) BOOL isRawTransaction;
 
 - (instancetype)initWithFrame:(NSRect)frame;
 - (void)runModal;

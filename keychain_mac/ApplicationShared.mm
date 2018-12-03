@@ -21,6 +21,7 @@
     [[PassSyncStore sharedInstance] setPass:@""];
     dispatch_once(&onceToken, ^{
         sharedInstance = [[ApplicationShared alloc] init];
+        [NSApp setDelegate:self];
     });
     [NSApp activateIgnoringOtherApps:YES];
     return sharedInstance;
@@ -41,7 +42,6 @@
     [menubar addItem:appMenuItem];
     [NSApp setMainMenu:menubar];
     id appMenu = [NSMenu new];
-    id appName = [[NSProcessInfo processInfo] processName];
     id quitTitle = @"Quit KeyChain";
     id quitMenuItem = [[NSMenuItem alloc] initWithTitle:quitTitle
                                                   action:@selector(terminate:) keyEquivalent:@"q"];

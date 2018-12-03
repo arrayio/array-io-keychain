@@ -12,11 +12,11 @@
                 <application id="hnw-xV-0zn" sceneMemberID="viewController">
                     <menu key="mainMenu" title="Main Menu" systemMenu="main" id="AYu-sK-qS6">
                         <items>
-                            <menuItem title="Keychain Installer" id="1Xt-HY-uBw">
+                            <menuItem title="KeyChain Installer" id="1Xt-HY-uBw">
                                 <modifierMask key="keyEquivalentModifierMask"/>
-                                <menu key="submenu" title="Keychain Installer" systemMenu="apple" id="uQy-DD-JDr">
+                                <menu key="submenu" title="KeyChain Installer" systemMenu="apple" id="uQy-DD-JDr">
                                     <items>
-                                        <menuItem title="About Keychain Installer" id="5kV-Vb-QxS">
+                                        <menuItem title="About KeyChain Installer" id="5kV-Vb-QxS">
                                             <modifierMask key="keyEquivalentModifierMask"/>
                                             <connections>
                                                 <action selector="orderFrontStandardAboutPanel:" target="Ady-hI-5gd" id="Exp-CZ-Vem"/>
@@ -30,7 +30,7 @@
                                             <menu key="submenu" title="Services" systemMenu="services" id="hz9-B4-Xy5"/>
                                         </menuItem>
                                         <menuItem isSeparatorItem="YES" id="4je-JR-u6R"/>
-                                        <menuItem title="Hide Keychain Installer" keyEquivalent="h" id="Olw-nP-bQN">
+                                        <menuItem title="Hide KeyChain Installer" keyEquivalent="h" id="Olw-nP-bQN">
                                             <connections>
                                                 <action selector="hide:" target="Ady-hI-5gd" id="PnN-Uc-m68"/>
                                             </connections>
@@ -48,7 +48,7 @@
                                             </connections>
                                         </menuItem>
                                         <menuItem isSeparatorItem="YES" id="kCx-OE-vgT"/>
-                                        <menuItem title="Quit Keychain Installer" keyEquivalent="q" id="4sb-4s-VLi">
+                                        <menuItem title="Quit KeyChain Installer" keyEquivalent="q" id="4sb-4s-VLi">
                                             <connections>
                                                 <action selector="terminate:" target="Ady-hI-5gd" id="Te7-pn-YzF"/>
                                             </connections>
@@ -661,7 +661,7 @@
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <menu key="submenu" title="Help" systemMenu="help" id="F2S-fz-NVQ">
                                     <items>
-                                        <menuItem title="Keychain Installer Help" keyEquivalent="?" id="FKE-Sm-Kum">
+                                        <menuItem title="KeyChain Installer Help" keyEquivalent="?" id="FKE-Sm-Kum">
                                             <connections>
                                                 <action selector="showHelp:" target="Ady-hI-5gd" id="y7X-2Q-9no"/>
                                             </connections>
@@ -675,7 +675,7 @@
                         <outlet property="delegate" destination="Voe-Tx-rLC" id="PrD-fu-P6m"/>
                     </connections>
                 </application>
-                <customObject id="Voe-Tx-rLC" customClass="AppDelegate" customModule="Keychain_Installer" customModuleProvider="target"/>
+                <customObject id="Voe-Tx-rLC" customClass="AppDelegate" customModule="KeyChain_Installer" customModuleProvider="target"/>
                 <customObject id="YLy-65-1bz" customClass="NSFontManager"/>
                 <customObject id="Ady-hI-5gd" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
@@ -705,7 +705,7 @@
         <!--ContainerVC-->
         <scene sceneID="iKx-kt-vJy">
             <objects>
-                <pagecontroller storyboardIdentifier="ContainerVC" id="1FD-G9-cEA" customClass="ContainerVC" customModule="Keychain_Installer" customModuleProvider="target" sceneMemberID="viewController">
+                <pagecontroller storyboardIdentifier="ContainerVC" id="1FD-G9-cEA" customClass="ContainerVC" customModule="KeyChain_Installer" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="hhb-bZ-4Os">
                         <rect key="frame" x="0.0" y="0.0" width="450" height="359"/>
                         <autoresizingMask key="autoresizingMask"/>
@@ -734,7 +734,7 @@
         <!--Select PathVC-->
         <scene sceneID="XxV-Sg-Awa">
             <objects>
-                <viewController storyboardIdentifier="SelectPathVC" id="hd9-Qg-Rxp" customClass="SelectPathVC" customModule="Keychain_Installer" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="SelectPathVC" id="hd9-Qg-Rxp" customClass="SelectPathVC" customModule="KeyChain_Installer" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="nX7-7N-2dt">
                         <rect key="frame" x="0.0" y="0.0" width="450" height="300"/>
                         <autoresizingMask key="autoresizingMask"/>
@@ -824,7 +824,7 @@
         <!--WelcomeVC-->
         <scene sceneID="OQ3-iJ-CuJ">
             <objects>
-                <viewController storyboardIdentifier="WelcomeVC" id="iIV-0J-O9j" customClass="WelcomeVC" customModule="Keychain_Installer" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="WelcomeVC" id="iIV-0J-O9j" customClass="WelcomeVC" customModule="KeyChain_Installer" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="Cdp-We-zDz">
                         <rect key="frame" x="0.0" y="0.0" width="450" height="300"/>
                         <autoresizingMask key="autoresizingMask"/>
@@ -875,7 +875,7 @@ Enjoy the new level of security!</string>
         <!--ProgressVC-->
         <scene sceneID="pS0-Y0-mKy">
             <objects>
-                <viewController storyboardIdentifier="ProgressVC" id="oZd-jx-WVe" customClass="ProgressVC" customModule="Keychain_Installer" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="ProgressVC" id="oZd-jx-WVe" customClass="ProgressVC" customModule="KeyChain_Installer" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="q5J-NA-DPF">
                         <rect key="frame" x="0.0" y="0.0" width="450" height="300"/>
                         <autoresizingMask key="autoresizingMask"/>

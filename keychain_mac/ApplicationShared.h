@@ -9,7 +9,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface ApplicationShared : NSObject
+@interface ApplicationShared : NSObject <NSApplicationDelegate>
 
 + (instancetype)sharedInstance;
 

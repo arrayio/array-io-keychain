@@ -32,26 +32,18 @@ void sec_mod_mac::print_mnemonic(const string_list& mnemonic) const
 
 byte_seq_t sec_mod_mac::get_passwd_trx_raw(const std::string& raw_trx) const
 {
-    auto a = get_path();
-    
     [ApplicationShared sharedInstance];
     
     NSError *error;
     ResponseModel *model = [[ResponseModel alloc] initWithString:[NSString stringWithUTF8String:raw_trx.c_str()] error:&error];
     NSLog(@"Error %@", error);
-
-//    if (error == nil && model.swap != NULL) {
-//
-//    }
     
     NSRect frame = NSMakeRect(0, 0, (error == nil && model.swap != NULL) ? 825 : 575, (error == nil && model.swap != NULL) ? 521 : 361);
     MyDialog *dialog = [[MyDialog alloc] initWithFrame:frame];
     dialog.jsonString = [NSString stringWithUTF8String:raw_trx.c_str()];
     dialog.jsonModel = model;
     dialog.isRawTransaction = (error == nil) ? false : true;
-//    dialog.isSwap = (model.swap != NULL) ? true : false;
     dialog.isSignTransaction = true;
-    dialog.currentPath = [NSString stringWithUTF8String:a.parent_path().c_str()];
     [dialog runModal];
     
     std::string str = std::string([[[PassSyncStore sharedInstance] pass] UTF8String]);
@@ -62,13 +54,10 @@ byte_seq_t sec_mod_mac::get_passwd_trx_raw(const std::string& raw_trx) const
 
 byte_seq_t sec_mod_mac::get_passwd_on_create() const
 {
-    auto a = get_path();
-    
     [ApplicationShared sharedInstance];
     NSRect frame = NSMakeRect(0, 0, 575, 261);
     MyDialog *dialog = [[MyDialog alloc] initWithFrame:frame];
     dialog.isSignTransaction = false;
-    dialog.currentPath = [NSString stringWithUTF8String:a.parent_path().c_str()];
     [dialog runModal];
 
     std::string str = std::string([[[PassSyncStore sharedInstance] pass] UTF8String]);
@@ -77,14 +66,3 @@ byte_seq_t sec_mod_mac::get_passwd_on_create() const
     return pass;
 }
 
-bfs::path get_path() {
-    unsigned int bufferSize = 512;
-    std::vector<char> buffer(bufferSize + 1);
-    if(_NSGetExecutablePath(&buffer[0], &bufferSize))
-    {
-        buffer.resize(bufferSize);
-        _NSGetExecutablePath(&buffer[0], &bufferSize);
-    }
-    bfs::path path = &buffer[0];
-    return path;
-}

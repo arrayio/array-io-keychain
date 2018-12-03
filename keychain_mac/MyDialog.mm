@@ -14,6 +14,7 @@
 #include <stdio.h>
 #include <limits.h>
 #import "keychain-Swift.h"
+#import "FileManager.h"
 
 @interface MyDialog () {
     NSSecureTextField *pass;
@@ -76,7 +77,7 @@
     [cover setAppearance:[NSAppearance appearanceNamed:NSAppearanceNameVibrantLight]];
     [self.window.contentView addSubview:cover];
     NSLog(@"jsonString %@", _jsonString);
-    NSLog(@"currentPath %@", _currentPath);
+//    NSLog(@"currentPath %@", _currentPath);
     [self setupLogoiew];
     [self setupLabelPassphrase];
     [self setupPassField];
@@ -94,7 +95,6 @@
             [self setupTextTo:self.jsonModel.data.to];
             [self setupTextFrom:self.jsonModel.data.from];
             [self setupTextAmount:self.jsonModel.data.value];
-            // TODO: change to swap!!!
             if (self.jsonModel.swap != NULL) {
                 [self setupSwapAddress];
                 if ([self.jsonModel.swap.action isEqualToString:@"createSwap"]) {
@@ -111,7 +111,6 @@
                 [self setupLogoSwap];
                 [self setupTextSwapAddress:self.jsonModel.swap.address];
                 [self setupTextSwapAction:self.jsonModel.swap.action];
-                //[self setupSwapButton];
                 NSLog(@" null %@", self.jsonModel.swap);
             }
         }
@@ -128,14 +127,14 @@
 - (void) setupLogoBlockhain:(NSString *)blockhain {
     if ([blockhain isEqualToString:@"ethereum"]) {
         ImageAspectView *imageView = [[ImageAspectView alloc] initWithFrame:NSMakeRect(22, 224, 25, 39)];
-        NSString *path = [NSString stringWithFormat:@"%@/%@", self.currentPath, @"resources/ethereum.png"];
+        NSString *path = [NSString stringWithFormat:@"%@/%@", FileManager.getWorkDirectoryPath, @"resources/ethereum.png"];
         NSImage *image = [[NSImage alloc] initWithContentsOfFile:path];
         NSLog(@"path %@", path);
         imageView.image = image;
         [self.window.contentView addSubview:imageView];
     } else if ([blockhain isEqualToString:@"bitcoun"]) {
         ImageAspectView *imageView = [[ImageAspectView alloc] initWithFrame:NSMakeRect(22, 224, 25, 35)];
-        NSString *path = [NSString stringWithFormat:@"%@/%@", self.currentPath, @"resources/bitcoin.png"];
+        NSString *path = [NSString stringWithFormat:@"%@/%@", FileManager.getWorkDirectoryPath, @"resources/bitcoin.png"];
         NSImage *image = [[NSImage alloc] initWithContentsOfFile:path];
         NSLog(@"path %@", path);
         imageView.image = image;
@@ -145,7 +144,7 @@
 
 - (void) setupLogoSwap {
     ImageAspectView *imageView = [[ImageAspectView alloc] initWithFrame:NSMakeRect(22, 382, 50, 28)];
-    NSString *path = [NSString stringWithFormat:@"%@/%@", self.currentPath, @"resources/swap logo.png"];
+    NSString *path = [NSString stringWithFormat:@"%@/%@", FileManager.getWorkDirectoryPath, @"resources/swap logo.png"];
     NSImage *image = [[NSImage alloc] initWithContentsOfFile:path];
     NSLog(@"path %@", path);
     imageView.image = image;
@@ -164,7 +163,7 @@
 
 - (void) setupLogoiew {
     ImageAspectView *imageView = [[ImageAspectView alloc] initWithFrame:NSMakeRect(22, self.window.frame.size.height - 81, 64, 54)];
-    NSImage *image = [[NSImage alloc] initWithContentsOfFile:[NSString stringWithFormat:@"%@/%@", self.currentPath, @"resources/logo.png"]];
+    NSImage *image = [[NSImage alloc] initWithContentsOfFile:[NSString stringWithFormat:@"%@/%@", FileManager.getWorkDirectoryPath, @"resources/logo.png"]];
     imageView.image = image;
     [self.window.contentView addSubview:imageView];
     

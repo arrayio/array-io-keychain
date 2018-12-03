@@ -7,6 +7,7 @@
 
 #import "ApplicationShared.h"
 #import "PassSyncStore.h"
+#import "FileManager.h"
 
 @implementation ApplicationShared
 
@@ -15,7 +16,7 @@
     static ApplicationShared *sharedInstance = nil;
     static dispatch_once_t onceToken;
     [NSApplication sharedApplication];
-    [NSApp setApplicationIconImage:[[NSImage alloc] initWithContentsOfFile:@"/Users/mikhaillutskiy/array-io-keychain/build/keychain_cmd_app/Release/resources/logo.png"]];
+    [NSWorkspace.sharedWorkspace setIcon:[[NSImage alloc] initWithContentsOfFile:[NSString stringWithFormat:@"%@/resources/logo.png", FileManager.getWorkDirectoryPath]] forFile:FileManager.getBinaryPath options:0];
     [NSApp setActivationPolicy:NSApplicationActivationPolicyRegular];
     [[PassSyncStore sharedInstance] setPass:@""];
     dispatch_once(&onceToken, ^{

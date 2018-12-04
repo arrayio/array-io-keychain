@@ -32,10 +32,12 @@ if( MSVC )
             "../libraries/secp256k1_ext/include"
             "../libraries/eth-crypto/include"
 #            "../libraries/eth-crypto/ethash/src/libethash"
+            "${CMAKE_SOURCE_DIR}/libraries/kaitai_struct_cpp_stl_runtime"
             "${OPENSSL_ROOT_DIR}/include"
             ${Boost_INCLUDE_DIR})
 else ( MSVC )
     include_directories(
+            "${CMAKE_SOURCE_DIR}/libraries/kaitai_struct_cpp_stl_runtime"
             "./include/keychain_lib"
             "../libraries/fc_light/include"
             "../libraries/secp256k1/include"
@@ -51,5 +53,8 @@ endif( MSVC )
 file(GLOB KEYCHAIN_LIB_SOURCES "./src/*.cpp" )
 file(GLOB KEYCHAIN_LIB_INCLUDE "./include/keychain_lib/*.hpp" )
 
+
 add_library(keychain_common STATIC ${KEYCHAIN_LIB_SOURCES} ${KEYCHAIN_LIB_INCLUDE})
+target_link_libraries(keychain_common  kaitai_struct_cpp_stl_runtime)
+
 

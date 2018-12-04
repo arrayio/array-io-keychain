@@ -16,7 +16,7 @@ Read full [KeyChain Protocol](https://github.com/arrayio/array-io-keychain/wiki/
 
 **Test the KeyChain commands** on the demo page [here](https://arrayio.github.io/array-io-keychain/demo/).
 
-You can find the detailed technical specification of the KeyChain system below if you refer to [How it works](#how-it-works) section. 
+You can find the detailed technical specification of the KeyChain system below if you refer to [Three layers of security](https://github.com/arrayio/array-io-keychain/wiki#three-security-layers-of-keychain) section. 
 
 ## Installation
 
@@ -82,22 +82,10 @@ Run the installer and follow the steps.
 
 Coming soon
 
+----
+
 After successful installation you will be returned to the web page or app you started from. The WebSocket server will be ready to work.
 
-## <a name="How it works"></a>How it works
-
-![Three-layer security](https://github.com/arrayio/array-io-keychain/blob/master/img/Diagram%20Keychain%20fin%201.png)
-
-Apps or websites send requests to the KeyChain through two types of communication - standard I/O streams (mostly called pipes), and the WebSocket. 
-The architecture of the KeyChain software consists of the three independent layers:
-
-1. **API layer** which integrates with your app, website or any external application. It is language-neutral. The protocol for the terminal application operates with the JSON format in synchronous request/response way. The main function of the **API layer** is to transmit and parse commands for given API. 
-Each request carries information about commands, the type of key user wants to use to sign transactions and other relevant parameters which you can find in the [Protocol](https://github.com/arrayio/array-io-keychain/wiki/KeyChain-API). 
-
-2. **Security layer** receives the commands from the API layer and acts as an OS-specific  protection mechanism for the **interface window** (third layer). It serves as a shield from potential attacks at sensitive data and information. **Security layer** is tailored for the Mac OS, Linux, and Windows OS and operates only with permitted files (through admin access). 
-The request, transmitted to the **Signing module** which holds the private keys, works simultaneously with the Secured input module that uses OS-specific mechanism. The **Secured input module** protects the passphrase from key grabbers and malware.
-
-3. **Representation layer** is the **UI window** which notifies the user about the details of transactions and necessary actions. The **interface window** is initiated from **Security layer**. Once the user inputs the correct passphrase, it sends the permission to the **Signing module** to unlock the demanded key. Passphrase input field is protected by the secured input module. **Security layer** decrypts the given key with the correct passphrase entered by the user.  In this instance **Signing module** can operate with the open private key, for example it can extract information, sign transactions, therefore responding to given requests.
 
 ## How to use
 

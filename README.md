@@ -56,23 +56,23 @@ Run the installer and follow the steps.
 
 1. Click "next" to prepare installation
 
-![alt text](https://github.com/arrayio/array-io-keychain/blob/master/img/win1.png)
+![alt text](https://github.com/arrayio/array-io-keychain/blob/master/img/windows1.png)
 
 2. Accept the terms of the License and click "next"
 
-![alt text](https://github.com/arrayio/array-io-keychain/blob/master/img/win2.png)
+![alt text](https://github.com/arrayio/array-io-keychain/blob/master/img/windows3.png)
 
 3. Choose a folder, click "next"
 
-![alt text](https://github.com/arrayio/array-io-keychain/blob/master/img/win3.png)
+![alt text](https://github.com/arrayio/array-io-keychain/blob/master/img/windows4.png)
 
 4. Click "install" for installation to start
 
-![alt text](https://github.com/arrayio/array-io-keychain/blob/master/img/win4.png)
+![alt text](https://github.com/arrayio/array-io-keychain/blob/master/img/windows5.png)
 
 5. Wait until the setup is done
 
-![alt text](https://github.com/arrayio/array-io-keychain/blob/master/img/win5.png)
+![alt text](https://github.com/arrayio/array-io-keychain/blob/master/img/windows6.png)
 
 ### Linux
 

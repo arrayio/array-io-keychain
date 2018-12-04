@@ -4,6 +4,8 @@ cmake_minimum_required( VERSION 3.0.2 )
 
 set(CMAKE_CXX_FLAGS "-std=c++14")
 
+SET(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -ldl -pthread")
+
 if(MSVC)
 	set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}  /EHsc" )
 	set( CMAKE_VS_PLATFORM_TOOLSET "LLVM-vs2017")

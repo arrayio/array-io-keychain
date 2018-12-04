@@ -16,7 +16,7 @@ Read full [KeyChain Protocol](https://github.com/arrayio/array-io-keychain/wiki/
 
 **Test the KeyChain commands** on the demo page [here](https://arrayio.github.io/array-io-keychain/demo/).
 
-You can find the detailed technical specification of the KeyChain system in [Three layers of security](https://github.com/arrayio/array-io-keychain/wiki#three-security-layers-of-keychain) section. 
+You can find the detailed technical specification of the KeyChain system in [Three security layers](https://github.com/arrayio/array-io-keychain/wiki#three-security-layers-of-keychain) section. 
 
 ## Installation
 

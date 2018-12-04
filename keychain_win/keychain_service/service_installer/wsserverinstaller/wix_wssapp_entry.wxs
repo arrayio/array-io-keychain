@@ -3,16 +3,16 @@
 
 	<!-- Set product information -->
    <Product Id="*" UpgradeCode="{46840884-EDE8-4425-B0E9-6EEECE8C1E9F}" 	 
-			Name="Install WSKeychain Services" Language="1033" Version="1.0.0.1" 
+			Name="WSKeychain Services" Language="1033" Version="1.0.0.2" 
 			Manufacturer="Array.IO">
 	
 	<!-- Set package and media information -->
-    <Package Description="pak" InstallerVersion="301" Compressed="yes" Platform = "x64" />
+    <Package Description="pak" InstallerVersion="400" Compressed="yes" Platform = "x64" InstallScope="perMachine"/>
     <Media Id="1" Cabinet="setup.cab" EmbedCab="yes" />
 	
 	<!-- Override root install directory path -->
 	<SetDirectory Id="RootInstallDrive" Value="C:\Program Files" />
-
+	
 	<!-- Fragment of sources to install -->
     <Directory Id="TARGETDIR" Name="SourceDir">
 		<Directory Id="RootInstallDrive">
@@ -35,6 +35,31 @@
 				<Component Id="Component6" DiskId="1" Guid="{46840884-EDE8-4425-B0E9-6EEECE8C1E91}">
 					<File Id="File5" Name="wsservice_manager.bat" Source="wsservice_manager.bat" />
 				</Component>
+				<Component Id="Component7" DiskId="1" Guid="{46840884-EDE8-4425-B0E9-6EEECE8C1E92}">
+					<File Id="File6" Name="keychain.exe" Source="keychain.exe" />
+				</Component>
+				<Component Id="Component8" DiskId="1" Guid="{46840884-EDE8-4425-B0E9-6EEECE8C1E93}">
+					<File Id="File7" Name="keychain_win_gui.exe" Source="keychain_win_gui.exe" />
+				</Component>
+				<Component Id="Component9" DiskId="1" Guid="{46840884-EDE8-4425-B0E9-6EEECE8C1E94}">
+					<File Id="File8" Name="keychainrunner.bat" Source="keychainrunner.bat" />
+				</Component>
+				<Directory Id="DemoComponents" Name="Demo">
+					<Component Id="Component10" DiskId="1" Guid="{46840884-EDE8-4425-B0E9-6EEECE8C1E95}">
+					<File Id="File9" Name="index.html" Source="demo\index.html" />
+					</Component>
+					<Component Id="Component11" DiskId="1" Guid="{46840884-EDE8-4425-B0E9-6EEECE8C1E96}">
+					<File Id="File10" Name="logo.png" Source="demo\logo.png" />
+					<CreateFolder/>
+					</Component>
+					<Component Id="Component12" DiskId="1" Guid="{46840884-EDE8-4425-B0E9-6EEECE8C1E97}">
+						<File Id="File11" Name="spectre.min.css" Source="demo\spectre.min.css" />
+					<CreateFolder/>
+					</Component>
+				</Directory>
+				<Component Id="Component13" DiskId="1" Guid="{46840884-EDE8-4425-B0E9-6EEECE8C1E98}">
+					<File Id="File12" Name="libcrypto-1_1-x64.dll" Source="libcrypto-1_1-x64.dll" />
+				</Component>				
 			</Directory>
 		</Directory>
     </Directory>
@@ -62,6 +87,13 @@
 		<ComponentRef Id="Component4" />
 		<ComponentRef Id="Component5" />
 		<ComponentRef Id="Component6" />
+		<ComponentRef Id="Component7" />
+		<ComponentRef Id="Component8" />
+		<ComponentRef Id="Component9" />
+		<ComponentRef Id="Component10" />
+		<ComponentRef Id="Component11" />
+		<ComponentRef Id="Component12" />
+		<ComponentRef Id="Component13" />
     </Feature>
 	
     <!-- Global Run Action -->

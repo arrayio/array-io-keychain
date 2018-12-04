@@ -14,12 +14,21 @@ if(WIN32)
 	set(wixsrcpath "${CMAKE_CURRENT_SOURCE_DIR}")
 	set(wixoutputpath "wsservice") 
 	message(STATUS "wixsrcpath: ${wixsrcpath}")
-
-	#TODO
-	#add keychain executable copy to wsservice folder ~ global path
+	
+	#find libcrypto.dll file inside openssl installed folder
+	if("$ENV{OPENSSL_ROOT_DIR}" OR "${OPENSSL_ROOT_DIR}" STREQUAL "")
+		message(FATAL_ERROR "CANNOT FIND OPENSSL LIBRARY")
+	else()
+		set(openssl_path "${OPENSSL_ROOT_DIR}")
+		message(STATUS "OPENSSL PATH: ${openssl_path}")
+		file(GLOB_RECURSE globalcrypto FOLLOW_SYMLINKS ${OPENSSL_ROOT_DIR}/libcrypto*.dll)
+		list(GET globalcrypto 1 cryptolib)
+		message(STATUS "FOUND LIBCRYPTO: ${cryptolib}")
+	endif()
 
 	#set copy files to alias
 	set( PREBUILD_FILES
+	   "${wixsrcpath}/keychainrunner.bat"
 	   "${wixsrcpath}/websocketwrapper.exe"
 	   "${wixsrcpath}/servicewrapper.exe"
 	   "${wixsrcpath}/servicewrapper.xml"
@@ -32,9 +41,19 @@ if(WIN32)
 	   "${wixsrcpath}/keychain_logo_maximal.ico"
 	   "${wixsrcpath}/keychain_logo_minimal.ico"
 	   "${wixsrcpath}/keychain_dialog_banner.jpg"
+	   ${cryptolib}
 	)
 
 	message(STATUS "PREBUILD FILES: ${PREBUILD_FILES}")
+	
+	#copy demo files
+	
+	set( DEMO_FILES
+		${CMAKE_CURRENT_SOURCE_DIR}/demo/index.html
+		${CMAKE_CURRENT_SOURCE_DIR}/demo/logo.png
+		${CMAKE_CURRENT_SOURCE_DIR}/demo/spectre.min.css)
+	
+	file(COPY ${DEMO_FILES} DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/wsservice/demo/)
 
 	#copy files in build folder
 	foreach( file_to_copy ${PREBUILD_FILES})

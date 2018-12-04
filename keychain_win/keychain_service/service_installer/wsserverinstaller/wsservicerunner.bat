@@ -1,1 +1,1 @@
-websocketwrapper --port=8080 --devconsole keychain.exe
+websocketwrapper --port=16384 --staticdir=./demo keychainrunner

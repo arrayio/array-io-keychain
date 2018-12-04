@@ -52,6 +52,10 @@ https://github.com/arrayio/array-io-keychain/blob/master/img/keychain%20direct.p
 
 ### Windows
 
+#### System requirements
+
+Windows 7 or newer.
+
 Run the installer and follow the steps. 
 
 1. Click "next" to prepare installation

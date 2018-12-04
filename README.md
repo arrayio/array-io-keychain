@@ -10,7 +10,13 @@ You can integrate **KeyChain** as a service through `pipe` or `websocket` method
 
 Read full [KeyChain Protocol](https://github.com/arrayio/array-io-keychain/wiki/KeyChain-Protocol) with comprehensive descriptions of JSON requests broken down into simple commands and parameters. 
 
-You can find the detailed technical specification of the KeyChain system below if you refer to *How it works* section. 
+### Demo pages
+
+[Here](https://arrayio.github.io/array-io-keychain/eth_signer/) you can try out signing Ethereum transactions with KeyChain.
+
+Test the KeyChain commands on the demo page [here](https://arrayio.github.io/array-io-keychain/demo/).
+
+You can find the detailed technical specification of the KeyChain system below if you refer to [How it works](#how-it-works) section. 
 
 ## Installation
 

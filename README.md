@@ -12,9 +12,9 @@ Read full [KeyChain Protocol](https://github.com/arrayio/array-io-keychain/wiki/
 
 ### Demo pages
 
-[Here](https://arrayio.github.io/array-io-keychain/eth_signer/) you can try out signing Ethereum transactions with KeyChain.
+[Here](https://arrayio.github.io/array-io-keychain/eth_signer/) you can **try out signing Ethereum transactions** with KeyChain.
 
-Test the KeyChain commands on the demo page [here](https://arrayio.github.io/array-io-keychain/demo/).
+**Test the KeyChain commands** on the demo page [here](https://arrayio.github.io/array-io-keychain/demo/).
 
 You can find the detailed technical specification of the KeyChain system below if you refer to [How it works](#how-it-works) section. 
 

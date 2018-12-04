@@ -82,11 +82,11 @@ Run the installer and follow the steps.
 
 #### System requirements
 
-- Linux mint 18.3 or newer
-
 - Ubuntu 16.04 or newer
 
 - Debian 9 or newer
+
+- Linux Mint 18.3 or newer
 
 **Coming soon**
 

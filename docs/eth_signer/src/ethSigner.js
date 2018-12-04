@@ -5,12 +5,12 @@ const rlp = require('rlp');
 
 let flag = false;
 let buffer;
+const WS_PUBLIC_KEY_REQUEST_ID = 12345;
 
 window.onload = function () {
   let web3;
   let keyname;
   let toAddress;
-  let waitingForPublicKeyResonse = true;
   let fromAddress;
   const valueTx = 100;
 
@@ -31,8 +31,7 @@ window.onload = function () {
     log(`KeyChain response: ${response.data}`);
     const data = JSON.parse(response.data);
     if (data.result) {
-      if (waitingForPublicKeyResonse) {
-        waitingForPublicKeyResonse = false;        
+      if (data.id === WS_PUBLIC_KEY_REQUEST_ID) {
         const publicKey = `0x${data.result}`;
         fromAddress = ethUtil.publicToAddress(publicKey).toString('hex');
         log(`"From" address calculated from public key: ${fromAddress}`);
@@ -107,10 +106,9 @@ window.onload = function () {
   }
 
   function getPublicKey() {
-    const command = { command: "public_key", params: { keyname } };
+    const command = { id: WS_PUBLIC_KEY_REQUEST_ID, command: "public_key", params: { keyname } };
     log(`Getting public key by keyname from KeyChain: ${JSON.stringify(command)}`);
     ws.send(JSON.stringify(command));
-    waitingForPublicKeyResonse = true;
   }
 
   const buildTxSinature = async (signature, fromAddress, to, value, data = '') => {

@@ -26,7 +26,7 @@ Download KeyChain and run the graphic installer if you are using [Windows](#wind
 
 #### System requirements
 
-MacOs 10.12 or newer.
+- MacOs 10.12 or newer.
 
 #### Download MacOs installer [here](https://github.com/arrayio/array-io-keychain/releases/download/0.7/KeyChain.Installer.v0.7.zip).
 
@@ -54,7 +54,7 @@ https://github.com/arrayio/array-io-keychain/blob/master/img/keychain%20direct.p
 
 #### System requirements
 
-Windows 7 or newer.
+- Windows 7 or newer.
 
 Run the installer and follow the steps. 
 

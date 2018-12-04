@@ -42,6 +42,13 @@ void SecureWindowElement::SetLabelAndValue(QString labelPair)
 	}
 	value->setText(list[1]);
 }
+
+void SecureWindowElement::SetLabelAndValue(QString Label, QString Value)
+{
+	label->setText(Label);
+	value->setText(Value);
+}
+
 void SecureWindowElement::SetLabelStyle(QString style)
 {
 	label->setStyleSheet(style);

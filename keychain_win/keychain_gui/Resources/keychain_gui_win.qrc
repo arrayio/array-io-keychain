@@ -7,5 +7,7 @@
         <file>but_ok.png</file>
         <file>lock.png</file>
         <file>notify_back.png</file>
+        <file>expert.png</file>
+        <file>more_arrow.png</file>
     </qresource>
 </RCC>

@@ -13,12 +13,12 @@ KeychainServiceExchange::~KeychainServiceExchange()
 
 }
 
-void KeychainServiceExchange::EncodeError(const std::wstring &mes, unsigned short len)
+void KeychainServiceExchange::EncodeError(const std::wstring &mes, unsigned int len)
 {
 	_sendToPipe(L"empty_password", std::wcslen(L"empty_password"));
 };
 
-void KeychainServiceExchange::EncodeSuccess(const std::wstring &mes, unsigned short len)
+void KeychainServiceExchange::EncodeSuccess(const std::wstring &mes, unsigned int len)
 {
 	_sendToPipe(mes, len);
 };
@@ -28,7 +28,7 @@ bool KeychainServiceExchange::Decode(std::string &outString, int &result)
 	return true;
 };
 
-void KeychainServiceExchange::_sendToPipe(const std::wstring &mes, unsigned short count)
+void KeychainServiceExchange::_sendToPipe(const std::wstring &mes, unsigned int count)
 {
 	HANDLE hPipe;
 	DWORD dwWritten;

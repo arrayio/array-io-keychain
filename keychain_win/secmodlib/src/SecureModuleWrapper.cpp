@@ -35,7 +35,6 @@ keychain_app::byte_seq_t SecureModuleWrapper::_startSecureDesktop(const std::str
 	HANDLE hPipe;
 	char buffer[1024];
 	DWORD dwRead;
-	_secman.CreateSecureDesktop(str);
 	//initializing security attributes
 	SECURITY_ATTRIBUTES  sa;
 	sa.nLength = sizeof(SECURITY_ATTRIBUTES);
@@ -59,6 +58,15 @@ keychain_app::byte_seq_t SecureModuleWrapper::_startSecureDesktop(const std::str
 	std::vector<wchar_t> password(256, 0x00);
 	if (hPipe == INVALID_HANDLE_VALUE)
 		throw std::runtime_error("Error: can't receive password: INVALID_HANDLE_VALUE");
+	BOOL WriteFile(
+		HANDLE       hFile,
+		LPCVOID      lpBuffer,
+		DWORD        nNumberOfBytesToWrite,
+		LPDWORD      lpNumberOfBytesWritten,
+		LPOVERLAPPED lpOverlapped
+	);
+	
+	_secman.CreateSecureDesktop(str);
 
     const int MAX_WAIT_TIME = 1000;
     /*if (WaitForSingleObject(hPipe, MAX_WAIT_TIME) == WAIT_OBJECT_0)

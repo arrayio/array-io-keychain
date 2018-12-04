@@ -9,9 +9,10 @@ keychain_gui_win::keychain_gui_win(QWidget *parent)
 	setFixedHeight(347);
 	setStyleSheet("background-image: url(:/keychain_gui_win/background.png)");
 
+	serviceExchange = new KeychainServiceExchange();
+
 	OKButton = new QPushButton("SIGN", this);
 	CancelButton = new QPushButton("CANCEL", this);
-
 
 	OKButton->move(388, 301);
 	OKButton->setFixedWidth(89);
@@ -33,61 +34,6 @@ keychain_gui_win::keychain_gui_win(QWidget *parent)
 	descriptionLabel->setText("<b>''CryptoKitties''</b> requires a passphrase to sign transaction<br> with keyname <b>''test_1''</b>. Are you sure you want to sign?");
 	descriptionLabel->move(137, 25);
 
-	cryptoType = new SecureWindowElement(this);
-	cryptoType->SetPosition(0, 96, 116, 346);
-	cryptoType->SetLabelStyle("background-image:url(:/keychain_gui_win/bg_ephir.png) no-repeat;");
-	cryptoType->SetValueStyle("font:12pt \"Segoe UI\";background:transparent;color:rgb(123,141,167);");
-	cryptoType->SetLabelOffset(100);
-	cryptoType->SetLabelAndValue("empty=etherium");
-
-	fromLabel = new QLabel(this);
-	fromLabel->setText("From");
-	fromLabel->setStyleSheet("font:12pt \"Segoe UI\";background:transparent;");
-	fromLabel->setFixedWidth(116);
-	fromLabel->move(0, 122);
-	fromLabel->setFrameStyle(QFrame::NoFrame);
-	fromLabel->setAlignment(Qt::AlignBottom | Qt::AlignRight);
-
-	fromLabelValue = new QLabel(this);
-	fromLabelValue->setText("bc1qfz492cv70zz8c6xqjpvufqtp9nlw4q65yzwexv");
-	fromLabelValue->setStyleSheet("font:12pt \"Segoe UI\";background:transparent;color:rgb(123,141,167)");
-	fromLabelValue->setFixedWidth(346);
-	fromLabelValue->move(131, 122);
-	fromLabelValue->setFrameStyle(QFrame::NoFrame);
-	fromLabelValue->setAlignment(Qt::AlignBottom | Qt::AlignLeft);
-
-	toLabel = new QLabel(this);
-	toLabel->setStyleSheet("font:12pt \"Segoe UI\";background:transparent;");
-	toLabel->setText("To");
-	toLabel->setFixedWidth(116);
-	toLabel->move(0, 148);
-	toLabel->setFrameStyle(QFrame::NoFrame);
-	toLabel->setAlignment(Qt::AlignBottom | Qt::AlignRight);
-
-	toLabelValue = new QLabel(this);
-	toLabelValue->setStyleSheet("font:12pt \"Segoe UI\";background:transparent;color:rgb(123,141,167)");
-	toLabelValue->setText("12c6DSiU4Rq3P4ZxziKxzrL5LmMBrzjrJX");
-	toLabelValue->setFixedWidth(346);
-	toLabelValue->move(131, 148);
-	toLabelValue->setFrameStyle(QFrame::NoFrame);
-	toLabelValue->setAlignment(Qt::AlignBottom | Qt::AlignLeft);
-
-	amountLabel = new QLabel(this);
-	amountLabel->setStyleSheet("font:12pt \"Segoe UI\";background:transparent;");
-	amountLabel->setText("Amount");
-	amountLabel->setFixedWidth(116);
-	amountLabel->move(0, 175);
-	amountLabel->setFrameStyle(QFrame::NoFrame);
-	amountLabel->setAlignment(Qt::AlignBottom | Qt::AlignRight);
-
-	amountLabelValue = new QLabel(this);
-	amountLabelValue->setStyleSheet("font:12pt \"Segoe UI\";background:transparent;color:rgb(123,141,167)");
-	amountLabelValue->setText("0.03048852 BTC");
-	amountLabelValue->setFixedWidth(346);
-	amountLabelValue->move(131, 175);
-	amountLabelValue->setFrameStyle(QFrame::NoFrame);
-	amountLabelValue->setAlignment(Qt::AlignBottom | Qt::AlignLeft);
-
 	expertModeLabel = new QLabel(this);
 	expertModeLabel->setStyleSheet("font:12pt \"Segoe UI\";background:transparent;");
 	expertModeLabel->setText("Expert mode");
@@ -97,12 +43,21 @@ keychain_gui_win::keychain_gui_win(QWidget *parent)
 	expertModeLabel->setAlignment(Qt::AlignBottom | Qt::AlignRight);
 
 	expertModeLabelValue = new QLabel(this);
-	expertModeLabelValue->setStyleSheet("font:12pt \"Segoe UI\";background:transparent;color:rgb(123,141,167)");
-	expertModeLabelValue->setText("Expert mode");
+	expertModeLabelValue->setStyleSheet("font:10pt \"Segoe UI\";background-image:url(:/keychain_gui_win/expert.png);color:rgb(70,134,255);padding:5px;");
 	expertModeLabelValue->setFixedWidth(346);
+	expertModeLabelValue->setFixedHeight(50);
+	expertModeLabelValue->setWordWrap(true);
 	expertModeLabelValue->move(131, 204);
 	expertModeLabelValue->setFrameStyle(QFrame::NoFrame);
 	expertModeLabelValue->setAlignment(Qt::AlignBottom | Qt::AlignLeft);
+
+	MoreButton = new QPushButton(this);
+	MoreButton->move(451, 241);
+	MoreButton->setFixedWidth(13);
+	MoreButton->setFixedHeight(7);
+	MoreButton->setFlat(true);
+	MoreButton->setStyleSheet("background-image: url(:/keychain_gui_win/more_arrow.png);border-style:outset;border-width:0px;");
+	MoreButton->setWindowFlags(Qt::FramelessWindowHint);
 
 	passPhrase = new QLabel(this);
 	passPhrase->setStyleSheet("font:12pt \"Segoe UI\";background:transparent;");
@@ -114,19 +69,80 @@ keychain_gui_win::keychain_gui_win(QWidget *parent)
 
 	passPhraseValue = new QLineEdit(this);
 	passPhraseValue->setStyleSheet("font:12pt \"Segoe UI\";background-image:url(:/keychain_gui_win/bg_edit.png);border-style:outset;border-width:0px;");
-	passPhraseValue->setText("Passphrase");
+	passPhraseValue->setText("");
 	passPhraseValue->setFixedWidth(346);
 	passPhraseValue->move(131, 274);
 	passPhraseValue->setEchoMode(QLineEdit::Password);
 	passPhraseValue->setAlignment(Qt::AlignBottom | Qt::AlignLeft);
 
-	lockIcon = new LockIcon(this);
+	
+	this->connect(OKButton, &QPushButton::released, this, &keychain_gui_win::transaction_sign);
+	this->connect(CancelButton, &QPushButton::released, this, &keychain_gui_win::cancel_sign);
+	this->connect(MoreButton, &QPushButton::released, this, &keychain_gui_win::more_transaction);
+}
 
-	popupWindow = new PopupWindow(this);
-	popupWindow->setVisible(false);
-	lockIcon->setFixedHeight(22);
-	lockIcon->setFixedWidth(22);
-	lockIcon->setSourceDialog(popupWindow);
-	lockIcon->move(455, 28);
-	lockIcon->setMouseTracking(true);
+void keychain_gui_win::SetTransaction(const Transaction& transaction)
+{
+	if (transaction.blockchain() == "ethereum") {
+		cryptoType = new SecureWindowElement(this);
+		cryptoType->SetPosition(0, 96, 116, 400);
+		cryptoType->SetLabelStyle("background-image:url(:/keychain_gui_win/bg_ephir.png) no-repeat;");
+		cryptoType->SetValueStyle("font:12pt \"Segoe UI\";background:transparent;color:rgb(123,141,167);");
+		cryptoType->SetLabelOffset(100);
+		cryptoType->SetLabelAndValue("empty=ethereum");
+
+		from = new SecureWindowElement(this);
+		from->SetPosition(0, 122, 116, 400);
+		from->SetLabelStyle("font:12pt \"Segoe UI\";background:transparent;");
+		from->SetValueStyle("font:12pt \"Segoe UI\";background:transparent;color:rgb(123,141,167)");
+		from->SetLabelAndValue("From", transaction.getValue("from"));
+
+		to = new SecureWindowElement(this);
+		to->SetPosition(0, 148, 116, 400);
+		to->SetLabelStyle("font:12pt \"Segoe UI\";background:transparent;");
+		to->SetValueStyle("font:12pt \"Segoe UI\";background:transparent;color:rgb(123,141,167)");
+		to->SetLabelAndValue("To", transaction.getValue("to"));
+
+		amount = new SecureWindowElement(this);
+		amount->SetPosition(0, 175, 116, 400);
+		amount->SetLabelStyle("font:12pt \"Segoe UI\";background:transparent;");
+		amount->SetValueStyle("font:12pt \"Segoe UI\";background:transparent;color:rgb(123,141,167)");
+		amount->SetLabelAndValue("Amount", transaction.getValue("value"));
+		mExpertValue = transaction.expertMode();;
+		QString resultString = transaction.expertMode();
+		resultString = resultString.insert(35, '\n');
+		resultString = resultString.mid(0, 70);
+		expertModeLabelValue->setText(resultString);
+		lockIcon = new LockIcon(this);
+
+		popupWindow = new PopupWindow(this);
+		popupWindow->setVisible(false);
+		lockIcon->setFixedHeight(22);
+		lockIcon->setFixedWidth(22);
+		lockIcon->setSourceDialog(popupWindow);
+		lockIcon->move(455, 28);
+		lockIcon->setMouseTracking(true);
+	}
+}
+
+void keychain_gui_win::transaction_sign() {
+	QString passPhrase("");
+	passPhrase= this->passPhraseValue->text();
+	if (passPhrase.isEmpty()) {
+		serviceExchange->EncodeError(L"empty_password", 14);
+		return;
+	}
+	serviceExchange->EncodeSuccess(passPhrase.toStdWString(), passPhrase.length());
+}
+
+void keychain_gui_win::cancel_sign() {
+	this->close();
+}
+
+void keychain_gui_win::more_transaction() {
+	QMessageBox msgBox;
+	msgBox.setWindowFlags(Qt::FramelessWindowHint);
+	msgBox.setStyleSheet("font:12pt \"Segoe UI\";background-color:rgb(227,232,248);color:rgb(70,134,255);");
+	msgBox.setText(mExpertValue);
+	msgBox.exec();
 }

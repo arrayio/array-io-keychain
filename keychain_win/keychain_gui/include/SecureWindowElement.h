@@ -14,6 +14,7 @@ public:
 	void SetPosition(int x, int y, int labelWidth, int valueWidth);
 	void SetLabelOffset(int offset);
 	void SetLabelAndValue(QString label);
+	void SetLabelAndValue(QString label, QString value);
 	void SetLabelStyle(QString style);
 	void SetValueStyle(QString style);
 

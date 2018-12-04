@@ -23,10 +23,10 @@ class KeychainServiceExchange {
 public:
 	KeychainServiceExchange();
 	~KeychainServiceExchange();
-	void EncodeError(const std::wstring &mes, unsigned short len);
-	void EncodeSuccess(const std::wstring &mes, unsigned short len);
+	void EncodeError(const std::wstring &mes, unsigned int len);
+	void EncodeSuccess(const std::wstring &mes, unsigned int len);
 	bool Decode(std::string &outString, int &result);
 private:
-	void _sendToPipe(const std::wstring &mes, unsigned short count);
+	void _sendToPipe(const std::wstring &mes, unsigned int count);
 };
 #endif // KEYCHAINSERVICE_EXCHANGE_H

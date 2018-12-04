@@ -16,9 +16,13 @@ You can find the detailed technical specification of the KeyChain system below i
 
 Download KeyChain and run the graphic installer if you are using [Windows](#windows) or [MacOs](#macos). [Linux](#linux) installer is coming soon.
 
-#### MacOs
+### MacOs
 
-Download MacOs installer [here](https://github.com/arrayio/array-io-keychain/releases/download/0.6/Keychain.Installer.zip).
+#### System requirements
+
+MacOs 10.12 or newer.
+
+#### Download MacOs installer [here](https://github.com/arrayio/array-io-keychain/releases/download/0.6/Keychain.Installer.zip).
 
 Follow the steps of the graphic installer. 
 
@@ -40,7 +44,7 @@ https://github.com/arrayio/array-io-keychain/blob/master/img/keychain%20direct.p
 
 ![alt text](https://github.com/arrayio/array-io-keychain/blob/master/img/keychain%20complete.png)
 
-#### Windows
+### Windows
 
 Run the installer and follow the steps. 
 
@@ -64,7 +68,7 @@ Run the installer and follow the steps.
 
 ![alt text](https://github.com/arrayio/array-io-keychain/blob/master/img/win5.png)
 
-#### Linux
+### Linux
 
 Coming soon
 

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Web3 Signer</title>
+    <title>ETH Signer</title>
     <link rel="stylesheet" href="../assets/spectre.min.css">
   </head>
   <body>
@@ -11,11 +11,30 @@
           <img src="../assets/logo.png">
         </div>
         <div class="column col mx-2 my-2">
-          <h1>Web3 Signer</h1>
-          <h6>On this page you can test all WebSocket commands of Keychain 0.0.4</h6>
+          <h1>ETH Signer</h1>
+          <h6>Sign and publish Etherium transaction</h6>
         </div>
       </div>
-      <div class="columns m-1">
+      <div class="container">
+        <div class="form-group">
+          <label class="form-label" for="input-endpoint">Endpoint</label>
+          <input class="form-input" type="text" id="input-endpoint" value="https://ropsten.infura.io/v3/046804e3dd3240b09834531326f310cf" />
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="input-keyname">Keyname</label>
+          <input class="form-input" type="text" id="input-keyname" placeholder="test1@6de493f01bf590c0" />
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="input-to-address">To address</label>
+          <input
+            class="form-input"
+            type="text"
+            id="input-to-address"
+            value="0xE8899BA12578d60e4D0683a596EDaCbC85eC18CC"
+          />
+        </div>
+      </div>
+      <div class="columns my-2 mx-1">
         <div class="column col-4 ">
           <button class="btn btn-primary" id="btn_SIGN">Sign</button>
           <button class="btn btn-primary" id="btn_PUBLISH">Publish</button>
@@ -24,19 +43,20 @@
     </div>  
     <div class="container">
       <div class="columns">
-        <div class="column col-6">
-          <label class="form-label" for="rowHex">Row Hex</label>
-          <textarea class="form-input" id="rowHex" placeholder="{}" rows="9"></textarea>
-        </div>
-        <div class="column col-6">
-          <label class="form-label" for="result">Result</label>
-          <textarea class="form-input" id="result" placeholder="{}" rows="9"></textarea>
+        <div class="column col">
+          <label class="form-label" for="log">Log</label>
+          <textarea class="form-input" id="log" rows="15"></textarea>
         </div>
       </div>
-      <div class="columns">
-        <div class="column col-6"></div>
+      <div class="columns my-2">
+        <div class="column col-6">
+          Raw Hex: <span id="rawHex" style="font-style: italic">Please, sign your transaction</span>
+        </div>
         <div class="column col-6" id="etherscanLink"></div>
-      </div>      
+      </div>
+      <div class="container">
+        <progress class="progress" style="display: none" max="100" id="progress"></progress>
+      </div>
     </div>
     <script src="dist/main.js"></script>
     

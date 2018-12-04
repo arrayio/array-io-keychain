@@ -31,21 +31,25 @@ window.onload = function () {
 
   ws.onmessage = (async (response) => {
     console.log(response.data)
+    log(`Response from keychain: ${response.data}`);    
     const data = JSON.parse(response.data);
-    console.log(data.result); // signature
-    log(`Got result from keychain: ${data.result}`);
-    log(`Building transaction with signed by KeyChain transaction`);
-  
-    flag = true;
-    const rawHex = await buildTxSinature(
-      data.result, // signature
-      fromAdd,
-      toAdd,
-      valueTx
-    )
-    log(`Transaction built, rawHex: ${rawHex}`);
-    log(`Please, publish your transaction`);
-    saveRawHex(rawHex);
+    if (data.result) {
+      console.log(data.result); // signature
+      log(`Building transaction with signed by KeyChain transaction`);
+    
+      flag = true;
+      const rawHex = await buildTxSinature(
+        data.result, // signature
+        fromAdd,
+        toAdd,
+        valueTx
+      )
+      log(`Transaction built, rawHex: ${rawHex}`);
+      log(`Please, publish your transaction`);
+      saveRawHex(rawHex);
+    } else {
+      log(`KeyChain retured error: ${data.error}`);
+    }
   });
 
 
@@ -90,8 +94,9 @@ window.onload = function () {
         blockchain_type: "ethereum",      
       }
     }
-    ws.send(JSON.stringify(command));
-    log(`Raw hex: ${rawHex} send to keychain`);
+    log(`Result: ${rawHex}`);
+    log('Signing it with keychain');
+    ws.send(JSON.stringify(command));    
   }
 
   const buildTxSinature = async (signature, fromAddress, to, value, data = '') => {

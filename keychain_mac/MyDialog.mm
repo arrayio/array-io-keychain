@@ -13,7 +13,6 @@
 #include <unistd.h>
 #include <stdio.h>
 #include <limits.h>
-#import "keychain-Swift.h"
 #import "FileManager.h"
 
 @interface MyDialog () {
@@ -126,14 +125,14 @@
 
 - (void) setupLogoBlockhain:(NSString *)blockhain {
     if ([blockhain isEqualToString:@"ethereum"]) {
-        ImageAspectView *imageView = [[ImageAspectView alloc] initWithFrame:NSMakeRect(22, 224, 25, 39)];
+        NSImageView *imageView = [[NSImageView alloc] initWithFrame:NSMakeRect(22, 224, 25, 39)];
         NSString *path = [NSString stringWithFormat:@"%@/%@", FileManager.getWorkDirectoryPath, @"resources/ethereum.png"];
         NSImage *image = [[NSImage alloc] initWithContentsOfFile:path];
         NSLog(@"path %@", path);
         imageView.image = image;
         [self.window.contentView addSubview:imageView];
     } else if ([blockhain isEqualToString:@"bitcoun"]) {
-        ImageAspectView *imageView = [[ImageAspectView alloc] initWithFrame:NSMakeRect(22, 224, 25, 35)];
+        NSImageView *imageView = [[NSImageView alloc] initWithFrame:NSMakeRect(22, 224, 25, 35)];
         NSString *path = [NSString stringWithFormat:@"%@/%@", FileManager.getWorkDirectoryPath, @"resources/bitcoin.png"];
         NSImage *image = [[NSImage alloc] initWithContentsOfFile:path];
         NSLog(@"path %@", path);
@@ -143,7 +142,7 @@
 }
 
 - (void) setupLogoSwap {
-    ImageAspectView *imageView = [[ImageAspectView alloc] initWithFrame:NSMakeRect(22, 382, 50, 28)];
+    NSImageView *imageView = [[NSImageView alloc] initWithFrame:NSMakeRect(22, 382, 50, 28)];
     NSString *path = [NSString stringWithFormat:@"%@/%@", FileManager.getWorkDirectoryPath, @"resources/swap logo.png"];
     NSImage *image = [[NSImage alloc] initWithContentsOfFile:path];
     NSLog(@"path %@", path);
@@ -162,7 +161,7 @@
 }
 
 - (void) setupLogoiew {
-    ImageAspectView *imageView = [[ImageAspectView alloc] initWithFrame:NSMakeRect(22, self.window.frame.size.height - 81, 64, 54)];
+    NSImageView *imageView = [[NSImageView alloc] initWithFrame:NSMakeRect(22, self.window.frame.size.height - 81, 64, 54)];
     NSImage *image = [[NSImage alloc] initWithContentsOfFile:[NSString stringWithFormat:@"%@/%@", FileManager.getWorkDirectoryPath, @"resources/logo.png"]];
     imageView.image = image;
     [self.window.contentView addSubview:imageView];

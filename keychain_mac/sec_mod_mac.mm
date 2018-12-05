@@ -33,7 +33,6 @@ void sec_mod_mac::print_mnemonic(const string_list& mnemonic) const
 byte_seq_t sec_mod_mac::get_passwd_trx_raw(const std::string& raw_trx) const
 {
     [ApplicationShared sharedInstance];
-    
     NSError *error;
     ResponseModel *model = [[ResponseModel alloc] initWithString:[NSString stringWithUTF8String:raw_trx.c_str()] error:&error];
     NSLog(@"Error %@", error);

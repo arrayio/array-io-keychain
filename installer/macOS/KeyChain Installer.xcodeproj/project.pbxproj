@@ -8,7 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		065E4561476CAD7D2A088F20 /* Pods_Keychain_Installer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D45CE400EF06130F590AA706 /* Pods_Keychain_Installer.framework */; };
-		A7B3C09021B54C8100317E54 /* bin.tar.gz in Resources */ = {isa = PBXBuildFile; fileRef = A7B3C08F21B54C8100317E54 /* bin.tar.gz */; };
+		A7B3C13721B7F8D000317E54 /* bin.tar.gz in Resources */ = {isa = PBXBuildFile; fileRef = A7B3C13621B7F8D000317E54 /* bin.tar.gz */; };
 		A7E7F73E21A6B0CE0021ED5E /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7E7F73D21A6B0CE0021ED5E /* AppDelegate.swift */; };
 		A7E7F74221A6B0D10021ED5E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A7E7F74121A6B0D10021ED5E /* Assets.xcassets */; };
 		A7E7F74521A6B0D10021ED5E /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A7E7F74321A6B0D10021ED5E /* Main.storyboard */; };
@@ -28,7 +28,7 @@
 /* Begin PBXFileReference section */
 		3E4F1444A32878A98C804499 /* Pods-Keychain Installer.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Keychain Installer.release.xcconfig"; path = "Pods/Target Support Files/Pods-Keychain Installer/Pods-Keychain Installer.release.xcconfig"; sourceTree = "<group>"; };
 		A0679F4132141184C33311C6 /* Pods-Keychain Installer.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Keychain Installer.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Keychain Installer/Pods-Keychain Installer.debug.xcconfig"; sourceTree = "<group>"; };
-		A7B3C08F21B54C8100317E54 /* bin.tar.gz */ = {isa = PBXFileReference; lastKnownFileType = archive.gzip; path = bin.tar.gz; sourceTree = "<group>"; };
+		A7B3C13621B7F8D000317E54 /* bin.tar.gz */ = {isa = PBXFileReference; lastKnownFileType = archive.gzip; path = bin.tar.gz; sourceTree = "<group>"; };
 		A7E7F73A21A6B0CD0021ED5E /* KeyChain Installer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "KeyChain Installer.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		A7E7F73D21A6B0CE0021ED5E /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		A7E7F74121A6B0D10021ED5E /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -115,7 +115,7 @@
 				A7E7F74321A6B0D10021ED5E /* Main.storyboard */,
 				A7E7F74621A6B0D10021ED5E /* Info.plist */,
 				A7E7F74721A6B0D10021ED5E /* Keychain_Installer.entitlements */,
-				A7B3C08F21B54C8100317E54 /* bin.tar.gz */,
+				A7B3C13621B7F8D000317E54 /* bin.tar.gz */,
 			);
 			path = "KeyChain Installer";
 			sourceTree = "<group>";
@@ -180,7 +180,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A7B3C09021B54C8100317E54 /* bin.tar.gz in Resources */,
+				A7B3C13721B7F8D000317E54 /* bin.tar.gz in Resources */,
 				A7E7F74221A6B0D10021ED5E /* Assets.xcassets in Resources */,
 				A7E7F74521A6B0D10021ED5E /* Main.storyboard in Resources */,
 			);

@@ -11,7 +11,7 @@ add_subdirectory(./keychain_lib)
 add_subdirectory(./libraries/secp256k1_ext)
 add_subdirectory(./libraries/eth-crypto)
 add_subdirectory(./libraries/fc_light)
-add_subdirectory(./libraries/kaitai_struct_cpp_stl_runtime)
+add_subdirectory(./libraries)
 
 
 

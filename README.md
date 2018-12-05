@@ -3,98 +3,64 @@
 
 ## Overview
 
-**KeyChain** is a standalone app for signing transactions and generating key pairs. It stores private keys in an isolated environment where no logger, debugger or spyware can intercept them because of the three-layer security protecting each action of the system.
+**KeyChain** is a standalone app for signing transactions and generating key pairs. It stores private keys in an isolated environment where no logger, debugger or spyware can intercept them because of the [three-layer security](https://github.com/arrayio/array-io-keychain/wiki#three-security-layers-of-keychain) protecting each action of the system.
 **KeyChain** supports transactions from and to various blockchains, including Ethereum and Ethereum classic, Litecoin, Bitcoin, and Bitshares. 
 
-You can integrate **KeyChain** as a service through `pipe` or `websocket` methods. For quick step-by-step guides see [Pipe integration guide](https://github.com/arrayio/array-io-keychain/wiki/Pipe-API) and [WebSocket integration guide](https://github.com/arrayio/array-io-keychain/wiki/WebSocket-API) that you can find in the corresponding API. For simple installation tutorials for Windows, MacOs, and Linux go to [Installation guides](https://github.com/arrayio/array-io-keychain/wiki/Installation-guides). 
-
-Read full [KeyChain Protocol](https://github.com/arrayio/array-io-keychain/wiki/KeyChain-Protocol) with comprehensive descriptions of JSON requests broken down into simple commands and parameters. 
-
-### Demo pages
-
-[Here](https://arrayio.github.io/array-io-keychain/eth_signer/) you can **try out signing Ethereum transactions** with KeyChain.
-
-**Test the KeyChain commands** on the demo page [here](https://arrayio.github.io/array-io-keychain/demo/).
-
-You can find the detailed technical specification of the KeyChain system in [Three security layers](https://github.com/arrayio/array-io-keychain/wiki#three-security-layers-of-keychain) section. 
+Read full [KeyChain Protocol](https://github.com/arrayio/array-io-keychain/wiki/KeyChain-Protocol) with comprehensive descriptions of json requests broken down into simple commands and parameters. 
 
 ## Installation
 
-Download KeyChain and run the graphic installer if you are using [Windows](#windows) or [MacOs](#macos). [Linux](#linux) installer is coming soon.
+Download and install KeyChain for [MacOs](https://github.com/arrayio/array-io-keychain/releases/download/0.8/KeyChain.Installer.v0.8.zip). Windows and Linux installers are coming soon.
 
-### MacOs
+After installation, connect to the demo-page: `http://localhost:16384/` to test the KeyChain commands.
 
-#### System requirements
+You can find comprehensive [installation guides](https://github.com/arrayio/array-io-keychain/wiki/Installation-guides) in our wiki. 
 
-- MacOs 10.12 or newer.
+## Getting started
 
-#### Download MacOs installer [here](https://github.com/arrayio/array-io-keychain/releases/download/0.8/KeyChain.Installer.v0.8.zip).
+1. Create a function that will sign the transaction
 
-Follow the steps of the graphic installer. 
+```javascript
+const signHexCommand = (hexraw) => {
+  return {
+    "command": "sign_hex",
+    "params": {
+      "transaction": hexraw,
+      "blockchain_type": "ethereum",
+      "keyname": keyname
+    }
+  }
+}
+```
 
-1. Click "next" to start installation
-![text](https://github.com/arrayio/array-io-keychain/blob/master/img/keychain%20mac.png)
+2. Pass hex of the transaxtion to the function
 
-2. Choose a folder and click "next"
-![text](https://github.com/arrayio/array-io-keychain/blob/master/img/keychain%202.png)
+```javascript
+ws.onopen = async () => {
+  console.log('ws open');
+  const rawHex = await buildTxSinature(
+    null, // signature
+    fromAdd,
+    toAdd,
+    valueTx
+  )
+  console.log('sign tx:', rawHex);
+  sendCommand(signHexCommand(rawHex));
+}
+```
 
-3. Click "install" for installation to start
+## Wiki table of contents
 
-![alt text](https://github.com/arrayio/array-io-keychain/blob/master/img/keychain%20install.png)
-
-4. Wait until the setup is done
-![alt text](
-https://github.com/arrayio/array-io-keychain/blob/master/img/keychain%20direct.png)
-
-5. Congratulations! You have installed KeyChain.
-
-![alt text](https://github.com/arrayio/array-io-keychain/blob/master/img/keychain%20complete.png)
-
-### Windows
-
-#### System requirements
-
-- Windows 7 or newer.
-
-Run the installer and follow the steps. 
-
-1. Click "next" to prepare installation
-
-![alt text](https://github.com/arrayio/array-io-keychain/blob/master/img/windows1.png)
-
-2. Accept the terms of the License and click "next"
-
-![alt text](https://github.com/arrayio/array-io-keychain/blob/master/img/windows3.png)
-
-3. Choose a folder, click "next"
-
-![alt text](https://github.com/arrayio/array-io-keychain/blob/master/img/windows4.png)
-
-4. Click "install" for installation to start
-
-![alt text](https://github.com/arrayio/array-io-keychain/blob/master/img/windows5.png)
-
-5. Wait until the setup is done
-
-![alt text](https://github.com/arrayio/array-io-keychain/blob/master/img/windows6.png)
-
-### Linux
-
-#### System requirements
-
-- Ubuntu 16.04 or newer
-
-- Debian 9 or newer
-
-- Linux Mint 18.3 or newer
-
-**Coming soon**
-
-----
-
-After successful installation you will be returned to the web page or app you started from. The WebSocket server will be ready to work.
-
+- [Home](https://github.com/arrayio/array-io-keychain/wiki): why KeyChain is highly secure
+- [How to sign an Ethereum transaction](https://github.com/arrayio/array-io-keychain/wiki/How-to-sign-Ethereum-transaction-via-KeyChain)
+- Installation guides for MacOs, Windows, Linux
+- [KeyChain Protocol](https://github.com/arrayio/array-io-keychain/wiki/KeyChain-Protocol): full comprehensive descriptions of the KeyChain commands
+- [KeyChain sample commands](https://github.com/arrayio/array-io-keychain/wiki/KeyChain-sample-commands): shortcut to using the commands
+- [Pipe API](https://github.com/arrayio/array-io-keychain/wiki/Pipe-API): integrating KeyChain through pipe.
+- [Troubleshooting](https://github.com/arrayio/array-io-keychain/wiki/Troubleshooting): error handling, log files, debugging.
+- [Useful reference](https://github.com/arrayio/array-io-keychain/wiki/Useful-reference): external links.
+- [WebSocket API](https://github.com/arrayio/array-io-keychain/wiki/WebSocket-API): integrating KeyChain through WebSocket.
 
 ## How to use
 
-For more information, see corresponding wiki https://github.com/arrayio/array-io-keychain/wiki
+For more information, refer to our [wiki](https://github.com/arrayio/array-io-keychain/wiki)

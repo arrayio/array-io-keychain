@@ -15,6 +15,16 @@ void Transaction::setJson(const bool &json)
 	mJson = json;
 }
 
+bool Transaction::isSwap() const
+{
+	return mIsSwap;
+}
+
+void Transaction::setSwap(const bool & isSwap)
+{
+	mIsSwap = isSwap;
+}
+
 QString Transaction::blockchain() const
 {
 	return mBlockchain;
@@ -57,6 +67,10 @@ void Transaction::read(const QJsonObject &jsonObject)
 			TransactionParameter tp(dataObject.keys().at(i), dataObject.value(dataObject.keys().at(i)).toString());
 			mTransactionParameters.push_back(tp);
 		}
+	}
+	if (jsonObject.contains("swap") && jsonObject["swap"].isObject()) {
+		mIsSwap = true;
+
 	}
 }
 

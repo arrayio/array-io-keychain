@@ -9,5 +9,7 @@
         <file>notify_back.png</file>
         <file>expert.png</file>
         <file>more_arrow.png</file>
+        <file>header.png</file>
+        <file>swap_logo.png</file>
     </qresource>
 </RCC>

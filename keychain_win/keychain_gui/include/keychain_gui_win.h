@@ -2,6 +2,7 @@
 
 #include <QtWidgets/QDialog>
 #include <QLabel>
+#include <QLayout>
 #include <QLineEdit>
 #include <QPushButton>
 #include "PopupWindow.h"
@@ -19,37 +20,35 @@ private:
 	Ui::keychain_gui_winClass ui;
 
 public:
-	void SetTransaction(const Transaction& transaction);
-	keychain_gui_win(QWidget *parent = Q_NULLPTR); 
+	keychain_gui_win(const Transaction &transaction, QWidget *parent = Q_NULLPTR);
 	PopupWindow * popupWindow;
 	
 private:
 	QString mExpertValue;
-	QPushButton * OKButton;
-	QPushButton* CancelButton;
-	QPushButton* MoreButton;
+	
+	QPushButton * OKButton = Q_NULLPTR;
+	QPushButton * CancelButton = Q_NULLPTR;
+	
+	QLabel * headerBlock = Q_NULLPTR;
+	QLabel * passPhrase = Q_NULLPTR;
+	QLabel * descriptionLabel = Q_NULLPTR;
+	QLineEdit* passPhraseValue = Q_NULLPTR;
+	LockIcon * lockIcon = Q_NULLPTR;
+	SecureWindowElement * cryptoType = Q_NULLPTR;
+	SecureWindowElement * from = Q_NULLPTR;
+	SecureWindowElement * to = Q_NULLPTR;
+	SecureWindowElement * amount = Q_NULLPTR;
+	QLabel * expertLabel = Q_NULLPTR;
+	QLabel * expertValue = Q_NULLPTR;
+	QPushButton * moreButton = Q_NULLPTR;
 
-	/*QLabel * fromLabel;
-	QLabel * fromLabelValue;*/
-	/*QLabel* toLabel;
-	QLabel* toLabelValue;*/
-	/*QLabel* amountLabel;
-	QLabel* amountLabelValue;*/
-	QLabel * expertModeLabel;
-	QLabel * expertModeLabelValue;
-	QLabel * passPhrase;
-	QLabel * descriptionLabel;
-	QLineEdit* passPhraseValue;
-	LockIcon * lockIcon;
-	SecureWindowElement * cryptoType;
-	SecureWindowElement * from;
-	SecureWindowElement * to;
-	SecureWindowElement * amount;
+	KeychainServiceExchange * serviceExchange =NULL;
 
-	KeychainServiceExchange* serviceExchange;
+private:
+	const int FIELD_WIDTH = 346;
+	void _createFieldsForEthereum(const Transaction &transaction);
 
 public slots:
 	void transaction_sign();
 	void cancel_sign();
-	void more_transaction();
 };

@@ -15,6 +15,9 @@ public:
 	bool json() const;
 	void setJson(const bool &json);
 
+	bool isSwap() const;
+	void setSwap(const bool &isSwap);
+
 	QString blockchain() const;
 	void setBlockchain(const QString &blockchain);
 
@@ -31,6 +34,7 @@ public:
 
 private:
 	bool mJson;
+	bool mIsSwap=false;
 	QString mBlockchain;
 	QString mExpertTransaction;
 	QVector<TransactionParameter> mTransactionParameters;

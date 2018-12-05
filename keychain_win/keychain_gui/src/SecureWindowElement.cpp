@@ -23,6 +23,7 @@ void SecureWindowElement::SetPosition(int x, int y, int labelWidth, int valueWid
 	value->setFixedWidth(valueWidth);
 	label->setFixedHeight(25);
 	value->setFixedHeight(25);
+	setFixedWidth(label->width()+value->width()+16);
 	value->move(x+labelWidth+16, y);
 	_valueX = x + labelWidth + 16, y;
 	_labelX = x;

@@ -40,8 +40,7 @@ int main(int argc, char *argv[])
 
 
 	QApplication a(argc, argv);
-	keychain_gui_win w;
-	w.SetTransaction(trans);
+	keychain_gui_win w(trans);
 	w.show();
 
 	a.exec();

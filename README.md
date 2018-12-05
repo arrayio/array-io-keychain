@@ -55,7 +55,7 @@ There you will find:
 
 - [Home](https://github.com/arrayio/array-io-keychain/wiki): why KeyChain is highly secure
 - [How to sign an Ethereum transaction](https://github.com/arrayio/array-io-keychain/wiki/How-to-sign-Ethereum-transaction-via-KeyChain)
-- Installation guides for MacOs, Windows, Linux
+- [Installation guides](https://github.com/arrayio/array-io-keychain/wiki/Installation-guides) for MacOs, Windows, Linux
 - [KeyChain Protocol](https://github.com/arrayio/array-io-keychain/wiki/KeyChain-Protocol): full comprehensive descriptions of the KeyChain commands
 - [KeyChain sample commands](https://github.com/arrayio/array-io-keychain/wiki/KeyChain-sample-commands): shortcut to using the commands
 - [Pipe API](https://github.com/arrayio/array-io-keychain/wiki/Pipe-API): integrating KeyChain through pipe.

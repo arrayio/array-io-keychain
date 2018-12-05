@@ -27,11 +27,14 @@ int main(int argc, char *argv[])
 
 	//SetThreadDesktop(hNewDesktop);
 
-	QString inputJson("{\"json\":true,\"blockchain\":\"ethereum\",\"data\":{\"nonce\":\"143\",\"gasPrice\":\"5300000000\",\"gas\":\"100000\",\"chainid\":1,\"from\":\"\",\"to\":\"843fcaaeb0cce5ffaf272f5f2ddfff3603f9c2a0\",\"value\":\"173117678552668600\"}}");
+	QString srcTrans(argv[1]);
 
+	//QString inputJson("{\"json\":true,\"blockchain\":\"ethereum\",\"data\":{\"nonce\":\"143\",\"gasPrice\":\"5300000000\",\"gas\":\"100000\",\"chainid\":1,\"from\":\"\",\"to\":\"843fcaaeb0cce5ffaf272f5f2ddfff3603f9c2a0\",\"value\":\"173117678552668600\"}}");
+
+	//QString swapInputJson("{\"json\":true,\"blockchain\":\"ethereum\",\"data\":{\"nonce\":\"143\",\"gasPrice\":\"5300000000\",\"gas\":\"100000\",\"chainid\":1,\"from\":\"\",\"to\":\"843fcaaeb0cce5ffaf272f5f2ddfff3603f9c2a0\",\"value\":\"173117678552668600\"},\"swap\":{\"action\":\"createSwap\",\"hash\":\"9dfc35e9b351731c7d8dd1f47351627eeffaaa1b000000000000000000000000\",\"address\":\"000000000000000000000000f59284b3e6631c49283d94fb4b09029b9d3f335f\"}}");
 
 	Transaction trans;
-	QJsonDocument document = QJsonDocument::fromJson(inputJson.toUtf8());
+	QJsonDocument document = QJsonDocument::fromJson(/*inputJson*//*swapInputJson*/srcTrans.toUtf8());
 	if (document.isObject()) {
 		trans.read(document.object());
 	}

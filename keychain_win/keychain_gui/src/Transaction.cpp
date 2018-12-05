@@ -55,6 +55,16 @@ void Transaction::setTransactionParameters(const QVector<TransactionParameter> p
 	mTransactionParameters = parameters;
 }
 
+QVector<TransactionParameter> Transaction::swapTransactionParameters() const
+{
+	return mSwapTransactionParameters;
+}
+
+void Transaction::setSwapTransactionParameters(const QVector<TransactionParameter> parameters)
+{
+	mTransactionParameters = parameters;
+}
+
 void Transaction::read(const QJsonObject &jsonObject)
 {
 	if (jsonObject.contains("blockchain") && jsonObject["blockchain"].isString())
@@ -70,7 +80,11 @@ void Transaction::read(const QJsonObject &jsonObject)
 	}
 	if (jsonObject.contains("swap") && jsonObject["swap"].isObject()) {
 		mIsSwap = true;
-
+		QJsonObject swapObject = jsonObject["swap"].toObject();
+		for (int i = 0; i < swapObject.keys().length(); i++) {
+			TransactionParameter tp(swapObject.keys().at(i), swapObject.value(swapObject.keys().at(i)).toString());
+			mSwapTransactionParameters.push_back(tp);
+		}
 	}
 }
 
@@ -83,6 +97,11 @@ void Transaction::write(QJsonObject &jsonObject) const
 		dataObject.insert(mTransactionParameters.at(i).name(), mTransactionParameters.at(i).value());
 	}
 	jsonObject["data"] = dataObject;
+	QJsonObject swapObject;
+	for (int i = 0; i < mSwapTransactionParameters.length(); i++) {
+		swapObject.insert(mSwapTransactionParameters.at(i).name(), mSwapTransactionParameters.at(i).value());
+	}
+	jsonObject["swap"] = swapObject;
 }
 
 QString Transaction::getValue(QString pName) const
@@ -90,6 +109,16 @@ QString Transaction::getValue(QString pName) const
 	for (int i = 0; i < mTransactionParameters.length(); i++) {
 		if (mTransactionParameters.at(i).name() == pName) {
 			return mTransactionParameters.at(i).value();
+		}
+	}
+	return QString("");
+}
+
+QString Transaction::getSwapValue(QString pName) const
+{
+	for (int i = 0; i < mSwapTransactionParameters.length(); i++) {
+		if (mSwapTransactionParameters.at(i).name() == pName) {
+			return mSwapTransactionParameters.at(i).value();
 		}
 	}
 	return QString("");

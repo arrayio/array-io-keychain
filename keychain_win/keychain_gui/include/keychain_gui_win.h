@@ -25,6 +25,7 @@ public:
 	
 private:
 	QString mExpertValue;
+	Transaction _transaction;
 	
 	QPushButton * OKButton = Q_NULLPTR;
 	QPushButton * CancelButton = Q_NULLPTR;
@@ -38,6 +39,13 @@ private:
 	SecureWindowElement * from = Q_NULLPTR;
 	SecureWindowElement * to = Q_NULLPTR;
 	SecureWindowElement * amount = Q_NULLPTR;
+
+
+	SecureWindowElement * swap = Q_NULLPTR;
+	SecureWindowElement * action = Q_NULLPTR;
+	SecureWindowElement * hash = Q_NULLPTR;
+	SecureWindowElement * address = Q_NULLPTR;
+
 	QLabel * expertLabel = Q_NULLPTR;
 	QLabel * expertValue = Q_NULLPTR;
 	QPushButton * moreButton = Q_NULLPTR;
@@ -46,9 +54,12 @@ private:
 
 private:
 	const int FIELD_WIDTH = 346;
-	void _createFieldsForEthereum(const Transaction &transaction);
+	const int START_POSITION = 96;
+	int _createFieldsForEthereum(const Transaction &transaction, const int startPosition);
+	int _createFieldsForSwap(const Transaction &transaction, const int startPosition);
 
 public slots:
 	void transaction_sign();
 	void cancel_sign();
+	void show_transaction();
 };

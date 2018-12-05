@@ -27,10 +27,14 @@ public:
 	QVector<TransactionParameter> transactionParameters() const;
 	void setTransactionParameters(const QVector<TransactionParameter> parameters);
 
+	QVector<TransactionParameter> swapTransactionParameters() const;
+	void setSwapTransactionParameters(const QVector<TransactionParameter> parameters);
+
 	void read(const QJsonObject &jsonObject);
 	void write(QJsonObject &jsonObject) const;
 
 	QString getValue(QString pName) const;
+	QString getSwapValue(QString pName) const;
 
 private:
 	bool mJson;
@@ -38,6 +42,7 @@ private:
 	QString mBlockchain;
 	QString mExpertTransaction;
 	QVector<TransactionParameter> mTransactionParameters;
+	QVector<TransactionParameter> mSwapTransactionParameters;
 };
 
 

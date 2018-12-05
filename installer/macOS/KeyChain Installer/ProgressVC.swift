@@ -39,7 +39,7 @@ class ProgressVC: NSViewController {
             job.programArguments = [
                 dataPath + "/websocketd",
                 "--port=16384",
-                "--staticdir=" + dataPath + "/examples/demo",
+                "--staticdir=" + dataPath + "/examples",
                 dataPath+"/keychain"
             ]
             print(job.programArguments)

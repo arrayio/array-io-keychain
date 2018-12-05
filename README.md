@@ -49,7 +49,11 @@ ws.onopen = async () => {
 }
 ```
 
-## Wiki table of contents
+## How to use 
+
+For extensive documentation on KeyChain, refer to the [Wiki](https://github.com/arrayio/array-io-keychain/wiki).
+
+There you will find:
 
 - [Home](https://github.com/arrayio/array-io-keychain/wiki): why KeyChain is highly secure
 - [How to sign an Ethereum transaction](https://github.com/arrayio/array-io-keychain/wiki/How-to-sign-Ethereum-transaction-via-KeyChain)
@@ -61,6 +65,4 @@ ws.onopen = async () => {
 - [Useful reference](https://github.com/arrayio/array-io-keychain/wiki/Useful-reference): external links.
 - [WebSocket API](https://github.com/arrayio/array-io-keychain/wiki/WebSocket-API): integrating KeyChain through WebSocket.
 
-## How to use
 
-For more information, refer to our [wiki](https://github.com/arrayio/array-io-keychain/wiki)

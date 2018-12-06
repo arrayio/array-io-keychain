@@ -1,5 +1,6 @@
 #include <sys/socket.h>
 #include <unistd.h>
+#include <cassert>
 #include "polling.hpp"
 Q_DECLARE_METATYPE(std::string)
 
@@ -9,8 +10,8 @@ void Polling::Select()
     struct timeval to ={0, 1000};
     int res;
 
-    auto begin  = [this](buf_it &i) { if (i==buf.end()) i=buf.begin(); if (i>buf.end()) abort; return &(*i); };
-    auto remain = [this](buf_it &i) { if (i==buf.end()) i=buf.begin(); return std::distance(i, buf.end());};
+    auto from   = [this](buf_it &i) { assert(i <= buf.end());  if (i > buf.end()) abort(); return &(*i); };
+    auto remain = [this](buf_it &i) { assert(i <= buf.end());  if (i > buf.end()) abort(); return std::distance(i, buf.end()); };
 
     FD_ZERO(&readfds);
     FD_SET(STDIN_FILENO, &readfds);
@@ -19,7 +20,7 @@ void Polling::Select()
 
     if (FD_ISSET(STDIN_FILENO, &readfds))
     {
-        size_t cnt = read(STDIN_FILENO, begin(it), remain(it));
+        size_t cnt = read(STDIN_FILENO, from(it), remain(it));
         if (cnt ==-1 ) throw std::runtime_error("gui reading error");
 
         it += cnt;
@@ -31,7 +32,21 @@ void Polling::Select()
                 emit rx(std::string(range.first, range.second));
                 it = std::copy(range.second, it, buf.begin());
             }
-            else break;
+            else
+            {
+                if(remain(it) < 256)
+                {
+                    if (buf.size() <= 4096*2)
+                    {
+                        auto it_  = std::distance(buf.begin(), it);
+                        buf.resize(buf.size() + 256, 0x00);
+                        it = buf.begin() + it_;
+                    }
+                    else
+                        throw std::runtime_error("size of read buffer is too large");
+                }
+                break;
+            }
         }
     }
     emit Polling::poll();

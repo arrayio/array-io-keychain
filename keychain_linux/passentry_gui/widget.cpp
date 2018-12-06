@@ -98,8 +98,8 @@ void Widget::found_pass()
 void Widget::closeEvent(QCloseEvent *event)
 {
     passClearOnExit ?
-    send(fc_light::json::to_pretty_string(fc_light::variant( master::cmd<( master::cmds::cancel)>().base))) :
-    send(fc_light::json::to_pretty_string(fc_light::variant( master::cmd<( master::cmds::ok)>().base)));
+    send(fc_light::json::to_string(fc_light::variant( master::cmd<( master::cmds::cancel)>().base))) :
+    send(fc_light::json::to_string(fc_light::variant( master::cmd<( master::cmds::ok)>().base)));
     event->accept();
 }
 

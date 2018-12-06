@@ -294,6 +294,8 @@ struct keychain_command: keychain_command_base
 
 namespace tx_parser
 {
+      params():unlock_time(0){};
+      int unlock_time;
 	struct tx_common
 	{
 		tx_common(bool json_, blockchain_te blockchain_) :
@@ -508,21 +510,13 @@ static   std::string parse(std::vector<unsigned char> raw, blockchain_te blockch
                     kaitai::kstream ks(&is);
 
                     bitcoin_transaction_t data(&ks);
-                    std::string json = data.toJSON();
+                    json = data.toJSON();
 
                     json = fc_light::json::pretty_print(json, 2);
-
 					tx_parser::tx_common common( true, blockchain_te::bitcoin, json);
                     json = fc_light::json::to_pretty_string(fc_light::variant(common));
 
-                    std::regex e ("(\\\\n)");
-                    json =  std::regex_replace (json,e,"\n");
-
-                    std::regex r ("(\\\\)");
-                    json =  std::regex_replace (json,r,"");
-
                     BOOST_LOG_SEV(log.lg, info) << "bitcoin transaction parse complete: \n" + json;
-
                 } catch (std::exception &exc) {
 					tx_parser::tx_common common( false, blockchain, to_hex(raw.data(), raw.size()));
                     json = fc_light::json::to_pretty_string(fc_light::variant(common));
@@ -602,6 +596,9 @@ static   std::string parse(std::vector<unsigned char> raw, blockchain_te blockch
               std::runtime_error("Error: keyname is not specified");
 
           json= parse(raw, params.blockchain_type);
+
+          keychain->unlock_time =  params.unlock_time;
+
           std::string key_data = read_private_key(keychain, params.keyname, json );
           int pk_len = keychain_app::from_hex(key_data, (unsigned char*) private_key.data(), 32);
 
@@ -682,9 +679,11 @@ struct keychain_command<command_te::sign_hash> : keychain_command_base
     virtual ~keychain_command(){}
     struct params
     {
+        params():unlock_time(0){};
         std::string hash;
         sign_te sign_type;
         std::string keyname;
+        int unlock_time;
     };
 
     using params_t = params;
@@ -698,6 +697,7 @@ struct keychain_command<command_te::sign_hash> : keychain_command_base
             if (params.keyname.empty())
                 std::runtime_error("Error: keyname is not specified");
 
+            keychain->unlock_time =  params.unlock_time;
             std::string key_data = read_private_key(keychain, params.keyname, params.hash );
 
             int pk_len = keychain_app::from_hex(key_data, (unsigned char*) private_key.data(), 32);
@@ -976,6 +976,7 @@ struct keychain_command<command_te::public_key>: keychain_command_base
 
         virtual std::string operator()(keychain_base* keychain, const fc_light::variant& params_variant, int id) const override
         {
+            throw std::runtime_error("Command is deprecated");
             try
             {
                 auto params = params_variant.as<params_t>();
@@ -1005,6 +1006,7 @@ struct keychain_command<command_te::public_key>: keychain_command_base
         using  params_t = params;
         virtual std::string operator()(keychain_base* keychain, const fc_light::variant& params_variant, int id) const override
         {
+            throw std::runtime_error("Command is deprecated");
             try
             {
                 auto params = params_variant.as<params_t>();
@@ -1047,8 +1049,8 @@ FC_LIGHT_REFLECT_ENUM(
     (set_unlock_time)
     (last))
 
-FC_LIGHT_REFLECT(keychain_app::keychain_command<keychain_app::command_te::sign_hex>::params_t, (chainid)(transaction)(blockchain_type)(keyname))
-FC_LIGHT_REFLECT(keychain_app::keychain_command<keychain_app::command_te::sign_hash>::params_t, (hash)(sign_type)(keyname))
+FC_LIGHT_REFLECT(keychain_app::keychain_command<keychain_app::command_te::sign_hex>::params_t, (chainid)(transaction)(blockchain_type)(keyname)(unlock_time))
+FC_LIGHT_REFLECT(keychain_app::keychain_command<keychain_app::command_te::sign_hash>::params_t, (hash)(sign_type)(keyname)(unlock_time))
 FC_LIGHT_REFLECT(keychain_app::keychain_command<keychain_app::command_te::create>::params_t, (keyname)(encrypted)(cipher)(curve))
 FC_LIGHT_REFLECT(keychain_app::keychain_command<keychain_app::command_te::remove>::params_t, (keyname))
 FC_LIGHT_REFLECT(keychain_app::keychain_command<keychain_app::command_te::public_key>::params_t, (keyname))

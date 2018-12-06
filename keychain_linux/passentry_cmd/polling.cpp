@@ -12,8 +12,8 @@ void polling::Select()
     struct timeval to ={0, 1000};
     int res;
 
-    auto begin  = [this](buf_it &i) { if (i==buf.end()) i=buf.begin(); if (i>buf.end()) abort; return &(*i); };
-    auto remain = [this](buf_it &i) { if (i==buf.end()) i=buf.begin(); return std::distance(i, buf.end());};
+    auto from   = [this](buf_it &i) { assert(i <= buf.end());  if (i > buf.end()) abort(); return &(*i); };
+    auto remain = [this](buf_it &i) { assert(i <= buf.end());  if (i > buf.end()) abort(); return std::distance(i, buf.end()); };
 
     FD_ZERO(&readfds);
     FD_SET(socket, &readfds);
@@ -22,20 +22,33 @@ void polling::Select()
 
     if (FD_ISSET(socket, &readfds))
     {
-        size_t cnt = read(socket, begin(it), remain(it));
+        size_t cnt = read(socket, from(it), remain(it));
         if (cnt ==-1 ) throw std::runtime_error("gui reading error");
 
         it += cnt;
         while (true)
         {
             auto range = cut_json_obj(buf.begin(), it );
-            std::string str = std::string(range.first, range.second);
             if(std::distance(range.first, range.second) > 0)
             {
                 parse(std::string(range.first, range.second));
                 it = std::copy(range.second, it, buf.begin());
             }
-            else break;
+            else
+            {
+                if(remain(it) < 256)
+                {
+                    if (buf.size() <= 4096*2)
+                    {
+                        auto it_  = std::distance(buf.begin(), it);
+                        buf.resize(buf.size() + 256, 0x00);
+                        it = buf.begin() + it_;
+                    }
+                    else
+                        throw std::runtime_error("size of read buffer is too large");
+                }
+                break;
+            }
         }
     }
 }

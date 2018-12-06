@@ -501,21 +501,13 @@ static   std::string parse(std::vector<unsigned char> raw, blockchain_te blockch
                     kaitai::kstream ks(&is);
 
                     bitcoin_transaction_t data(&ks);
-                    std::string json = data.toJSON();
+                    json = data.toJSON();
 
                     json = fc_light::json::pretty_print(json, 2);
-
                     tx_common common( true, blockchain_te::bitcoin, json);
                     json = fc_light::json::to_pretty_string(fc_light::variant(common));
 
-                    std::regex e ("(\\\\n)");
-                    json =  std::regex_replace (json,e,"\n");
-
-                    std::regex r ("(\\\\)");
-                    json =  std::regex_replace (json,r,"");
-
                     BOOST_LOG_SEV(log.lg, info) << "bitcoin transaction parse complete: \n" + json;
-
                 } catch (std::exception &exc) {
                     tx_common common( false, blockchain, to_hex(raw.data(), raw.size()));
                     json = fc_light::json::to_pretty_string(fc_light::variant(common));

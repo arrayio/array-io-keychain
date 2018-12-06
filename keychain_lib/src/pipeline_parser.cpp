@@ -88,7 +88,11 @@ int pipeline_parser::run()
       else if(bytes_remaining(it) < 256)
       {
         if (read_buf.size() <= 4096*2)
-          read_buf.resize(256, 0x00);
+        {
+          auto i  = std::distance(read_buf.begin(), it);
+          read_buf.resize(read_buf.size() + 256, 0x00);
+          it = read_buf.begin() + i;
+        }
         else
           throw std::runtime_error("size of read buffer is too large");
       }

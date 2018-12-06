@@ -1,5 +1,6 @@
 #include <sys/socket.h>
 #include <unistd.h>
+#include <cassert>
 #include "polling.hpp"
 Q_DECLARE_METATYPE(std::string)
 

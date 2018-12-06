@@ -292,6 +292,148 @@ struct keychain_command: keychain_command_base
     using params_t = void;
 };
 
+namespace tx_parser
+{
+	struct tx_common
+	{
+		tx_common(bool json_, blockchain_te blockchain_) :
+			json(json_), blockchain(blockchain_) {}
+		tx_common(bool json_, blockchain_te blockchain_, std::string raw) :
+			json(json_), blockchain(blockchain_) {
+			data = fc_light::variant(raw);
+		}
+		bool json;
+		blockchain_te blockchain;
+		fc_light::variant data;
+	};
+
+	struct eth_tx : tx_common
+	{
+		eth_tx(blockchain_te blockchain,
+			std::string nonce,
+			std::string gasPrice,
+			std::string gas,
+			int chainid,
+			std::string from,
+			std::string to,
+			std::string value
+		) :
+			tx_common(true, blockchain),
+			trx(nonce, gasPrice, gas, chainid, from, to, value)
+		{
+			data = fc_light::variant(trx);
+		}
+
+		struct trx_t
+		{
+			trx_t() {}
+			trx_t(std::string _nonce,
+				std::string _gasPrice,
+				std::string _gas,
+				int _chainid,
+				std::string _from,
+				std::string _to,
+				std::string _value) :
+				nonce(_nonce),
+				gasPrice(_gasPrice),
+				gas(_gas),
+				chainid(_chainid),
+				from(_from),
+				to(_to),
+				value(_value) {}
+			std::string nonce, gasPrice, gas;
+			int chainid;
+			std::string from, to, value;
+		} trx;
+	};
+
+	struct tx_swap_common
+	{
+		tx_swap_common(bool json_, blockchain_te blockchain_) :
+			json(json_), blockchain(blockchain_) {}
+
+		bool json;
+		blockchain_te blockchain;
+		fc_light::variant data;
+		fc_light::variant swap;
+	};
+
+
+	struct eth_swap_tx : tx_swap_common
+	{
+		eth_swap_tx(blockchain_te blockchain,
+			std::string nonce,
+			std::string gasPrice,
+			std::string gas,
+			int chainid,
+			std::string from,
+			std::string to,
+			std::string value,
+			fc_light::variant sw
+		) :
+			tx_swap_common(true, blockchain),
+			trx(nonce, gasPrice, gas, chainid, from, to, value)
+		{
+			data = fc_light::variant(trx);
+			swap = sw;
+		}
+
+		struct trx_t
+		{
+			trx_t() {}
+			trx_t(std::string _nonce,
+				std::string _gasPrice,
+				std::string _gas,
+				int _chainid,
+				std::string _from,
+				std::string _to,
+				std::string _value) :
+				nonce(_nonce),
+				gasPrice(_gasPrice),
+				gas(_gas),
+				chainid(_chainid),
+				from(_from),
+				to(_to),
+				value(_value) {}
+			std::string nonce, gasPrice, gas;
+			int chainid;
+			std::string from, to, value;
+		} trx;
+	};
+
+
+	struct createSwap_tx
+	{
+		createSwap_tx(std::string hash, std::string addr) : params(hash, addr) {}
+		struct params_t
+		{
+			params_t(std::string  hash_, std::string addr_) :
+				action("createSwap"), hash(hash_), address(addr_) {}
+			std::string action, hash, address;
+		} params;
+	};
+
+	struct refund_tx
+	{
+		refund_tx(std::string addr) : params(addr) {}
+		struct params_t
+		{
+			params_t(std::string addr) : action("refund"), address(addr) {}
+			std::string action, address;
+		} params;
+	};
+
+	struct Withdraw_tx
+	{
+		Withdraw_tx(std::string secret, std::string addr) : params(secret, addr) {}
+		struct params_t
+		{
+			params_t(std::string  sec, std::string addr) : action("Withdraw"), secret(sec), address(addr) {}
+			std::string action, secret, address;
+		} params;
+	};
+}
+
 template<>
 struct keychain_command<command_te::sign_hex> : keychain_command_base
 {
@@ -305,141 +447,6 @@ struct keychain_command<command_te::sign_hex> : keychain_command_base
       std::string keyname;
     };
     using params_t = params;
-
-    struct tx_common
-    {
-        tx_common(bool json_, blockchain_te blockchain_):
-                json(json_), blockchain(blockchain_){}
-        tx_common(bool json_, blockchain_te blockchain_, std::string raw):
-                json(json_), blockchain(blockchain_){data = fc_light::variant(raw);}
-        bool json;
-        blockchain_te blockchain;
-        fc_light::variant data;
-    };
-
-    struct eth_tx : tx_common
-    {
-        eth_tx( blockchain_te blockchain,
-                std::string nonce,
-                std::string gasPrice,
-                std::string gas,
-                int chainid,
-                std::string from,
-                std::string to,
-                std::string value
-                ):
-                tx_common(true, blockchain),
-                trx(nonce, gasPrice, gas, chainid, from, to, value)
-        { data  = fc_light::variant(trx); }
-
-        struct trx_t
-        {
-            trx_t () {}
-            trx_t(  std::string _nonce,
-                    std::string _gasPrice,
-                    std::string _gas,
-                    int _chainid,
-                    std::string _from,
-                    std::string _to,
-                    std::string _value):
-                    nonce(_nonce),
-                    gasPrice(_gasPrice),
-                    gas(_gas),
-                    chainid(_chainid),
-                    from(_from),
-                    to(_to),
-                    value(_value){}
-            std::string nonce, gasPrice, gas;
-            int chainid;
-            std::string from, to ,value;
-        } trx;
-    };
-
-    struct tx_swap_common
-    {
-        tx_swap_common(bool json_, blockchain_te blockchain_):
-                json(json_), blockchain(blockchain_){}
-
-        bool json;
-        blockchain_te blockchain;
-        fc_light::variant data;
-        fc_light::variant swap;
-    };
-
-
-    struct eth_swap_tx : tx_swap_common
-    {
-        eth_swap_tx( blockchain_te blockchain,
-                std::string nonce,
-                std::string gasPrice,
-                std::string gas,
-                int chainid,
-                std::string from,
-                std::string to,
-                std::string value,
-                fc_light::variant sw
-        ):
-                tx_swap_common(true, blockchain),
-                trx(nonce, gasPrice, gas, chainid, from, to, value)
-        { data  = fc_light::variant(trx);
-          swap = sw;
-        }
-
-        struct trx_t
-        {
-            trx_t () {}
-            trx_t(  std::string _nonce,
-                    std::string _gasPrice,
-                    std::string _gas,
-                    int _chainid,
-                    std::string _from,
-                    std::string _to,
-                    std::string _value):
-                    nonce(_nonce),
-                    gasPrice(_gasPrice),
-                    gas(_gas),
-                    chainid(_chainid),
-                    from(_from),
-                    to(_to),
-                    value(_value){}
-            std::string nonce, gasPrice, gas;
-            int chainid;
-            std::string from, to ,value;
-        } trx;
-    };
-
-
-    struct createSwap_tx
-    {
-        createSwap_tx( std::string hash, std::string addr):   params(hash, addr){}
-        struct params_t
-        {
-            params_t(std::string  hash_,  std::string addr_):
-                    action("createSwap"), hash(hash_), address(addr_){}
-            std::string action, hash, address;
-        } params;
-    };
-
-    struct refund_tx
-    {
-        refund_tx( std::string addr): params(addr){}
-        struct params_t
-        {
-            params_t(std::string addr): action("refund"), address(addr){}
-            std::string action, address;
-        } params;
-    };
-
-    struct Withdraw_tx
-    {
-        Withdraw_tx( std::string secret, std::string addr): params(secret, addr){}
-        struct params_t
-        {
-            params_t(std::string  sec,  std::string addr): action("Withdraw"), secret(sec), address(addr){}
-            std::string action, secret, address;
-        } params;
-    };
-
 
 static    bool swap_action(std::string data, fc_light::variant& variant)
     {
@@ -455,7 +462,7 @@ static    bool swap_action(std::string data, fc_light::variant& variant)
 
             auto hash = data.substr(8, 64);
             auto address = data.substr(8+64, 64);
-            createSwap_tx  action( hash, address);
+			tx_parser::createSwap_tx  action( hash, address);
             variant = fc_light::variant(action.params);
         }
         else if (func == SWAP_F2)
@@ -464,7 +471,7 @@ static    bool swap_action(std::string data, fc_light::variant& variant)
                 return false;
 
             auto address = data.substr(8, 64);
-            refund_tx  action( address);
+			tx_parser::refund_tx  action( address);
             variant = fc_light::variant(action.params);
         }
         else if (func == SWAP_F3)
@@ -474,7 +481,7 @@ static    bool swap_action(std::string data, fc_light::variant& variant)
 
             auto secret = data.substr(8, 64);
             auto address = data.substr(8+64, 64);
-            Withdraw_tx  action( secret, address);
+			tx_parser::Withdraw_tx  action( secret, address);
             variant = fc_light::variant(action.params);
         }
         else
@@ -505,7 +512,7 @@ static   std::string parse(std::vector<unsigned char> raw, blockchain_te blockch
 
                     json = fc_light::json::pretty_print(json, 2);
 
-                    tx_common common( true, blockchain_te::bitcoin, json);
+					tx_parser::tx_common common( true, blockchain_te::bitcoin, json);
                     json = fc_light::json::to_pretty_string(fc_light::variant(common));
 
                     std::regex e ("(\\\\n)");
@@ -517,7 +524,7 @@ static   std::string parse(std::vector<unsigned char> raw, blockchain_te blockch
                     BOOST_LOG_SEV(log.lg, info) << "bitcoin transaction parse complete: \n" + json;
 
                 } catch (std::exception &exc) {
-                    tx_common common( false, blockchain, to_hex(raw.data(), raw.size()));
+					tx_parser::tx_common common( false, blockchain, to_hex(raw.data(), raw.size()));
                     json = fc_light::json::to_pretty_string(fc_light::variant(common));
                     BOOST_LOG_SEV(log.lg, info) << "bitcoin transaction parse is not complete: \n" + std::string(exc.what()) +"\n " + json;
                 }
@@ -541,20 +548,20 @@ static   std::string parse(std::vector<unsigned char> raw, blockchain_te blockch
                     fc_light::variant swap;
                     if (swap_action(data, swap))
                     {
-                        eth_swap_tx  parsed(blockchain,  nonce, gasPrice, gas, chainId, from, to, value, swap);
-                        json = fc_light::json::to_pretty_string(fc_light::variant(static_cast<tx_swap_common&>(parsed)));
+                        tx_parser::eth_swap_tx  parsed(blockchain,  nonce, gasPrice, gas, chainId, from, to, value, swap);
+                        json = fc_light::json::to_pretty_string(fc_light::variant(static_cast<tx_parser::tx_swap_common&>(parsed)));
                         BOOST_LOG_SEV(log.lg, info) << "ethereum transaction swap-on-line specific-fields parse complete: \n" + json;
                     }
                     else
                     {
-                        eth_tx  parsed(blockchain,  nonce, gasPrice, gas, chainId, from, to, value);
-                        json = fc_light::json::to_pretty_string(fc_light::variant(static_cast<tx_common&>(parsed)));
+						tx_parser::eth_tx  parsed(blockchain,  nonce, gasPrice, gas, chainId, from, to, value);
+                        json = fc_light::json::to_pretty_string(fc_light::variant(static_cast<tx_parser::tx_common&>(parsed)));
                         BOOST_LOG_SEV(log.lg, info) << "ethereum transaction parse complete: \n" + json;
                     }
                 }
                 catch (const std::exception& exc)
                 {
-                    tx_common common( false, blockchain, to_hex(raw.data(), raw.size()));
+					tx_parser::tx_common common( false, blockchain, to_hex(raw.data(), raw.size()));
                     json = fc_light::json::to_pretty_string(fc_light::variant(common));
                     BOOST_LOG_SEV(log.lg, info) << "ethereum transaction parse is not complete: \n" + std::string(exc.what()) +"\n " + json;
                 }
@@ -562,7 +569,7 @@ static   std::string parse(std::vector<unsigned char> raw, blockchain_te blockch
             }
             default:
             {
-                tx_common common( false, blockchain, to_hex(raw.data(), raw.size()));
+				tx_parser::tx_common common( false, blockchain, to_hex(raw.data(), raw.size()));
                 json = fc_light::json::to_pretty_string(fc_light::variant(common));
                 BOOST_LOG_SEV(log.lg, info) << " transaction parse is not implementated: \n" + json;
             }
@@ -1053,15 +1060,15 @@ FC_LIGHT_REFLECT(keychain_app::json_error, (id)(error))
 FC_LIGHT_REFLECT_ENUM(keychain_app::blockchain_te, (unknown)(bitshares)(array)(ethereum)(bitcoin))
 FC_LIGHT_REFLECT_ENUM(keychain_app::sign_te, (unknown)(VRS_canonical)(RSV_noncanonical))
 
-FC_LIGHT_REFLECT(keychain_app::keychain_command<keychain_app::command_te::sign_hex>::tx_common, (json)(blockchain)(data))
-FC_LIGHT_REFLECT(keychain_app::keychain_command<keychain_app::command_te::sign_hex>::eth_tx::trx_t, (nonce)(gasPrice)(gas)(chainid)(from)(to)(value))
+FC_LIGHT_REFLECT(keychain_app::tx_parser::tx_common, (json)(blockchain)(data))
+FC_LIGHT_REFLECT(keychain_app::tx_parser::eth_tx::trx_t, (nonce)(gasPrice)(gas)(chainid)(from)(to)(value))
 
-FC_LIGHT_REFLECT(keychain_app::keychain_command<keychain_app::command_te::sign_hex>::tx_swap_common, (json)(blockchain)(data)(swap))
-FC_LIGHT_REFLECT(keychain_app::keychain_command<keychain_app::command_te::sign_hex>::eth_swap_tx::trx_t, (nonce)(gasPrice)(gas)(chainid)(from)(to)(value))
+FC_LIGHT_REFLECT(keychain_app::tx_parser::tx_swap_common, (json)(blockchain)(data)(swap))
+FC_LIGHT_REFLECT(keychain_app::tx_parser::eth_swap_tx::trx_t, (nonce)(gasPrice)(gas)(chainid)(from)(to)(value))
 
-FC_LIGHT_REFLECT(keychain_app::keychain_command<keychain_app::command_te::sign_hex>::createSwap_tx::params_t, (action)(hash)(address))
-FC_LIGHT_REFLECT(keychain_app::keychain_command<keychain_app::command_te::sign_hex>::refund_tx::params_t, (action)(address))
-FC_LIGHT_REFLECT(keychain_app::keychain_command<keychain_app::command_te::sign_hex>::Withdraw_tx::params_t, (action)(secret)(address))
+FC_LIGHT_REFLECT(keychain_app::tx_parser::createSwap_tx::params_t, (action)(hash)(address))
+FC_LIGHT_REFLECT(keychain_app::tx_parser::refund_tx::params_t, (action)(address))
+FC_LIGHT_REFLECT(keychain_app::tx_parser::Withdraw_tx::params_t, (action)(secret)(address))
 
 
 #endif //KEYCHAINAPP_KEYCHAIN_COMMANDS_HPP

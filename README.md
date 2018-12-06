@@ -54,7 +54,7 @@ For extensive documentation on KeyChain, refer to the [Wiki](https://github.com/
 There you will find:
 
 - [Home](https://github.com/arrayio/array-io-keychain/wiki): how to navigate in our Wiki 
-- [How to sign an Ethereum transaction](https://github.com/arrayio/array-io-keychain/wiki/How-to-sign-Ethereum-transaction-via-KeyChain)
+- [How to sign an Ethereum transaction](https://github.com/arrayio/array-io-keychain/wiki/How-to-sign-Ethereum-transaction-via-KeyChain): a simple and precise tutorial
 - [Installation guides](https://github.com/arrayio/array-io-keychain/wiki/Installation-guides) for MacOs, Windows, Linux
 - [KeyChain Protocol](https://github.com/arrayio/array-io-keychain/wiki/KeyChain-Protocol): full comprehensive descriptions of the KeyChain commands
 - [KeyChain sample commands](https://github.com/arrayio/array-io-keychain/wiki/KeyChain-sample-commands): shortcut to using the commands

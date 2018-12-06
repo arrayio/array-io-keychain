@@ -685,7 +685,7 @@
         <scene sceneID="R2V-B0-nI4">
             <objects>
                 <windowController id="B8D-0N-5wS" sceneMemberID="viewController">
-                    <window key="window" title="KeyChain Installer" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" animationBehavior="default" id="IQv-IB-iLA">
+                    <window key="window" title="KeyChain Installer v0.9" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" animationBehavior="default" id="IQv-IB-iLA">
                         <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
                         <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
                         <rect key="contentRect" x="196" y="240" width="480" height="270"/>
@@ -711,7 +711,7 @@
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="fAj-v8-o2M">
-                                <rect key="frame" x="191" y="13" width="69" height="32"/>
+                                <rect key="frame" x="228" y="13" width="69" height="32"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                 <buttonCell key="cell" type="push" title="Next" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="3Qg-lP-pXw">
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
@@ -721,9 +721,21 @@
                                     </connections>
                                 </buttonCell>
                             </button>
+                            <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="XHp-rm-deL">
+                                <rect key="frame" x="153" y="13" width="70" height="32"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <buttonCell key="cell" type="push" title="Back" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="ukZ-zg-Mcf">
+                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                </buttonCell>
+                                <connections>
+                                    <action selector="navigateBack:" target="oxz-tc-nBJ" id="JEF-Fi-tlo"/>
+                                </connections>
+                            </button>
                         </subviews>
                     </view>
                     <connections>
+                        <outlet property="backButton" destination="XHp-rm-deL" id="JLk-qy-geW"/>
                         <outlet property="nextButton" destination="fAj-v8-o2M" id="LgJ-UA-W97"/>
                     </connections>
                 </pagecontroller>
@@ -881,7 +893,7 @@ Enjoy the new level of security!</string>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="cdC-9J-Svi">
-                                <rect key="frame" x="187" y="13" width="76" height="32"/>
+                                <rect key="frame" x="228" y="13" width="76" height="32"/>
                                 <buttonCell key="cell" type="push" title="Install" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="c9d-nL-qiH">
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                     <font key="font" metaFont="system"/>
@@ -923,7 +935,7 @@ Enjoy the new level of security!</string>
                             <constraint firstItem="iEN-O1-8Hp" firstAttribute="centerX" secondItem="q5J-NA-DPF" secondAttribute="centerX" id="D2J-iB-qH3"/>
                             <constraint firstItem="iEN-O1-8Hp" firstAttribute="top" secondItem="BTw-Au-wCi" secondAttribute="bottom" constant="16" id="HdB-ny-WGb"/>
                             <constraint firstItem="tL8-Mo-Wgr" firstAttribute="centerX" secondItem="q5J-NA-DPF" secondAttribute="centerX" id="SRT-nS-5aj"/>
-                            <constraint firstItem="cdC-9J-Svi" firstAttribute="centerX" secondItem="q5J-NA-DPF" secondAttribute="centerX" id="Uxi-Nr-9zH"/>
+                            <constraint firstItem="cdC-9J-Svi" firstAttribute="centerX" secondItem="q5J-NA-DPF" secondAttribute="centerX" constant="41" id="Uxi-Nr-9zH"/>
                             <constraint firstAttribute="trailing" secondItem="3pT-tS-DUq" secondAttribute="trailing" constant="161" id="Xth-OJ-PNK"/>
                             <constraint firstItem="cdC-9J-Svi" firstAttribute="top" secondItem="iEN-O1-8Hp" secondAttribute="bottom" constant="20" id="Z2H-x2-G8y"/>
                             <constraint firstItem="tL8-Mo-Wgr" firstAttribute="top" secondItem="3pT-tS-DUq" secondAttribute="bottom" constant="8" id="b2T-e2-FJd"/>

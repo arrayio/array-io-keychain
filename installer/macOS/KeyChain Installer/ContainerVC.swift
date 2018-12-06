@@ -12,12 +12,14 @@ class ContainerVC: NSPageController, NSPageControllerDelegate {
     
     var viewArray = ["one", "two", "three"]
     @IBOutlet weak var nextButton: NSButton!
+    @IBOutlet weak var backButton: NSButton!
     
     override func viewDidLoad() {
         super.viewDidLoad()
         delegate = self
         self.arrangedObjects = viewArray
         self.transitionStyle = .horizontalStrip
+        self.backButton.isEnabled = false
         
         NotificationCenter.default.addObserver(self, selector: #selector(navigateForward(_:)), name: .navigationForward, object: nil)
         print("Start")
@@ -54,16 +56,30 @@ class ContainerVC: NSPageController, NSPageControllerDelegate {
     
     override func navigateForward(_ sender: Any?) {
         super.navigateForward(sender)
+        buttonHiddenRules()
+    }
+    
+    fileprivate func buttonHiddenRules() {
         switch self.selectedIndex {
         case 0:
+            self.backButton.isEnabled = false
+            self.nextButton.isHidden = false
             break
         case 1:
+            self.backButton.isEnabled = true
+            self.nextButton.isHidden = false
             break
         case 2:
+            self.backButton.isEnabled = true
             self.nextButton.isHidden = true
         default:
             break
         }
+    }
+    
+    override func navigateBack(_ sender: Any?) {
+        super.navigateBack(sender)
+        buttonHiddenRules()
     }
     
 }

@@ -961,6 +961,7 @@ struct keychain_command<command_te::public_key>: keychain_command_base
 
         virtual std::string operator()(keychain_base* keychain, const fc_light::variant& params_variant, int id) const override
         {
+            throw std::runtime_error("Command is deprecated");
             try
             {
                 auto params = params_variant.as<params_t>();
@@ -990,6 +991,7 @@ struct keychain_command<command_te::public_key>: keychain_command_base
         using  params_t = params;
         virtual std::string operator()(keychain_base* keychain, const fc_light::variant& params_variant, int id) const override
         {
+            throw std::runtime_error("Command is deprecated");
             try
             {
                 auto params = params_variant.as<params_t>();

@@ -16,37 +16,6 @@ You can find comprehensive [installation guides](https://github.com/arrayio/arra
 
 ## Getting started
 
-1. Create a function that will sign the transaction
-
-```javascript
-const signHexCommand = (hexraw) => {
-  return {
-    "command": "sign_hex",
-    "params": {
-      "transaction": hexraw,
-      "blockchain_type": "ethereum",
-      "keyname": keyname
-    }
-  }
-}
-```
-
-2. Pass hex of the transaxtion to the function
-
-```javascript
-ws.onopen = async () => {
-  console.log('ws open');
-  const rawHex = await buildTxSinature(
-    null, // signature
-    fromAdd,
-    toAdd,
-    valueTx
-  )
-  console.log('sign tx:', rawHex);
-  sendCommand(signHexCommand(rawHex));
-}
-```
-
 ## How to use 
 
 For extensive documentation on KeyChain, refer to the [Wiki](https://github.com/arrayio/array-io-keychain/wiki).

@@ -1,9 +1,9 @@
 <?xml version="1.0"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
-
+	
 	<!-- Set product information -->
    <Product Id="*" UpgradeCode="{46840884-EDE8-4425-B0E9-6EEECE8C1E9F}" 	 
-			Name="WSKeychain Services" Language="1033" Version="1.0.0.3" 
+			Name="WSKeychainServices" Language="1033" Version="1.0.0.3" 
 			Manufacturer="Array.IO">
 	
 	<!-- Set package and media information -->
@@ -118,14 +118,34 @@
 		<Custom Action="BeforeUninstallService" After="InstallInitialize">REMOVE="ALL"</Custom>
     </InstallExecuteSequence>
 	
-	<!-- Embed vcredist v14 (14.15.26706) -->
+	<!-- Embed vcredist (VC1.41) for x86-x32 & x86-x64 target platforms -->
 	<DirectoryRef Id="TARGETDIR">
-		<Merge Id="VCRedist" SourceFile="C:\IDE\MVS2017\VC\Redist\MSVC\14.15.26706\MergeModules\Microsoft_VC141_CRT_x64.msm" DiskId="1" Language="0"/>
+		<!-- Handle x64 vcredist files -->
+		<!-- Or use $(env.CommonProgramFiles) alias if it's not x86 in folder name -->
+		<?if $(var.ProcessorArchitecture)="AMD64" or $(var.ProcessorArchitecture)="x64" or $(var.ProcessorArchitecture)="Intel64" ?> 
+			<Merge Id="CrtFiles_x64" SourceFile="C:\IDE\MVS2017\VC\Redist\MSVC\14.15.26706\MergeModules\Microsoft_VC141_CRT_x64.msm" DiskId="1" Language="0"/>
+			<Merge Id="CrtPolicy_x64" SourceFile="C:\IDE\MVS2017\VC\Redist\MSVC\14.15.26706\MergeModules\Microsoft_VC141_DebugCRT_x64.msm" DiskId="1" Language="0"/>
+		<?endif?>
+		<!-- Handle x64 vcredist files -->
+		<?if $(var.ProcessorArchitecture)="x86" or $(var.ProcessorArchitecture)="Intel" ?> 
+			<!-- (VC141) -->
+			<Merge Id="CrtFiles_x86" SourceFile="C:\IDE\MVS2017\VC\Redist\MSVC\14.15.26706\MergeModules\Microsoft_VC141_CRT_x86.msm" DiskId="1" Language="0"/>
+			<Merge Id="CrtPolicy_x86" SourceFile="C:\IDE\MVS2017\VC\Redist\MSVC\14.15.26706\MergeModules\Microsoft_VC141_DebugCRT_x86.msm" DiskId="1" Language="0"/>
+		<?endif?> 
+		<?warning Architecture type: $(var.ProcessorArchitecture) ?>
 	</DirectoryRef>
+	
+	<!-- Merge specific version of vcredist -->
 	<Feature Id="VCRedist" Title="Visual C++ 14.0 Runtime" AllowAdvertise="no" Display="hidden" Level="1">
-		<MergeRef Id="VCRedist"/>
+		<?if $(var.ProcessorArchitecture)="AMD64" or $(var.ProcessorArchitecture)="x64" ?>
+			<MergeRef Id="CrtFiles_x64"/>
+			<MergeRef Id="CrtPolicy_x64"/>
+		<?endif?>
+		<?if $(var.ProcessorArchitecture)="x86" or $(var.ProcessorArchitecture)="Intel" ?> 
+			<MergeRef Id="CrtFiles_x86"/>
+			<MergeRef Id="CrtPolicy_x86"/>
+		<?endif?> 
 	</Feature>
 	
    </Product>
-   
 </Wix>

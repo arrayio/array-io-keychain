@@ -66,13 +66,23 @@ if(WIN32)
 	message(STATUS "WSSDeploy installer Path: ${wixoutputpath}")
 	message(STATUS "WIX Path: ${WIX_PATH}")
 
+	# check if you already have a correctly defined PROCESSOR_ARCHITECTURE enviroment variable_requires
+	#like: 
+	#Intel   - 32-bit x86 
+	#Intel64 - Itanium family 
+	#AMD64   - 64-bit x86, deprecated 
+	#x64     - 64-bit x86 
+	
+	#get specific platform version to detect vcredist type
+	set(TARGET_PLATFORM $ENV{PROCESSOR_ARCHITECTURE})
+	message(STATUS "TARGET PLATFORM: ${TARGET_PLATFORM}")
+	
 	#-bf - flag causes all of the files to be bound int the resulting .wixout/.* file. 
 	#-out - flag tells the linker where to output the .wixout/.* file
 	#-xo - this flag tells the linker to output an XML representation of the MSI, instead of the actual MSI,  required to use the -bf switch
-	
 	add_custom_command(TARGET wssdeploy
 					   POST_BUILD
-		               COMMAND ${WIX_PATH}/candle.exe ${installerpath}/wix_wssapp_entry.wxs -bf -xo -out ${installerpath}/wix_wssapp_entry.wixobj
+		               COMMAND ${WIX_PATH}/candle.exe ${installerpath}/wix_wssapp_entry.wxs -dProcessorArchitecture=${TARGET_PLATFORM} -bf -xo -out ${installerpath}/wix_wssapp_entry.wixobj
 		               COMMAND ${WIX_PATH}/light.exe -ext WixUIExtension ${installerpath}/wix_wssapp_entry.wixobj -out ${installerpath}/${PROJECT_NAME}.msi
 					   VERBATIM)
 

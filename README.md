@@ -53,13 +53,13 @@ For extensive documentation on KeyChain, refer to the [Wiki](https://github.com/
 
 There you will find:
 
-- [Home](https://github.com/arrayio/array-io-keychain/wiki): how to navigate in our Wiki 
-- [How to sign an Ethereum transaction](https://github.com/arrayio/array-io-keychain/wiki/How-to-sign-Ethereum-transaction-via-KeyChain): a simple and precise tutorial
-- [Installation guides](https://github.com/arrayio/array-io-keychain/wiki/Installation-guides) for macOS, Windows, Linux
-- [KeyChain Protocol](https://github.com/arrayio/array-io-keychain/wiki/KeyChain-Protocol): full comprehensive descriptions of the KeyChain commands
-- [KeyChain sample commands](https://github.com/arrayio/array-io-keychain/wiki/KeyChain-sample-commands): shortcut to using the commands
+- [Home](https://github.com/arrayio/array-io-keychain/wiki): how to navigate in our Wiki. 
+- [How to sign an Ethereum transaction](https://github.com/arrayio/array-io-keychain/wiki/How-to-sign-Ethereum-transaction-via-KeyChain): a simple and precise tutorial.
+- [Installation guides](https://github.com/arrayio/array-io-keychain/wiki/Installation-guides) for macOS, Windows, Linux.
+- [KeyChain Protocol](https://github.com/arrayio/array-io-keychain/wiki/KeyChain-Protocol): full comprehensive descriptions of the KeyChain commands.
+- [KeyChain sample commands](https://github.com/arrayio/array-io-keychain/wiki/KeyChain-sample-commands): shortcut to using the commands.
 - [Pipe API](https://github.com/arrayio/array-io-keychain/wiki/Pipe-API): integrating KeyChain through pipe.
-- [Security](https://github.com/arrayio/array-io-keychain/wiki/Security): why KeyChain is highly secure
+- [Security](https://github.com/arrayio/array-io-keychain/wiki/Security): why KeyChain is highly secure.
 - [Troubleshooting](https://github.com/arrayio/array-io-keychain/wiki/Troubleshooting): error handling, log files, debugging.
 - [Useful reference](https://github.com/arrayio/array-io-keychain/wiki/Useful-reference): external links.
 - [WebSocket API](https://github.com/arrayio/array-io-keychain/wiki/WebSocket-API): integrating KeyChain through WebSocket.

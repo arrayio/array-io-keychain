@@ -3,7 +3,7 @@
 
 	<!-- Set product information -->
    <Product Id="*" UpgradeCode="{46840884-EDE8-4425-B0E9-6EEECE8C1E9F}" 	 
-			Name="WSKeychain Services" Language="1033" Version="1.0.0.2" 
+			Name="WSKeychain Services" Language="1033" Version="1.0.0.3" 
 			Manufacturer="Array.IO">
 	
 	<!-- Set package and media information -->
@@ -59,7 +59,7 @@
 				</Directory>
 				<Component Id="Component13" DiskId="1" Guid="{46840884-EDE8-4425-B0E9-6EEECE8C1E98}">
 					<File Id="File12" Name="libcrypto-1_1-x64.dll" Source="libcrypto-1_1-x64.dll" />
-				</Component>				
+				</Component>	
 			</Directory>
 		</Directory>
     </Directory>
@@ -102,7 +102,7 @@
                   HideTarget="no" Impersonate="no" />
 				  			  
 	<!-- Additional action after installation -->			  
-	<CustomAction Id="RunBat" Directory="INSTALLLOCATION"
+	<CustomAction Id="RunWsserviceInstallation" Directory="INSTALLLOCATION"
 	ExeCommand='"[INSTALLLOCATION]wsservice_manager.BAT"'
     Execute="deferred" Impersonate="no" Return="check"/>
 	
@@ -114,9 +114,18 @@
 	<!-- Overall install & uninstall actions execution block -->	
     <InstallExecuteSequence>
         <Custom Action="RunWrapExe" After="InstallFiles">NOT REMOVE~="ALL"</Custom>
-		<Custom Action="RunBat" Before="InstallFinalize">NOT (REMOVE~="ALL")</Custom>
+		<Custom Action="RunWsserviceInstallation" Before="InstallFinalize">NOT (REMOVE~="ALL")</Custom>
 		<Custom Action="BeforeUninstallService" After="InstallInitialize">REMOVE="ALL"</Custom>
     </InstallExecuteSequence>
-
+	
+	<!-- Embed vcredist v14 (14.15.26706) -->
+	<DirectoryRef Id="TARGETDIR">
+		<Merge Id="VCRedist" SourceFile="C:\IDE\MVS2017\VC\Redist\MSVC\14.15.26706\MergeModules\Microsoft_VC141_CRT_x64.msm" DiskId="1" Language="0"/>
+	</DirectoryRef>
+	<Feature Id="VCRedist" Title="Visual C++ 14.0 Runtime" AllowAdvertise="no" Display="hidden" Level="1">
+		<MergeRef Id="VCRedist"/>
+	</Feature>
+	
    </Product>
+   
 </Wix>

@@ -47,7 +47,6 @@ if(WIN32)
 	message(STATUS "PREBUILD FILES: ${PREBUILD_FILES}")
 	
 	#copy demo files
-	
 	set( DEMO_FILES
 		${CMAKE_CURRENT_SOURCE_DIR}/demo/index.html
 		${CMAKE_CURRENT_SOURCE_DIR}/demo/logo.png

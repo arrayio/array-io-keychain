@@ -14,7 +14,7 @@ After installation, connect to the demo-page: http://localhost:16384/ to check i
 
 ![new-key-demo-list](https://user-images.githubusercontent.com/34011337/49649968-d1857900-fa3b-11e8-97c1-a78cf5b6febe.png)
 
-If you are having trouble connecting to the page, [contact us]() and we will do our best to help you.
+If you are having trouble connecting to the page, [contact us](#contact) and we will do our best to help you.
 
 You can find comprehensive installation guides for [macOS](https://github.com/arrayio/array-io-keychain/wiki/Installation-guide-for-macOS), [Windows](https://github.com/arrayio/array-io-keychain/wiki/Installation-guide-for-Windows), and [Linux](https://github.com/arrayio/array-io-keychain/wiki/Installation-guide-for-Linux) in our Wiki. 
 

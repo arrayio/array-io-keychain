@@ -1,5 +1,5 @@
 //
-//  MyDialog.h
+//  DialogWC.h
 //  keychain
 //
 //  Created by Mikhail Lutskiy on 29/10/2018.
@@ -10,7 +10,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface MyDialog : NSWindowController
+@interface DialogWC : NSWindowController
 
 @property (nonatomic, strong) NSString *jsonString;
 @property (readwrite) BOOL isSignTransaction;

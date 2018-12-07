@@ -1,11 +1,11 @@
 //
-//  MyDialog.m
+//  DialogWC.m
 //  keychain
 //
 //  Created by Mikhail Lutskiy on 29/10/2018.
 //
 
-#import "MyDialog.h"
+#import "DialogWC.h"
 #import "PassSyncStore.h"
 #import "SYFlatButton.h"
 #import "HexToRgbColor.h"
@@ -15,14 +15,14 @@
 #include <limits.h>
 #import "FileManager.h"
 
-@interface MyDialog () {
+@interface DialogWC () {
     NSSecureTextField *pass;
     NSSecureTextField *passConfirm;
 }
 
 @end
 
-@implementation MyDialog
+@implementation DialogWC
 
 - (instancetype)initWithFrame:(NSRect)frame {
     NSWindowStyleMask windowMask = NSWindowStyleMaskTitled | NSWindowStyleMaskFullSizeContentView | NSWindowStyleMaskClosable;
@@ -52,6 +52,7 @@
 - (void) clickButton {
     if (!self.isSignTransaction && ![pass.stringValue isEqualToString:passConfirm.stringValue]) {
         NSAlert *alert = [NSAlert new];
+        [alert setIcon:[NSImage new]];
         alert.messageText = @"Error";
         alert.informativeText = @"Passphrases must match";
         [alert addButtonWithTitle:@"OK"];
@@ -358,21 +359,9 @@
 
 - (void) expertModeAlert {
     NSAlert *alert = [NSAlert new];
+    [alert setIcon:[NSImage new]];
     alert.messageText = @"Expert mode";
     alert.informativeText = self.jsonString;
-    [alert addButtonWithTitle:@"OK"];
-    [alert beginSheetModalForWindow:[self.window.contentView window] completionHandler:^(NSInteger result) {
-        NSLog(@"Success");
-    }];
-}
-
-- (void) swapAlert {
-    NSError *error;
-    ResponseModel *model = [[ResponseModel alloc] initWithString:self.jsonString error:&error];
-
-    NSAlert *alert = [NSAlert new];
-    alert.messageText = @"Swap";
-    alert.informativeText = model.swap.toJSONString;
     [alert addButtonWithTitle:@"OK"];
     [alert beginSheetModalForWindow:[self.window.contentView window] completionHandler:^(NSInteger result) {
         NSLog(@"Success");

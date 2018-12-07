@@ -7,7 +7,7 @@
 
 #include "sec_mod_mac.hpp"
 #import <Foundation/Foundation.h>
-#import "MyDialog.h"
+#import "DialogWC.h"
 #import "PassSyncStore.h"
 #import "ApplicationShared.h"
 
@@ -38,7 +38,7 @@ byte_seq_t sec_mod_mac::get_passwd_trx_raw(const std::string& raw_trx) const
     NSLog(@"Error %@", error);
     
     NSRect frame = NSMakeRect(0, 0, (error == nil && model.swap != NULL) ? 825 : 575, (error == nil && model.swap != NULL) ? 521 : 361);
-    MyDialog *dialog = [[MyDialog alloc] initWithFrame:frame];
+    DialogWC *dialog = [[DialogWC alloc] initWithFrame:frame];
     dialog.jsonString = [NSString stringWithUTF8String:raw_trx.c_str()];
     dialog.jsonModel = model;
     dialog.isRawTransaction = (error == nil) ? false : true;
@@ -55,7 +55,7 @@ byte_seq_t sec_mod_mac::get_passwd_on_create() const
 {
     [ApplicationShared sharedInstance];
     NSRect frame = NSMakeRect(0, 0, 575, 261);
-    MyDialog *dialog = [[MyDialog alloc] initWithFrame:frame];
+    DialogWC *dialog = [[DialogWC alloc] initWithFrame:frame];
     dialog.isSignTransaction = false;
     [dialog runModal];
 

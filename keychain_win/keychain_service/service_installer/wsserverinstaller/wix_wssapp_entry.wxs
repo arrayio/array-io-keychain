@@ -3,7 +3,7 @@
 	
 	<!-- Set product information -->
    <Product Id="*" UpgradeCode="{46840884-EDE8-4425-B0E9-6EEECE8C1E9F}" 	 
-			Name="WSKeychainServices" Language="1033" Version="1.0.0.3" 
+			Name="KeyChain" Language="1033" Version="1.0.0.3" 
 			Manufacturer="Array.IO">
 	
 	<!-- Set package and media information -->
@@ -16,7 +16,7 @@
 	<!-- Fragment of sources to install -->
     <Directory Id="TARGETDIR" Name="SourceDir">
 		<Directory Id="RootInstallDrive">
-			<Directory Id="INSTALLLOCATION" Name="WSKeychain">
+			<Directory Id="INSTALLLOCATION" Name="KeyChain">
 				<Component Id="Component1" DiskId="1" Guid="{46840884-EDE8-4425-B0E9-6EEECE8C1E9A}">
 					<File Id="File0" Name="websocketwrapper.exe" Source="websocketwrapper.exe" />
 				</Component>

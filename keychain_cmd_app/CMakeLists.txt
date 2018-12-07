@@ -98,9 +98,14 @@ else()
 			PUBLIC "${CMAKE_SOURCE_DIR}/keychain_win/keychain_agent/include"
 		)
 		target_link_libraries(keychain keychain_common secmodlib keychain_agent fc_light eth-crypto ${LIB_OPENSSL} ${Boost_LIBRARIES} Crypt32.lib Userenv.lib Wtsapi32.lib)
+		if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+			set(BUILD_TYPE_PATH Debug )
+		else(CMAKE_BUILD_TYPE STREQUAL "Debug")
+			set(BUILD_TYPE_PATH Release )
+		endif(CMAKE_BUILD_TYPE STREQUAL "Debug")
 		add_custom_command(TARGET keychain 
 						   POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy
-						   ${CMAKE_CURRENT_BINARY_DIR}/debug/keychain.exe
+						   ${CMAKE_CURRENT_BINARY_DIR}/${BUILD_TYPE_PATH}/keychain.exe
 						   ../keychain_win/keychain_service/service_installer/wsserverinstaller/wsservice/keychain.exe)
 	else()
 		target_link_libraries(keychain keychain_common fc_light eth-crypto ${LIB_OPENSSL} ${Boost_LIBRARIES})

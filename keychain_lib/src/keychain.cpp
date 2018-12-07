@@ -22,10 +22,7 @@
 using namespace keychain_app;
 
 
-keychain_base::keychain_base()
-{
-  unlock_time =DEF_UNLOCK_SECONDS;
-}
+keychain_base::keychain_base(){}
 
 keychain_base::~keychain_base(){}
 

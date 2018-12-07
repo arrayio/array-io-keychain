@@ -127,3 +127,7 @@ If you need help interacting with KeyChain, please do not hesitate to contact us
 If you want to report a security issue, include the word "security" in the subject field.
 
 We take security issues very seriously and we'll be looking forward to hearing from you. Still, we hope you enjoy using KeyChain and the integration goes smooth! 
+
+## License
+
+This project is licensed under the terms of the MIT license.

@@ -9,11 +9,132 @@
 #include <fc_light/io/json.hpp>
 
 #include "keychain_commands.hpp"
+#include "sec_mod_protocol.hpp"
 #include "keychain.hpp"
 
+bool keychain_app::swap_action(std::string data, fc_light::variant& variant)
+{
+  if (data.size() < 8)
+    return false;
+  
+  auto func = data.substr(0, 8);
+  
+  if (func == SWAP_F1)
+  {
+    if (data.length() != 8+64+64)
+      return false;
+    
+    auto hash = data.substr(8, 64);
+    auto address = data.substr(8+64, 64);
+    sec_mod_commands::createSwap_tx  action( hash, address);
+    variant = fc_light::variant(action.params);
+  }
+  else if (func == SWAP_F2)
+  {
+    if (data.length() != 8+64)
+      return false;
+    
+    auto address = data.substr(8, 64);
+    sec_mod_commands::refund_tx  action( address);
+    variant = fc_light::variant(action.params);
+  }
+  else if (func == SWAP_F3)
+  {
+    if (data.length() != 8+64+64)
+      return false;
+    
+    auto secret = data.substr(8, 64);
+    auto address = data.substr(8+64, 64);
+    sec_mod_commands::Withdraw_tx  action( secret, address);
+    variant = fc_light::variant(action.params);
+  }
+  else
+    return false;
+  
+  return true;
+}
 
-std::pair<std::string, std::string> keychain_app::read_private_key_file(
-        keychain_base * keychain, std::string keyname, std::string text)
+std::string keychain_app::parse(std::vector<unsigned char> raw, blockchain_te blockchain, std::string from)
+{
+  std::string json;
+  auto log  =logger_singletone::instance();
+  
+  
+  switch (blockchain)
+  {
+    case (keychain_app::blockchain_te::bitcoin):
+    {
+      try
+      {
+        streambuf_derived buf((char*) raw.data(),  (char*)raw.data() + raw.size());
+        std::istream is(&buf);
+        
+        kaitai::kstream ks(&is);
+        
+        bitcoin_transaction_t data(&ks);
+        json = data.toJSON();
+        
+        json = fc_light::json::pretty_print(json, 2);
+        sec_mod_commands::tx_common common( true, keychain_app::blockchain_te::bitcoin, json);
+        json = fc_light::json::to_pretty_string(fc_light::variant(common));
+        
+        BOOST_LOG_SEV(log.lg, info) << "bitcoin transaction parse complete: \n" + json;
+      } catch (std::exception &exc) {
+        sec_mod_commands::tx_common common( false, blockchain, to_hex(raw.data(), raw.size()));
+        json = fc_light::json::to_pretty_string(fc_light::variant(common));
+        BOOST_LOG_SEV(log.lg, info) << "bitcoin transaction parse is not complete: \n" + std::string(exc.what()) +"\n " + json;
+      }
+      
+      break;
+    }
+    case (keychain_app::blockchain_te::ethereum):
+    {
+      try
+      {
+        auto tx = dev::eth::TransactionBase(raw, dev::eth::CheckTransaction::none);
+        auto nonce     = tx.nonce().str();
+        auto gasPrice  = tx.gasPrice().str();
+        auto gas       = tx.gas().str();
+        auto chainId   = tx.ChainId();
+        auto to        = tx.to().hex();
+        auto value     = tx.value().str();
+        
+        auto data = to_hex(tx.data().data(), tx.data().size() );
+        
+        fc_light::variant swap;
+        if (swap_action(data, swap))
+        {
+          sec_mod_commands::eth_swap_tx  parsed(blockchain,  nonce, gasPrice, gas, chainId, from, to, value, swap);
+          json = fc_light::json::to_pretty_string(fc_light::variant(static_cast<sec_mod_commands::tx_swap_common&>(parsed)));
+          BOOST_LOG_SEV(log.lg, info) << "ethereum transaction swap-on-line specific-fields parse complete: \n" + json;
+        }
+        else
+        {
+          sec_mod_commands::eth_tx  parsed(blockchain,  nonce, gasPrice, gas, chainId, from, to, value);
+          json = fc_light::json::to_pretty_string(fc_light::variant(static_cast<sec_mod_commands::tx_common&>(parsed)));
+          BOOST_LOG_SEV(log.lg, info) << "ethereum transaction parse complete: \n" + json;
+        }
+      }
+      catch (const std::exception& exc)
+      {
+        sec_mod_commands::tx_common common( false, blockchain, to_hex(raw.data(), raw.size()));
+        json = fc_light::json::to_pretty_string(fc_light::variant(common));
+        BOOST_LOG_SEV(log.lg, info) << "ethereum transaction parse is not complete: \n" + std::string(exc.what()) +"\n " + json;
+      }
+      break;
+    }
+    default:
+    {
+      sec_mod_commands::tx_common common( false, blockchain, to_hex(raw.data(), raw.size()));
+      json = fc_light::json::to_pretty_string(fc_light::variant(common));
+      BOOST_LOG_SEV(log.lg, info) << " transaction parse is not implementated: \n" + json;
+    }
+  }
+  
+  return json;
+}
+
+std::pair<std::string, std::string> keychain_app::read_private_key_file(keychain_base* keychain, std::string keyname, std::string text)
 {
   keyfile_format::keyfile_t keyfile;
   auto curdir = bfs::current_path();

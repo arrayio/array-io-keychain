@@ -49,8 +49,8 @@
 #else
 
 #if defined(macintosh) || defined(__APPLE__) || defined(__APPLE_CC__)
-#  define KEY_DEFAULT_PATH  "data/keychain"
-#  define LOG_DEFAULT_PATH  "data/keychain/logs"
+        #define KEY_DEFAULT_PATH  "/var/keychain"
+        #define LOG_DEFAULT_PATH  "/var/keychain/logs"
 #else
 
 #ifdef _WIN32
@@ -67,10 +67,6 @@
 #define SWAP_F3 "1b258d50"      // "withdraw(bytes32,address)"
 
 
-
-// after password entry the decrypted private key stored in memory  during this time
-// This allow sing transaction without password entry.
-#define DEF_UNLOCK_SECONDS 0
 
 
 namespace keychain_app {
@@ -156,9 +152,9 @@ public:
     boost::signals2::signal<byte_seq_t(const std::string&)> get_passwd_trx_raw;
     boost::signals2::signal<byte_seq_t(void)> get_passwd_on_create;
     boost::signals2::signal<void(const string_list&)> print_mnemonic;
-    int unlock_time;
 
-    std::unordered_map<std::string, std::pair<std::string, std::time_t>> key_map;
+    // {keyname, {private_key {unlock_time, time_stamp}} }
+    std::unordered_map<std::string, std::pair<std::string, std::pair<int, std::time_t>>> key_map;
 };
 
 template <typename char_t>
@@ -189,7 +185,7 @@ fc_light::variant open_keyfile(const char_t* filename)
 void create_keyfile(const char* filename, const fc_light::variant& keyfile_var);
 size_t from_hex(const std::string& hex_str, unsigned char* out_data, size_t out_data_len );
 std::string to_hex(const uint8_t* data, size_t length);
-std::string read_private_key(keychain_base *, std::string , std::string);
+std::string read_private_key(keychain_base *, std::string , std::string, int);
 std::pair<std::string, std::string> read_private_key_file( keychain_base * , std::string , std::string );
 
 
@@ -590,9 +586,7 @@ static   std::string parse(std::vector<unsigned char> raw, blockchain_te blockch
 
           json= parse(raw, params.blockchain_type);
 
-          keychain->unlock_time =  params.unlock_time;
-
-          std::string key_data = read_private_key(keychain, params.keyname, json );
+          std::string key_data = read_private_key(keychain, params.keyname, json , params.unlock_time);
           int pk_len = keychain_app::from_hex(key_data, (unsigned char*) private_key.data(), 32);
 
           switch (params.blockchain_type)
@@ -672,11 +666,9 @@ struct keychain_command<command_te::sign_hash> : keychain_command_base
     virtual ~keychain_command(){}
     struct params
     {
-        params():unlock_time(0){};
         std::string hash;
         sign_te sign_type;
         std::string keyname;
-        int unlock_time;
     };
 
     using params_t = params;
@@ -690,8 +682,7 @@ struct keychain_command<command_te::sign_hash> : keychain_command_base
             if (params.keyname.empty())
                 std::runtime_error("Error: keyname is not specified");
 
-            keychain->unlock_time =  params.unlock_time;
-            std::string key_data = read_private_key(keychain, params.keyname, params.hash );
+            std::string key_data = read_private_key(keychain, params.keyname, params.hash, 0 );
 
             int pk_len = keychain_app::from_hex(key_data, (unsigned char*) private_key.data(), 32);
 
@@ -964,17 +955,19 @@ struct keychain_command<command_te::public_key>: keychain_command_base
         struct params
         {
             std::string keyname;
+            int unlock_time;
         };
         using  params_t = params;
 
         virtual std::string operator()(keychain_base* keychain, const fc_light::variant& params_variant, int id) const override
         {
-            throw std::runtime_error("Command is deprecated");
             try
             {
                 auto params = params_variant.as<params_t>();
                 if (!params.keyname.empty())
-                    read_private_key(keychain, params.keyname, "");
+                    read_private_key(keychain, params.keyname, "", params.unlock_time);
+                else
+                    throw std::runtime_error("keyname param is not specified");
 
                 json_response response(true, id);
                 return fc_light::json::to_string(fc_light::variant(response));
@@ -1003,7 +996,7 @@ struct keychain_command<command_te::public_key>: keychain_command_base
             try
             {
                 auto params = params_variant.as<params_t>();
-                keychain->unlock_time =  params.seconds;
+//                keychain->unlock_time =  params.seconds;
                 json_response response(true, id);
                 return fc_light::json::to_string(fc_light::variant(response));
             }
@@ -1043,12 +1036,12 @@ FC_LIGHT_REFLECT_ENUM(
     (last))
 
 FC_LIGHT_REFLECT(keychain_app::keychain_command<keychain_app::command_te::sign_hex>::params_t, (chainid)(transaction)(blockchain_type)(keyname)(unlock_time))
-FC_LIGHT_REFLECT(keychain_app::keychain_command<keychain_app::command_te::sign_hash>::params_t, (hash)(sign_type)(keyname)(unlock_time))
+FC_LIGHT_REFLECT(keychain_app::keychain_command<keychain_app::command_te::sign_hash>::params_t, (hash)(sign_type)(keyname))
 FC_LIGHT_REFLECT(keychain_app::keychain_command<keychain_app::command_te::create>::params_t, (keyname)(encrypted)(cipher)(curve))
 FC_LIGHT_REFLECT(keychain_app::keychain_command<keychain_app::command_te::remove>::params_t, (keyname))
 FC_LIGHT_REFLECT(keychain_app::keychain_command<keychain_app::command_te::public_key>::params_t, (keyname))
 FC_LIGHT_REFLECT(keychain_app::keychain_command<keychain_app::command_te::set_unlock_time>::params_t, (seconds))
-FC_LIGHT_REFLECT(keychain_app::keychain_command<keychain_app::command_te::unlock>::params_t, (keyname))
+FC_LIGHT_REFLECT(keychain_app::keychain_command<keychain_app::command_te::unlock>::params_t, (keyname)(unlock_time))
 FC_LIGHT_REFLECT(keychain_app::keychain_command_common, (command)(id)(params))
 FC_LIGHT_REFLECT(keychain_app::json_response, (id)(result))
 FC_LIGHT_REFLECT(keychain_app::json_error, (id)(error))

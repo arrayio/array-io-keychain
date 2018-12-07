@@ -208,11 +208,11 @@
 
 - (void)animateColorWithState:(NSCellStateValue)state {
     [self removeAllAnimations];
-    CGFloat duration = (state == NSOnState) ? self.onAnimateDuration : self.offAnimateDuration;
-    NSColor *borderColor = (state == NSOnState) ? self.borderHighlightColor : self.borderNormalColor;
-    NSColor *backgroundColor = (state == NSOnState) ? self.backgroundHighlightColor : self.backgroundNormalColor;
-    NSColor *titleColor = (state == NSOnState) ? self.titleHighlightColor : self.titleNormalColor;
-    NSColor *imageColor = (state == NSOnState) ? self.imageHighlightColor : self.imageNormalColor;
+    CGFloat duration = (state == NSControlStateValueOn) ? self.onAnimateDuration : self.offAnimateDuration;
+    NSColor *borderColor = (state == NSControlStateValueOn) ? self.borderHighlightColor : self.borderNormalColor;
+    NSColor *backgroundColor = (state == NSControlStateValueOn) ? self.backgroundHighlightColor : self.backgroundNormalColor;
+    NSColor *titleColor = (state == NSControlStateValueOn) ? self.titleHighlightColor : self.titleNormalColor;
+    NSColor *imageColor = (state == NSControlStateValueOn) ? self.imageHighlightColor : self.imageNormalColor;
     [self animateLayer:self.layer color:borderColor keyPath:@"borderColor" duration:duration];
     [self animateLayer:self.layer color:backgroundColor keyPath:@"backgroundColor" duration:duration];
     [self animateLayer:self.imageLayer color:imageColor keyPath:@"backgroundColor" duration:duration];
@@ -241,20 +241,20 @@
 - (void)mouseDown:(NSEvent *)event {
     if (self.isEnabled) {
         self.mouseDown = YES;
-        self.state = (self.state == NSOnState) ? NSOffState : NSOnState;
+        self.state = (self.state == NSControlStateValueOn) ? NSControlStateValueOff : NSControlStateValueOn;
     }
 }
 
 - (void)mouseEntered:(NSEvent *)event {
     if (self.mouseDown) {
-        self.state = (self.state == NSOnState) ? NSOffState : NSOnState;
+        self.state = (self.state == NSControlStateValueOn) ? NSControlStateValueOff : NSControlStateValueOn;
     }
 }
 
 - (void)mouseExited:(NSEvent *)event {
     if (self.mouseDown) {
         self.mouseDown = NO;
-        self.state = (self.state == NSOnState) ? NSOffState : NSOnState;
+        self.state = (self.state == NSControlStateValueOn) ? NSControlStateValueOff : NSControlStateValueOn;
     }
 }
 
@@ -262,7 +262,7 @@
     if (self.mouseDown) {
         self.mouseDown = NO;
         if (self.momentary) {
-            self.state = (self.state == NSOnState) ? NSOffState : NSOnState;
+            self.state = (self.state == NSControlStateValueOn) ? NSControlStateValueOff : NSControlStateValueOn;
         }
         [NSApp sendAction:self.action to:self.target from:self];
     }

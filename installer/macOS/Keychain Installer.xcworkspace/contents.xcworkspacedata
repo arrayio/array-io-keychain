@@ -2,7 +2,7 @@
 <Workspace
    version = "1.0">
    <FileRef
-      location = "group:Keychain Installer.xcodeproj">
+      location = "group:/Users/mikhaillutskiy/array-io-keychain/installer/macOS/KeyChain Installer.xcodeproj">
    </FileRef>
    <FileRef
       location = "group:Pods/Pods.xcodeproj">

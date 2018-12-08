@@ -130,7 +130,7 @@ std::string keychain_app::parse(std::vector<unsigned char> raw, blockchain_te bl
           cmd_t data(std::move(from),std::move(trx));
           sec_mod_commands::sec_mod_command_common  common(
             true, keychain_app::sec_mod_commands::blockchain_secmod_te::ethereum,  std::move(fc_light::variant(data)));
-          json = fc_light::json::to_pretty_string(fc_light::variant(common));
+          json = fc_light::json::to_string(fc_light::variant(common));
           BOOST_LOG_SEV(log.lg, info) << "ethereum transaction parse complete: \n" + json;
         }
       }
@@ -138,7 +138,7 @@ std::string keychain_app::parse(std::vector<unsigned char> raw, blockchain_te bl
       {
         sec_mod_commands::sec_mod_command_common common(
           false, keychain_app::sec_mod_commands::blockchain_secmod_te::ethereum, to_hex(raw.data(), raw.size()));
-        json = fc_light::json::to_pretty_string(fc_light::variant(common));
+        json = fc_light::json::to_string(fc_light::variant(common));
         BOOST_LOG_SEV(log.lg, info) << "ethereum transaction parse is not complete: \n" + std::string(exc.what()) +"\n " + json;
       }
       break;
@@ -147,7 +147,7 @@ std::string keychain_app::parse(std::vector<unsigned char> raw, blockchain_te bl
     {
       sec_mod_commands::sec_mod_command_common common(
         false, keychain_app::sec_mod_commands::blockchain_secmod_te::unknown, to_hex(raw.data(), raw.size()));
-      json = fc_light::json::to_pretty_string(fc_light::variant(common));
+      json = fc_light::json::to_string(fc_light::variant(common));
       BOOST_LOG_SEV(log.lg, info) << " transaction parse is not implementated: \n" + json;
     }
   }

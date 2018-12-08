@@ -25,7 +25,7 @@ struct secmod_command
   using type = void;
 };
 
-struct sec_mod_command_common
+struct sec_mod_command_common//TODO: add unlock time info into common command
 {
   sec_mod_command_common(bool json_, blockchain_secmod_te blockchain_, fc_light::variant&& data_)
     : json(json_)

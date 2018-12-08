@@ -10,152 +10,128 @@ namespace keychain_app
 namespace sec_mod_commands
 {
 
-struct tx_common
+enum struct blockchain_secmod_te {
+  unknown=0,
+  ethereum,
+  bitcoin,
+  ethereum_swap //HACK:
+};
+
+struct sec_mod_command_common
 {
-  tx_common(bool json_, blockchain_te blockchain_):
-    json(json_), blockchain(blockchain_){}
-  tx_common(bool json_, blockchain_te blockchain_, std::string raw):
-    json(json_), blockchain(blockchain_){data = fc_light::variant(raw);}
+  sec_mod_command_common(bool json_, blockchain_secmod_te blockchain_, fc_light::variant&& data_)
+    : json(json_)
+    , blockchain(blockchain_)
+    , data(data_)
+  {}
   bool json;
-  blockchain_te blockchain;
+  blockchain_secmod_te blockchain;
   fc_light::variant data;
 };
 
-struct eth_tx : tx_common
+struct ethereum_trx_t
 {
-  eth_tx( blockchain_te blockchain,
-          std::string nonce,
-          std::string gasPrice,
-          std::string gas,
-          int chainid,
-          std::string from,
-          std::string to,
-          std::string value
-  ):
-    tx_common(true, blockchain),
-    trx(nonce, gasPrice, gas, chainid, from, to, value)
-  { data  = fc_light::variant(trx); }
+  ethereum_trx_t () : chainid(0) {}
+  ethereum_trx_t(  std::string _nonce,
+          std::string _gasPrice,
+          std::string _gas,
+          int _chainid,
+          std::string _from,
+          std::string _to,
+          std::string _value):
+    nonce(_nonce),
+    gasPrice(_gasPrice),
+    gas(_gas),
+    chainid(_chainid),
+    to(_to),
+    value(_value){}
+  std::string nonce, gasPrice, gas;
+  int chainid;
+  std::string to ,value;
+};
+
+struct sec_mod_command_ethereum
+{
+  sec_mod_command_ethereum( std::string&& from_, ethereum_trx_t&& trx_)
+    : from(from_)
+    , trx_info(trx_)
+  {}
   
-  struct trx_t
-  {
-    trx_t () {}
-    trx_t(  std::string _nonce,
-            std::string _gasPrice,
-            std::string _gas,
-            int _chainid,
-            std::string _from,
-            std::string _to,
-            std::string _value):
-      nonce(_nonce),
-      gasPrice(_gasPrice),
-      gas(_gas),
-      chainid(_chainid),
-      from(_from),
-      to(_to),
-      value(_value){}
-    std::string nonce, gasPrice, gas;
-    int chainid;
-    std::string from, to ,value;
-  } trx;
+  std::string from;
+  ethereum_trx_t trx_info;
 };
 
-struct tx_swap_common
+struct sec_mod_command_swap
 {
-  tx_swap_common(bool json_, blockchain_te blockchain_):
-    json(json_), blockchain(blockchain_){}
   
-  bool json;
-  blockchain_te blockchain;
-  fc_light::variant data;
-  fc_light::variant swap;
-};
-
-
-struct eth_swap_tx : tx_swap_common
-{
-  eth_swap_tx( blockchain_te blockchain,
-               std::string nonce,
-               std::string gasPrice,
-               std::string gas,
-               int chainid,
-               std::string from,
-               std::string to,
-               std::string value,
-               fc_light::variant sw
-  ):
-    tx_swap_common(true, blockchain),
-    trx(nonce, gasPrice, gas, chainid, from, to, value)
-  { data  = fc_light::variant(trx);
-    swap = sw;
-  }
+  enum struct action_te {
+    create_swap = 0,
+    refund,
+    withdraw
+  };
   
-  struct trx_t
+  struct swap_t
   {
-    trx_t () {}
-    trx_t(  std::string _nonce,
-            std::string _gasPrice,
-            std::string _gas,
-            int _chainid,
-            std::string _from,
-            std::string _to,
-            std::string _value):
-      nonce(_nonce),
-      gasPrice(_gasPrice),
-      gas(_gas),
-      chainid(_chainid),
-      from(_from),
-      to(_to),
-      value(_value){}
-    std::string nonce, gasPrice, gas;
-    int chainid;
-    std::string from, to ,value;
-  } trx;
+    action_te action;
+    fc_light::variant params;
+  };
+  
+  struct swap_create
+  {
+    std::string hash;
+    std::string address;
+  };
+  
+  struct swap_refund
+  {
+    std::string address;
+  };
+  
+  struct swap_withdraw
+  {
+    std::string secret;
+    std::string address;
+  };
+  
+  sec_mod_command_swap( std::string&& from_, ethereum_trx_t&& trx_, swap_t&& swap_info_)
+    : from(from_)
+    , trx_info(trx_)
+    , swap_info(swap_info_)
+  {}
+  
+  std::string from;
+  ethereum_trx_t trx_info;
+  swap_t swap_info;
 };
 
-
-struct createSwap_tx
+struct sec_mod_command_bitcoin
 {
-  createSwap_tx( std::string hash, std::string addr):   params(hash, addr){}
-  struct params_t
-  {
-    params_t(std::string  hash_,  std::string addr_):
-      action("createSwap"), hash(hash_), address(addr_){}
-    std::string action, hash, address;
-  } params;
-};
-
-struct refund_tx
-{
-  refund_tx( std::string addr): params(addr){}
-  struct params_t
-  {
-    params_t(std::string addr): action("refund"), address(addr){}
-    std::string action, address;
-  } params;
-};
-
-struct Withdraw_tx
-{
-  Withdraw_tx( std::string secret, std::string addr): params(secret, addr){}
-  struct params_t
-  {
-    params_t(std::string  sec,  std::string addr): action("Withdraw"), secret(sec), address(addr){}
-    std::string action, secret, address;
-  } params;
+  sec_mod_command_bitcoin( std::string&& from_, bitcoin_transaction_t&& trx_)
+    : from(from_)
+    , trx_info(trx_)
+  {}
+  std::string from;
+  bitcoin_transaction_t trx_info;
 };
 
 }
 
 }
 
-FC_LIGHT_REFLECT(keychain_app::sec_mod_commands::tx_common, (json)(blockchain)(data))
-FC_LIGHT_REFLECT(keychain_app::sec_mod_commands::eth_tx::trx_t, (nonce)(gasPrice)(gas)(chainid)(from)(to)(value))
+FC_LIGHT_REFLECT_ENUM(keychain_app::sec_mod_commands::blockchain_secmod_te, (unknown)(ethereum)(bitcoin)(ethereum_swap))
 
-FC_LIGHT_REFLECT(keychain_app::sec_mod_commands::tx_swap_common, (json)(blockchain)(data)(swap))
-FC_LIGHT_REFLECT(keychain_app::sec_mod_commands::eth_swap_tx::trx_t, (nonce)(gasPrice)(gas)(chainid)(from)(to)(value))
+FC_LIGHT_REFLECT(keychain_app::sec_mod_commands::sec_mod_command_common, (json)(blockchain)(data))
+FC_LIGHT_REFLECT(keychain_app::sec_mod_commands::ethereum_trx_t, (nonce)(gasPrice)(gas)(chainid)(to)(value))
+FC_LIGHT_REFLECT(keychain_app::sec_mod_commands::sec_mod_command_ethereum, (from)(trx_info))
 
-FC_LIGHT_REFLECT(keychain_app::sec_mod_commands::createSwap_tx::params_t, (action)(hash)(address))
-FC_LIGHT_REFLECT(keychain_app::sec_mod_commands::refund_tx::params_t, (action)(address))
-FC_LIGHT_REFLECT(keychain_app::sec_mod_commands::Withdraw_tx::params_t, (action)(secret)(address))
+FC_LIGHT_REFLECT_ENUM(keychain_app::sec_mod_commands::sec_mod_command_swap::action_te, (create_swap)(refund)(withdraw))
+FC_LIGHT_REFLECT(keychain_app::sec_mod_commands::sec_mod_command_swap::swap_t, (action)(params))
+FC_LIGHT_REFLECT(keychain_app::sec_mod_commands::sec_mod_command_swap::swap_create, (hash)(address))
+FC_LIGHT_REFLECT(keychain_app::sec_mod_commands::sec_mod_command_swap::swap_refund, (address))
+FC_LIGHT_REFLECT(keychain_app::sec_mod_commands::sec_mod_command_swap::swap_withdraw, (secret)(address))
+FC_LIGHT_REFLECT(keychain_app::sec_mod_commands::sec_mod_command_swap, (from)(trx_info)(swap_info))
+
+FC_LIGHT_REFLECT(keychain_app::sec_mod_commands::sec_mod_command_bitcoin, (from)(trx_info))
+
 
 #endif //KEYCHAINAPP_KEYCHAIN_SEC_MOD_PROTOCOL_HPP

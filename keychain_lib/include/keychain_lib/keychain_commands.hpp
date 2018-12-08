@@ -68,10 +68,19 @@
 
 namespace keychain_app {
 
-enum struct blockchain_te {unknown=0, bitshares, array, ethereum, bitcoin};
-enum struct sign_te {unknown=0, VRS_canonical, RSV_noncanonical};
+enum struct blockchain_te {
+  unknown=0,
+  array,
+  bitshares,
+  ethereum,
+  bitcoin
+};
+enum struct sign_te {
+  unknown=0,
+  VRS_canonical,
+  RSV_noncanonical
+};
 
-bool swap_action(std::string data, fc_light::variant& variant);
 std::string parse(std::vector<unsigned char> raw, blockchain_te blockchain, std::string from = "");
 
 using byte_seq_t = std::vector<char>;

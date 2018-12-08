@@ -12,47 +12,54 @@
 #include "sec_mod_protocol.hpp"
 #include "keychain.hpp"
 
-bool keychain_app::swap_action(std::string data, fc_light::variant& variant)
-{
+namespace keychain_app {
+
+bool swap_action(std::string data, sec_mod_commands::sec_mod_command_swap::swap_t &swap_info) {
   if (data.size() < 8)
     return false;
   
   auto func = data.substr(0, 8);
   
-  if (func == SWAP_F1)
-  {
-    if (data.length() != 8+64+64)
+  if (func == SWAP_F1) {
+    if (data.length() != 8 + 64 + 64)
       return false;
     
     auto hash = data.substr(8, 64);
-    auto address = data.substr(8+64, 64);
-    sec_mod_commands::createSwap_tx  action( hash, address);
-    variant = fc_light::variant(action.params);
-  }
-  else if (func == SWAP_F2)
-  {
-    if (data.length() != 8+64)
+    auto address = data.substr(8 + 64, 64);
+    swap_info.action = sec_mod_commands::sec_mod_command_swap::action_te::create_swap;
+    sec_mod_commands::sec_mod_command_swap::swap_create swap_cmd;
+    swap_cmd.hash = hash;
+    swap_cmd.address = address;
+    swap_info.params = fc_light::variant(swap_cmd);
+  } else if (func == SWAP_F2) {
+    if (data.length() != 8 + 64)
       return false;
     
     auto address = data.substr(8, 64);
-    sec_mod_commands::refund_tx  action( address);
-    variant = fc_light::variant(action.params);
-  }
-  else if (func == SWAP_F3)
-  {
-    if (data.length() != 8+64+64)
+    swap_info.action = sec_mod_commands::sec_mod_command_swap::action_te::refund;
+    sec_mod_commands::sec_mod_command_swap::swap_refund swap_cmd;
+    swap_cmd.address = address;
+    swap_info.params = fc_light::variant(swap_cmd);
+  } else if (func == SWAP_F3) {
+    if (data.length() != 8 + 64 + 64)
       return false;
     
     auto secret = data.substr(8, 64);
-    auto address = data.substr(8+64, 64);
-    sec_mod_commands::Withdraw_tx  action( secret, address);
-    variant = fc_light::variant(action.params);
-  }
-  else
+    auto address = data.substr(8 + 64, 64);
+    swap_info.action = sec_mod_commands::sec_mod_command_swap::action_te::withdraw;
+    sec_mod_commands::sec_mod_command_swap::swap_withdraw swap_cmd;
+    swap_cmd.address = address;
+    swap_cmd.secret = secret;
+    swap_info.params = fc_light::variant(swap_cmd);
+  } else
     return false;
   
   return true;
 }
+
+}
+
+using namespace keychain_app;
 
 std::string keychain_app::parse(std::vector<unsigned char> raw, blockchain_te blockchain, std::string from)
 {
@@ -70,19 +77,18 @@ std::string keychain_app::parse(std::vector<unsigned char> raw, blockchain_te bl
         std::istream is(&buf);
         
         kaitai::kstream ks(&is);
-        
-        bitcoin_transaction_t data(&ks);
-  
-        json = fc_light::json::to_string(fc_light::variant(data));
-        
-        json = fc_light::json::pretty_print(json, 2);
-        sec_mod_commands::tx_common common( true, keychain_app::blockchain_te::bitcoin, json);
-        json = fc_light::json::to_pretty_string(fc_light::variant(common));
+        bitcoin_transaction_t trx_info(&ks);
+        std::string from = "some_address";//TODO: need to implement
+        sec_mod_commands::sec_mod_command_bitcoin data(std::move(from), std::move(trx_info));
+        sec_mod_commands::sec_mod_command_common common(
+          true, keychain_app::sec_mod_commands::blockchain_secmod_te::bitcoin, std::move(fc_light::variant(data)));
+        json = fc_light::json::to_string(fc_light::variant(common));
         
         BOOST_LOG_SEV(log.lg, info) << "bitcoin transaction parse complete: \n" + json;
       } catch (std::exception &exc) {
-        sec_mod_commands::tx_common common( false, blockchain, to_hex(raw.data(), raw.size()));
-        json = fc_light::json::to_pretty_string(fc_light::variant(common));
+        sec_mod_commands::sec_mod_command_common common(
+          false, keychain_app::sec_mod_commands::blockchain_secmod_te::bitcoin, to_hex(raw.data(), raw.size()));
+        json = fc_light::json::to_string(fc_light::variant(common));
         BOOST_LOG_SEV(log.lg, info) << "bitcoin transaction parse is not complete: \n" + std::string(exc.what()) +"\n " + json;
       }
       
@@ -93,32 +99,40 @@ std::string keychain_app::parse(std::vector<unsigned char> raw, blockchain_te bl
       try
       {
         auto tx = dev::eth::TransactionBase(raw, dev::eth::CheckTransaction::none);
-        auto nonce     = tx.nonce().str();
-        auto gasPrice  = tx.gasPrice().str();
-        auto gas       = tx.gas().str();
-        auto chainId   = tx.ChainId();
-        auto to        = tx.to().hex();
-        auto value     = tx.value().str();
+        sec_mod_commands::ethereum_trx_t trx;
+        trx.nonce     = tx.nonce().str();
+        trx.gasPrice  = tx.gasPrice().str();
+        trx.gas       = tx.gas().str();
+        trx.chainid   = tx.ChainId();
+        trx.to        = tx.to().hex();
+        trx.value     = tx.value().str();
+  
+        std::string from = "some_address";//TODO: need to implement
         
         auto data = to_hex(tx.data().data(), tx.data().size() );
-        
-        fc_light::variant swap;
-        if (swap_action(data, swap))
+  
+        sec_mod_commands::sec_mod_command_swap::swap_t swap_info;
+        if (swap_action(data, swap_info))
         {
-          sec_mod_commands::eth_swap_tx  parsed(blockchain,  nonce, gasPrice, gas, chainId, from, to, value, swap);
-          json = fc_light::json::to_pretty_string(fc_light::variant(static_cast<sec_mod_commands::tx_swap_common&>(parsed)));
+          sec_mod_commands::sec_mod_command_swap  data(std::move(from),std::move(trx), std::move(swap_info));
+          sec_mod_commands::sec_mod_command_common common(
+            true, keychain_app::sec_mod_commands::blockchain_secmod_te::ethereum_swap, std::move(fc_light::variant(data)));
+          json = fc_light::json::to_string(fc_light::variant(common));
           BOOST_LOG_SEV(log.lg, info) << "ethereum transaction swap-on-line specific-fields parse complete: \n" + json;
         }
         else
         {
-          sec_mod_commands::eth_tx  parsed(blockchain,  nonce, gasPrice, gas, chainId, from, to, value);
-          json = fc_light::json::to_pretty_string(fc_light::variant(static_cast<sec_mod_commands::tx_common&>(parsed)));
+          sec_mod_commands::sec_mod_command_ethereum  data(std::move(from),std::move(trx));
+          sec_mod_commands::sec_mod_command_common  common(
+            true, keychain_app::sec_mod_commands::blockchain_secmod_te::ethereum,  std::move(fc_light::variant(data)));
+          json = fc_light::json::to_pretty_string(fc_light::variant(common));
           BOOST_LOG_SEV(log.lg, info) << "ethereum transaction parse complete: \n" + json;
         }
       }
       catch (const std::exception& exc)
       {
-        sec_mod_commands::tx_common common( false, blockchain, to_hex(raw.data(), raw.size()));
+        sec_mod_commands::sec_mod_command_common common(
+          false, keychain_app::sec_mod_commands::blockchain_secmod_te::ethereum, to_hex(raw.data(), raw.size()));
         json = fc_light::json::to_pretty_string(fc_light::variant(common));
         BOOST_LOG_SEV(log.lg, info) << "ethereum transaction parse is not complete: \n" + std::string(exc.what()) +"\n " + json;
       }
@@ -126,7 +140,8 @@ std::string keychain_app::parse(std::vector<unsigned char> raw, blockchain_te bl
     }
     default:
     {
-      sec_mod_commands::tx_common common( false, blockchain, to_hex(raw.data(), raw.size()));
+      sec_mod_commands::sec_mod_command_common common(
+        false, keychain_app::sec_mod_commands::blockchain_secmod_te::unknown, to_hex(raw.data(), raw.size()));
       json = fc_light::json::to_pretty_string(fc_light::variant(common));
       BOOST_LOG_SEV(log.lg, info) << " transaction parse is not implementated: \n" + json;
     }
@@ -249,9 +264,6 @@ void keychain_app::create_keyfile(const char* filename, const fc_light::variant&
     throw std::runtime_error("Error: cannot open keyfile");
   fout << fc_light::json::to_pretty_string(keyfile_var) << std::endl;
 }
-
-using namespace keychain_app;
-
 
 sha2_256_encoder::sha2_256_encoder()
 {

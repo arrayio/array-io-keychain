@@ -23,7 +23,6 @@ get_target_property(QtCore_location Qt5::Core LOCATION)
 
 add_definitions(-DUNICODE -D_UNICODE)
 
-
 QT5_ADD_RESOURCES(RESOURCES "${CMAKE_SOURCE_DIR}/keychain_win/keychain_gui/Resources/*.qrc")
 QT5_WRAP_UI(MOC_FILES "${CMAKE_SOURCE_DIR}/keychain_win/keychain_gui/src/*.ui")
 include_directories(${Qt5Widgets_INCLUDES})
@@ -32,7 +31,29 @@ include_directories(${Qt5Qml_INCLUDES})
 include_directories(${Qt5Svg_INCLUDES})
 add_definitions(${Qt5Widgets_DEFINITIONS})
 
-include_directories("${CMAKE_SOURCE_DIR}/keychain_win/keychain_gui/include" "${AUTOGEN_BUILD_DIR}")
+SET(BOOST_COMPONENTS)
+LIST(APPEND BOOST_COMPONENTS log date_time system filesystem program_options signals serialization chrono unit_test_framework locale thread exception iostreams)
+SET( Boost_USE_STATIC_LIBS ON CACHE STRING "ON or OFF" )
+
+SET(BOOST_ROOT $ENV{BOOST_ROOT})
+set(Boost_USE_MULTITHREADED ON)
+set(BOOST_ALL_DYN_LINK OFF)
+
+FIND_PACKAGE(Boost 1.65 REQUIRED COMPONENTS ${BOOST_COMPONENTS})
+SET(Boost_LIBRARIES ${Boost_LIBRARIES})
+
+
+if( NOT MSVC )
+  find_library(LIB_OPENSSL NAME crypto HINTS "${OPENSSL_ROOT_DIR}/lib")
+  find_library(LIB_PTHREAD NAME pthread HINTS "/usr/lib/x86_64-linux-gnu")
+else()
+  find_library(LIB_OPENSSL NAME libcrypto.lib HINTS "${OPENSSL_ROOT_DIR}/lib")
+endif( NOT MSVC )
+
+include_directories("${CMAKE_SOURCE_DIR}/keychain_win/keychain_gui/include" 
+			"${AUTOGEN_BUILD_DIR}"
+            "${CMAKE_SOURCE_DIR}/libraries/fc_light/include"
+			"${CMAKE_SOURCE_DIR}/keychain_lib/include")
 file(GLOB KEYCHAIN_GUI_SOURCES "${CMAKE_SOURCE_DIR}/keychain_win/keychain_gui/src/*.cpp")
 file(GLOB KEYCHAIN_GUI_INCLUDES "${CMAKE_SOURCE_DIR}/keychain_win/keychain_gui/include/*.h")
 file(GLOB KEYCHAIN_GUI_RESOURCES "${CMAKE_SOURCE_DIR}/keychain_win/keychain_gui/Resources/*.qrc")

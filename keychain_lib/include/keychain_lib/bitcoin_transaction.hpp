@@ -53,35 +53,17 @@ public:
         ~vout_t();
 
     private:
-        uint64_t m_amount;
-        uint8_t m_script_len;
-        std::string m_script_pub_key;
         bitcoin_transaction_t* m__root;
         bitcoin_transaction_t* m__parent;
 
     public:
-
-        /**
-         * Number of Satoshis to be transfered.
-         */
-        uint64_t amount() const { return m_amount; }
-
-        /**
-         * ScriptPubKey's length.
-         */
-        uint8_t script_len() const { return m_script_len; }
-
-        /**
-         * ScriptPubKey.
-         * \sa Source
-         */
-        std::string script_pub_key() const { return m_script_pub_key; }
+        std::string address;
+        uint64_t amount;
+        uint8_t script_len;
+        std::string script_pub_key;
+        
         bitcoin_transaction_t* _root() const { return m__root; }
         bitcoin_transaction_t* _parent() const { return m__parent; }
-
-	//--------------------------------------------
-	//--------------------------------------------
-	std::string toJSON() const;
     };
 
     class public_key_t : public kaitai::kstruct {
@@ -132,48 +114,19 @@ public:
         ~vin_t();
 
     private:
-        std::string m_txid;
-        uint32_t m_output_id;
-        uint8_t m_script_len;
-        std::string m_script_sig;
-        std::string m_end_of_vin;
+        
         bitcoin_transaction_t* m__root;
         bitcoin_transaction_t* m__parent;
 
     public:
-
-        /**
-         * Previous transaction hash.
-         */
-        std::string txid() const { return m_txid; }
-
-        /**
-         * ID indexing an ouput of the transaction refered by txid.
-         * This output will be used as an input in the present transaction.
-         */
-        uint32_t output_id() const { return m_output_id; }
-
-        /**
-         * ScriptSig's length.
-         */
-        uint8_t script_len() const { return m_script_len; }
-
-        /**
-         * ScriptSig.
-         * \sa Source
-         */
-        std::string script_sig() const { return m_script_sig; }
-
-        /**
-         * Magic number indicating the end of the current input.
-         */
-        std::string end_of_vin() const { return m_end_of_vin; }
+        std::string txid;
+        uint32_t output_id;
+        uint8_t script_len;
+        std::string script_sig;
+        std::string end_of_vin;
+        
         bitcoin_transaction_t* _root() const { return m__root; }
         bitcoin_transaction_t* _parent() const { return m__parent; }
-
-	//-------------------------------------
-	//-------------------------------------
-	std::string toJSON() const;
     };
 
     class script_signature_t : public kaitai::kstruct {
@@ -276,49 +229,27 @@ public:
     };
 
 private:
-    uint32_t m_version;
-    uint8_t m_num_vins;
-    std::vector<vin_t*>* m_vins;
-    uint8_t m_num_vouts;
-    std::vector<vout_t*>* m_vouts;
-    uint32_t m_locktime;
-    bitcoin_transaction_t* m__root;
-    kaitai::kstruct* m__parent;
-
+  
+  bitcoin_transaction_t* m__root;
+  kaitai::kstruct* m__parent;
+  
 public:
-
-    /**
-     * Version number.
-     */
-    uint32_t version() const { return m_version; }
-
-    /**
-     * Number of input transactions.
-     */
-    uint8_t num_vins() const { return m_num_vins; }
-
-    /**
-     * Input transactions.
-     * An input refers to an output from a previous transaction.
-     */
-    std::vector<vin_t*>* vins() const { return m_vins; }
-
-    /**
-     * Number of output transactions.
-     */
-    uint8_t num_vouts() const { return m_num_vouts; }
-
-    /**
-     * Output transactions.
-     */
-    std::vector<vout_t*>* vouts() const { return m_vouts; }
-    uint32_t locktime() const { return m_locktime; }
+    uint32_t version;
+    uint8_t num_vins;
+    std::vector<vin_t> vins;
+    uint8_t num_vouts;
+    std::vector<vout_t> vouts;
+    uint32_t locktime;
+  
     bitcoin_transaction_t* _root() const { return m__root; }
     kaitai::kstruct* _parent() const { return m__parent; }
-
-    //-------------------------------------
-    //-------------------------------------
-    std::string toJSON() const;
 };
+
+#include <fc_light/reflect/reflect.hpp>
+#include <fc_light/variant.hpp>
+
+FC_LIGHT_REFLECT(bitcoin_transaction_t::vin_t, (txid)(output_id)(script_len)(script_sig)(end_of_vin))
+FC_LIGHT_REFLECT(bitcoin_transaction_t::vout_t, (address)(amount)(script_len)(script_pub_key))
+FC_LIGHT_REFLECT(bitcoin_transaction_t, (version)(num_vins)(vins)(num_vouts)(vouts)(locktime))
 
 #endif  // BITCOIN_TRANSACTION_H_

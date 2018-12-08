@@ -72,7 +72,8 @@ std::string keychain_app::parse(std::vector<unsigned char> raw, blockchain_te bl
         kaitai::kstream ks(&is);
         
         bitcoin_transaction_t data(&ks);
-        json = data.toJSON();
+  
+        json = fc_light::json::to_string(fc_light::variant(data));
         
         json = fc_light::json::pretty_print(json, 2);
         sec_mod_commands::tx_common common( true, keychain_app::blockchain_te::bitcoin, json);

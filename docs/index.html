@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Keychain test page</title>
+    <title>KeyChain test page</title>
     <link rel="stylesheet" href="assets/spectre.min.css">
     <style>
       button {
@@ -18,8 +18,8 @@
           <img src="assets/logo.png">
         </div>
         <div class="column col mx-2 my-2">
-          <h1>Keychain demo</h1>
-          <h6>Test the WebSocket commands of KeyСhain 0.0.5 - a highly secure key management app for generating keys and signing transactions.</h6>
+          <h1>KeyChain demo</h1>
+          <h6>Test the WebSocket commands of KeyСhain v.0.9 - a highly secure key management app for generating keys and signing transactions.</h6>
           <h6>Documentation: <a href="https://github.com/arrayio/array-io-keychain/wiki/KeyChain-Protocol">KeyChain Protocol</a></h6>
         </div>
       </div>
@@ -38,23 +38,38 @@
           <button class="btn btn-primary" id="btn_UNLOCK">Unlock</button>
         </div>
         <div class="column col-8">
-          <input type="text" class="form-input" placeholder="test1@be5f6e75878b84ba" id="input_UNLOCK">
-        </div>
-      </div>
-      <div class="columns m-1">
-        <div class="column col-2">
-          <button class="btn btn-primary input-group-btn" id="btn_SET_UNLOCK_TIME">Set unlock time</button>
-        </div>  
-        <div class="column col-8">  
-          <input type="text" class="form-input" placeholder="300" id="input_SET_UNLOCK_TIME">
+          <div class="columns">
+            <div class="column col-6 col-xs-12">
+              <div class="input-group">
+                <span class="input-group-addon">keyname: </span>
+                <input type="text" class="form-input" placeholder="test1@be5f6e75878b84ba" id="keyname_UNLOCK">
+              </div>
+            </div>
+            <div class="column col-6 col-xs-12">
+              <div class="input-group">
+                <label class="form-switch">
+                  <input type="checkbox" id="checkbox_UNLOCK"><i class="form-icon"></i>
+                </label>
+                <span class="input-group-addon">unlock_time: </span>
+                <input type="number" class="form-input" placeholder="45" id="unlock_time_UNLOCK" title="This parameter is experimental and optional!">
+              </div>
+            </div>
+          </div>
         </div>
       </div>
       <div class="columns m-1">
         <div class="column col-2">
           <button class="btn btn-primary input-group-btn" id="btn_PUBLIC_KEY">Public key</button>
         </div>
-        <div class="column col-8">
-          <input type="text" class="form-input" placeholder="test1@be5f6e75878b84ba" id="input_PUBLIC_KEY">
+        <div class="column col-8">          
+          <div class="columns">
+            <div class="column col-6 col-xs-12">
+              <div class="input-group">
+                <span class="input-group-addon">keyname: </span>
+                <input type="text" class="form-input" placeholder="test1@be5f6e75878b84ba" id="keyname_PUBLIC_KEY">
+              </div>
+            </div>
+          </div>
         </div>
       </div>
       <div class="columns m-1">
@@ -62,7 +77,23 @@
           <button class="btn btn-primary input-group-btn" id="btn_SIGN_HEX">Sign hex</button>
         </div>  
         <div class="column col-8">  
-          <input type="text" class="form-input" placeholder="test1@be5f6e75878b84ba" id="input_SIGN_HEX">
+          <div class="columns">
+            <div class="column col-6 col-xs-12">
+              <div class="input-group">
+                <span class="input-group-addon">keyname: </span>
+                <input type="text" class="form-input" placeholder="test1@be5f6e75878b84ba" id="keyname_SIGN_HEX">
+              </div>
+            </div>
+            <div class="column col-6 col-xs-12">
+              <div class="input-group">
+                <label class="form-switch">
+                  <input type="checkbox" id="checkbox_SIGN_HEX"><i class="form-icon"></i>
+                </label>
+                <span class="input-group-addon">unlock_time: </span>
+                <input type="number" class="form-input" placeholder="45" id="unlock_time_SIGN_HEX" title="This parameter is experimental and optional!">
+              </div>
+            </div>
+          </div>
         </div>
       </div>
       <div class="columns m-1">
@@ -70,7 +101,14 @@
           <button class="btn btn-primary input-group-btn" id="btn_SIGN_HASH">Sign hash</button>
         </div>
         <div class="column col-8">
-          <input type="text" class="form-input" placeholder="test1@be5f6e75878b84ba" id="input_SIGN_HASH">
+          <div class="columns">
+            <div class="column col-6 col-xs-12">
+              <div class="input-group">
+                <span class="input-group-addon">keyname: </span>
+                <input type="text" class="form-input" placeholder="test1@be5f6e75878b84ba" id="keyname_SIGN_HASH">
+              </div>
+            </div>
+          </div>
         </div>
       </div>
       <div class="columns m-1">
@@ -88,6 +126,11 @@
         <div class="column col-6">
           <label class="form-label" for="response">Response</label>
           <textarea class="form-input" id="response" placeholder="{}" rows="9"></textarea>
+        </div>
+      </div>
+      <div class="column col-6 my-2">
+        <div class="toast toast-warning">
+          Warning! <code>unlock_time</code> parameter is experimental and optional
         </div>
       </div>
     </div>
@@ -109,13 +152,8 @@
         UNLOCK: {
           command: "unlock",
           params: {
-            keyname: null
-          }
-        },
-        SET_UNLOCK_TIME: {
-          command: "set_unlock_time",
-          params: {
-            seconds: null
+            keyname: null,
+            unlock_time: null
           }
         },
         PUBLIC_KEY: {          
@@ -127,10 +165,11 @@
         SIGN_HEX: {
           command: "sign_hex",
           params: {
-            chainid: "03",
-            transaction: "eb0885098bca5a00825208948ec6977b1255854169e5f9f8f163f371bcf1ffd287038d7ea4c6800080038080",
-            blockchain_type: "ethereum",
-            keyname: null
+            chainid: "de5f4d8974715e20f47c8bb609547c9e66b0b9e31d521199b3d8d6af6da74cb1",
+            transaction: "871689d060721b5cec5a010080841e00000000000011130065cd1d0000000000000000",
+            blockchain_type: "array",
+            keyname: null,
+            unlock_time: null
           }
         },
         SIGN_HASH: {
@@ -159,21 +198,33 @@
       }
 
       window.onload = function () {
-        attachListener('UNLOCK', 'keyname');
-        attachListener('SET_UNLOCK_TIME', 'seconds');
-        attachListener('PUBLIC_KEY', 'keyname');
-        attachListener('SIGN_HEX', 'keyname');
-        attachListener('SIGN_HASH', 'keyname');
+        attachListener('UNLOCK', ['keyname', 'unlock_time']);
+        attachListener('PUBLIC_KEY', ['keyname']);
+        attachListener('SIGN_HEX', ['keyname', 'unlock_time']);
+        attachListener('SIGN_HASH', ['keyname']);
         attachListener('CREATE');
         attachListener('LIST');
         attachListener('LOCK');
+        document.getElementById('checkbox_UNLOCK').addEventListener('click', function(e) {
+          document.getElementById('unlock_time_UNLOCK').disabled = e.target.checked;
+        })
+        document.getElementById('checkbox_SIGN_HEX').addEventListener('click', function(e) {
+          document.getElementById('unlock_time_SIGN_HEX').disabled = e.target.checked;
+        })
       }
        
-      function attachListener(commandName, paramName) {
+      function attachListener(commandName, params) {
         document.getElementById(`btn_${commandName}`).addEventListener('click', function() {
-          if (paramName) {
-            const inputValue = document.getElementById(`input_${commandName}`).value;
-            commands[commandName].params[paramName] = inputValue;
+          if (params) {
+            for (let i = 0; i < params.length; i++) {
+                const paramName = params[i];
+                const input = document.getElementById(`${paramName}_${commandName}`);
+                if (input.disabled) {
+                  delete commands[commandName].params[paramName];
+                } else {
+                  commands[commandName].params[paramName] = input.value;                
+                }
+            }
           }
           const data = JSON.stringify(commands[commandName], undefined, 2);
           document.getElementById('request').value = data;

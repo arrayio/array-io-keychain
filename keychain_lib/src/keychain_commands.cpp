@@ -41,28 +41,40 @@ std::pair<std::string, std::string> keychain_app::read_private_key_file(
 }
 
 
-std::string keychain_app::read_private_key(keychain_base * keychain, std::string keyname, std::string text)
+std::string keychain_app::read_private_key(keychain_base * keychain, std::string keyname, std::string text, int seconds)
 {
   bool locked = true;
+  std::string key_data;
 
   auto map = keychain->key_map.find(keyname);
   if (map != keychain->key_map.end())
   {
-    if ((std::time(nullptr) -  map->second.second) > keychain->unlock_time )
+    auto time_stamp = map->second.second.second;
+    auto unlock_time = map->second.second.first;
+    if ((std::time(nullptr) -  time_stamp) > unlock_time )
       keychain->key_map.erase(map);
     else
       locked = false;
   }
 
   if (locked)
-  {// unlock key
-    auto key_data = read_private_key_file(keychain, keyname, text).first;
-    keychain->key_map[keyname] = std::make_pair(key_data, std::time(nullptr));
+  {
+    key_data = read_private_key_file(keychain, keyname, text).first;
+    if (!seconds) // unlock key
+      keychain->key_map[keyname] = std::make_pair(key_data, std::make_pair(seconds, std::time(nullptr) ) );
   }
-  else   //  reset key timer after each key use
-    keychain->key_map[keyname].second = std::time(nullptr);
+  else
+  {
+    if (!seconds) // unlock key
+    {
+      key_data = read_private_key_file(keychain, keyname, text).first;
+      keychain->key_map[keyname] = std::make_pair(key_data, std::make_pair(seconds, std::time(nullptr) ) );
+    }
+    else
+      key_data = keychain->key_map[keyname].first;
+  }
 
-  return keychain->key_map[keyname].first;
+  return key_data;
 }
 
 std::string keychain_app::to_hex(const uint8_t* data, size_t length)

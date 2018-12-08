@@ -3,8 +3,8 @@
 
 ## Overview
 
-**KeyChain** is a standalone app for signing transactions and generating key pairs. It stores private keys in an isolated environment where no logger, debugger or spyware can intercept them because of the [three-layer security](https://github.com/arrayio/array-io-keychain/wiki#three-security-layers-of-keychain) protecting each action of the system.
-**KeyChain** supports transactions from and to various blockchains, including Ethereum and Ethereum classic, Litecoin, Bitcoin, and Bitshares. 
+**KeyChain** is a standalone app for signing transactions and generating key pairs. It stores private keys in an isolated environment where no logger, debugger or spyware can intercept them because of the [three-layer security](https://github.com/arrayio/array-io-keychain/wiki/Security#three-security-layers-of-keychain) protecting each action of the system.
+**KeyChain** supports transactions from and to various blockchains, including Ethereum and Ethereum classic, Litecoin, Bitcoin, Bitcoin Cash, and Bitshares. 
 
 ## Installation
 
@@ -12,9 +12,11 @@ Download and install KeyChain for [macOS](https://github.com/arrayio/array-io-ke
 
 After installation, connect to the demo-page: http://localhost:16384/ to check if the installation was successful and to test the KeyChain commands. In case everything went well, you will see the following page and you will be able to see responses to the commands in the "Response" box when you click on them.
 
-![img](https://github.com/arrayio/array-io-keychain/blob/master/img/right_demo2.jpg)
+![new-key-demo-list](https://user-images.githubusercontent.com/34011337/49649968-d1857900-fa3b-11e8-97c1-a78cf5b6febe.png)
 
-You can find comprehensive installation guides for [macOS](https://github.com/arrayio/array-io-keychain/wiki/Installation-guide-for-macOS), [Windows](https://github.com/arrayio/array-io-keychain/wiki/Installation-guide-for-Windows), and [Linux](https://github.com/arrayio/array-io-keychain/wiki/Installation-guide-for-Linux) in our wiki. 
+If you are having trouble connecting to the page, [contact us](#contact) and we will do our best to help you.
+
+You can find comprehensive installation guides for [macOS](https://github.com/arrayio/array-io-keychain/wiki/Installation-guide-for-macOS), [Windows](https://github.com/arrayio/array-io-keychain/wiki/Installation-guide-for-Windows), and [Linux](https://github.com/arrayio/array-io-keychain/wiki/Installation-guide-for-Linux) in our Wiki. 
 
 ## Getting started
 
@@ -108,4 +110,24 @@ There you will find:
 - [Useful reference](https://github.com/arrayio/array-io-keychain/wiki/Useful-reference): external links.
 - [WebSocket API](https://github.com/arrayio/array-io-keychain/wiki/WebSocket-API): integrating KeyChain through WebSocket.
 
+## Contact
 
+If you need help interacting with KeyChain, please do not hesitate to contact us:
+
+- [Twitter](https://twitter.com/ProjectArray)
+
+- [Facebook](https://www.facebook.com/Array.IO/)
+
+- [Telegram](https://t.me/arrayio)
+
+- [Stackoverflow](https://stackoverflow.com/users/10429540/array-io)
+
+- Or you can write us an email to support@array.io. 
+
+If you want to report a security issue, include the word "security" in the subject field.
+
+We take security issues very seriously and we'll be looking forward to hearing from you. Still, we hope you enjoy using KeyChain and the integration goes smooth! 
+
+## License
+
+This project is licensed under the terms of the MIT license.

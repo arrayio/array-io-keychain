@@ -87,7 +87,7 @@ struct secmod_command<blockchain_secmod_te::ethereum_swap>
       action_te action;
       fc_light::variant params;
     };
-    
+    //TODO:  need one single type, because of integration with mac and windows platform
     struct swap_create {
       std::string hash;
       std::string address;

@@ -14,7 +14,9 @@
 
 namespace keychain_app {
 
-bool swap_action(std::string data, sec_mod_commands::sec_mod_command_swap::swap_t &swap_info) {
+using swap_cmd_t = sec_mod_commands::secmod_command<sec_mod_commands::blockchain_secmod_te::ethereum_swap>::type;
+
+bool swap_action(std::string data, swap_cmd_t::swap_t &swap_info) {
   if (data.size() < 8)
     return false;
   
@@ -26,8 +28,8 @@ bool swap_action(std::string data, sec_mod_commands::sec_mod_command_swap::swap_
     
     auto hash = data.substr(8, 64);
     auto address = data.substr(8 + 64, 64);
-    swap_info.action = sec_mod_commands::sec_mod_command_swap::action_te::create_swap;
-    sec_mod_commands::sec_mod_command_swap::swap_create swap_cmd;
+    swap_info.action = swap_cmd_t::action_te::create_swap;
+    swap_cmd_t::swap_create swap_cmd;
     swap_cmd.hash = hash;
     swap_cmd.address = address;
     swap_info.params = fc_light::variant(swap_cmd);
@@ -36,8 +38,8 @@ bool swap_action(std::string data, sec_mod_commands::sec_mod_command_swap::swap_
       return false;
     
     auto address = data.substr(8, 64);
-    swap_info.action = sec_mod_commands::sec_mod_command_swap::action_te::refund;
-    sec_mod_commands::sec_mod_command_swap::swap_refund swap_cmd;
+    swap_info.action = swap_cmd_t::action_te::refund;
+    swap_cmd_t::swap_refund swap_cmd;
     swap_cmd.address = address;
     swap_info.params = fc_light::variant(swap_cmd);
   } else if (func == SWAP_F3) {
@@ -46,8 +48,8 @@ bool swap_action(std::string data, sec_mod_commands::sec_mod_command_swap::swap_
     
     auto secret = data.substr(8, 64);
     auto address = data.substr(8 + 64, 64);
-    swap_info.action = sec_mod_commands::sec_mod_command_swap::action_te::withdraw;
-    sec_mod_commands::sec_mod_command_swap::swap_withdraw swap_cmd;
+    swap_info.action = swap_cmd_t::action_te::withdraw;
+    swap_cmd_t::swap_withdraw swap_cmd;
     swap_cmd.address = address;
     swap_cmd.secret = secret;
     swap_info.params = fc_light::variant(swap_cmd);
@@ -79,7 +81,8 @@ std::string keychain_app::parse(std::vector<unsigned char> raw, blockchain_te bl
         kaitai::kstream ks(&is);
         bitcoin_transaction_t trx_info(&ks);
         std::string from = "some_address";//TODO: need to implement
-        sec_mod_commands::sec_mod_command_bitcoin data(std::move(from), std::move(trx_info));
+        using cmd_t = sec_mod_commands::secmod_command<sec_mod_commands::blockchain_secmod_te::bitcoin>::type;
+        cmd_t data(std::move(from), std::move(trx_info));
         sec_mod_commands::sec_mod_command_common common(
           true, keychain_app::sec_mod_commands::blockchain_secmod_te::bitcoin, std::move(fc_light::variant(data)));
         json = fc_light::json::to_string(fc_light::variant(common));
@@ -111,10 +114,11 @@ std::string keychain_app::parse(std::vector<unsigned char> raw, blockchain_te bl
         
         auto data = to_hex(tx.data().data(), tx.data().size() );
   
-        sec_mod_commands::sec_mod_command_swap::swap_t swap_info;
+        using swap_cmd_t = sec_mod_commands::secmod_command<sec_mod_commands::blockchain_secmod_te::ethereum_swap>::type;
+        swap_cmd_t::swap_t swap_info;
         if (swap_action(data, swap_info))
         {
-          sec_mod_commands::sec_mod_command_swap  data(std::move(from),std::move(trx), std::move(swap_info));
+          swap_cmd_t data(std::move(from),std::move(trx), std::move(swap_info));
           sec_mod_commands::sec_mod_command_common common(
             true, keychain_app::sec_mod_commands::blockchain_secmod_te::ethereum_swap, std::move(fc_light::variant(data)));
           json = fc_light::json::to_string(fc_light::variant(common));
@@ -122,7 +126,8 @@ std::string keychain_app::parse(std::vector<unsigned char> raw, blockchain_te bl
         }
         else
         {
-          sec_mod_commands::sec_mod_command_ethereum  data(std::move(from),std::move(trx));
+          using cmd_t = sec_mod_commands::secmod_command<sec_mod_commands::blockchain_secmod_te::ethereum>::type;
+          cmd_t data(std::move(from),std::move(trx));
           sec_mod_commands::sec_mod_command_common  common(
             true, keychain_app::sec_mod_commands::blockchain_secmod_te::ethereum,  std::move(fc_light::variant(data)));
           json = fc_light::json::to_pretty_string(fc_light::variant(common));

@@ -49,7 +49,7 @@ keychain_gui_win::keychain_gui_win(const Transaction &transaction, QWidget *pare
 			//fields = new SecureWindowElement[8];
 			//endControlPosition = _createFieldsForSwap(transaction, START_POSITION);
 			//endControlPosition = _createFieldsForEthereum(transaction, endControlPosition);
-			element = new EthereumSwapWidget(transaction, this);
+			element = new BitcoinWidget(transaction, this);//new EthereumSwapWidget(transaction, this);
 			
 		}
 		else {

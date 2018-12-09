@@ -12,6 +12,8 @@ public:
 	};
 	virtual void SetPosition(int x, int y, int width)=0;
 	virtual int GetCurrentHeight()=0;
+
+	
 };
 
 #endif

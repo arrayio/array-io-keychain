@@ -15,6 +15,7 @@
 #include "EthereumWidget.h"
 #include "EthereumSwapWidget.h"
 #include "KeychainWidget.h"
+#include "BitcoinWidget.h"
 
 class keychain_gui_win : public QDialog
 {

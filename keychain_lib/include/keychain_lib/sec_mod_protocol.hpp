@@ -25,15 +25,24 @@ struct secmod_command
   using type = void;
 };
 
-struct sec_mod_command_common//TODO: add unlock time info into common command
+struct sec_mod_command_common
 {
-  sec_mod_command_common(bool json_, blockchain_secmod_te blockchain_, fc_light::variant&& data_)
+  sec_mod_command_common(bool json_, blockchain_secmod_te blockchain_, fc_light::variant&& data_, int unlock_time_ = 0)
     : json(json_)
     , blockchain(blockchain_)
+    , unlock_time(unlock_time_)
     , data(data_)
   {}
+  
+  sec_mod_command_common()
+    : json(false)
+    , blockchain(blockchain_secmod_te::unknown)
+    , unlock_time(0)
+  {}
+  
   bool json;
   blockchain_secmod_te blockchain;
+  int unlock_time;
   fc_light::variant data;
 };
 
@@ -85,21 +94,9 @@ struct secmod_command<blockchain_secmod_te::ethereum_swap>
     
     struct swap_t {
       action_te action;
-      fc_light::variant params;
-    };
-    //TODO:  need one single type, because of integration with mac and windows platform
-    struct swap_create {
       std::string hash;
       std::string address;
-    };
-    
-    struct swap_refund {
-      std::string address;
-    };
-    
-    struct swap_withdraw {
       std::string secret;
-      std::string address;
     };
     
     sec_mod_command_swap(std::string &&from_, ethereum_trx_t &&trx_, swap_t &&swap_info_)
@@ -157,18 +154,7 @@ FC_LIGHT_REFLECT_ENUM(
 
 FC_LIGHT_REFLECT(
   keychain_app::sec_mod_commands::secmod_command<keychain_app::sec_mod_commands::blockchain_secmod_te::ethereum_swap>::type::swap_t,
-  (action)(params))
-
-FC_LIGHT_REFLECT(
-  keychain_app::sec_mod_commands::secmod_command<keychain_app::sec_mod_commands::blockchain_secmod_te::ethereum_swap>::type::swap_create,
-                 (hash)(address))
-
-FC_LIGHT_REFLECT(
-  keychain_app::sec_mod_commands::secmod_command<keychain_app::sec_mod_commands::blockchain_secmod_te::ethereum_swap>::type::swap_refund,
-  (address))
-
-FC_LIGHT_REFLECT(keychain_app::sec_mod_commands::secmod_command<keychain_app::sec_mod_commands::blockchain_secmod_te::ethereum_swap>::type::swap_withdraw,
-                 (secret)(address))
+  (action)(hash)(address)(secret))
 
 FC_LIGHT_REFLECT(
   keychain_app::sec_mod_commands::secmod_command<keychain_app::sec_mod_commands::blockchain_secmod_te::ethereum_swap>::type,

@@ -75,13 +75,14 @@ enum struct blockchain_te {
   ethereum,
   bitcoin
 };
+
 enum struct sign_te {
   unknown=0,
   VRS_canonical,
   RSV_noncanonical
 };
 
-std::string parse(std::vector<unsigned char> raw, blockchain_te blockchain, std::string from = "");
+std::string create_secmod_cmd(std::vector<unsigned char> raw, blockchain_te blockchain, std::string from, int unlock_time);
 
 using byte_seq_t = std::vector<char>;
 
@@ -322,6 +323,7 @@ struct keychain_command<command_te::sign_hex> : keychain_command_base
           std::vector<unsigned char> chain(32);
           std::vector<unsigned char> raw(params.transaction.length());
           std::string json;
+          std::string from = "some_address";//TODO: need to implement
 
           if (!params.chainid.empty())
               auto chain_len = keychain_app::from_hex(params.chainid, chain.data(), chain.size());
@@ -333,7 +335,7 @@ struct keychain_command<command_te::sign_hex> : keychain_command_base
           if (params.keyname.empty())
               std::runtime_error("Error: keyname is not specified");
 
-          json= parse(raw, params.blockchain_type);
+          json = create_secmod_cmd(raw, params.blockchain_type, from, params.unlock_time);
 
           std::string key_data = read_private_key(keychain, params.keyname, json , params.unlock_time);
           int pk_len = keychain_app::from_hex(key_data, (unsigned char*) private_key.data(), 32);

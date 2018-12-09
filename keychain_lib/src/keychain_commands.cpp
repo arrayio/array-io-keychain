@@ -29,19 +29,15 @@ bool swap_action(std::string data, swap_cmd_t::swap_t &swap_info) {
     auto hash = data.substr(8, 64);
     auto address = data.substr(8 + 64, 64);
     swap_info.action = swap_cmd_t::action_te::create_swap;
-    swap_cmd_t::swap_create swap_cmd;
-    swap_cmd.hash = hash;
-    swap_cmd.address = address;
-    swap_info.params = fc_light::variant(swap_cmd);
+    swap_info.hash = hash;
+    swap_info.address = address;
   } else if (func == SWAP_F2) {
     if (data.length() != 8 + 64)
       return false;
     
     auto address = data.substr(8, 64);
     swap_info.action = swap_cmd_t::action_te::refund;
-    swap_cmd_t::swap_refund swap_cmd;
-    swap_cmd.address = address;
-    swap_info.params = fc_light::variant(swap_cmd);
+    swap_info.address = address;
   } else if (func == SWAP_F3) {
     if (data.length() != 8 + 64 + 64)
       return false;
@@ -49,25 +45,20 @@ bool swap_action(std::string data, swap_cmd_t::swap_t &swap_info) {
     auto secret = data.substr(8, 64);
     auto address = data.substr(8 + 64, 64);
     swap_info.action = swap_cmd_t::action_te::withdraw;
-    swap_cmd_t::swap_withdraw swap_cmd;
-    swap_cmd.address = address;
-    swap_cmd.secret = secret;
-    swap_info.params = fc_light::variant(swap_cmd);
+    swap_info.address = address;
+    swap_info.secret = secret;
   } else
     return false;
   
   return true;
 }
 
-}
-
-using namespace keychain_app;
-
-std::string keychain_app::parse(std::vector<unsigned char> raw, blockchain_te blockchain, std::string from)
+std::string create_secmod_cmd(std::vector<unsigned char> raw, blockchain_te blockchain, std::string from, int unlock_time)
 {
   std::string json;
-  auto log  =logger_singletone::instance();
-  
+  auto log = logger_singletone::instance();
+  sec_mod_commands::sec_mod_command_common cmd;
+  cmd.json = true;
   
   switch (blockchain)
   {
@@ -80,18 +71,15 @@ std::string keychain_app::parse(std::vector<unsigned char> raw, blockchain_te bl
         
         kaitai::kstream ks(&is);
         bitcoin_transaction_t trx_info(&ks);
-        std::string from = "some_address";//TODO: need to implement
         using cmd_t = sec_mod_commands::secmod_command<sec_mod_commands::blockchain_secmod_te::bitcoin>::type;
         cmd_t data(std::move(from), std::move(trx_info));
-        sec_mod_commands::sec_mod_command_common common(
-          true, keychain_app::sec_mod_commands::blockchain_secmod_te::bitcoin, std::move(fc_light::variant(data)));
-        json = fc_light::json::to_string(fc_light::variant(common));
-        
+        cmd.blockchain = sec_mod_commands::blockchain_secmod_te::bitcoin;
+        cmd.data = fc_light::variant(data);
         BOOST_LOG_SEV(log.lg, info) << "bitcoin transaction parse complete: \n" + json;
       } catch (std::exception &exc) {
-        sec_mod_commands::sec_mod_command_common common(
-          false, keychain_app::sec_mod_commands::blockchain_secmod_te::bitcoin, to_hex(raw.data(), raw.size()));
-        json = fc_light::json::to_string(fc_light::variant(common));
+        cmd.json = false;
+        cmd.blockchain = sec_mod_commands::blockchain_secmod_te::bitcoin;
+        cmd.data = to_hex(raw.data(), raw.size());
         BOOST_LOG_SEV(log.lg, info) << "bitcoin transaction parse is not complete: \n" + std::string(exc.what()) +"\n " + json;
       }
       
@@ -109,51 +97,51 @@ std::string keychain_app::parse(std::vector<unsigned char> raw, blockchain_te bl
         trx.chainid   = tx.ChainId();
         trx.to        = tx.to().hex();
         trx.value     = tx.value().str();
-  
-        std::string from = "some_address";//TODO: need to implement
         
         auto data = to_hex(tx.data().data(), tx.data().size() );
-  
+        
         using swap_cmd_t = sec_mod_commands::secmod_command<sec_mod_commands::blockchain_secmod_te::ethereum_swap>::type;
         swap_cmd_t::swap_t swap_info;
         if (swap_action(data, swap_info))
         {
           swap_cmd_t data(std::move(from),std::move(trx), std::move(swap_info));
-          sec_mod_commands::sec_mod_command_common common(
-            true, keychain_app::sec_mod_commands::blockchain_secmod_te::ethereum_swap, std::move(fc_light::variant(data)));
-          json = fc_light::json::to_string(fc_light::variant(common));
+          cmd.blockchain = sec_mod_commands::blockchain_secmod_te::ethereum_swap;
+          cmd.data = fc_light::variant(data);
           BOOST_LOG_SEV(log.lg, info) << "ethereum transaction swap-on-line specific-fields parse complete: \n" + json;
         }
         else
         {
           using cmd_t = sec_mod_commands::secmod_command<sec_mod_commands::blockchain_secmod_te::ethereum>::type;
           cmd_t data(std::move(from),std::move(trx));
-          sec_mod_commands::sec_mod_command_common  common(
-            true, keychain_app::sec_mod_commands::blockchain_secmod_te::ethereum,  std::move(fc_light::variant(data)));
-          json = fc_light::json::to_string(fc_light::variant(common));
+          cmd.blockchain = sec_mod_commands::blockchain_secmod_te::ethereum;
+          cmd.data = fc_light::variant(data);
           BOOST_LOG_SEV(log.lg, info) << "ethereum transaction parse complete: \n" + json;
         }
       }
       catch (const std::exception& exc)
       {
-        sec_mod_commands::sec_mod_command_common common(
-          false, keychain_app::sec_mod_commands::blockchain_secmod_te::ethereum, to_hex(raw.data(), raw.size()));
-        json = fc_light::json::to_string(fc_light::variant(common));
+        cmd.json = false;
+        cmd.blockchain = sec_mod_commands::blockchain_secmod_te::ethereum;
+        cmd.data = to_hex(raw.data(), raw.size());
         BOOST_LOG_SEV(log.lg, info) << "ethereum transaction parse is not complete: \n" + std::string(exc.what()) +"\n " + json;
       }
       break;
     }
     default:
     {
-      sec_mod_commands::sec_mod_command_common common(
-        false, keychain_app::sec_mod_commands::blockchain_secmod_te::unknown, to_hex(raw.data(), raw.size()));
-      json = fc_light::json::to_string(fc_light::variant(common));
+      cmd.json = false;
+      cmd.blockchain = sec_mod_commands::blockchain_secmod_te::unknown;
+      cmd.data = to_hex(raw.data(), raw.size());
       BOOST_LOG_SEV(log.lg, info) << " transaction parse is not implementated: \n" + json;
     }
   }
-  
-  return json;
+  cmd.unlock_time = unlock_time;
+  return fc_light::json::to_string(fc_light::variant(cmd));
 }
+
+}
+
+using namespace keychain_app;
 
 std::pair<std::string, std::string> keychain_app::read_private_key_file(keychain_base* keychain, std::string keyname, std::string text)
 {

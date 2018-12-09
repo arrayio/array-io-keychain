@@ -49,14 +49,17 @@ keychain_gui_win::keychain_gui_win(const Transaction &transaction, QWidget *pare
 			//fields = new SecureWindowElement[8];
 			//endControlPosition = _createFieldsForSwap(transaction, START_POSITION);
 			//endControlPosition = _createFieldsForEthereum(transaction, endControlPosition);
+			element = new EthereumSwapWidget(transaction, this);
+			
 		}
 		else {
 			//fields = new SecureWindowElement[4];
 			//endControlPosition = _createFieldsForEthereum(transaction, START_POSITION);
 			element = new EthereumWidget(transaction, this);
-			element->move(0, START_POSITION);
-			element->SetPosition(0, START_POSITION, FIELD_WIDTH);
+			
 		}
+		element->move(0, START_POSITION);
+		element->SetPosition(0, START_POSITION, FIELD_WIDTH);
 
 		/*swapLogo= new SecureWindowElement(this);
 		swapLogo->SetPosition(0, 96, 116, 400);
@@ -185,13 +188,11 @@ int keychain_gui_win::_createFieldsForEthereum(const Transaction &transaction, c
 int keychain_gui_win::_createFieldsForSwap(const Transaction &transaction, const int startPosition) //96
 {
 
-	swap = new SecureWindowElement(this);
+	/*swap = new SecureWindowElement(this);
 	swap->SetPosition(0, startPosition, 116, FIELD_WIDTH);
 	swap->SetLabelStyle("background-image:url(:/keychain_gui_win/swap_logo.png) no-repeat;");
 	swap->SetValueStyle("font:14px \"Segoe UI\";background:transparent;color:rgb(123,141,167);");
 	swap->SetLabelOffset(72);
-
-	//QList<QString> fieldList({ "From","To","Amount" });
 
 	action = new SecureWindowElement(this);
 	action->SetPosition(0, startPosition+26, 116, FIELD_WIDTH);
@@ -210,7 +211,7 @@ int keychain_gui_win::_createFieldsForSwap(const Transaction &transaction, const
 	address->SetPosition(0, startPosition+26*3, 116, FIELD_WIDTH);
 	address->SetLabelStyle("font:14px \"Segoe UI\";background:transparent;");
 	address->SetValueStyle("font:14px \"Segoe UI\";background:transparent;color:rgb(123,141,167)");
-	address->SetLabelAndValue("Address", transaction.getSwapValue("address"));
+	address->SetLabelAndValue("Address", transaction.getSwapValue("address"));*/
 
 	return (startPosition + 26 * 4);
 }

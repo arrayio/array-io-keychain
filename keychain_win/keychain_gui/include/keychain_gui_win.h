@@ -13,6 +13,7 @@
 #include "Transaction.h"
 #include "ui_keychain_gui_win.h"
 #include "EthereumWidget.h"
+#include "EthereumSwapWidget.h"
 #include "KeychainWidget.h"
 
 class keychain_gui_win : public QDialog
@@ -44,10 +45,10 @@ private:
 	//SecureWindowElement * amount = Q_NULLPTR;
 	KeychainWidget * element = Q_NULLPTR;
 
-	SecureWindowElement * swap = Q_NULLPTR;
-	SecureWindowElement * action = Q_NULLPTR;
-	SecureWindowElement * hash = Q_NULLPTR;
-	SecureWindowElement * address = Q_NULLPTR;
+	//SecureWindowElement * swap = Q_NULLPTR;
+	//SecureWindowElement * action = Q_NULLPTR;
+	//SecureWindowElement * hash = Q_NULLPTR;
+	//SecureWindowElement * address = Q_NULLPTR;
 
 	//QLabel * expertLabel = Q_NULLPTR;
 	//QLabel * expertValue = Q_NULLPTR;

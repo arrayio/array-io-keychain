@@ -118,7 +118,7 @@ secmod_parser_f::rawhash_cmd secmod_parser_f::to_rawhash() const
 
 std::string secmod_parser_f::to_raw_tx() const
 {
-  auto check = !m_cmd.json;
+  auto check = !m_cmd.json && m_cmd.blockchain == blockchain_secmod_te::unknown;
   assert(check);
   if(!check)
     throw std::runtime_error("secmod_parser_f::to_raw_tx(): cast error");

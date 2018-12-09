@@ -5,7 +5,7 @@ ExpertModeElement::ExpertModeElement(QWidget * parent)
 {
 	QMetaObject::connectSlotsByName(this);
 	expertLabel = new QLabel(this);
-	expertLabel->setStyleSheet("font:18px \"Segoe UI\";background:transparent;");
+	expertLabel->setStyleSheet("font:16px \"Segoe UI\";background:transparent;");
 	expertLabel->setText("Expert mode");
 
 	//expertLabel->setFixedSize(116, 20);

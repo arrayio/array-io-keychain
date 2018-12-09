@@ -116,7 +116,7 @@ secmod_parser_f::rawhash_cmd secmod_parser_f::to_rawhash() const
   }
 }
 
-std::string secmod_parser_f::to_raw_tx() const
+std::string secmod_parser_f::to_raw_trx_string() const
 {
   auto check = !m_cmd.json && m_cmd.blockchain == blockchain_secmod_te::unknown;
   assert(check);
@@ -125,7 +125,10 @@ std::string secmod_parser_f::to_raw_tx() const
   return m_cmd.data.as<std::string>();
 }
 
-std::string secmod_parser_f::to_pretty_string() const
+
+//TODO: need to fix output, this function works not correct
+//it is print secmod command instead of nested json transaction
+std::string secmod_parser_f::to_expert_mode_string() const 
 {
   try
   {

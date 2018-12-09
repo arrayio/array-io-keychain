@@ -13,9 +13,17 @@ SecureModuleWrapper::~SecureModuleWrapper()
 	//TODO: need implementation
 }
 
-keychain_app::byte_seq_t SecureModuleWrapper::get_passwd_trx_raw(const std::string& raw_trx) const
+keychain_app::byte_seq_t SecureModuleWrapper::get_passwd_trx(const std::string& json_cmd) const
 {
-	return _startSecureDesktop(raw_trx);
+	return _startSecureDesktop(json_cmd);
+}
+
+keychain_app::byte_seq_t SecureModuleWrapper::get_passwd_unlock(const std::string& keyname, int unlock_time) const
+{
+	//TODO: need to implement
+	//it is experimental future
+	//need ot print red lock icon on user dialog window
+	return keychain_app::byte_seq_t();
 }
 
 keychain_app::byte_seq_t SecureModuleWrapper::get_passwd_on_create() const

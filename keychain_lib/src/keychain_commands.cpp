@@ -160,7 +160,8 @@ std::pair<std::string, std::string> keychain_app::read_private_key_file(keychain
 // If we can parse transaction we need to use get_passwd_trx function
 // else use get_passwd_trx_raw()
 // At this moment parsing of transaction is not implemented
-    byte_seq_t passwd = *(keychain->get_passwd_trx_raw(text.empty() ? keyfile.keyname: text));
+	
+    byte_seq_t passwd = *(keychain->get_passwd_trx(text.empty() ? keyfile.keyname: text));
     if (passwd.empty())
       throw std::runtime_error("Error: can't get password");
     return  std::make_pair(encryptor.decrypt_keydata(passwd, encrypted_data), keyfile.keyname);

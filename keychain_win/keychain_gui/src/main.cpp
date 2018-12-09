@@ -21,8 +21,8 @@ HDESK hOldDesktop, hNewDesktop;
 
 int main(int argc, char *argv[])
 {
-	hNewDesktop = OpenDesktopW(_T("secdesktop"), NULL, FALSE, GENERIC_ALL); //GetThreadDesktop(GetCurrentThreadId());
-	hOldDesktop = OpenDesktopW(_T("default"), NULL, FALSE, GENERIC_ALL);
+	//hNewDesktop = OpenDesktopW(_T("secdesktop"), NULL, FALSE, GENERIC_ALL); //GetThreadDesktop(GetCurrentThreadId());
+	//hOldDesktop = OpenDesktopW(_T("default"), NULL, FALSE, GENERIC_ALL);
 	//SwitchDesktop(hNewDesktop);
 
 	//SetThreadDesktop(hNewDesktop);

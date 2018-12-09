@@ -8,6 +8,7 @@
 #include "PopupWindow.h"
 #include "LockIcon.h"
 #include "SecureWindowElement.h"
+#include "ExpertModeElement.h"
 #include "KeychainServiceExchange.h"
 #include "Transaction.h"
 #include "ui_keychain_gui_win.h"
@@ -46,14 +47,14 @@ private:
 	SecureWindowElement * hash = Q_NULLPTR;
 	SecureWindowElement * address = Q_NULLPTR;
 
-	QLabel * expertLabel = Q_NULLPTR;
-	QLabel * expertValue = Q_NULLPTR;
-	QPushButton * moreButton = Q_NULLPTR;
-
+	//QLabel * expertLabel = Q_NULLPTR;
+	//QLabel * expertValue = Q_NULLPTR;
+	//QPushButton * moreButton = Q_NULLPTR;
+	ExpertModeElement * expertModeElement = Q_NULLPTR;
 	KeychainServiceExchange * serviceExchange =NULL;
 
 private:
-	const int FIELD_WIDTH = 346;
+	const int FIELD_WIDTH = 446;
 	const int START_POSITION = 96;
 	int _createFieldsForEthereum(const Transaction &transaction, const int startPosition);
 	int _createFieldsForSwap(const Transaction &transaction, const int startPosition);

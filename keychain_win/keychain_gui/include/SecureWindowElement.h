@@ -2,7 +2,8 @@
 
 #include <QWidget>
 #include <QLabel>
-#include "ui_SecureWindowElement.h"
+#include <QFrame>
+//#include "ui_SecureWindowElement.h"
 
 class SecureWindowElement : public QWidget
 {
@@ -19,7 +20,7 @@ public:
 	void SetValueStyle(QString style);
 
 private:
-	Ui::SecureWindowElement ui;
+	//Ui::SecureWindowElement ui;
 	QLabel *label;
 	QLabel *value;
 	int _labelX;

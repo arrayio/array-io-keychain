@@ -3,7 +3,7 @@
 SecureWindowElement::SecureWindowElement(QWidget *parent)
 	: QWidget(parent)
 {
-	ui.setupUi(this);
+	//ui.setupUi(this);
 	label = new QLabel(this);
 	value = new QLabel(this);
 	label->setFrameStyle(QFrame::NoFrame);

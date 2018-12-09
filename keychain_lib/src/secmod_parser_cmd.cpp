@@ -24,8 +24,9 @@ blockchain_secmod_te secmod_parser_f::operator()(const std::string& json)
   }
   catch (const fc_light::exception& exc){
     BOOST_LOG_SEV(log.lg, error) << "secmod common command parse error: " << exc.what();
-    return blockchain_secmod_te::parse_error;
+    m_cmd.blockchain = blockchain_secmod_te::parse_error;
   }
+  return m_cmd.blockchain;
 }
 
 blockchain_secmod_te secmod_parser_f::cmd_type() const

@@ -55,9 +55,9 @@ keychain::keychain(const secure_dlg_mod_base* secure_dlg)
           throw std::runtime_error("Error: can not create key directory");
   }
 
-  get_passwd_trx_raw.connect(std::bind(&secure_dlg_mod_base::get_passwd_trx_raw, secure_dlg,
-          std::placeholders::_1));
+  get_passwd_trx.connect(std::bind(&secure_dlg_mod_base::get_passwd_trx, secure_dlg, std::placeholders::_1));
   get_passwd_on_create.connect(std::bind(&secure_dlg_mod_base::get_passwd_on_create, secure_dlg));
+  get_passwd_unlock.connect(std::bind(&secure_dlg_mod_base::get_passwd_unlock, secure_dlg, std::placeholders::_1, std::placeholders::_2));
   print_mnemonic.connect(std::bind(&secure_dlg_mod_base::print_mnemonic, secure_dlg,
           std::placeholders::_1));
 }

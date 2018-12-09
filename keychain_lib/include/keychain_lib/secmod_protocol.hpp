@@ -34,10 +34,11 @@ struct secmod_command
 
 struct secmod_command_common
 {
-  secmod_command_common(bool json_, blockchain_secmod_te blockchain_, fc_light::variant&& data_, int unlock_time_ = 0)
+  secmod_command_common(bool json_, blockchain_secmod_te blockchain_, const std::string& keyname_, fc_light::variant&& data_, int unlock_time_ = 0)
     : json(json_)
     , blockchain(blockchain_)
     , unlock_time(unlock_time_)
+	, keyname(keyname_)
     , data(data_)
   {}
   
@@ -50,6 +51,7 @@ struct secmod_command_common
   bool json;
   blockchain_secmod_te blockchain;
   int unlock_time;
+  std::string keyname;
   fc_light::variant data;
 };
 
@@ -158,7 +160,7 @@ struct secmod_command<blockchain_secmod_te::rawhash>
 
 FC_LIGHT_REFLECT_ENUM(keychain_app::secmod_commands::blockchain_secmod_te, (unknown)(ethereum)(bitcoin)(ethereum_swap))
 
-FC_LIGHT_REFLECT(keychain_app::secmod_commands::secmod_command_common, (json)(blockchain)(data)(unlock_time))
+FC_LIGHT_REFLECT(keychain_app::secmod_commands::secmod_command_common, (json)(blockchain)(keyname)(data)(unlock_time))
 FC_LIGHT_REFLECT(keychain_app::secmod_commands::ethereum_trx_t, (nonce)(gasPrice)(gas)(chainid)(to)(value))
 FC_LIGHT_REFLECT(keychain_app::secmod_commands::secmod_command<keychain_app::secmod_commands::blockchain_secmod_te::ethereum>::type, (from)(trx_info))
 

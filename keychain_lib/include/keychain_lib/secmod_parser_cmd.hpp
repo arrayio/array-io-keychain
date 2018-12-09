@@ -29,9 +29,9 @@ public:
   bitcoin_cmd to_bitcoin() const;
   ethereum_swap_cmd to_ethereum_swap() const;
   rawhash_cmd to_rawhash() const;
-  std::string to_raw_tx() const;
+  std::string to_raw_trx_string() const;
   
-  std::string to_pretty_string() const;
+  std::string to_expert_mode_string() const;
   
 private:
   secmod_command_common m_cmd;

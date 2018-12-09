@@ -6,26 +6,29 @@ EthereumWidget::EthereumWidget(const Transaction &transaction, QWidget * parent)
 {
 	QMetaObject::connectSlotsByName(this);
 	cryptoType = new SecureWindowElement(this);
-	cryptoType->SetLabelStyle("background-image:url(:/keychain_gui_win/bg_ephir.png) no-repeat;");
-	cryptoType->SetValueStyle("font:16px \"Segoe UI\";background:transparent;color:rgb(123,141,167);");
+
+	QString valueStyle("font:16px \"Segoe UI\";background:transparent;color:rgb(123,141,167);");
+	QString labelStyle("background-image:url(:/keychain_gui_win/bg_ephir.png) no-repeat;");
+	cryptoType->SetLabelStyle(labelStyle);
+	cryptoType->SetValueStyle(valueStyle);
 	cryptoType->SetLabelAndValue("empty=ethereum99");
 
 	//QList<QString> fieldList({ "From","To","Amount" });
 
 	from = new SecureWindowElement(this);
-	from->SetLabelStyle("font:16px \"Segoe UI\";background:transparent;");
-	from->SetValueStyle("font:16px \"Segoe UI\";background:transparent;color:rgb(123,141,167)");
+	from->SetLabelStyle(labelStyle);
+	from->SetValueStyle(valueStyle);
 	from->SetLabelAndValue("From", transaction.getValue("from"));
 
 	to = new SecureWindowElement(this);
-	to->SetLabelStyle("font:16px \"Segoe UI\";background:transparent;");
-	to->SetValueStyle("font:16px \"Segoe UI\";background:transparent;color:rgb(123,141,167)");
+	to->SetLabelStyle(labelStyle);
+	to->SetValueStyle(valueStyle);
 	to->SetLabelAndValue("To", transaction.getValue("to"));
 
 
 	amount = new SecureWindowElement(this);
-	amount->SetLabelStyle("font:16px \"Segoe UI\";background:transparent;");
-	amount->SetValueStyle("font:16px \"Segoe UI\";background:transparent;color:rgb(123,141,167)");
+	amount->SetLabelStyle(labelStyle);
+	amount->SetValueStyle(valueStyle);
 	amount->SetLabelAndValue("Amount", transaction.getValue("value"));
 	
 	expertModeElement = new ExpertModeElement(this);

@@ -41,28 +41,13 @@ private:
 	QLabel * descriptionLabel = Q_NULLPTR;
 	QLineEdit* passPhraseValue = Q_NULLPTR;
 	LockIcon * lockIcon = Q_NULLPTR;
-	//SecureWindowElement * cryptoType = Q_NULLPTR;
-	//SecureWindowElement * from = Q_NULLPTR;
-	//SecureWindowElement * to = Q_NULLPTR;
-	//SecureWindowElement * amount = Q_NULLPTR;
 	KeychainWidget * element = Q_NULLPTR;
 
-	//SecureWindowElement * swap = Q_NULLPTR;
-	//SecureWindowElement * action = Q_NULLPTR;
-	//SecureWindowElement * hash = Q_NULLPTR;
-	//SecureWindowElement * address = Q_NULLPTR;
-
-	//QLabel * expertLabel = Q_NULLPTR;
-	//QLabel * expertValue = Q_NULLPTR;
-	//QPushButton * moreButton = Q_NULLPTR;
-	//ExpertModeElement * expertModeElement = Q_NULLPTR;
 	KeychainServiceExchange * serviceExchange =NULL;
 
 private:
 	const int FIELD_WIDTH = 446;
 	const int START_POSITION = 96;
-	int _createFieldsForEthereum(const Transaction &transaction, const int startPosition);
-	int _createFieldsForSwap(const Transaction &transaction, const int startPosition);
 
 public slots:
 	void transaction_sign();

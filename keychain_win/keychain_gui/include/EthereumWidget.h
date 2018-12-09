@@ -14,6 +14,7 @@ public:
 	EthereumWidget(const Transaction &transaction, QWidget * parent = Q_NULLPTR);
 	void SetPosition(int x, int y, int width) override;
 	int GetCurrentHeight() override;
+	int GetCurrentWidth() override;
 	~EthereumWidget();
 
 private:
@@ -23,6 +24,7 @@ private:
 	SecureWindowElement * amount = Q_NULLPTR;
 	ExpertModeElement * expertModeElement = Q_NULLPTR;
 	int currentHeight = 0;
+	int currentWidth = 0;
 };
 
 #endif

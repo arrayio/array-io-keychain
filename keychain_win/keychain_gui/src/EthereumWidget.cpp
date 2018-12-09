@@ -39,21 +39,33 @@ EthereumWidget::EthereumWidget(const Transaction &transaction, QWidget * parent)
 void EthereumWidget::SetPosition(int x, int y, int width)
 {
 	cryptoType->SetPosition(0, 0, 116, width);
-	cryptoType->SetLabelOffset(100);
+	cryptoType->SetLabelOffset(100); 
+	cryptoType->move(0, currentHeight);
 	currentHeight = 26;
 	from->SetPosition(0, currentHeight, 116, width);
+	from->move(0, currentHeight);
 	currentHeight += 26;
 	to->SetPosition(0, currentHeight, 116, width);
+	to->move(0, currentHeight);
 	currentHeight += 26;
 	amount->SetPosition(0, currentHeight, 116, width);
+	amount->move(0, currentHeight);
 	currentHeight += 26;
 	expertModeElement->SetPosition(0, currentHeight, 116, width);
+	expertModeElement->move(0, currentHeight);
 	currentHeight += 60;
+	currentWidth = from->width();
+	currentWidth = from->width();
+	setFixedWidth(currentWidth);
 	setFixedHeight(currentHeight);
 }
 
 int EthereumWidget::GetCurrentHeight() {
 	return currentHeight;
+}
+
+int EthereumWidget::GetCurrentWidth() {
+	return currentWidth;
 }
 
 EthereumWidget::~EthereumWidget()

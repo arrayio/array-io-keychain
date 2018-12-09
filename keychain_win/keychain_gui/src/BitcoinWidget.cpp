@@ -53,22 +53,27 @@ void BitcoinWidget::SetPosition(int x, int y, int width)
 	cryptoType->SetPosition(0, 0, 116, width);
 	cryptoType->SetLabelOffset(97);
 	currentHeight = 26;
-	//for (int i = 0; i < 2; i++) {
-	//	(*(from+i))->move(0, currentHeight);
-	//	currentHeight += 26;
-	//}
 	from->SetPosition(0, currentHeight, 116, width);
+	from->move(0, currentHeight);
 	currentHeight += 26;
-	to->SetPosition(0, currentHeight, 116, width);
-	amount->SetPosition(to->width(), currentHeight, 116, width);
+	to->SetPosition(0, currentHeight, 116, width*0.75);
+	to->move(0, currentHeight);
+	amount->SetPosition(to->width(), currentHeight, 116, width/2);
+	amount->move(to->width(), currentHeight);
+	currentWidth = to->width() + amount->width();
 	currentHeight += 26;
 	expertModeElement->SetPosition(0, currentHeight, 116, width);
 	currentHeight += 60;
+	setFixedWidth(currentWidth);
 	setFixedHeight(currentHeight);
 }
 
 int BitcoinWidget::GetCurrentHeight() {
 	return currentHeight;
+}
+
+int BitcoinWidget::GetCurrentWidth() {
+	return currentWidth;
 }
 
 BitcoinWidget::~BitcoinWidget()

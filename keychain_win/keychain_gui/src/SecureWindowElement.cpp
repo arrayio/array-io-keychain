@@ -18,15 +18,15 @@ SecureWindowElement::~SecureWindowElement()
 
 void SecureWindowElement::SetPosition(int x, int y, int labelWidth, int valueWidth)
 {
-	label->move(x, y);
+	label->move(0, 0);
 	label->setFixedWidth(labelWidth);
 	value->setFixedWidth(valueWidth);
 	label->setFixedHeight(25);
 	value->setFixedHeight(25);
 	setFixedWidth(label->width()+value->width()+16);
-	value->move(x+labelWidth+16, y);
-	_valueX = x + labelWidth + 16, y;
-	_labelX = x;
+	value->move(labelWidth+16, 0);
+	_valueX = labelWidth + 16, 0;
+	_labelX = 0;
 }
 
 void SecureWindowElement::SetLabelOffset(int offset)

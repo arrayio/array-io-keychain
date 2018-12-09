@@ -17,6 +17,7 @@ public:
 	BitcoinWidget(const Transaction &transaction, QWidget * parent = Q_NULLPTR);
 	void SetPosition(int x, int y, int width) override;
 	int GetCurrentHeight() override;
+	int GetCurrentWidth() override;
 	~BitcoinWidget();
 
 private:
@@ -29,6 +30,7 @@ private:
 	SecureWindowElement * amount;
 	ExpertModeElement * expertModeElement = Q_NULLPTR;
 	int currentHeight = 0;
+	int currentWidth = 0;
 	int inElementCount = 0;
 	int outElementCount = 0;
 	int num_vins = 2;

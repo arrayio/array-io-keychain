@@ -62,27 +62,41 @@ void EthereumSwapWidget::SetPosition(int x, int y, int width)
 	swap->SetLabelOffset(72);
 	currentHeight = 26;
 	action->SetPosition(0, currentHeight, 116, width);
+	action->move(0, currentHeight);
 	currentHeight += 26;
 	hash->SetPosition(0, currentHeight, 116, width);
+	hash->move(0, currentHeight);
 	currentHeight += 26;
 	address->SetPosition(0, currentHeight, 116, width);
+	address->move(0, currentHeight);
 	currentHeight += 26;
 	cryptoType->SetPosition(0, currentHeight, 116, width);
+	cryptoType->move(0, currentHeight);
 	cryptoType->SetLabelOffset(100);
 	currentHeight += 26;
 	from->SetPosition(0, currentHeight, 116, width);
+	from->move(0, currentHeight);
 	currentHeight += 26;
 	to->SetPosition(0, currentHeight, 116, width);
+	to->move(0, currentHeight);
 	currentHeight += 26;
 	amount->SetPosition(0, currentHeight, 116, width);
+	amount->move(0, currentHeight);
 	currentHeight += 26;
 	expertModeElement->SetPosition(0, currentHeight, 116, width);
+	expertModeElement->move(0, currentHeight);
 	currentHeight += 60;
+	currentWidth = from->width();
+	setFixedWidth(currentWidth);
 	setFixedHeight(currentHeight);
 }
 
 int EthereumSwapWidget::GetCurrentHeight() {
 	return currentHeight;
+}
+
+int EthereumSwapWidget::GetCurrentWidth() {
+	return currentWidth;
 }
 
 EthereumSwapWidget::~EthereumSwapWidget()

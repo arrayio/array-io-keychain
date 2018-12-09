@@ -16,12 +16,19 @@ void PrivateKeyInMemory::SetPosition(int x, int y, int width)
 {
 	unlockTime->SetPosition(0, 0, 116, width);
 	currentHeight = 30;
+	setFixedWidth(unlockTime->width());
+	currentWidth = unlockTime->width();
 	setFixedHeight(currentHeight);
 }
 
 int PrivateKeyInMemory::GetCurrentHeight() {
 	return currentHeight;
 }
+
+int PrivateKeyInMemory::GetCurrentWidth() {
+	return currentWidth;
+}
+
 
 PrivateKeyInMemory::~PrivateKeyInMemory()
 {

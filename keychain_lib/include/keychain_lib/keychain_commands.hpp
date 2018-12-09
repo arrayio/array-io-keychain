@@ -10,17 +10,18 @@
 
 #include <type_traits>
 #include <string>
-#include <fc_light/reflect/reflect.hpp>
-#include <fc_light/variant.hpp>
+
 #include <boost/hana/range.hpp>
 #include <boost/filesystem.hpp>
 
 #include <fc_light/variant.hpp>
 #include <fc_light/io/json.hpp>
+#include <fc_light/reflect/reflect.hpp>
+#include <fc_light/reflect/variant.hpp>
 #include <fc_light/exception/exception.hpp>
 #include <fc_light/crypto/hex.hpp>
 
-#include <fc_light/reflect/variant.hpp>
+
 
 #include <boost/signals2.hpp>
 

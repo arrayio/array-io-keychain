@@ -33,6 +33,7 @@ public:
     };
 
     bitcoin_transaction_t(kaitai::kstream* p__io, kaitai::kstruct* p__parent = 0, bitcoin_transaction_t* p__root = 0);
+    bitcoin_transaction_t();
 
 private:
     void _read();
@@ -45,7 +46,8 @@ public:
     public:
 
         vout_t(kaitai::kstream* p__io, bitcoin_transaction_t* p__parent = 0, bitcoin_transaction_t* p__root = 0);
-
+        vout_t();
+        
     private:
         void _read();
 
@@ -106,7 +108,8 @@ public:
     public:
 
         vin_t(kaitai::kstream* p__io, bitcoin_transaction_t* p__parent = 0, bitcoin_transaction_t* p__root = 0);
-
+        vin_t();
+        
     private:
         void _read();
 

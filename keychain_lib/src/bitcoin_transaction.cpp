@@ -18,6 +18,14 @@ bitcoin_transaction_t::bitcoin_transaction_t(kaitai::kstream* p__io, kaitai::kst
     _read();
 }
 
+bitcoin_transaction_t::bitcoin_transaction_t()
+  : kaitai::kstruct(nullptr)
+  , version(0)
+  , num_vins(0)
+  , num_vouts(0)
+  , locktime(0)
+{}
+
 void bitcoin_transaction_t::_read() {
     version = m__io->read_u4le();
     num_vins = m__io->read_u1();
@@ -44,6 +52,12 @@ bitcoin_transaction_t::vout_t::vout_t(kaitai::kstream* p__io, bitcoin_transactio
 {
     _read();
 }
+
+bitcoin_transaction_t::vout_t::vout_t()
+  : kaitai::kstruct(nullptr)
+  , amount(0)
+  , script_len(0)
+{}
 
 void bitcoin_transaction_t::vout_t::_read() {
     amount = m__io->read_u8le();
@@ -85,6 +99,12 @@ bitcoin_transaction_t::vin_t::vin_t(kaitai::kstream* p__io, bitcoin_transaction_
 {
     _read();
 }
+
+bitcoin_transaction_t::vin_t::vin_t()
+  : kaitai::kstruct(nullptr)
+  , output_id(0)
+  , script_len(0)
+{}
 
 void bitcoin_transaction_t::vin_t::_read() {
     txid = bintohex(m__io->read_bytes(32), false);

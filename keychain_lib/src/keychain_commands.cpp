@@ -57,7 +57,7 @@ std::string create_secmod_cmd(std::vector<unsigned char> raw, blockchain_te bloc
 {
   std::string json;
   auto log = logger_singletone::instance();
-  secmod_commands::sec_mod_command_common cmd;
+  secmod_commands::secmod_command_common cmd;
   cmd.json = true;
   
   switch (blockchain)

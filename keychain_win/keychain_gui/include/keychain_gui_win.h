@@ -12,6 +12,8 @@
 #include "KeychainServiceExchange.h"
 #include "Transaction.h"
 #include "ui_keychain_gui_win.h"
+#include "EthereumWidget.h"
+#include "KeychainWidget.h"
 
 class keychain_gui_win : public QDialog
 {
@@ -36,11 +38,11 @@ private:
 	QLabel * descriptionLabel = Q_NULLPTR;
 	QLineEdit* passPhraseValue = Q_NULLPTR;
 	LockIcon * lockIcon = Q_NULLPTR;
-	SecureWindowElement * cryptoType = Q_NULLPTR;
-	SecureWindowElement * from = Q_NULLPTR;
-	SecureWindowElement * to = Q_NULLPTR;
-	SecureWindowElement * amount = Q_NULLPTR;
-
+	//SecureWindowElement * cryptoType = Q_NULLPTR;
+	//SecureWindowElement * from = Q_NULLPTR;
+	//SecureWindowElement * to = Q_NULLPTR;
+	//SecureWindowElement * amount = Q_NULLPTR;
+	KeychainWidget * element = Q_NULLPTR;
 
 	SecureWindowElement * swap = Q_NULLPTR;
 	SecureWindowElement * action = Q_NULLPTR;
@@ -50,7 +52,7 @@ private:
 	//QLabel * expertLabel = Q_NULLPTR;
 	//QLabel * expertValue = Q_NULLPTR;
 	//QPushButton * moreButton = Q_NULLPTR;
-	ExpertModeElement * expertModeElement = Q_NULLPTR;
+	//ExpertModeElement * expertModeElement = Q_NULLPTR;
 	KeychainServiceExchange * serviceExchange =NULL;
 
 private:

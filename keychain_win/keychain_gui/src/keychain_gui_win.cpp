@@ -47,12 +47,15 @@ keychain_gui_win::keychain_gui_win(const Transaction &transaction, QWidget *pare
 	if (transaction.blockchain() == "ethereum") {
 		if (transaction.isSwap()) {
 			//fields = new SecureWindowElement[8];
-			endControlPosition = _createFieldsForSwap(transaction, START_POSITION);
-			endControlPosition = _createFieldsForEthereum(transaction, endControlPosition);
+			//endControlPosition = _createFieldsForSwap(transaction, START_POSITION);
+			//endControlPosition = _createFieldsForEthereum(transaction, endControlPosition);
 		}
 		else {
 			//fields = new SecureWindowElement[4];
-			endControlPosition = _createFieldsForEthereum(transaction, START_POSITION);
+			//endControlPosition = _createFieldsForEthereum(transaction, START_POSITION);
+			element = new EthereumWidget(transaction, this);
+			element->move(0, START_POSITION);
+			element->SetPosition(0, START_POSITION, FIELD_WIDTH);
 		}
 
 		/*swapLogo= new SecureWindowElement(this);
@@ -76,16 +79,16 @@ keychain_gui_win::keychain_gui_win(const Transaction &transaction, QWidget *pare
 	}
 
 	endControlPosition += 10;
-	expertModeElement = new ExpertModeElement(this);
-	expertModeElement->SetPosition(0, endControlPosition, 116, FIELD_WIDTH);
-	expertModeElement->SetExpertModeText(transaction.expertMode());
+	//expertModeElement = new ExpertModeElement(this);
+	//expertModeElement->SetPosition(0, endControlPosition, 116, FIELD_WIDTH);
+	//expertModeElement->SetExpertModeText(transaction.expertMode());
 	//expertLabel->move(0, endControlPosition);
 	//expertValue->move(131, endControlPosition);
 
 	/*moreButton = new QPushButton(this);*/
 	//moreButton->move(131+ FIELD_WIDTH-23, endControlPosition+50-13);
 
-	endControlPosition += 60;
+	endControlPosition = START_POSITION + element->GetCurrentHeight();
 
 	passPhrase = new QLabel(this);
 	passPhrase->setStyleSheet("font:16px \"Segoe UI\";background:transparent;");
@@ -148,33 +151,33 @@ void keychain_gui_win::transaction_sign() {
 int keychain_gui_win::_createFieldsForEthereum(const Transaction &transaction, const int startPosition) //96
 {
 
-	cryptoType = new SecureWindowElement(this);
-	cryptoType->SetPosition(0, startPosition, 116, FIELD_WIDTH);
-	cryptoType->SetLabelStyle("background-image:url(:/keychain_gui_win/bg_ephir.png) no-repeat;");
-	cryptoType->SetValueStyle("font:16px \"Segoe UI\";background:transparent;color:rgb(123,141,167);");
-	cryptoType->SetLabelOffset(100);
-	cryptoType->SetLabelAndValue("empty=ethereum");
+	//cryptoType = new SecureWindowElement(this);
+	//cryptoType->SetPosition(0, startPosition, 116, FIELD_WIDTH);
+	//cryptoType->SetLabelStyle("background-image:url(:/keychain_gui_win/bg_ephir.png) no-repeat;");
+	//cryptoType->SetValueStyle("font:16px \"Segoe UI\";background:transparent;color:rgb(123,141,167);");
+	//cryptoType->SetLabelOffset(100);
+	//cryptoType->SetLabelAndValue("empty=ethereum");
 
-	//QList<QString> fieldList({ "From","To","Amount" });
+	////QList<QString> fieldList({ "From","To","Amount" });
 
-	from = new SecureWindowElement(this);
-	from->SetPosition(0, startPosition+26, 116, FIELD_WIDTH);
-	from->SetLabelStyle("font:16px \"Segoe UI\";background:transparent;");
-	from->SetValueStyle("font:16px \"Segoe UI\";background:transparent;color:rgb(123,141,167)");
-	from->SetLabelAndValue("From", transaction.getValue("from"));
+	//from = new SecureWindowElement(this);
+	//from->SetPosition(0, startPosition+26, 116, FIELD_WIDTH);
+	//from->SetLabelStyle("font:16px \"Segoe UI\";background:transparent;");
+	//from->SetValueStyle("font:16px \"Segoe UI\";background:transparent;color:rgb(123,141,167)");
+	//from->SetLabelAndValue("From", transaction.getValue("from"));
 
-	to = new SecureWindowElement(this);
-	to->SetPosition(0, startPosition+26*2, 116, FIELD_WIDTH);
-	to->SetLabelStyle("font:16px \"Segoe UI\";background:transparent;");
-	to->SetValueStyle("font:16px \"Segoe UI\";background:transparent;color:rgb(123,141,167)");
-	to->SetLabelAndValue("To", transaction.getValue("to"));
+	//to = new SecureWindowElement(this);
+	//to->SetPosition(0, startPosition+26*2, 116, FIELD_WIDTH);
+	//to->SetLabelStyle("font:16px \"Segoe UI\";background:transparent;");
+	//to->SetValueStyle("font:16px \"Segoe UI\";background:transparent;color:rgb(123,141,167)");
+	//to->SetLabelAndValue("To", transaction.getValue("to"));
 
 
-	amount = new SecureWindowElement(this);
-	amount->SetPosition(0, startPosition+26*3, 116, FIELD_WIDTH);
-	amount->SetLabelStyle("font:16px \"Segoe UI\";background:transparent;");
-	amount->SetValueStyle("font:16px \"Segoe UI\";background:transparent;color:rgb(123,141,167)");
-	amount->SetLabelAndValue("Amount", transaction.getValue("value"));
+	//amount = new SecureWindowElement(this);
+	//amount->SetPosition(0, startPosition+26*3, 116, FIELD_WIDTH);
+	//amount->SetLabelStyle("font:16px \"Segoe UI\";background:transparent;");
+	//amount->SetValueStyle("font:16px \"Segoe UI\";background:transparent;color:rgb(123,141,167)");
+	//amount->SetLabelAndValue("Amount", transaction.getValue("value"));
 
 	return (startPosition + 26 * 4);
 }

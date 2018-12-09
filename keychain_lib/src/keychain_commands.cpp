@@ -9,12 +9,12 @@
 #include <fc_light/io/json.hpp>
 
 #include "keychain_commands.hpp"
-#include "sec_mod_protocol.hpp"
+#include "secmod_protocol.hpp"
 #include "keychain.hpp"
 
 namespace keychain_app {
 
-using swap_cmd_t = sec_mod_commands::secmod_command<sec_mod_commands::blockchain_secmod_te::ethereum_swap>::type;
+using swap_cmd_t = secmod_commands::secmod_command<secmod_commands::blockchain_secmod_te::ethereum_swap>::type;
 
 bool swap_action(std::string data, swap_cmd_t::swap_t &swap_info) {
   if (data.size() < 8)
@@ -57,7 +57,7 @@ std::string create_secmod_cmd(std::vector<unsigned char> raw, blockchain_te bloc
 {
   std::string json;
   auto log = logger_singletone::instance();
-  sec_mod_commands::sec_mod_command_common cmd;
+  secmod_commands::sec_mod_command_common cmd;
   cmd.json = true;
   
   switch (blockchain)
@@ -71,14 +71,14 @@ std::string create_secmod_cmd(std::vector<unsigned char> raw, blockchain_te bloc
         
         kaitai::kstream ks(&is);
         bitcoin_transaction_t trx_info(&ks);
-        using cmd_t = sec_mod_commands::secmod_command<sec_mod_commands::blockchain_secmod_te::bitcoin>::type;
+        using cmd_t = secmod_commands::secmod_command<secmod_commands::blockchain_secmod_te::bitcoin>::type;
         cmd_t data(std::move(from), std::move(trx_info));
-        cmd.blockchain = sec_mod_commands::blockchain_secmod_te::bitcoin;
+        cmd.blockchain = secmod_commands::blockchain_secmod_te::bitcoin;
         cmd.data = fc_light::variant(data);
         BOOST_LOG_SEV(log.lg, info) << "bitcoin transaction parse complete: \n" + json;
       } catch (std::exception &exc) {
         cmd.json = false;
-        cmd.blockchain = sec_mod_commands::blockchain_secmod_te::bitcoin;
+        cmd.blockchain = secmod_commands::blockchain_secmod_te::bitcoin;
         cmd.data = to_hex(raw.data(), raw.size());
         BOOST_LOG_SEV(log.lg, info) << "bitcoin transaction parse is not complete: \n" + std::string(exc.what()) +"\n " + json;
       }
@@ -90,7 +90,7 @@ std::string create_secmod_cmd(std::vector<unsigned char> raw, blockchain_te bloc
       try
       {
         auto tx = dev::eth::TransactionBase(raw, dev::eth::CheckTransaction::none);
-        sec_mod_commands::ethereum_trx_t trx;
+        secmod_commands::ethereum_trx_t trx;
         trx.nonce     = tx.nonce().str();
         trx.gasPrice  = tx.gasPrice().str();
         trx.gas       = tx.gas().str();
@@ -100,20 +100,20 @@ std::string create_secmod_cmd(std::vector<unsigned char> raw, blockchain_te bloc
         
         auto data = to_hex(tx.data().data(), tx.data().size() );
         
-        using swap_cmd_t = sec_mod_commands::secmod_command<sec_mod_commands::blockchain_secmod_te::ethereum_swap>::type;
+        using swap_cmd_t = secmod_commands::secmod_command<secmod_commands::blockchain_secmod_te::ethereum_swap>::type;
         swap_cmd_t::swap_t swap_info;
         if (swap_action(data, swap_info))
         {
           swap_cmd_t data(std::move(from),std::move(trx), std::move(swap_info));
-          cmd.blockchain = sec_mod_commands::blockchain_secmod_te::ethereum_swap;
+          cmd.blockchain = secmod_commands::blockchain_secmod_te::ethereum_swap;
           cmd.data = fc_light::variant(data);
           BOOST_LOG_SEV(log.lg, info) << "ethereum transaction swap-on-line specific-fields parse complete: \n" + json;
         }
         else
         {
-          using cmd_t = sec_mod_commands::secmod_command<sec_mod_commands::blockchain_secmod_te::ethereum>::type;
+          using cmd_t = secmod_commands::secmod_command<secmod_commands::blockchain_secmod_te::ethereum>::type;
           cmd_t data(std::move(from),std::move(trx));
-          cmd.blockchain = sec_mod_commands::blockchain_secmod_te::ethereum;
+          cmd.blockchain = secmod_commands::blockchain_secmod_te::ethereum;
           cmd.data = fc_light::variant(data);
           BOOST_LOG_SEV(log.lg, info) << "ethereum transaction parse complete: \n" + json;
         }
@@ -121,7 +121,7 @@ std::string create_secmod_cmd(std::vector<unsigned char> raw, blockchain_te bloc
       catch (const std::exception& exc)
       {
         cmd.json = false;
-        cmd.blockchain = sec_mod_commands::blockchain_secmod_te::ethereum;
+        cmd.blockchain = secmod_commands::blockchain_secmod_te::ethereum;
         cmd.data = to_hex(raw.data(), raw.size());
         BOOST_LOG_SEV(log.lg, info) << "ethereum transaction parse is not complete: \n" + std::string(exc.what()) +"\n " + json;
       }
@@ -130,7 +130,7 @@ std::string create_secmod_cmd(std::vector<unsigned char> raw, blockchain_te bloc
     default:
     {
       cmd.json = false;
-      cmd.blockchain = sec_mod_commands::blockchain_secmod_te::unknown;
+      cmd.blockchain = secmod_commands::blockchain_secmod_te::unknown;
       cmd.data = to_hex(raw.data(), raw.size());
       BOOST_LOG_SEV(log.lg, info) << " transaction parse is not implementated: \n" + json;
     }

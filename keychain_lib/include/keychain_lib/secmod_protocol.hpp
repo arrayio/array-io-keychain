@@ -7,7 +7,7 @@
 namespace keychain_app
 {
 
-namespace sec_mod_commands
+namespace secmod_commands
 {
 
 enum struct blockchain_secmod_te {
@@ -18,11 +18,19 @@ enum struct blockchain_secmod_te {
   ethereum_swap //HACK:
 };
 
+struct secmod_command_base
+{
+  virtual std::string to_pretty_string() const;
+};
 
 template<blockchain_secmod_te blockchain_type>
-struct secmod_command
+struct secmod_command: secmod_command_base
 {
   using type = void;
+  virtual std::string to_pretty_string() const override
+  {
+    return std::string();
+  }
 };
 
 struct sec_mod_command_common
@@ -68,7 +76,7 @@ struct ethereum_trx_t
 };
 
 template<>
-struct secmod_command<blockchain_secmod_te::ethereum>
+struct secmod_command<blockchain_secmod_te::ethereum>: secmod_command_base
 {
   struct sec_mod_command_ethereum {
     sec_mod_command_ethereum(std::string &&from_, ethereum_trx_t &&trx_)
@@ -82,7 +90,7 @@ struct secmod_command<blockchain_secmod_te::ethereum>
 };
 
 template<>
-struct secmod_command<blockchain_secmod_te::ethereum_swap>
+struct secmod_command<blockchain_secmod_te::ethereum_swap>: secmod_command_base
 {
   struct sec_mod_command_swap {
     
@@ -111,7 +119,7 @@ struct secmod_command<blockchain_secmod_te::ethereum_swap>
 };
 
 template<>
-struct secmod_command<blockchain_secmod_te::bitcoin>
+struct secmod_command<blockchain_secmod_te::bitcoin>: secmod_command_base
 {
   struct sec_mod_command_bitcoin {
     sec_mod_command_bitcoin(std::string &&from_, bitcoin_transaction_t &&trx_)
@@ -125,7 +133,7 @@ struct secmod_command<blockchain_secmod_te::bitcoin>
 };
 
 template<>
-struct secmod_command<blockchain_secmod_te::raw_hash>
+struct secmod_command<blockchain_secmod_te::raw_hash>: secmod_command_base
 {
   struct sec_mod_command_rawhash {
     sec_mod_command_rawhash(std::string &&from_, std::string &&hash_)
@@ -142,27 +150,27 @@ struct secmod_command<blockchain_secmod_te::raw_hash>
 
 }
 
-FC_LIGHT_REFLECT_ENUM(keychain_app::sec_mod_commands::blockchain_secmod_te, (unknown)(ethereum)(bitcoin)(ethereum_swap))
+FC_LIGHT_REFLECT_ENUM(keychain_app::secmod_commands::blockchain_secmod_te, (unknown)(ethereum)(bitcoin)(ethereum_swap))
 
-FC_LIGHT_REFLECT(keychain_app::sec_mod_commands::sec_mod_command_common, (json)(blockchain)(data))
-FC_LIGHT_REFLECT(keychain_app::sec_mod_commands::ethereum_trx_t, (nonce)(gasPrice)(gas)(chainid)(to)(value))
-FC_LIGHT_REFLECT(keychain_app::sec_mod_commands::secmod_command<keychain_app::sec_mod_commands::blockchain_secmod_te::ethereum>::type, (from)(trx_info))
+FC_LIGHT_REFLECT(keychain_app::secmod_commands::sec_mod_command_common, (json)(blockchain)(data))
+FC_LIGHT_REFLECT(keychain_app::secmod_commands::ethereum_trx_t, (nonce)(gasPrice)(gas)(chainid)(to)(value))
+FC_LIGHT_REFLECT(keychain_app::secmod_commands::secmod_command<keychain_app::secmod_commands::blockchain_secmod_te::ethereum>::type, (from)(trx_info))
 
 FC_LIGHT_REFLECT_ENUM(
-  keychain_app::sec_mod_commands::secmod_command<keychain_app::sec_mod_commands::blockchain_secmod_te::ethereum_swap>::type::action_te,
+  keychain_app::secmod_commands::secmod_command<keychain_app::secmod_commands::blockchain_secmod_te::ethereum_swap>::type::action_te,
   (create_swap)(refund)(withdraw))
 
 FC_LIGHT_REFLECT(
-  keychain_app::sec_mod_commands::secmod_command<keychain_app::sec_mod_commands::blockchain_secmod_te::ethereum_swap>::type::swap_t,
+  keychain_app::secmod_commands::secmod_command<keychain_app::secmod_commands::blockchain_secmod_te::ethereum_swap>::type::swap_t,
   (action)(hash)(address)(secret))
 
 FC_LIGHT_REFLECT(
-  keychain_app::sec_mod_commands::secmod_command<keychain_app::sec_mod_commands::blockchain_secmod_te::ethereum_swap>::type,
+  keychain_app::secmod_commands::secmod_command<keychain_app::secmod_commands::blockchain_secmod_te::ethereum_swap>::type,
   (from)(trx_info)(swap_info))
 
-FC_LIGHT_REFLECT(keychain_app::sec_mod_commands::secmod_command<keychain_app::sec_mod_commands::blockchain_secmod_te::bitcoin>::type, (from)(trx_info))
+FC_LIGHT_REFLECT(keychain_app::secmod_commands::secmod_command<keychain_app::secmod_commands::blockchain_secmod_te::bitcoin>::type, (from)(trx_info))
 
-FC_LIGHT_REFLECT(keychain_app::sec_mod_commands::secmod_command<keychain_app::sec_mod_commands::blockchain_secmod_te::raw_hash>::type, (from)(hash))
+FC_LIGHT_REFLECT(keychain_app::secmod_commands::secmod_command<keychain_app::secmod_commands::blockchain_secmod_te::raw_hash>::type, (from)(hash))
 
 
 #endif //KEYCHAINAPP_KEYCHAIN_SEC_MOD_PROTOCOL_HPP

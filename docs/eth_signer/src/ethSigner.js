@@ -2,7 +2,6 @@ var Web3 = require('web3');
 const Transaction = require('ethereumjs-tx');
 const ethUtil = require('ethereumjs-util');
 
-let buffer;
 const WS_PUBLIC_KEY_REQUEST_ID = 12345;
 
 window.onload = function () {
@@ -110,10 +109,10 @@ window.onload = function () {
     const nonce = await web3.eth.getTransactionCount(fromAddress);
     const gasPrice = await web3.eth.getGasPrice().then(wei => Number(wei))
     const chainId = 3;
-    const gasLimit = 21000; // await web3.eth.estimateGas(draftTxParams) ||
-    
+    const gasLimit = 21000; // await web3.eth.estimateGas(draftTxParams) ||    
+
     const ret = rsv(signature, chainId);
-  
+
     const txParams = {
       nonce,
       gasPrice,
@@ -125,21 +124,11 @@ window.onload = function () {
       gasLimit,
       ...ret
     }
-
-    console.log('tx KeyChain params', txParams)
-  
+    console.log('tx KeyChain params', txParams);  
     const tx = new Transaction(txParams);
-    buffer = tx.serialize();
-  
-    const hex = buffer.toString('hex')
-  
-    console.log('final hex: ', hex); 
-    return hex;
+    const buffer = tx.serialize();  
+    return buffer.toString('hex');
   }
-}
-
-function saveRawHex(rawHex) {
-  document.getElementById('rawHex').innerText = rawHex;
 }
 
 const rsv = (signature, chainId) => {
@@ -159,6 +148,10 @@ const rsv = (signature, chainId) => {
     ret.v = chainId;
   }
   return ret;
+}
+
+function saveRawHex(rawHex) {
+  document.getElementById('rawHex').innerText = rawHex;
 }
 
 function log(message) {

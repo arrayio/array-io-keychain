@@ -12,8 +12,8 @@ ExpertModeDialog::ExpertModeDialog(QWidget * parent)
 	transactionDescription->setFixedSize(380, 240);
 	transactionDescription->move(5,5);
 	OKButton = new QPushButton(this);
-	OKButton->setFixedSize(89,25);
-	OKButton->move(220, 250);
+	OKButton->setFixedSize(100,25);
+	OKButton->move(150, 250);
 	OKButton->setCursor(Qt::PointingHandCursor);
 	OKButton->setText("OK");
 	OKButton->setStyleSheet("color:white;background-color:rgb(70,134,255);border-style:outset;border-width:0px;border-radius:5px;font:16px \"Segoe UI\"");

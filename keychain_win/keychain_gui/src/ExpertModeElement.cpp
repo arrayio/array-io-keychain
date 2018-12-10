@@ -36,13 +36,13 @@ ExpertModeElement::~ExpertModeElement()
 
 void ExpertModeElement::SetPosition(int x, int y, int labelWidth, int valueWidth)
 {
-	expertLabel->move(x, y);
+	expertLabel->move(0, 0);
 	expertLabel->setFixedWidth(labelWidth);
 	expertValue->setFixedWidth(valueWidth);
 	expertLabel->setFixedHeight(25);
 	expertValue->setFixedHeight(50);
 	setFixedWidth(expertLabel->width() + expertValue->width() + 16);
-	expertValue->move(x + labelWidth + 16, y);
+	expertValue->move(labelWidth + 16, 0);
 	moreButton->move((expertValue->x() + expertValue->width() - 20), (expertValue->y() + 50 - 12));
 	/*_valueX = x + labelWidth + 16, y;
 	_labelX = x;*/

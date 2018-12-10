@@ -2,6 +2,10 @@
 #define KEYCHAINWIDGET_H
 
 #include <QWidget>
+#include <keychain_lib/secmod_parser_cmd.hpp>
+
+using namespace keychain_app;
+using secmod_commands::secmod_parser_f;
 
 class KeychainWidget: public QWidget
 {

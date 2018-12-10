@@ -14,6 +14,7 @@ public:
 	LockIcon(QWidget * parent=Q_NULLPTR);
 	~LockIcon();
 	void setSourceDialog(PopupWindow * popup);
+	void setUnSecureMode();
 protected:
 	void mouseMoveEvent(QMouseEvent *event);
 	void leaveEvent(QEvent *event);

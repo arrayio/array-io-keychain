@@ -24,6 +24,18 @@ PopupWindow::PopupWindow(QWidget *parent)
 }
 
 
+void PopupWindow::setUnsecureText()
+{
+	header->setText("Unsecure transaction");
+	header->setStyleSheet("background:transparent;color:rgb(215,132,133);font:10pt \"Segoe UI\";");
+	body->setFixedWidth(171);
+	body->setStyleSheet("background:transparent;width:150px;height:64px;color:rgb(147,148,151);font:9.5pt \"Segoe UI\";padding:5px;");
+	body->setWordWrap(true);
+	body->setText("We do not recommend you to sign this transaction because it might come from a fraudulent source.");
+	body->setAlignment(Qt::AlignJustify);
+}
+
+
 PopupWindow::~PopupWindow()
 {
 }

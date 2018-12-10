@@ -44,6 +44,7 @@ keychain_app::byte_seq_t SecureModuleWrapper::_startSecureDesktop(const std::str
 	char buffer[1024];
 	DWORD dwRead;
 	//initializing security attributes
+	_secman.CreateSecureDesktop(str);
 	SECURITY_ATTRIBUTES  sa;
 	sa.nLength = sizeof(SECURITY_ATTRIBUTES);
 	sa.bInheritHandle = FALSE;
@@ -73,8 +74,6 @@ keychain_app::byte_seq_t SecureModuleWrapper::_startSecureDesktop(const std::str
 		LPDWORD      lpNumberOfBytesWritten,
 		LPOVERLAPPED lpOverlapped
 	);
-	
-	_secman.CreateSecureDesktop(str);
 
     const int MAX_WAIT_TIME = 1000;
     /*if (WaitForSingleObject(hPipe, MAX_WAIT_TIME) == WAIT_OBJECT_0)

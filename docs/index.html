@@ -141,6 +141,15 @@
 
       keychain.ws.onopen = function() {
         document.body.style.backgroundColor = '#cfc';
+
+        /** Promises test */
+        keychain.method('LIST')
+        .then(data => {
+          console.log('list result: ', data);
+          return keychain.method('UNLOCK', { keyname: JSON.parse(data).result[0]} )
+        })
+        .then(data => console.log('unlock result: ', data));
+        /** Promises test end */
       };
       keychain.ws.onclose = function() {      
         document.body.style.backgroundColor = null;
@@ -182,8 +191,11 @@
 
           const data = JSON.stringify(request, undefined, 2);
           document.getElementById('request').value = data;
-          keychain.command(commandName, params, function(response) {
-            document.getElementById('response').textContent = JSON.stringify(JSON.parse(response.data), undefined, 2);
+          // keychain.command(commandName, params, function(data) {
+          //   document.getElementById('response').textContent = JSON.stringify(JSON.parse(data), undefined, 2);
+          // });
+          keychain.method(commandName, params).then((data) => {
+            document.getElementById('response').textContent = JSON.stringify(JSON.parse(data), undefined, 2);
           });
         });
       }

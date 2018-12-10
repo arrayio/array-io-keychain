@@ -2,6 +2,9 @@ class Keychain {
   constructor(url) {
     this.ws = new WebSocket(url);
     this.ws.onmessage = (response) => {
+      this.queue.shift()(response.data);
+    }
+    this.ws.onclose = (response) => {
       this.queue.shift()(response);
     }
     this.queue = [];
@@ -13,6 +16,13 @@ class Keychain {
       request.params = Object.assign(request.params, params);
     }
     this.send(request, callback);
+  }
+
+  /** Promise implementation of the 'command' method */
+  method(name, params) {
+      return new Promise((resolve, reject) => {
+      this.command(name, params, resolve)
+    });
   }
 
   send(data, callback) {

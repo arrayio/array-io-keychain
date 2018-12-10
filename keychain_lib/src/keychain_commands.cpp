@@ -191,12 +191,12 @@ std::string keychain_app::read_private_key(keychain_base * keychain, std::string
   if (locked)
   {
     key_data = read_private_key_file(keychain, keyname, text).first;
-    if (!seconds) // unlock key
+    if (seconds) // unlock key
       keychain->key_map[keyname] = std::make_pair(key_data, std::make_pair(seconds, std::time(nullptr) ) );
   }
   else
   {
-    if (!seconds) // unlock key
+    if (seconds) // unlock key
     {
       key_data = read_private_key_file(keychain, keyname, text).first;
       keychain->key_map[keyname] = std::make_pair(key_data, std::make_pair(seconds, std::time(nullptr) ) );

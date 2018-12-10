@@ -135,13 +135,13 @@ std::string secmod_parser_f::to_expert_mode_string() const
     switch (m_cmd.blockchain)
     {
       case blockchain_secmod_te::ethereum:
-        return fc_light::json::to_pretty_string(fc_light::variant(m_cmd.data.as<ethereum_cmd>()));
+        return fc_light::json::to_pretty_string(fc_light::variant(m_cmd.data.as<ethereum_cmd>().trx_info));
       case blockchain_secmod_te::bitcoin:
-        return fc_light::json::to_pretty_string(fc_light::variant(m_cmd.data.as<bitcoin_cmd>()));
+        return fc_light::json::to_pretty_string(fc_light::variant(m_cmd.data.as<bitcoin_cmd>().trx_info));
       case blockchain_secmod_te:: ethereum_swap:
-        return fc_light::json::to_pretty_string(fc_light::variant(m_cmd.data.as<ethereum_swap_cmd>()));
+        return fc_light::json::to_pretty_string(fc_light::variant(m_cmd.data.as<ethereum_swap_cmd>().trx_info));
       case blockchain_secmod_te::rawhash:
-        return fc_light::json::to_pretty_string(fc_light::variant(m_cmd.data.as<rawhash_cmd>()));
+        return m_cmd.data.as<rawhash_cmd>().hash;
       default:
         return std::string();
     }

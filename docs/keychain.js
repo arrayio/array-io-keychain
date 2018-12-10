@@ -2,10 +2,7 @@ class Keychain {
   constructor(url) {
     this.ws = new WebSocket(url);
     this.ws.onmessage = (response) => {
-      this.queue.shift()(response.data);
-    }
-    this.ws.onclose = (response) => {
-      this.queue.shift()(response);
+      this.queue.shift()(JSON.parse(response.data));
     }
     this.queue = [];
   }

@@ -146,7 +146,7 @@
         keychain.method('LIST')
         .then(data => {
           console.log('list result: ', data);
-          return keychain.method('UNLOCK', { keyname: JSON.parse(data).result[0]} )
+          return keychain.method('UNLOCK', { keyname: data.result[0]} )
         })
         .then(data => console.log('unlock result: ', data));
         /** Promises test end */
@@ -192,10 +192,10 @@
           const data = JSON.stringify(request, undefined, 2);
           document.getElementById('request').value = data;
           // keychain.command(commandName, params, function(data) {
-          //   document.getElementById('response').textContent = JSON.stringify(JSON.parse(data), undefined, 2);
+          //   document.getElementById('response').textContent = JSON.stringify(data, undefined, 2);
           // });
           keychain.method(commandName, params).then((data) => {
-            document.getElementById('response').textContent = JSON.stringify(JSON.parse(data), undefined, 2);
+            document.getElementById('response').textContent = JSON.stringify(data, undefined, 2);
           });
         });
       }

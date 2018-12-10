@@ -109,40 +109,31 @@ window.onload = function () {
   const buildTxSinature = async (signature, fromAddress, to, value, data = '') => {
     const nonce = await web3.eth.getTransactionCount(fromAddress);
     const gasPrice = await web3.eth.getGasPrice().then(wei => Number(wei))
-    const chainIdHere = 3;
+    const chainId = 3;
+    const gasLimit = 21000; // await web3.eth.estimateGas(draftTxParams) ||
+    
+    const ret = rsv(signature, chainId);
   
-    const draftTxParams = {
+    const txParams = {
       nonce,
       gasPrice,
       to,
       value,
       data,
       // EIP 155 chainId - mainnet: 1, ropsten: 3, rinkeby: 4
-      chainId: chainIdHere
+      chainId,
+      gasLimit,
+      ...ret
     }
-  
-    const gasLimit = 21000; // await web3.eth.estimateGas(draftTxParams) ||
-  
-    let txParams = {
-      ...draftTxParams,
-      gasLimit
-    }
-  
-    if (signature) {
-      const ret = rsv(signature, chainIdHere);
-      txParams = { ...txParams,
-        ...ret
-      };
-    }
-  
+
     console.log('tx KeyChain params', txParams)
   
     const tx = new Transaction(txParams);
-    if (!signature) {
-      tx.v = chainIdHere;
-      tx.r = 0;
-      tx.s = 0;
-    }
+    // if (!signature) {
+    //   tx.v = chainId;
+    //   tx.r = 0;
+    //   tx.s = 0;
+    // }
     buffer = tx.serialize();
   
     const hex = buffer.toString('hex')
@@ -156,16 +147,22 @@ function saveRawHex(rawHex) {
   document.getElementById('rawHex').innerText = rawHex;
 }
 
-const rsv = (signature, chainIdHere) => {
+const rsv = (signature, chainId) => {
   const ret = {};
-  ret.r = `0x${signature.slice(0, 64)}`;
-  ret.s = `0x${signature.slice(64, 128)}`;
-  const recovery = parseInt(signature.slice(128, 130), 16);
-  let tmpV = recovery + 27;
-  if (chainIdHere > 0) {
-    tmpV += chainIdHere * 2 + 8;
+  if (signature) {
+    ret.r = `0x${signature.slice(0, 64)}`;
+    ret.s = `0x${signature.slice(64, 128)}`;
+    const recovery = parseInt(signature.slice(128, 130), 16);
+    let tmpV = recovery + 27;
+    if (chainId > 0) {
+      tmpV += chainId * 2 + 8;
+    }
+    ret.v = tmpV;
+  } else {
+    ret.r = '0x00';
+    ret.s = '0x00';
+    ret.v = '0x03'; // todo get from chainId
   }
-  ret.v = tmpV;
   return ret;
 }
 

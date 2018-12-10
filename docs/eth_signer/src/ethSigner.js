@@ -129,11 +129,6 @@ window.onload = function () {
     console.log('tx KeyChain params', txParams)
   
     const tx = new Transaction(txParams);
-    // if (!signature) {
-    //   tx.v = chainId;
-    //   tx.r = 0;
-    //   tx.s = 0;
-    // }
     buffer = tx.serialize();
   
     const hex = buffer.toString('hex')
@@ -161,7 +156,7 @@ const rsv = (signature, chainId) => {
   } else {
     ret.r = '0x00';
     ret.s = '0x00';
-    ret.v = '0x03'; // todo get from chainId
+    ret.v = chainId;
   }
   return ret;
 }

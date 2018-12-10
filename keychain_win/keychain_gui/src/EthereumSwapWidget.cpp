@@ -1,6 +1,6 @@
 #include "EthereumSwapWidget.h"
 
-EthereumSwapWidget::EthereumSwapWidget(const Transaction &transaction, QWidget * parent)
+EthereumSwapWidget::EthereumSwapWidget(Transaction &transaction, QWidget * parent)
 	:KeychainWidget(parent)
 {
 	QMetaObject::connectSlotsByName(this);
@@ -13,21 +13,34 @@ EthereumSwapWidget::EthereumSwapWidget(const Transaction &transaction, QWidget *
 
 	//QList<QString> fieldList({ "From","To","Amount" });
 
+	secmod_parser_f cmd_parse;
+	auto cmd_type = cmd_parse(transaction.getTransactionText().toStdString());
+	auto swap_trx = cmd_parse.to_ethereum_swap();
+	auto swap_info = swap_trx.swap_info;
+
 	action = new SecureWindowElement(this);
 	action->SetLabelStyle(labelStyle);
 	action->SetValueStyle(valueStyle);
-	action->SetLabelAndValue("Action", transaction.getSwapValue("action"));
+	switch (swap_info.action)
+	{
+		
+		//TODO: need impleentation
+	}
+	action->SetLabelAndValue("Action", "(action)");
+
+	/*create_swap = 0,
+		refund,
+		withdraw*/
 
 	hash = new SecureWindowElement(this);
 	hash->SetLabelStyle(labelStyle);
 	hash->SetValueStyle(valueStyle);
-	hash->SetLabelAndValue("Hash", transaction.getSwapValue("hash"));
-
+	hash->SetLabelAndValue("Hash", QString::fromStdString(swap_info.hash));
 
 	address = new SecureWindowElement(this);
 	address->SetLabelStyle(labelStyle);
 	address->SetValueStyle(valueStyle);
-	address->SetLabelAndValue("Address", transaction.getSwapValue("address"));
+	address->SetLabelAndValue("Address", QString::fromStdString(swap_info.address));
 
 	cryptoType = new SecureWindowElement(this);
 	cryptoType->SetLabelStyle("background-image:url(:/keychain_gui_win/bg_ephir.png) no-repeat;");
@@ -39,20 +52,22 @@ EthereumSwapWidget::EthereumSwapWidget(const Transaction &transaction, QWidget *
 	from = new SecureWindowElement(this);
 	from->SetLabelStyle(labelStyle);
 	from->SetValueStyle(valueStyle);
-	from->SetLabelAndValue("From", transaction.getValue("from"));
-
+	from->SetLabelAndValue("From", QString::fromStdString(swap_trx.from));
+	
+	auto eth_data = swap_trx.trx_info;
+	
 	to = new SecureWindowElement(this);
 	to->SetLabelStyle(labelStyle);
 	to->SetValueStyle(valueStyle);
-	to->SetLabelAndValue("To", transaction.getValue("to"));
+	to->SetLabelAndValue("To", QString::fromStdString(eth_data.to));
 
 	amount = new SecureWindowElement(this);
 	amount->SetLabelStyle(labelStyle);
 	amount->SetValueStyle(valueStyle);
-	amount->SetLabelAndValue("Amount", transaction.getValue("value"));
+	amount->SetLabelAndValue("Amount", QString::fromStdString(eth_data.value));
 
 	expertModeElement = new ExpertModeElement(this);
-	expertModeElement->SetExpertModeText(transaction.expertMode());
+	expertModeElement->SetExpertModeText(QString::fromStdString(cmd_parse.to_expert_mode_string()));
 
 }
 

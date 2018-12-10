@@ -1,7 +1,7 @@
 #include "BitcoinWidget.h"
 
 
-BitcoinWidget::BitcoinWidget(const Transaction &transaction, QWidget * parent)
+BitcoinWidget::BitcoinWidget(Transaction &transaction, QWidget * parent)
 	:KeychainWidget(parent)
 {
 	QMetaObject::connectSlotsByName(this);
@@ -28,23 +28,34 @@ BitcoinWidget::BitcoinWidget(const Transaction &transaction, QWidget * parent)
 	//	(*(from+i))->SetLabelAndValue("From", "fdsfsdfsdfsdfsdfdffafdafasdf");
 
 	//}
-	from = new SecureWindowElement(this);
-	from->SetLabelStyle(labelStyle);
-	from->SetValueStyle(valueStyle);
-	from->SetLabelAndValue("From", "fasfadafsdfsfafsdfasdfasdf");
+	secmod_parser_f cmd_parse;
+	auto cmd_type = cmd_parse(transaction.getTransactionText().toStdString());
 
-	to = new SecureWindowElement(this);
-	to->SetLabelStyle(labelStyle);
-	to->SetValueStyle(valueStyle);
-	to->SetLabelAndValue("To", "fsdfsdfsdfsdfsdfsdfsdfadfafasdf");
+	auto bitcoin_trx = cmd_parse.to_bitcoin();
+	auto bitcoin_data = bitcoin_trx.trx_info;
+	
+	auto num_vouts = bitcoin_data.num_vouts;//chech num of vouts
+	
+	if (bitcoin_data.num_vouts >= 1) {
+		auto vout1 = bitcoin_data.vouts[0];
+		from = new SecureWindowElement(this);
+		from->SetLabelStyle(labelStyle);
+		from->SetValueStyle(valueStyle);
+		from->SetLabelAndValue("From", QString::fromStdString(bitcoin_trx.from));
 
-	amount = new SecureWindowElement(this);
-	amount->SetLabelStyle(labelStyle);
-	amount->SetValueStyle(valueStyle);
-	amount->SetLabelAndValue("Amount", "0.2342342 BTC");
+		to = new SecureWindowElement(this);
+		to->SetLabelStyle(labelStyle);
+		to->SetValueStyle(valueStyle);
+		to->SetLabelAndValue("To", QString::fromStdString(vout1.address));
+
+		amount = new SecureWindowElement(this);
+		amount->SetLabelStyle(labelStyle);
+		amount->SetValueStyle(valueStyle);
+		amount->SetLabelAndValue("Amount", QString::number(vout1.amount) + " BTC");
+	}
 
 	expertModeElement = new ExpertModeElement(this);
-	expertModeElement->SetExpertModeText(transaction.expertMode());
+	expertModeElement->SetExpertModeText(transaction.getTransactionText());
 
 }
 
@@ -63,6 +74,7 @@ void BitcoinWidget::SetPosition(int x, int y, int width)
 	currentWidth = to->width() + amount->width();
 	currentHeight += 26;
 	expertModeElement->SetPosition(0, currentHeight, 116, width);
+	expertModeElement->move(0, currentHeight);
 	currentHeight += 60;
 	setFixedWidth(currentWidth);
 	setFixedHeight(currentHeight);

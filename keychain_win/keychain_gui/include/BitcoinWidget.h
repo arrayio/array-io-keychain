@@ -13,9 +13,8 @@ class BitcoinWidget : public KeychainWidget
 {
 	Q_OBJECT
 public:
-	BitcoinWidget(Transaction* trnsaction, QWidget *parent = Q_NULLPTR);
-	BitcoinWidget(const Transaction &transaction, QWidget * parent = Q_NULLPTR);
-	void SetPosition(int x, int y, int width) override;
+	BitcoinWidget(Transaction& trnsaction, QWidget *parent = Q_NULLPTR);
+		void SetPosition(int x, int y, int width) override;
 	int GetCurrentHeight() override;
 	int GetCurrentWidth() override;
 	~BitcoinWidget();

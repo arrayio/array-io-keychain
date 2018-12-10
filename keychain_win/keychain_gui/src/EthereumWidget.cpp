@@ -1,38 +1,43 @@
 #include "EthereumWidget.h"
 
 
-EthereumWidget::EthereumWidget(const Transaction &transaction, QWidget * parent)
+EthereumWidget::EthereumWidget(Transaction &transaction, QWidget * parent)
 	:KeychainWidget(parent)
 {
 	QMetaObject::connectSlotsByName(this);
 	cryptoType = new SecureWindowElement(this);
 
 	QString valueStyle("font:16px \"Segoe UI\";background:transparent;color:rgb(123,141,167);");
-	QString labelStyle("background-image:url(:/keychain_gui_win/bg_ephir.png) no-repeat;");
-	cryptoType->SetLabelStyle(labelStyle);
+	QString labelStyle("font:16px \"Segoe UI\";background:transparent;");
+	cryptoType->SetLabelStyle("background-image:url(:/keychain_gui_win/bg_ephir.png) no-repeat;background-size:contain;");
 	cryptoType->SetValueStyle(valueStyle);
-	cryptoType->SetLabelAndValue("empty=ethereum99");
+	cryptoType->SetLabelAndValue("empty=ethereum");
 
 	//QList<QString> fieldList({ "From","To","Amount" });
 
+	secmod_parser_f cmd_parse;
+	auto cmd_type = cmd_parse(transaction.getTransactionText().toStdString());
+	auto eth_trx = cmd_parse.to_ethereum();
+
 	from = new SecureWindowElement(this);
+	from->SetLabelAndValue("From", QString::fromStdString(eth_trx.from));
 	from->SetLabelStyle(labelStyle);
 	from->SetValueStyle(valueStyle);
-	from->SetLabelAndValue("From", transaction.getValue("from"));
+
+	auto eth_data = eth_trx.trx_info;
 
 	to = new SecureWindowElement(this);
+	to->SetLabelAndValue("To", QString::fromStdString(eth_data.to));
 	to->SetLabelStyle(labelStyle);
 	to->SetValueStyle(valueStyle);
-	to->SetLabelAndValue("To", transaction.getValue("to"));
-
 
 	amount = new SecureWindowElement(this);
+	amount->SetLabelAndValue("Amount", QString::fromStdString(eth_data.value));
 	amount->SetLabelStyle(labelStyle);
 	amount->SetValueStyle(valueStyle);
-	amount->SetLabelAndValue("Amount", transaction.getValue("value"));
 	
 	expertModeElement = new ExpertModeElement(this);
-	expertModeElement->SetExpertModeText(transaction.expertMode());
+	expertModeElement->SetExpertModeText(QString::fromStdString(cmd_parse.to_expert_mode_string()));
 	
 }
 

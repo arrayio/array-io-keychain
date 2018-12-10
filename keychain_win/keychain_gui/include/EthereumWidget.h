@@ -7,11 +7,12 @@
 #include "ExpertModeElement.h"
 #include "KeychainWidget.h"
 
+
 class EthereumWidget : public KeychainWidget
 {
 	Q_OBJECT
 public:
-	EthereumWidget(const Transaction &transaction, QWidget * parent = Q_NULLPTR);
+	EthereumWidget(Transaction &transaction, QWidget * parent = Q_NULLPTR);
 	void SetPosition(int x, int y, int width) override;
 	int GetCurrentHeight() override;
 	int GetCurrentWidth() override;

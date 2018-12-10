@@ -1,13 +1,12 @@
 #include "keychain_gui_win.h"
 
-keychain_gui_win::keychain_gui_win(const Transaction &transaction, QWidget *parent)
+keychain_gui_win::keychain_gui_win(Transaction &transaction, QWidget *parent)
 	: QDialog(parent)
 {
 	ui.setupUi(this);
 	setWindowFlags(Qt::FramelessWindowHint);
 	setFixedSize(600, 347);
 
-	_transaction = transaction;
 
 	headerBlock = new QLabel(this);
 	headerBlock->setFixedHeight(68);
@@ -25,19 +24,46 @@ keychain_gui_win::keychain_gui_win(const Transaction &transaction, QWidget *pare
 	
 	int _x = 0, _y = 204, _labelWidth = 116;
 
+
+
 	int endControlPosition = 0;
-	if (transaction.blockchain() == "ethereum") {
-		if (transaction.isSwap()) {
-			element = new BitcoinWidget(transaction, this);//new EthereumSwapWidget(transaction, this);
-			
-		}
-		else {
-			element = new EthereumWidget(transaction, this);
-			
-		}
-		element->move(0, START_POSITION);
-		element->SetPosition(0, START_POSITION, FIELD_WIDTH);
+
+	
+	bool warn = false;
+	secmod_parser_f cmd_parse;
+	auto cmd_type = cmd_parse(transaction.getTransactionText().toStdString());
+	if (!cmd_parse.is_json()) {
+		element = new UnparsedTransactionWidget(transaction, this);
+		warn = true;
 	}
+	else {
+		switch (cmd_type)
+		{
+		case keychain_app::secmod_commands::blockchain_secmod_te::ethereum: {
+			element = new EthereumWidget(transaction, this);
+			break;
+		}
+		case keychain_app::secmod_commands::blockchain_secmod_te::ethereum_swap: {
+			element = new EthereumSwapWidget(transaction, this);
+			break;
+		}
+		case keychain_app::secmod_commands::blockchain_secmod_te::bitcoin:
+		{
+			element = new BitcoinWidget(transaction, this);
+			break;
+		}
+		case keychain_app::secmod_commands::blockchain_secmod_te::rawhash:
+		{
+			element = new UnparsedTransactionWidget(transaction, this);
+			warn = true;
+			break;
+		}
+		break;
+		}
+	}
+
+	element->move(0, START_POSITION);
+	element->SetPosition(0, START_POSITION, FIELD_WIDTH);
 
 	endControlPosition += 10;
 
@@ -61,7 +87,7 @@ keychain_gui_win::keychain_gui_win(const Transaction &transaction, QWidget *pare
 	passPhraseValue->setAlignment(Qt::AlignVCenter | Qt::AlignLeft);
 	
 	endControlPosition += 35;
-	headerBlock->setFixedWidth(element->GetCurrentWidth());
+	headerBlock->setFixedWidth(element->GetCurrentWidth()+20);
 
 	OKButton = new QPushButton("SIGN", this);
 	CancelButton = new QPushButton("CANCEL", this);
@@ -82,17 +108,19 @@ keychain_gui_win::keychain_gui_win(const Transaction &transaction, QWidget *pare
 
 	OKButton->move(element->GetCurrentWidth() -112, endControlPosition);
 	setFixedHeight(endControlPosition+OKButton->height() + 15);
-	setFixedWidth(element->GetCurrentWidth());
-	descriptionLabel->move(element->GetCurrentWidth() - 363, 25);
-
+	setFixedWidth(element->GetCurrentWidth()+20);
+	descriptionLabel->move(element->GetCurrentWidth() - 343, 25);
+	
 	lockIcon = new LockIcon(this);
-
 	popupWindow = new PopupWindow(this);
 	popupWindow->setVisible(false);
 	lockIcon->setFixedSize(22, 22);
 	lockIcon->setSourceDialog(popupWindow);
-	lockIcon->move(element->GetCurrentWidth() -45, 28);
+	lockIcon->move(element->GetCurrentWidth() -25, 28);
 	lockIcon->setMouseTracking(true);
+	if (warn) {
+		lockIcon->setUnSecureMode();
+	}
 	this->connect(OKButton, &QPushButton::released, this, &keychain_gui_win::transaction_sign);
 	this->connect(CancelButton, &QPushButton::released, this, &keychain_gui_win::cancel_sign);
 }
@@ -105,6 +133,7 @@ void keychain_gui_win::transaction_sign() {
 		return;
 	}
 	serviceExchange->EncodeSuccess(passPhrase.toStdWString(), passPhrase.length());
+	this->close();
 }
 
 void keychain_gui_win::cancel_sign() {
@@ -113,10 +142,6 @@ void keychain_gui_win::cancel_sign() {
 
 void keychain_gui_win::show_transaction()
 {
-	QMessageBox msgBox;
-	msgBox.setText(_transaction.expertMode());
-	msgBox.setWindowFlags(Qt::FramelessWindowHint);
-	msgBox.setStyleSheet("background-color:rgb(227,232,248);border-style:outset;border-width:0px;border-radius:7px;font:11pt \"Segoe UI\";color:rgb(70,134,255);padding:5px;");
-	msgBox.exec();
+
 }
 

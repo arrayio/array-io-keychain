@@ -2,10 +2,10 @@
 <configuration>
   
   <!-- ID of the service. It should be unique accross the Windows system-->
-  <id>WSKeychain</id>
+  <id>Keychain</id>
   
   <!-- Display name of the service -->
-  <name>WSKeychain</name>
+  <name>Keychain</name>
   
   <!-- Service description -->
   <description>Keychain Service created for manipulating keys and transactions</description>

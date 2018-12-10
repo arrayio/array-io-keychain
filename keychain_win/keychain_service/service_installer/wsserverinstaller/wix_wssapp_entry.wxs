@@ -2,13 +2,18 @@
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
 	
 	<!-- Set product information -->
-   <Product Id="*" UpgradeCode="{46840884-EDE8-4425-B0E9-6EEECE8C1E9F}" 	 
-			Name="KeyChain" Language="1033" Version="1.0.0.3" 
+   <Product Id="*" UpgradeCode="{E975488E-8EC8-4643-8C76-7CBCBC698C6C}" 	 
+			Name="KeyChain" Language="1033" Version="1.0.2" 
 			Manufacturer="Array.IO">
 	
 	<!-- Set package and media information -->
-    <Package Description="pak" InstallerVersion="400" Compressed="yes" Platform = "x64" InstallScope="perMachine"/>
+    <Package Id="*" Description="pak" InstallerVersion="400" Compressed="yes" Platform = "x64" InstallScope="perMachine"/>
     <Media Id="1" Cabinet="setup.cab" EmbedCab="yes" />
+	<Property Id="MSIUSEREALADMINDETECTION" Value="1" />
+	
+	<MajorUpgrade
+	Schedule="afterInstallInitialize"
+	DowngradeErrorMessage="A later version of [ProductName] is already installed. Setup will now exit."/>
 	
 	<!-- Override root install directory path -->
 	<SetDirectory Id="RootInstallDrive" Value="C:\Program Files" />
@@ -59,7 +64,10 @@
 				</Directory>
 				<Component Id="Component13" DiskId="1" Guid="{46840884-EDE8-4425-B0E9-6EEECE8C1E98}">
 					<File Id="File12" Name="libcrypto-1_1-x64.dll" Source="libcrypto-1_1-x64.dll" />
-				</Component>	
+				</Component>
+				<Component Id="Component14" DiskId="1" Guid="{46840884-EDE8-4425-B0E9-6EEECE8C1E99}">
+					<File Id="File13" Name="check_service.bat" Source="check_service.bat" />
+				</Component>
 			</Directory>
 		</Directory>
     </Directory>
@@ -94,6 +102,7 @@
 		<ComponentRef Id="Component11" />
 		<ComponentRef Id="Component12" />
 		<ComponentRef Id="Component13" />
+		<ComponentRef Id="Component14" />
     </Feature>
 	
     <!-- Global Run Action -->
@@ -110,10 +119,16 @@
 	<CustomAction Id="BeforeUninstallService" Directory="INSTALLLOCATION"
     ExeCommand='"[INSTALLLOCATION]delete_wsservice.BAT"'
     Execute="deferred" Impersonate="no" Return="check"/>
+	
+	<!-- Additional action after every installation/update -->	
+	<CustomAction Id="RunCheckService" Directory="INSTALLLOCATION"
+    ExeCommand='"[INSTALLLOCATION]check_service.BAT"'
+    Execute="deferred" Impersonate="no" Return="check"/>
 
 	<!-- Overall install & uninstall actions execution block -->	
     <InstallExecuteSequence>
         <Custom Action="RunWrapExe" After="InstallFiles">NOT REMOVE~="ALL"</Custom>
+		<Custom Action="RunCheckService" Before="InstallFinalize">NOT (REMOVE~="ALL")</Custom>
 		<Custom Action="RunWsserviceInstallation" Before="InstallFinalize">NOT (REMOVE~="ALL")</Custom>
 		<Custom Action="BeforeUninstallService" After="InstallInitialize">REMOVE="ALL"</Custom>
     </InstallExecuteSequence>

@@ -29,6 +29,7 @@ if(WIN32)
 	#set copy files to alias
 	set( PREBUILD_FILES
 	   "${wixsrcpath}/keychainrunner.bat"
+	   "${wixsrcpath}/check_service.bat"
 	   "${wixsrcpath}/websocketwrapper.exe"
 	   "${wixsrcpath}/servicewrapper.exe"
 	   "${wixsrcpath}/servicewrapper.xml"

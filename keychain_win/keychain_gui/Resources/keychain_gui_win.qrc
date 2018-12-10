@@ -12,5 +12,6 @@
         <file>header.png</file>
         <file>swap_logo.png</file>
         <file>btc_logo.png</file>
+        <file>unsecure_lock.png</file>
     </qresource>
 </RCC>

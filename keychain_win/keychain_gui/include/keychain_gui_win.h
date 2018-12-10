@@ -17,6 +17,11 @@
 #include "KeychainWidget.h"
 #include "BitcoinWidget.h"
 #include "PrivateKeyInMemoryWidget.h"
+#include <keychain_lib/secmod_parser_cmd.hpp>
+#include "UnparsedTransactionWidget.h"
+
+using namespace keychain_app;
+using secmod_commands::secmod_parser_f;
 
 class keychain_gui_win : public QDialog
 {
@@ -26,12 +31,11 @@ private:
 	Ui::keychain_gui_winClass ui;
 
 public:
-	keychain_gui_win(const Transaction &transaction, QWidget *parent = Q_NULLPTR);
+	keychain_gui_win(Transaction &transaction, QWidget *parent = Q_NULLPTR);
 	PopupWindow * popupWindow;
 	
 private:
 	QString mExpertValue;
-	Transaction _transaction;
 	
 	QPushButton * OKButton = Q_NULLPTR;
 	QPushButton * CancelButton = Q_NULLPTR;

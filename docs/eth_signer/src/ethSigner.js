@@ -138,40 +138,18 @@ window.onload = function () {
   
     console.log('tx KeyChain params', txParams)
   
-    class EthereumTxKeychain extends EthereumTx {
-      hash(includeSignature) {
-        if (includeSignature === undefined) includeSignature = true
-  
-        // EIP155 spec:
-        // when computing the hash of a transaction for purposes of signing or recovering,
-        // instead of hashing only the first six elements (ie. nonce, gasprice, startgas, to, value, data),
-        // hash nine elements, with v replaced by CHAIN_ID, r = 0 and s = 0
-  
-        let items
-        if (includeSignature) {
-          items = this.raw
-        } else {
-          if (this._chainId > 0) {
-            const raw = this.raw.slice()
-            this.v = this._chainId
-            this.r = 0
-            this.s = 0
-            items = this.raw
-            this.raw = raw
-          } else {
-            items = this.raw.slice(0, 6)
-          }
-        }
-        // create hash
-        return rlp.encode(items)
-      }
-    }
-  
-    const tx = new EthereumTxKeychain(txParams);
+    const tx = new EthereumTx(txParams);
     if (signature) {
-      buffer = tx.serialize()
+      buffer = tx.serialize();
+      // console.log('tx.raw: ',  tx.raw);
+      // console.log('tx.serialize(): ', tx.serialize());
     } else {
-      buffer = tx.hash(false);
+      tx.v = chainIdHere;
+      tx.r = 0;
+      tx.s = 0;
+      // console.log('tx.raw: ',  tx.raw);
+      // console.log('tx.serialize(): ', tx.serialize());
+      buffer = rlp.encode(tx.raw);
     }
   
     const hex = buffer.toString('hex')

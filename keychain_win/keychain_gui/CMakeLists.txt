@@ -53,7 +53,9 @@ endif( NOT MSVC )
 include_directories("${CMAKE_SOURCE_DIR}/keychain_win/keychain_gui/include" 
 			"${AUTOGEN_BUILD_DIR}"
             "${CMAKE_SOURCE_DIR}/libraries/fc_light/include"
-			"${CMAKE_SOURCE_DIR}/keychain_lib/include")
+			"${CMAKE_SOURCE_DIR}/keychain_lib/include"
+			"${BOOST_ROOT}/include/boost-1_66"
+			"${CMAKE_SOURCE_DIR}/libraries/kaitai_struct_cpp_stl_runtime")
 file(GLOB KEYCHAIN_GUI_SOURCES "${CMAKE_SOURCE_DIR}/keychain_win/keychain_gui/src/*.cpp")
 file(GLOB KEYCHAIN_GUI_INCLUDES "${CMAKE_SOURCE_DIR}/keychain_win/keychain_gui/include/*.h")
 file(GLOB KEYCHAIN_GUI_RESOURCES "${CMAKE_SOURCE_DIR}/keychain_win/keychain_gui/Resources/*.qrc")
@@ -61,5 +63,5 @@ file(GLOB KEYCHAIN_GUI_UIS "${CMAKE_SOURCE_DIR}/keychain_win/keychain_gui/src/*.
 
 add_executable(keychain_win_gui ${KEYCHAIN_GUI_SOURCES} ${KEYCHAIN_GUI_INCLUDES} ${KEYCHAIN_GUI_RESOURCES} ${KEYCHAIN_GUI_UIS})
         
-target_link_libraries(keychain_win_gui Crypt32.lib Qt5::Widgets Qt5::Core Qt5::Qml Qt5::Svg)
+target_link_libraries(keychain_win_gui Crypt32.lib Qt5::Widgets Qt5::Core Qt5::Qml Qt5::Svg keychain_common secmodlib kaitai_struct_cpp_stl_runtime fc_light ${Boost_LIBRARIES})
 

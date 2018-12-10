@@ -12,7 +12,7 @@ Download and install KeyChain for [macOS](https://github.com/arrayio/array-io-ke
 
 After installation, connect to the demo-page: http://localhost:16384/ to check if the installation was successful and to test the KeyChain commands. In case everything went well, you will see the following page and you will be able to see responses to the commands in the "Response" box when you click on them.
 
-![new-key-demo-list](https://user-images.githubusercontent.com/34011337/49649968-d1857900-fa3b-11e8-97c1-a78cf5b6febe.png)
+![71](https://user-images.githubusercontent.com/34011337/49728428-c6248e80-fc83-11e8-93e9-d6b7ec6fb5b0.png)
 
 If you are having trouble connecting to the page, [contact us](#contact) and we will do our best to help you.
 

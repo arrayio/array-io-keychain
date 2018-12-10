@@ -3,14 +3,13 @@ const EthereumTx = require('ethereumjs-tx');
 const ethUtil = require('ethereumjs-util');
 const rlp = require('rlp');
 
-let flag = false;
 let buffer;
+const WS_PUBLIC_KEY_REQUEST_ID = 12345;
 
 window.onload = function () {
   let web3;
   let keyname;
   let toAddress;
-  let waitingForPublicKeyResonse = true;
   let fromAddress;
   const valueTx = 100;
 
@@ -27,12 +26,10 @@ window.onload = function () {
   }
 
   ws.onmessage = (async (response) => {
-    console.log(response.data)
     log(`KeyChain response: ${response.data}`);
     const data = JSON.parse(response.data);
     if (data.result) {
-      if (waitingForPublicKeyResonse) {
-        waitingForPublicKeyResonse = false;        
+      if (data.id === WS_PUBLIC_KEY_REQUEST_ID) {
         const publicKey = `0x${data.result}`;
         fromAddress = ethUtil.publicToAddress(publicKey).toString('hex');
         log(`"From" address calculated from public key: ${fromAddress}`);
@@ -42,8 +39,7 @@ window.onload = function () {
 
       console.log(data.result); // signature
       log(`Building transaction with signed by KeyChain transaction`);
-    
-      flag = true;
+
       const rawHex = await buildTxSinature(
         data.result, // signature
         fromAddress,
@@ -70,7 +66,6 @@ window.onload = function () {
 
   document.getElementById('btn_PUBLISH').addEventListener('click', async function() {
     const rawHex = document.getElementById('rawHex').innerText;
-    console.log('rawHex from element: ', rawHex);
     log(`Sending signed transaction: ${rawHex}`);
     try {
       document.getElementById('progress').style.display = 'inline-block';
@@ -87,7 +82,7 @@ window.onload = function () {
   async function signTransacton() {    
     log('Building transaction signature');
     const rawHex = await buildTxSinature(
-      null, // signature
+      '',
       fromAddress,
       toAddress,
       valueTx
@@ -107,14 +102,12 @@ window.onload = function () {
   }
 
   function getPublicKey() {
-    const command = { command: "public_key", params: { keyname } };
+    const command = { id: WS_PUBLIC_KEY_REQUEST_ID, command: "public_key", params: { keyname } };
     log(`Getting public key by keyname from KeyChain: ${JSON.stringify(command)}`);
     ws.send(JSON.stringify(command));
-    waitingForPublicKeyResonse = true;
   }
 
   const buildTxSinature = async (signature, fromAddress, to, value, data = '') => {
-    console.log('buildTxSinature')
     const nonce = await web3.eth.getTransactionCount(fromAddress);
     const gasPrice = await web3.eth.getGasPrice().then(wei => Number(wei))
     const chainIdHere = 3;
@@ -175,7 +168,7 @@ window.onload = function () {
     }
   
     const tx = new EthereumTxKeychain(txParams);
-    if (flag) {
+    if (signature) {
       buffer = tx.serialize()
     } else {
       buffer = tx.hash(false);

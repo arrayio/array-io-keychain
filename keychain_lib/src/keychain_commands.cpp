@@ -9,11 +9,142 @@
 #include <fc_light/io/json.hpp>
 
 #include "keychain_commands.hpp"
+#include "secmod_protocol.hpp"
 #include "keychain.hpp"
 
+namespace keychain_app {
 
-std::pair<std::string, std::string> keychain_app::read_private_key_file(
-        keychain_base * keychain, std::string keyname, std::string text)
+using swap_cmd_t = secmod_commands::secmod_command<secmod_commands::blockchain_secmod_te::ethereum_swap>::type;
+
+bool swap_action(std::string data, swap_cmd_t::swap_t &swap_info) {
+  if (data.size() < 8)
+    return false;
+  
+  auto func = data.substr(0, 8);
+  
+  if (func == SWAP_F1) {
+    if (data.length() != 8 + 64 + 64)
+      return false;
+    
+    auto hash = data.substr(8, 64);
+    auto address = data.substr(8 + 64, 64);
+    swap_info.action = swap_cmd_t::action_te::create_swap;
+    swap_info.hash = hash;
+    swap_info.address = address;
+  } else if (func == SWAP_F2) {
+    if (data.length() != 8 + 64)
+      return false;
+    
+    auto address = data.substr(8, 64);
+    swap_info.action = swap_cmd_t::action_te::refund;
+    swap_info.address = address;
+  } else if (func == SWAP_F3) {
+    if (data.length() != 8 + 64 + 64)
+      return false;
+    
+    auto secret = data.substr(8, 64);
+    auto address = data.substr(8 + 64, 64);
+    swap_info.action = swap_cmd_t::action_te::withdraw;
+    swap_info.address = address;
+    swap_info.secret = secret;
+  } else
+    return false;
+  
+  return true;
+}
+
+std::string create_secmod_cmd(std::vector<unsigned char> raw, blockchain_te blockchain, std::string from, int unlock_time, std::string keyname)
+{
+  std::string json;
+  auto log = logger_singletone::instance();
+  secmod_commands::secmod_command_common cmd;
+  cmd.json = true;
+  cmd.keyname = keyname;
+  
+  switch (blockchain)
+  {
+    case (keychain_app::blockchain_te::bitcoin):
+    {
+      try
+      {
+        streambuf_derived buf((char*) raw.data(),  (char*)raw.data() + raw.size());
+        std::istream is(&buf);
+        
+        kaitai::kstream ks(&is);
+        bitcoin_transaction_t trx_info(&ks);
+        using cmd_t = secmod_commands::secmod_command<secmod_commands::blockchain_secmod_te::bitcoin>::type;
+        cmd_t data(std::move(from), std::move(trx_info));
+        cmd.blockchain = secmod_commands::blockchain_secmod_te::bitcoin;
+        cmd.data = fc_light::variant(data);
+        BOOST_LOG_SEV(log.lg, info) << "bitcoin transaction parse complete: \n" + json;
+      } catch (std::exception &exc) {
+        cmd.json = false;
+        cmd.blockchain = secmod_commands::blockchain_secmod_te::bitcoin;
+        cmd.data = to_hex(raw.data(), raw.size());
+        BOOST_LOG_SEV(log.lg, info) << "bitcoin transaction parse is not complete: \n" + std::string(exc.what()) +"\n " + json;
+      }
+      
+      break;
+    }
+    case (keychain_app::blockchain_te::ethereum):
+    {
+      try
+      {
+        auto tx = dev::eth::TransactionBase(raw, dev::eth::CheckTransaction::none);
+        secmod_commands::ethereum_trx_t trx;
+        trx.nonce     = tx.nonce().str();
+        trx.gasPrice  = tx.gasPrice().str();
+        trx.gas       = tx.gas().str();
+        trx.chainid   = tx.ChainId();
+        trx.to        = tx.to().hex();
+        trx.value     = tx.value().str();
+        
+        auto data = to_hex(tx.data().data(), tx.data().size() );
+        
+        using swap_cmd_t = secmod_commands::secmod_command<secmod_commands::blockchain_secmod_te::ethereum_swap>::type;
+        swap_cmd_t::swap_t swap_info;
+        if (swap_action(data, swap_info))
+        {
+          swap_cmd_t data(std::move(from),std::move(trx), std::move(swap_info));
+          cmd.blockchain = secmod_commands::blockchain_secmod_te::ethereum_swap;
+          cmd.data = fc_light::variant(data);
+          BOOST_LOG_SEV(log.lg, info) << "ethereum transaction swap-on-line specific-fields parse complete: \n" + json;
+        }
+        else
+        {
+          using cmd_t = secmod_commands::secmod_command<secmod_commands::blockchain_secmod_te::ethereum>::type;
+          cmd_t data(std::move(from),std::move(trx));
+          cmd.blockchain = secmod_commands::blockchain_secmod_te::ethereum;
+          cmd.data = fc_light::variant(data);
+          BOOST_LOG_SEV(log.lg, info) << "ethereum transaction parse complete: \n" + json;
+        }
+      }
+      catch (const std::exception& exc)
+      {
+        cmd.json = false;
+        cmd.blockchain = secmod_commands::blockchain_secmod_te::ethereum;
+        cmd.data = to_hex(raw.data(), raw.size());
+        BOOST_LOG_SEV(log.lg, info) << "ethereum transaction parse is not complete: \n" + std::string(exc.what()) +"\n " + json;
+      }
+      break;
+    }
+    default:
+    {
+      cmd.json = false;
+      cmd.blockchain = secmod_commands::blockchain_secmod_te::unknown;
+      cmd.data = to_hex(raw.data(), raw.size());
+      BOOST_LOG_SEV(log.lg, info) << " transaction parse is not implementated: \n" + json;
+    }
+  }
+  cmd.unlock_time = unlock_time;
+  return fc_light::json::to_string(fc_light::variant(cmd));
+}
+
+}
+
+using namespace keychain_app;
+
+std::pair<std::string, std::string> keychain_app::read_private_key_file(keychain_base* keychain, std::string keyname, std::string text)
 {
   keyfile_format::keyfile_t keyfile;
   auto curdir = bfs::current_path();
@@ -30,7 +161,8 @@ std::pair<std::string, std::string> keychain_app::read_private_key_file(
 // If we can parse transaction we need to use get_passwd_trx function
 // else use get_passwd_trx_raw()
 // At this moment parsing of transaction is not implemented
-    byte_seq_t passwd = *(keychain->get_passwd_trx_raw(text.empty() ? keyfile.keyname: text));
+	
+    byte_seq_t passwd = *(keychain->get_passwd_trx(text.empty() ? keyfile.keyname: text));
     if (passwd.empty())
       throw std::runtime_error("Error: can't get password");
     return  std::make_pair(encryptor.decrypt_keydata(passwd, encrypted_data), keyfile.keyname);
@@ -40,28 +172,40 @@ std::pair<std::string, std::string> keychain_app::read_private_key_file(
 }
 
 
-std::string keychain_app::read_private_key(keychain_base * keychain, std::string keyname, std::string text)
+std::string keychain_app::read_private_key(keychain_base * keychain, std::string keyname, std::string text, int seconds)
 {
   bool locked = true;
+  std::string key_data;
 
   auto map = keychain->key_map.find(keyname);
   if (map != keychain->key_map.end())
   {
-    if ((std::time(nullptr) -  map->second.second) > keychain->unlock_time )
+    auto time_stamp = map->second.second.second;
+    auto unlock_time = map->second.second.first;
+    if ((std::time(nullptr) -  time_stamp) > unlock_time )
       keychain->key_map.erase(map);
     else
       locked = false;
   }
 
   if (locked)
-  {// unlock key
-    auto key_data = read_private_key_file(keychain, keyname, text).first;
-    keychain->key_map[keyname] = std::make_pair(key_data, std::time(nullptr));
+  {
+    key_data = read_private_key_file(keychain, keyname, text).first;
+    if (seconds) // unlock key
+      keychain->key_map[keyname] = std::make_pair(key_data, std::make_pair(seconds, std::time(nullptr) ) );
   }
-  else   //  reset key timer after each key use
-    keychain->key_map[keyname].second = std::time(nullptr);
+  else
+  {
+    if (seconds) // unlock key
+    {
+      key_data = read_private_key_file(keychain, keyname, text).first;
+      keychain->key_map[keyname] = std::make_pair(key_data, std::make_pair(seconds, std::time(nullptr) ) );
+    }
+    else
+      key_data = keychain->key_map[keyname].first;
+  }
 
-  return keychain->key_map[keyname].first;
+  return key_data;
 }
 
 std::string keychain_app::to_hex(const uint8_t* data, size_t length)
@@ -115,9 +259,6 @@ void keychain_app::create_keyfile(const char* filename, const fc_light::variant&
     throw std::runtime_error("Error: cannot open keyfile");
   fout << fc_light::json::to_pretty_string(keyfile_var) << std::endl;
 }
-
-using namespace keychain_app;
-
 
 sha2_256_encoder::sha2_256_encoder()
 {

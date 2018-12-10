@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>KeyChain test page</title>
+    <link rel="stylesheet" href="assets/spectre.min.css">
+    <style>
+      button {
+        width: 100%;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="columns">
+        <div class="column col-2 ">
+        </div>
+        <div class="column col-2">
+          <img src="assets/logo.png">
+        </div>
+        <div class="column col mx-2 my-2">
+          <h1>KeyChain demo</h1>
+          <h6>Test the WebSocket commands of KeyСhain v.0.9 - a highly secure key management app for generating keys and signing transactions.</h6>
+          <h6>Documentation: <a href="https://github.com/arrayio/array-io-keychain/wiki/KeyChain-Protocol">KeyChain Protocol</a></h6>
+        </div>
+      </div>
+      <div class="columns m-1">
+        <div class="column col-2 ">
+          <button class="btn btn-primary" id="btn_LIST">List</button>
+        </div>
+      </div>
+      <div class="columns m-1">
+        <div class="column col-2">
+          <button class="btn btn-primary" id="btn_LOCK">Lock</button>
+        </div>  
+      </div>
+      <div class="columns m-1">
+        <div class="column col-2">
+          <button class="btn btn-primary" id="btn_UNLOCK">Unlock</button>
+        </div>
+        <div class="column col-8">
+          <div class="columns">
+            <div class="column col-6 col-xs-12">
+              <div class="input-group">
+                <span class="input-group-addon">keyname: </span>
+                <input type="text" class="form-input" placeholder="test1@be5f6e75878b84ba" id="keyname_UNLOCK">
+              </div>
+            </div>
+            <div class="column col-6 col-xs-12">
+              <div class="input-group">
+                <label class="form-switch">
+                  <input type="checkbox" id="checkbox_UNLOCK"><i class="form-icon"></i>
+                </label>
+                <span class="input-group-addon">unlock_time: </span>
+                <input type="number" class="form-input" placeholder="45" id="unlock_time_UNLOCK" title="This parameter is experimental and optional!" disabled>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="columns m-1">
+        <div class="column col-2">
+          <button class="btn btn-primary input-group-btn" id="btn_PUBLIC_KEY">Public key</button>
+        </div>
+        <div class="column col-8">          
+          <div class="columns">
+            <div class="column col-6 col-xs-12">
+              <div class="input-group">
+                <span class="input-group-addon">keyname: </span>
+                <input type="text" class="form-input" placeholder="test1@be5f6e75878b84ba" id="keyname_PUBLIC_KEY">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="columns m-1">
+        <div class="column col-2">
+          <button class="btn btn-primary input-group-btn" id="btn_SIGN_HEX">Sign hex</button>
+        </div>  
+        <div class="column col-8">  
+          <div class="columns">
+            <div class="column col-6 col-xs-12">
+              <div class="input-group">
+                <span class="input-group-addon">keyname: </span>
+                <input type="text" class="form-input" placeholder="test1@be5f6e75878b84ba" id="keyname_SIGN_HEX">
+              </div>
+            </div>
+            <div class="column col-6 col-xs-12">
+              <div class="input-group">
+                <label class="form-switch">
+                  <input type="checkbox" id="checkbox_SIGN_HEX"><i class="form-icon"></i>
+                </label>
+                <span class="input-group-addon">unlock_time: </span>
+                <input type="number" class="form-input" placeholder="45" id="unlock_time_SIGN_HEX" title="This parameter is experimental and optional!" disabled>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="columns m-1">
+        <div class="column col-2">
+          <button class="btn btn-primary input-group-btn" id="btn_SIGN_HASH">Sign hash</button>
+        </div>
+        <div class="column col-8">
+          <div class="columns">
+            <div class="column col-6 col-xs-12">
+              <div class="input-group">
+                <span class="input-group-addon">keyname: </span>
+                <input type="text" class="form-input" placeholder="test1@be5f6e75878b84ba" id="keyname_SIGN_HASH">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="columns m-1">
+        <div class="column col-2">
+          <button class="btn btn-primary input-group-btn" id="btn_CREATE">Create</button>
+        </div>
+      </div>
+    </div>
+    <div class="container">
+      <div class="columns">
+        <div class="column col-6">
+          <label class="form-label" for="request">Request</label>
+          <textarea class="form-input" id="request" placeholder="{}" rows="9"></textarea>
+        </div>
+        <div class="column col-6">
+          <label class="form-label" for="response">Response</label>
+          <textarea class="form-input" id="response" placeholder="{}" rows="9"></textarea>
+        </div>
+      </div>
+      <div class="column col-6 my-2">
+        <div class="toast toast-warning">
+          Warning! <code>unlock_time</code> parameter is experimental and optional
+        </div>
+      </div>
+    </div>
+    
+    <script src="keychain.js"></script>
+    <script>
+      const keychain = new Keychain('ws://localhost:16384/');
+
+      keychain.ws.onopen = function() {
+        document.body.style.backgroundColor = '#cfc';
+
+        /** Promises test */
+        keychain.method('LIST')
+        .then(data => {
+          console.log('list result: ', data);
+          return keychain.method('UNLOCK', { keyname: data.result[0]} )
+        })
+        .then(data => console.log('unlock result: ', data));
+        /** Promises test end */
+      };
+      keychain.ws.onclose = function() {      
+        document.body.style.backgroundColor = null;
+      };
+
+      window.onload = function () {
+        attachListener('UNLOCK', ['keyname', 'unlock_time']);
+        attachListener('PUBLIC_KEY', ['keyname']);
+        attachListener('SIGN_HEX', ['keyname', 'unlock_time']);
+        attachListener('SIGN_HASH', ['keyname']);
+        attachListener('CREATE');
+        attachListener('LIST');
+        attachListener('LOCK');
+        document.getElementById('checkbox_UNLOCK').addEventListener('click', function(e) {
+          document.getElementById('unlock_time_UNLOCK').disabled = !e.target.checked;
+        })
+        document.getElementById('checkbox_SIGN_HEX').addEventListener('click', function(e) {
+          document.getElementById('unlock_time_SIGN_HEX').disabled = !e.target.checked;
+        })
+      }
+       
+      function attachListener(commandName, paramNames) {
+        document.getElementById(`btn_${commandName}`).addEventListener('click', function() {
+          const params = {};
+          if (paramNames) {
+            for (let i = 0; i < paramNames.length; i++) {
+              const paramName = paramNames[i];
+              const input = document.getElementById(`${paramName}_${commandName}`);
+              if (!input.disabled) {
+                params[paramName] = input.value;
+              }
+            }
+          }
+
+          const request = Object.assign(Keychain.commands[commandName], {});
+          if (request.params) {
+            request.params = Object.assign(request.params, params);
+          }
+
+          const data = JSON.stringify(request, undefined, 2);
+          document.getElementById('request').value = data;
+          // keychain.command(commandName, params, function(data) {
+          //   document.getElementById('response').textContent = JSON.stringify(data, undefined, 2);
+          // });
+          keychain.method(commandName, params).then((data) => {
+            document.getElementById('response').textContent = JSON.stringify(data, undefined, 2);
+          });
+        });
+      }
+    </script>
+    
+  </body>
+</html>

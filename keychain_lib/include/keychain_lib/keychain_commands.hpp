@@ -10,17 +10,18 @@
 
 #include <type_traits>
 #include <string>
-#include <fc_light/reflect/reflect.hpp>
-#include <fc_light/variant.hpp>
+
 #include <boost/hana/range.hpp>
 #include <boost/filesystem.hpp>
 
 #include <fc_light/variant.hpp>
 #include <fc_light/io/json.hpp>
+#include <fc_light/reflect/reflect.hpp>
+#include <fc_light/reflect/variant.hpp>
 #include <fc_light/exception/exception.hpp>
 #include <fc_light/crypto/hex.hpp>
 
-#include <fc_light/reflect/variant.hpp>
+
 
 #include <boost/signals2.hpp>
 
@@ -49,8 +50,8 @@
 #else
 
 #if defined(macintosh) || defined(__APPLE__) || defined(__APPLE_CC__)
-#  define KEY_DEFAULT_PATH  "data/keychain"
-#  define LOG_DEFAULT_PATH  "data/keychain/logs"
+        #define KEY_DEFAULT_PATH  "/var/keychain"
+        #define LOG_DEFAULT_PATH  "/var/keychain/logs"
 #else
 
 #ifdef _WIN32
@@ -66,21 +67,25 @@
 #define SWAP_F2 "fa89401a"      // "refund(address)"
 #define SWAP_F3 "1b258d50"      // "withdraw(bytes32,address)"
 
-
-
-// after password entry the decrypted private key stored in memory  during this time
-// This allow sing transaction without password entry.
-#define DEF_UNLOCK_SECONDS 0
-
-
 namespace keychain_app {
 
+enum struct blockchain_te {
+  unknown=0,
+  array,
+  bitshares,
+  ethereum,
+  bitcoin
+};
+
+enum struct sign_te {
+  unknown=0,
+  VRS_canonical,
+  RSV_noncanonical
+};
+
+std::string create_secmod_cmd(std::vector<unsigned char> raw, blockchain_te blockchain, std::string from, int unlock_time, std::string keyname);
 
 using byte_seq_t = std::vector<char>;
-
-enum struct blockchain_te {unknown=0, bitshares, array, ethereum, bitcoin};
-enum struct sign_te {unknown=0, VRS_canonical, RSV_noncanonical};
-
 
 class streambuf_derived : public std::basic_streambuf<char>
 {
@@ -153,12 +158,13 @@ public:
     keychain_base();
     virtual ~keychain_base();
     virtual std::string operator()(const fc_light::variant& command) = 0;
-    boost::signals2::signal<byte_seq_t(const std::string&)> get_passwd_trx_raw;
+    boost::signals2::signal<byte_seq_t(const std::string&)> get_passwd_trx;
+	  boost::signals2::signal<byte_seq_t(const std::string&,int)> get_passwd_unlock;//TODO: need to call in unlock command handler
     boost::signals2::signal<byte_seq_t(void)> get_passwd_on_create;
     boost::signals2::signal<void(const string_list&)> print_mnemonic;
-    int unlock_time;
 
-    std::unordered_map<std::string, std::pair<std::string, std::time_t>> key_map;
+    // {keyname, {private_key {unlock_time, time_stamp}} }
+    std::unordered_map<std::string, std::pair<std::string, std::pair<int, std::time_t>>> key_map;
 };
 
 template <typename char_t>
@@ -189,7 +195,7 @@ fc_light::variant open_keyfile(const char_t* filename)
 void create_keyfile(const char* filename, const fc_light::variant& keyfile_var);
 size_t from_hex(const std::string& hex_str, unsigned char* out_data, size_t out_data_len );
 std::string to_hex(const uint8_t* data, size_t length);
-std::string read_private_key(keychain_base *, std::string , std::string);
+std::string read_private_key(keychain_base *, std::string , std::string, int);
 std::pair<std::string, std::string> read_private_key_file( keychain_base * , std::string , std::string );
 
 
@@ -299,283 +305,14 @@ struct keychain_command<command_te::sign_hex> : keychain_command_base
     virtual ~keychain_command(){}
     struct params
     {
+      params():unlock_time(0){};
       std::string chainid;
       std::string transaction;
       blockchain_te blockchain_type;
       std::string keyname;
+      int unlock_time;
     };
     using params_t = params;
-
-    struct tx_common
-    {
-        tx_common(bool json_, blockchain_te blockchain_):
-                json(json_), blockchain(blockchain_){}
-
-        bool json;
-        blockchain_te blockchain;
-        fc_light::variant data;
-    };
-
-    struct not_parsed_tx : tx_common
-    {
-        not_parsed_tx(blockchain_te blockchain, std::string raw) :
-                tx_common(false, blockchain) { data = fc_light::variant(raw); }
-    };
-
-    struct eth_tx : tx_common
-    {
-        eth_tx( blockchain_te blockchain,
-                std::string nonce,
-                std::string gasPrice,
-                std::string gas,
-                int chainid,
-                std::string from,
-                std::string to,
-                std::string value
-                ):
-                tx_common(true, blockchain),
-                trx(nonce, gasPrice, gas, chainid, from, to, value)
-        { data  = fc_light::variant(trx); }
-
-        struct trx_t
-        {
-            trx_t () {}
-            trx_t(  std::string _nonce,
-                    std::string _gasPrice,
-                    std::string _gas,
-                    int _chainid,
-                    std::string _from,
-                    std::string _to,
-                    std::string _value):
-                    nonce(_nonce),
-                    gasPrice(_gasPrice),
-                    gas(_gas),
-                    chainid(_chainid),
-                    from(_from),
-                    to(_to),
-                    value(_value){}
-            std::string nonce, gasPrice, gas;
-            int chainid;
-            std::string from, to ,value;
-        } trx;
-    };
-
-    struct tx_swap_common
-    {
-        tx_swap_common(bool json_, blockchain_te blockchain_):
-                json(json_), blockchain(blockchain_){}
-
-        bool json;
-        blockchain_te blockchain;
-        fc_light::variant data;
-        fc_light::variant swap;
-    };
-
-
-    struct eth_swap_tx : tx_swap_common
-    {
-        eth_swap_tx( blockchain_te blockchain,
-                std::string nonce,
-                std::string gasPrice,
-                std::string gas,
-                int chainid,
-                std::string from,
-                std::string to,
-                std::string value,
-                fc_light::variant sw
-        ):
-                tx_swap_common(true, blockchain),
-                trx(nonce, gasPrice, gas, chainid, from, to, value)
-        { data  = fc_light::variant(trx);
-          swap = sw;
-        }
-
-        struct trx_t
-        {
-            trx_t () {}
-            trx_t(  std::string _nonce,
-                    std::string _gasPrice,
-                    std::string _gas,
-                    int _chainid,
-                    std::string _from,
-                    std::string _to,
-                    std::string _value):
-                    nonce(_nonce),
-                    gasPrice(_gasPrice),
-                    gas(_gas),
-                    chainid(_chainid),
-                    from(_from),
-                    to(_to),
-                    value(_value){}
-            std::string nonce, gasPrice, gas;
-            int chainid;
-            std::string from, to ,value;
-        } trx;
-    };
-
-
-    struct createSwap_tx
-    {
-        createSwap_tx( std::string hash, std::string addr):   params(hash, addr){}
-        struct params_t
-        {
-            params_t(std::string  hash_,  std::string addr_):
-                    action("createSwap"), hash(hash_), address(addr_){}
-            std::string action, hash, address;
-        } params;
-    };
-
-    struct refund_tx
-    {
-        refund_tx( std::string addr): params(addr){}
-        struct params_t
-        {
-            params_t(std::string addr): action("refund"), address(addr){}
-            std::string action, address;
-        } params;
-    };
-
-    struct Withdraw_tx
-    {
-        Withdraw_tx( std::string secret, std::string addr): params(secret, addr){}
-        struct params_t
-        {
-            params_t(std::string  sec,  std::string addr): action("Withdraw"), secret(sec), address(addr){}
-            std::string action, secret, address;
-        } params;
-    };
-
-
-static    bool swap_action(std::string data, fc_light::variant& variant)
-    {
-        if (data.size() < 8)
-            return false;
-
-        auto func = data.substr(0, 8);
-
-        if (func == SWAP_F1)
-        {
-            if (data.length() != 8+64+64)
-                return false;
-
-            auto hash = data.substr(8, 64);
-            auto address = data.substr(8+64, 64);
-            createSwap_tx  action( hash, address);
-            variant = fc_light::variant(action.params);
-        }
-        else if (func == SWAP_F2)
-        {
-            if (data.length() != 8+64)
-                return false;
-
-            auto address = data.substr(8, 64);
-            refund_tx  action( address);
-            variant = fc_light::variant(action.params);
-        }
-        else if (func == SWAP_F3)
-        {
-            if (data.length() != 8+64+64)
-                return false;
-
-            auto secret = data.substr(8, 64);
-            auto address = data.substr(8+64, 64);
-            Withdraw_tx  action( secret, address);
-            variant = fc_light::variant(action.params);
-        }
-        else
-            return false;
-
-        return true;
-    }
-
-static   std::string parse(std::vector<unsigned char> raw, blockchain_te blockchain, std::string from = "")
-    {
-        std::string json;
-        auto log  =logger_singletone::instance();
-
-
-        switch (blockchain)
-        {
-            case (blockchain_te::bitcoin):
-            {
-                try
-                {
-                    streambuf_derived buf((char*) raw.data(),  (char*)raw.data() + raw.size());
-                    std::istream is(&buf);
-
-                    kaitai::kstream ks(&is);
-
-                    bitcoin_transaction_t data(&ks);
-                    std::string json = data.toJSON();
-
-                    json = fc_light::json::pretty_print(json, 2);
-
-                    not_parsed_tx  not_parsed( blockchain_te::bitcoin, json);
-                    json = fc_light::json::to_pretty_string(fc_light::variant(static_cast<tx_common&>(not_parsed)));
-
-                    std::regex e ("(\\\\n)");
-                    json =  std::regex_replace (json,e,"\n");
-
-                    std::regex r ("(\\\\)");
-                    json =  std::regex_replace (json,r,"");
-
-                    BOOST_LOG_SEV(log.lg, info) << "bitcoin transaction parse complete: \n" + json;
-
-                } catch (std::exception &exc) {
-                    not_parsed_tx  not_parsed( blockchain_te::bitcoin, to_hex(raw.data(), raw.size()));
-                    json = fc_light::json::to_pretty_string(fc_light::variant(static_cast<tx_common&>(not_parsed)));
-                    BOOST_LOG_SEV(log.lg, info) << "bitcoin transaction parse is not complete: \n" + std::string(exc.what()) +"\n " + json;
-                }
-
-                break;
-            }
-            case (blockchain_te::ethereum):
-            {
-                try
-                {
-                    auto tx = dev::eth::TransactionBase(raw, dev::eth::CheckTransaction::none);
-                    auto nonce     = tx.nonce().str();
-                    auto gasPrice  = tx.gasPrice().str();
-                    auto gas       = tx.gas().str();
-                    auto chainId   = tx.ChainId();
-                    auto to        = tx.to().hex();
-                    auto value     = tx.value().str();
-
-                    auto data = to_hex(tx.data().data(), tx.data().size() );
-
-                    fc_light::variant swap;
-                    if (swap_action(data, swap))
-                    {
-                        eth_swap_tx  parsed(blockchain_te::ethereum,  nonce, gasPrice, gas, chainId, from, to, value, swap);
-                        json = fc_light::json::to_pretty_string(fc_light::variant(static_cast<tx_swap_common&>(parsed)));
-                        BOOST_LOG_SEV(log.lg, info) << "ethereum transaction swap-on-line specific-fields parse complete: \n" + json;
-                    }
-                    else
-                    {
-                        eth_tx  parsed(blockchain_te::ethereum,  nonce, gasPrice, gas, chainId, from, to, value);
-                        json = fc_light::json::to_pretty_string(fc_light::variant(static_cast<tx_common&>(parsed)));
-                        BOOST_LOG_SEV(log.lg, info) << "ethereum transaction parse complete: \n" + json;
-                    }
-                }
-                catch (const std::exception& exc)
-                {
-                    not_parsed_tx  not_parsed( blockchain_te::ethereum, to_hex(raw.data(), raw.size()));
-                    json = fc_light::json::to_pretty_string(fc_light::variant(static_cast<tx_common&>(not_parsed)));
-                    BOOST_LOG_SEV(log.lg, info) << "ethereum transaction parse is not complete: \n" + std::string(exc.what()) +"\n " + json;
-                }
-                break;
-            }
-            default:
-            {
-                not_parsed_tx  not_parsed( blockchain, to_hex(raw.data(), raw.size()));
-                json = fc_light::json::to_pretty_string(fc_light::variant(static_cast<tx_common&>(not_parsed)));
-                BOOST_LOG_SEV(log.lg, info) << " transaction parse is not implementated: \n" + json;
-            }
-        }
-
-        return json;
-    }
-
 
     virtual std::string operator()(keychain_base* keychain, const fc_light::variant& params_variant, int id) const override
     {
@@ -588,6 +325,7 @@ static   std::string parse(std::vector<unsigned char> raw, blockchain_te blockch
           std::vector<unsigned char> chain(32);
           std::vector<unsigned char> raw(params.transaction.length());
           std::string json;
+          std::string from = "some_address";//TODO: need to implement
 
           if (!params.chainid.empty())
               auto chain_len = keychain_app::from_hex(params.chainid, chain.data(), chain.size());
@@ -599,8 +337,9 @@ static   std::string parse(std::vector<unsigned char> raw, blockchain_te blockch
           if (params.keyname.empty())
               std::runtime_error("Error: keyname is not specified");
 
-          json= parse(raw, params.blockchain_type);
-          std::string key_data = read_private_key(keychain, params.keyname, json );
+          json = create_secmod_cmd(raw, params.blockchain_type, from, params.unlock_time, params.keyname);
+
+          std::string key_data = read_private_key(keychain, params.keyname, json , params.unlock_time);
           int pk_len = keychain_app::from_hex(key_data, (unsigned char*) private_key.data(), 32);
 
           switch (params.blockchain_type)
@@ -696,7 +435,7 @@ struct keychain_command<command_te::sign_hash> : keychain_command_base
             if (params.keyname.empty())
                 std::runtime_error("Error: keyname is not specified");
 
-            std::string key_data = read_private_key(keychain, params.keyname, params.hash );
+            std::string key_data = read_private_key(keychain, params.keyname, params.hash, 0 );
 
             int pk_len = keychain_app::from_hex(key_data, (unsigned char*) private_key.data(), 32);
 
@@ -868,6 +607,7 @@ struct keychain_command<command_te::list>: keychain_command_base {
   }
 };
 
+/*
 template <>
 struct keychain_command<command_te::remove>: keychain_command_base
 {
@@ -906,6 +646,7 @@ struct keychain_command<command_te::remove>: keychain_command_base
     }
   }
 };
+*/
 
 template<>
 struct keychain_command<command_te::public_key>: keychain_command_base
@@ -969,6 +710,7 @@ struct keychain_command<command_te::public_key>: keychain_command_base
         struct params
         {
             std::string keyname;
+            int unlock_time;
         };
         using  params_t = params;
 
@@ -978,7 +720,9 @@ struct keychain_command<command_te::public_key>: keychain_command_base
             {
                 auto params = params_variant.as<params_t>();
                 if (!params.keyname.empty())
-                    read_private_key(keychain, params.keyname, "");
+                    read_private_key(keychain, params.keyname, "", params.unlock_time);
+                else
+                    throw std::runtime_error("keyname param is not specified");
 
                 json_response response(true, id);
                 return fc_light::json::to_string(fc_light::variant(response));
@@ -1003,10 +747,11 @@ struct keychain_command<command_te::public_key>: keychain_command_base
         using  params_t = params;
         virtual std::string operator()(keychain_base* keychain, const fc_light::variant& params_variant, int id) const override
         {
+            throw std::runtime_error("Command is deprecated");
             try
             {
                 auto params = params_variant.as<params_t>();
-                keychain->unlock_time =  params.seconds;
+//                keychain->unlock_time =  params.seconds;
                 json_response response(true, id);
                 return fc_light::json::to_string(fc_light::variant(response));
             }
@@ -1045,28 +790,17 @@ FC_LIGHT_REFLECT_ENUM(
     (set_unlock_time)
     (last))
 
-FC_LIGHT_REFLECT(keychain_app::keychain_command<keychain_app::command_te::sign_hex>::params_t, (chainid)(transaction)(blockchain_type)(keyname))
+FC_LIGHT_REFLECT(keychain_app::keychain_command<keychain_app::command_te::sign_hex>::params_t, (chainid)(transaction)(blockchain_type)(keyname)(unlock_time))
 FC_LIGHT_REFLECT(keychain_app::keychain_command<keychain_app::command_te::sign_hash>::params_t, (hash)(sign_type)(keyname))
 FC_LIGHT_REFLECT(keychain_app::keychain_command<keychain_app::command_te::create>::params_t, (keyname)(encrypted)(cipher)(curve))
-FC_LIGHT_REFLECT(keychain_app::keychain_command<keychain_app::command_te::remove>::params_t, (keyname))
+//FC_LIGHT_REFLECT(keychain_app::keychain_command<keychain_app::command_te::remove>::params_t, (keyname))
 FC_LIGHT_REFLECT(keychain_app::keychain_command<keychain_app::command_te::public_key>::params_t, (keyname))
 FC_LIGHT_REFLECT(keychain_app::keychain_command<keychain_app::command_te::set_unlock_time>::params_t, (seconds))
-FC_LIGHT_REFLECT(keychain_app::keychain_command<keychain_app::command_te::unlock>::params_t, (keyname))
+FC_LIGHT_REFLECT(keychain_app::keychain_command<keychain_app::command_te::unlock>::params_t, (keyname)(unlock_time))
 FC_LIGHT_REFLECT(keychain_app::keychain_command_common, (command)(id)(params))
 FC_LIGHT_REFLECT(keychain_app::json_response, (id)(result))
 FC_LIGHT_REFLECT(keychain_app::json_error, (id)(error))
 FC_LIGHT_REFLECT_ENUM(keychain_app::blockchain_te, (unknown)(bitshares)(array)(ethereum)(bitcoin))
 FC_LIGHT_REFLECT_ENUM(keychain_app::sign_te, (unknown)(VRS_canonical)(RSV_noncanonical))
-
-FC_LIGHT_REFLECT(keychain_app::keychain_command<keychain_app::command_te::sign_hex>::tx_common, (json)(blockchain)(data))
-FC_LIGHT_REFLECT(keychain_app::keychain_command<keychain_app::command_te::sign_hex>::eth_tx::trx_t, (nonce)(gasPrice)(gas)(chainid)(from)(to)(value))
-
-FC_LIGHT_REFLECT(keychain_app::keychain_command<keychain_app::command_te::sign_hex>::tx_swap_common, (json)(blockchain)(data)(swap))
-FC_LIGHT_REFLECT(keychain_app::keychain_command<keychain_app::command_te::sign_hex>::eth_swap_tx::trx_t, (nonce)(gasPrice)(gas)(chainid)(from)(to)(value))
-
-FC_LIGHT_REFLECT(keychain_app::keychain_command<keychain_app::command_te::sign_hex>::createSwap_tx::params_t, (action)(hash)(address))
-FC_LIGHT_REFLECT(keychain_app::keychain_command<keychain_app::command_te::sign_hex>::refund_tx::params_t, (action)(address))
-FC_LIGHT_REFLECT(keychain_app::keychain_command<keychain_app::command_te::sign_hex>::Withdraw_tx::params_t, (action)(secret)(address))
-
 
 #endif //KEYCHAINAPP_KEYCHAIN_COMMANDS_HPP

@@ -1,7 +1,6 @@
 var Web3 = require('web3');
-const EthereumTx = require('ethereumjs-tx');
+const Transaction = require('ethereumjs-tx');
 const ethUtil = require('ethereumjs-util');
-const rlp = require('rlp');
 
 let buffer;
 const WS_PUBLIC_KEY_REQUEST_ID = 12345;
@@ -138,19 +137,13 @@ window.onload = function () {
   
     console.log('tx KeyChain params', txParams)
   
-    const tx = new EthereumTx(txParams);
-    if (signature) {
-      buffer = tx.serialize();
-      // console.log('tx.raw: ',  tx.raw);
-      // console.log('tx.serialize(): ', tx.serialize());
-    } else {
+    const tx = new Transaction(txParams);
+    if (!signature) {
       tx.v = chainIdHere;
       tx.r = 0;
       tx.s = 0;
-      // console.log('tx.raw: ',  tx.raw);
-      // console.log('tx.serialize(): ', tx.serialize());
-      buffer = rlp.encode(tx.raw);
     }
+    buffer = tx.serialize();
   
     const hex = buffer.toString('hex')
   

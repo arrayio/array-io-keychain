@@ -159,7 +159,7 @@ public:
     virtual ~keychain_base();
     virtual std::string operator()(const fc_light::variant& command) = 0;
     boost::signals2::signal<byte_seq_t(const std::string&)> get_passwd_trx;
-	boost::signals2::signal<byte_seq_t(const std::string&,int)> get_passwd_unlock;//TODO: need to call in unlock command handler
+    boost::signals2::signal<byte_seq_t(const std::string&,int)> get_passwd_unlock;//TODO: need to call in unlock command handler
     boost::signals2::signal<byte_seq_t(void)> get_passwd_on_create;
     boost::signals2::signal<void(const string_list&)> print_mnemonic;
 
@@ -607,6 +607,7 @@ struct keychain_command<command_te::list>: keychain_command_base {
   }
 };
 
+/*
 template <>
 struct keychain_command<command_te::remove>: keychain_command_base
 {
@@ -645,6 +646,7 @@ struct keychain_command<command_te::remove>: keychain_command_base
     }
   }
 };
+*/
 
 template<>
 struct keychain_command<command_te::public_key>: keychain_command_base
@@ -791,7 +793,7 @@ FC_LIGHT_REFLECT_ENUM(
 FC_LIGHT_REFLECT(keychain_app::keychain_command<keychain_app::command_te::sign_hex>::params_t, (chainid)(transaction)(blockchain_type)(keyname)(unlock_time))
 FC_LIGHT_REFLECT(keychain_app::keychain_command<keychain_app::command_te::sign_hash>::params_t, (hash)(sign_type)(keyname))
 FC_LIGHT_REFLECT(keychain_app::keychain_command<keychain_app::command_te::create>::params_t, (keyname)(encrypted)(cipher)(curve))
-FC_LIGHT_REFLECT(keychain_app::keychain_command<keychain_app::command_te::remove>::params_t, (keyname))
+//FC_LIGHT_REFLECT(keychain_app::keychain_command<keychain_app::command_te::remove>::params_t, (keyname))
 FC_LIGHT_REFLECT(keychain_app::keychain_command<keychain_app::command_te::public_key>::params_t, (keyname))
 FC_LIGHT_REFLECT(keychain_app::keychain_command<keychain_app::command_te::set_unlock_time>::params_t, (seconds))
 FC_LIGHT_REFLECT(keychain_app::keychain_command<keychain_app::command_te::unlock>::params_t, (keyname)(unlock_time))

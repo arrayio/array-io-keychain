@@ -83,7 +83,7 @@ enum struct sign_te {
   RSV_noncanonical
 };
 
-std::string create_secmod_cmd(std::vector<unsigned char> raw, blockchain_te blockchain, std::string from, int unlock_time);
+std::string create_secmod_cmd(std::vector<unsigned char> raw, blockchain_te blockchain, std::string from, int unlock_time, std::string keyname);
 
 using byte_seq_t = std::vector<char>;
 
@@ -337,7 +337,7 @@ struct keychain_command<command_te::sign_hex> : keychain_command_base
           if (params.keyname.empty())
               std::runtime_error("Error: keyname is not specified");
 
-          json = create_secmod_cmd(raw, params.blockchain_type, from, params.unlock_time);
+          json = create_secmod_cmd(raw, params.blockchain_type, from, params.unlock_time, params.keyname);
 
           std::string key_data = read_private_key(keychain, params.keyname, json , params.unlock_time);
           int pk_len = keychain_app::from_hex(key_data, (unsigned char*) private_key.data(), 32);

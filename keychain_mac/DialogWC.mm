@@ -85,6 +85,7 @@ using keychain_app::secmod_commands::secmod_parser_f;
     [self setupPassField];
     [self setupSignButton];
     [self setupCancelButton];
+    [self checkForRedLock];
     if (_isSignTransaction) {
 
         [self setupLogoBlockhain:self.blockhainType];
@@ -179,6 +180,21 @@ using keychain_app::secmod_commands::secmod_parser_f;
     [[NSApplication sharedApplication] runModalForWindow:self.window];
     
     [self.window setFrame:NSMakeRect(0, 0, 575, 500) display:true];
+}
+
+- (void) checkForRedLock {
+    if (self.unlockTime > 0 || !self.isJson) {
+        [self setupLogoRedLock];
+    }
+}
+
+- (void) setupLogoRedLock {
+    NSImageView *imageView = [[NSImageView alloc] initWithFrame:NSMakeRect(self.window.frame.size.width - 41, self.window.frame.size.height - 65, 19, 25)];
+    NSString *path = [NSString stringWithFormat:@"%@/%@", FileManager.getWorkDirectoryPath, @"resources/locked-padlock.png"];
+    NSImage *image = [[NSImage alloc] initWithContentsOfFile:path];
+    NSLog(@"path %@", path);
+    imageView.image = image;
+    [self.window.contentView addSubview:imageView];
 }
 
 - (void) setupLogoBlockhain:(NSString *)blockhain {

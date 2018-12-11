@@ -18,6 +18,7 @@ NS_ASSUME_NONNULL_BEGIN
 //@property (nonatomic, strong) NSString *currentPath;
 //@property (nonatomic, strong) ResponseModel *jsonModel;
 @property (readwrite) BOOL isJson;
+@property (readwrite) int unlockTime;
 
 - (instancetype)initWithFrame:(NSRect)frame;
 - (void)runModal;

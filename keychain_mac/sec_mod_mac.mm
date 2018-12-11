@@ -58,78 +58,45 @@ byte_seq_t sec_mod_mac::get_passwd_trx(const std::string& raw_trx) const
         {
             frame = NSMakeRect(0, 0, 575, 361);
             blockhain_type = "";
-            //auto trx_str = cmd_parse.to_raw_tx();//raw hex transaction
         }
             break;
         case keychain_app::secmod_commands::blockchain_secmod_te::ethereum:
         {
             frame = NSMakeRect(0, 0, 575, 361);
             blockhain_type = "ethereum";
-            auto eth_trx = cmd_parse.to_ethereum();
-            auto from_str = eth_trx.from;
-            auto eth_data = eth_trx.trx_info;
-            auto to_str = eth_data.to;
-            auto amount = eth_data.value;
-            auto expert_mode_str = cmd_parse.to_expert_mode_string();
         }
             break;
         case keychain_app::secmod_commands::blockchain_secmod_te::bitcoin:
         {
             frame = NSMakeRect(0, 0, 575, 361);
             blockhain_type = "bitcoin";
-            auto bitcoin_trx = cmd_parse.to_bitcoin();
-            auto from_str = bitcoin_trx.from;
-            auto bitcoin_data = bitcoin_trx.trx_info;
-            auto num_vouts = bitcoin_data.num_vouts;//chech num of vouts
-            auto vout1 = bitcoin_data.vouts[0];
-            auto to_str1 = vout1.address;
-            auto amount1 = vout1.amount;
-            //etc
         }
             break;
         case keychain_app::secmod_commands::blockchain_secmod_te::rawhash:
         {
             frame = NSMakeRect(0, 0, 575, 361);
             blockhain_type = "";
-            auto trx_str = cmd_parse.to_raw_trx_string();//raw hex transaction
         }
             break;
         case keychain_app::secmod_commands::blockchain_secmod_te::ethereum_swap:
         {
             blockhain_type = "ethereum";
             frame = NSMakeRect(0, 0, 825, 521);
-            auto swap_trx = cmd_parse.to_ethereum_swap();
-            auto from_str = swap_trx.from;
-            auto swap_info = swap_trx.swap_info;
-            switch (swap_info.action)
-            {
-                    //TODO: need impleentation
-            }
-            auto eth_data = swap_trx.trx_info;
-            auto to_str = eth_data.to;
-            auto amount = eth_data.value;
-            auto expert_mode_str = cmd_parse.to_expert_mode_string();
         }
             break;
         case keychain_app::secmod_commands::blockchain_secmod_te::parse_error:
         {
             frame = NSMakeRect(0, 0, 575, 361);
             blockhain_type = "";
-            //some error msg into log
         }
             break;
         default:
         {
             frame = NSMakeRect(0, 0, 575, 361);
             blockhain_type = "";
-            //some error msg into log
         }
             break;
     }
-    
-//    NSError *error;
-//    ResponseModel *model = [[ResponseModel alloc] initWithString:[NSString stringWithUTF8String:raw_trx.c_str()] error:&error];
-//    NSLog(@"Error %@", error);
     
     DialogWC *dialog = [[DialogWC alloc] initWithFrame:frame];
     dialog.jsonString = [NSString stringWithUTF8String:raw_trx.c_str()];

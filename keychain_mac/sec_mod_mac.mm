@@ -102,6 +102,7 @@ byte_seq_t sec_mod_mac::get_passwd_trx(const std::string& raw_trx) const
     dialog.jsonString = [NSString stringWithUTF8String:raw_trx.c_str()];
     dialog.isJson = is_json;
     dialog.isSignTransaction = true;
+    dialog.expertModeString = [NSString stringWithUTF8String:cmd_parse.to_expert_mode_string().c_str()];
     dialog.blockhainType = [NSString stringWithUTF8String:blockhain_type.c_str()];
     [dialog runModal];
     

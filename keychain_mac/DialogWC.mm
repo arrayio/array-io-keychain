@@ -434,7 +434,7 @@ using keychain_app::secmod_commands::secmod_parser_f;
     NSAlert *alert = [NSAlert new];
     [alert setIcon:[NSImage new]];
     alert.messageText = @"Expert mode";
-    alert.informativeText = self.jsonString;
+    alert.informativeText = self.expertModeString;
     [alert addButtonWithTitle:@"OK"];
     [alert beginSheetModalForWindow:[self.window.contentView window] completionHandler:^(NSInteger result) {
         NSLog(@"Success");

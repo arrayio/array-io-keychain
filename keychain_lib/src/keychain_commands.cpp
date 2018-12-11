@@ -144,7 +144,8 @@ std::string create_secmod_cmd(std::vector<unsigned char> raw, blockchain_te bloc
 
 using namespace keychain_app;
 
-std::pair<std::string, std::string> keychain_app::read_private_key_file(keychain_base* keychain, std::string keyname, std::string text)
+std::pair<std::string, std::string> keychain_app::read_private_key_file(keychain_base* keychain,
+        std::string keyname, std::string text, int unlock_time, const keychain_command_base * cmd)
 {
   keyfile_format::keyfile_t keyfile;
   auto curdir = bfs::current_path();
@@ -161,8 +162,12 @@ std::pair<std::string, std::string> keychain_app::read_private_key_file(keychain
 // If we can parse transaction we need to use get_passwd_trx function
 // else use get_passwd_trx_raw()
 // At this moment parsing of transaction is not implemented
-	
-    byte_seq_t passwd = *(keychain->get_passwd_trx(text.empty() ? keyfile.keyname: text));
+
+    byte_seq_t passwd;
+    if (cmd->e_type == command_te::unlock)
+        passwd = *(keychain->get_passwd_unlock(keyfile.keyname, unlock_time));
+    else
+        passwd = *(keychain->get_passwd_trx(text.empty() ? keyfile.keyname: text));
     if (passwd.empty())
       throw std::runtime_error("Error: can't get password");
     return  std::make_pair(encryptor.decrypt_keydata(passwd, encrypted_data), keyfile.keyname);
@@ -184,7 +189,8 @@ std::pair<std::string, std::string> keychain_app::read_public_key_file(keychain_
 }
 
 
-std::string keychain_app::read_private_key(keychain_base * keychain, std::string keyname, std::string text, int seconds)
+std::string keychain_app::read_private_key(keychain_base * keychain, std::string keyname, std::string text, int seconds,
+                                           const keychain_command_base* cmd)
 {
   bool locked = true;
   std::string key_data;
@@ -202,7 +208,7 @@ std::string keychain_app::read_private_key(keychain_base * keychain, std::string
 
   if (locked)
   {
-    key_data = read_private_key_file(keychain, keyname, text).first;
+    key_data = read_private_key_file(keychain, keyname, text, seconds, cmd).first;
     if (seconds) // unlock key
       keychain->key_map[keyname] = std::make_pair(key_data, std::make_pair(seconds, std::time(nullptr) ) );
   }
@@ -210,7 +216,7 @@ std::string keychain_app::read_private_key(keychain_base * keychain, std::string
   {
     if (seconds) // unlock key
     {
-      key_data = read_private_key_file(keychain, keyname, text).first;
+      key_data = read_private_key_file(keychain, keyname, text, seconds, cmd).first;
       keychain->key_map[keyname] = std::make_pair(key_data, std::make_pair(seconds, std::time(nullptr) ) );
     }
     else

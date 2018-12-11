@@ -14,12 +14,14 @@
 #include <limits.h>
 #import "FileManager.h"
 #include <keychain_lib/secmod_parser_cmd.hpp>
+#import "keychain-Swift.h"
 
 using keychain_app::secmod_commands::secmod_parser_f;
 
 @interface DialogWC () {
     NSSecureTextField *pass;
     NSSecureTextField *passConfirm;
+    NSButton *redLockButton;
 }
 
 @end
@@ -190,12 +192,31 @@ using keychain_app::secmod_commands::secmod_parser_f;
 }
 
 - (void) setupLogoRedLock {
-    NSImageView *imageView = [[NSImageView alloc] initWithFrame:NSMakeRect(self.window.frame.size.width - 41, self.window.frame.size.height - 65, 19, 25)];
     NSString *path = [NSString stringWithFormat:@"%@/%@", FileManager.getWorkDirectoryPath, @"resources/locked-padlock.png"];
     NSImage *image = [[NSImage alloc] initWithContentsOfFile:path];
+    NSImageView *imageView = [[NSImageView alloc] initWithFrame:NSMakeRect(self.window.frame.size.width - 41, self.window.frame.size.height - 65, 19, 25)];
     NSLog(@"path %@", path);
     imageView.image = image;
     [self.window.contentView addSubview:imageView];
+
+    NSButton *redLockButton = [[NSButton alloc] initWithFrame:NSMakeRect(self.window.frame.size.width - 41, self.window.frame.size.height - 65, 19, 25)];
+    [redLockButton setImage:[NSImage new]];
+    [redLockButton setImagePosition:NSImageOnly];
+    [redLockButton setBordered:NO];
+    [redLockButton setAction:@selector(redlockButtonClicked)];
+    [self.window.contentView addSubview:redLockButton];
+}
+
+- (void) redlockButtonClicked {
+    NSString *string = @"";
+    if (self.unlockTime > 0) {
+        string = [NSString stringWithFormat:@"%@Experimental unlock function is used, it may be unsafe.", string];
+    }
+    if (!self.isJson) {
+        string = [NSString stringWithFormat:@"%@%@Failed to parse transaction.", ([string isEqualToString:@""]) ? @"" : @"\n\n", string];
+    }
+    NSPopover *popover = [[NSPopover alloc] initWithContent:string doesAnimate:true];
+    [popover showRelativeToRect:NSMakeRect(self.window.frame.size.width - 41, self.window.frame.size.height - 65, 19, 25) ofView:self.window.contentView.superview preferredEdge:NSRectEdgeMinY];
 }
 
 - (void) setupLogoBlockhain:(NSString *)blockhain {

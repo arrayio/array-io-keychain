@@ -54,8 +54,8 @@ include_directories("${CMAKE_SOURCE_DIR}/keychain_win/keychain_gui/include"
 			"${AUTOGEN_BUILD_DIR}"
             "${CMAKE_SOURCE_DIR}/libraries/fc_light/include"
 			"${CMAKE_SOURCE_DIR}/keychain_lib/include"
-			"${BOOST_ROOT}/include/boost-1_66"
-			"${CMAKE_SOURCE_DIR}/libraries/kaitai_struct_cpp_stl_runtime")
+			"${CMAKE_SOURCE_DIR}/libraries/kaitai_struct_cpp_stl_runtime"
+			${Boost_INCLUDE_DIR})
 file(GLOB KEYCHAIN_GUI_SOURCES "${CMAKE_SOURCE_DIR}/keychain_win/keychain_gui/src/*.cpp")
 file(GLOB KEYCHAIN_GUI_INCLUDES "${CMAKE_SOURCE_DIR}/keychain_win/keychain_gui/include/*.h")
 file(GLOB KEYCHAIN_GUI_RESOURCES "${CMAKE_SOURCE_DIR}/keychain_win/keychain_gui/Resources/*.qrc")

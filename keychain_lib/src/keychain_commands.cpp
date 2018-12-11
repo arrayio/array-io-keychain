@@ -171,6 +171,18 @@ std::pair<std::string, std::string> keychain_app::read_private_key_file(keychain
     return  std::make_pair(keyfile.keyinfo.priv_key_data.as<std::string>(), keyfile.keyname);
 }
 
+std::pair<std::string, std::string> keychain_app::read_public_key_file(keychain_base* keychain, std::string keyname)
+{
+  keyfile_format::keyfile_t keyfile;
+  auto curdir = bfs::current_path();
+  auto first = bfs::directory_iterator(bfs::path(KEY_DEFAULT_PATH_));
+  auto it = std::find_if(first, bfs::directory_iterator(),find_keyfile_by_username(keyname.c_str(), &keyfile));
+  if (it == bfs::directory_iterator())
+    throw std::runtime_error("Error: keyfile could not found by keyname");
+
+  return  std::make_pair(keyfile.keyinfo.public_key, keyfile.keyname);
+}
+
 
 std::string keychain_app::read_private_key(keychain_base * keychain, std::string keyname, std::string text, int seconds)
 {

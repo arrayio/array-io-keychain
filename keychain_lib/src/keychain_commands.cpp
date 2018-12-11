@@ -98,12 +98,11 @@ std::string create_secmod_cmd(std::vector<unsigned char> raw, blockchain_te bloc
         trx.chainid   = tx.ChainId();
         trx.to        = tx.to().hex();
         trx.value     = tx.value().str();
-        
-        auto data = to_hex(tx.data().data(), tx.data().size() );
+        trx.data      = to_hex(tx.data().data(), tx.data().size());
         
         using swap_cmd_t = secmod_commands::secmod_command<secmod_commands::blockchain_secmod_te::ethereum_swap>::type;
         swap_cmd_t::swap_t swap_info;
-        if (swap_action(data, swap_info))
+        if (swap_action(trx.data, swap_info))
         {
           swap_cmd_t data(std::move(from),std::move(trx), std::move(swap_info));
           cmd.blockchain = secmod_commands::blockchain_secmod_te::ethereum_swap;

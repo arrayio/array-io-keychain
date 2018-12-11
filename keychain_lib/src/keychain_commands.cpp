@@ -60,11 +60,13 @@ std::string create_secmod_cmd(std::vector<unsigned char> raw, blockchain_te bloc
   secmod_commands::secmod_command_common cmd;
   cmd.json = true;
   cmd.keyname = keyname;
-  
+
+
   switch (blockchain)
   {
     case (keychain_app::blockchain_te::bitcoin):
     {
+      cmd.blockchain = secmod_commands::blockchain_secmod_te::bitcoin;
       try
       {
         streambuf_derived buf((char*) raw.data(),  (char*)raw.data() + raw.size());
@@ -74,14 +76,12 @@ std::string create_secmod_cmd(std::vector<unsigned char> raw, blockchain_te bloc
         bitcoin_transaction_t trx_info(&ks);
         using cmd_t = secmod_commands::secmod_command<secmod_commands::blockchain_secmod_te::bitcoin>::type;
         cmd_t data(std::move(from), std::move(trx_info));
-        cmd.blockchain = secmod_commands::blockchain_secmod_te::bitcoin;
         cmd.data = fc_light::variant(data);
-        BOOST_LOG_SEV(log.lg, info) << "bitcoin transaction parse complete: \n" + json;
+        BOOST_LOG_SEV(log.lg, info) << "bitcoin transaction parse complete: \n";
       } catch (std::exception &exc) {
         cmd.json = false;
-        cmd.blockchain = secmod_commands::blockchain_secmod_te::bitcoin;
         cmd.data = to_hex(raw.data(), raw.size());
-        BOOST_LOG_SEV(log.lg, info) << "bitcoin transaction parse is not complete: \n" + std::string(exc.what()) +"\n " + json;
+        BOOST_LOG_SEV(log.lg, info) << "bitcoin transaction parse is not complete: \n" + std::string(exc.what());
       }
       
       break;
@@ -108,7 +108,7 @@ std::string create_secmod_cmd(std::vector<unsigned char> raw, blockchain_te bloc
           swap_cmd_t data(std::move(from),std::move(trx), std::move(swap_info));
           cmd.blockchain = secmod_commands::blockchain_secmod_te::ethereum_swap;
           cmd.data = fc_light::variant(data);
-          BOOST_LOG_SEV(log.lg, info) << "ethereum transaction swap-on-line specific-fields parse complete: \n" + json;
+          BOOST_LOG_SEV(log.lg, info) << "ethereum transaction swap-on-line specific-fields parse complete:";
         }
         else
         {
@@ -116,7 +116,7 @@ std::string create_secmod_cmd(std::vector<unsigned char> raw, blockchain_te bloc
           cmd_t data(std::move(from),std::move(trx));
           cmd.blockchain = secmod_commands::blockchain_secmod_te::ethereum;
           cmd.data = fc_light::variant(data);
-          BOOST_LOG_SEV(log.lg, info) << "ethereum transaction parse complete: \n" + json;
+          BOOST_LOG_SEV(log.lg, info) << "ethereum transaction parse complete:";
         }
       }
       catch (const std::exception& exc)
@@ -124,7 +124,7 @@ std::string create_secmod_cmd(std::vector<unsigned char> raw, blockchain_te bloc
         cmd.json = false;
         cmd.blockchain = secmod_commands::blockchain_secmod_te::ethereum;
         cmd.data = to_hex(raw.data(), raw.size());
-        BOOST_LOG_SEV(log.lg, info) << "ethereum transaction parse is not complete: \n" + std::string(exc.what()) +"\n " + json;
+        BOOST_LOG_SEV(log.lg, info) << "ethereum transaction parse is not complete: \n" + std::string(exc.what());
       }
       break;
     }
@@ -133,11 +133,13 @@ std::string create_secmod_cmd(std::vector<unsigned char> raw, blockchain_te bloc
       cmd.json = false;
       cmd.blockchain = secmod_commands::blockchain_secmod_te::unknown;
       cmd.data = to_hex(raw.data(), raw.size());
-      BOOST_LOG_SEV(log.lg, info) << " transaction parse is not implementated: \n" + json;
+      BOOST_LOG_SEV(log.lg, info) << " transaction parse is not implementated:";
     }
   }
   cmd.unlock_time = unlock_time;
-  return fc_light::json::to_string(fc_light::variant(cmd));
+  auto variant = fc_light::variant(cmd);
+  BOOST_LOG_SEV(log.lg, info) << "\n" + fc_light::json::to_pretty_string(variant);
+  return fc_light::json::to_string(variant);
 }
 
 }

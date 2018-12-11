@@ -43,8 +43,45 @@ keychain_app::byte_seq_t SecureModuleWrapper::_startSecureDesktop(const std::str
 	HANDLE hPipe;
 	char buffer[1024];
 	DWORD dwRead;
-	//initializing security attributes
+	
+	HANDLE transactionPipe;
+
+	auto log = logger_singletone::instance();
+	BOOST_LOG_SEV(log.lg, info) << str;
+
+	transactionPipe = CreateNamedPipe(TEXT("\\\\.\\pipe\\transpipe"),
+		PIPE_ACCESS_DUPLEX,
+		PIPE_TYPE_BYTE | PIPE_READMODE_BYTE | PIPE_WAIT, 
+		1,
+		9000 * 16,
+		9000 * 16,
+		NMPWAIT_USE_DEFAULT_WAIT,
+		NULL);
+
+	DWORD writtenSize;
+	DWORD lastErrror;
+	DisconnectNamedPipe(transactionPipe);
 	_secman.CreateSecureDesktop(str);
+	while (transactionPipe != INVALID_HANDLE_VALUE) {
+		DWORD dwWritten;
+		if (ConnectNamedPipe(transactionPipe, NULL) != FALSE)   // wait for someone to connect to the pipe
+		{
+			std::string trans = str;
+			trans.push_back('\0');
+			WriteFile(transactionPipe,
+				trans.c_str(),
+				trans.length(),   // = length of string + terminating '\0' !!!
+				&dwWritten,
+				NULL);
+			CloseHandle(transactionPipe);
+			DisconnectNamedPipe(transactionPipe);
+			break;
+		}
+		//lastErrror = GetLastError();
+		//throw std::runtime_error("Error: can't write pipe transaction");
+	}
+
+	//initializing security attributes
 	SECURITY_ATTRIBUTES  sa;
 	sa.nLength = sizeof(SECURITY_ATTRIBUTES);
 	sa.bInheritHandle = FALSE;

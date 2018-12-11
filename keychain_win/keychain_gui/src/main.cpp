@@ -8,6 +8,7 @@
 #include "Transaction.h"
 #include <QString>
 #include <cwchar>
+#include <keychain_lib/keychain_logger.hpp>
 
 #include <keychain_lib/secmod_parser_cmd.hpp>
 
@@ -27,13 +28,35 @@ using secmod_commands::secmod_parser_f;
 
 int main(int argc, char *argv[])
 {
+	DWORD dwWritten;
+	char buffer[9000];
+	DWORD dwRead = 0;
+	Sleep(30000);
+	HANDLE transPipe = CreateFile(TEXT("\\\\.\\pipe\\transpipe"),
+		GENERIC_READ | GENERIC_WRITE,
+		0,
+		NULL,
+		OPEN_EXISTING,
+		0,
+		NULL);
+	if (transPipe != INVALID_HANDLE_VALUE)
+	{
+		ReadFile(transPipe, buffer, sizeof(buffer) - 1, &dwRead, NULL);
+		CloseHandle(transPipe);
+	}
+
+
+
 	hNewDesktop = OpenDesktopW(_T("secdesktop"), NULL, FALSE, GENERIC_ALL); //GetThreadDesktop(GetCurrentThreadId());
 	hOldDesktop = OpenDesktopW(_T("default"), NULL, FALSE, GENERIC_ALL);
 	SwitchDesktop(hNewDesktop);
 
 	SetThreadDesktop(hNewDesktop);
 
-	QString srcTrans(argv[1]);
+	QString srcTrans(buffer/*argv[1]*/);
+	
+	auto log = logger_singletone::instance();
+	BOOST_LOG_SEV(log.lg, info) << srcTrans.toStdString();
 
 	//QString inputJson("{\"json\":true,\"blockchain\":\"ethereum\",\"data\":{\"nonce\":\"143\",\"gasPrice\":\"5300000000\",\"gas\":\"100000\",\"chainid\":1,\"from\":\"\",\"to\":\"843fcaaeb0cce5ffaf272f5f2ddfff3603f9c2a0\",\"value\":\"173117678552668600\"}}");
 

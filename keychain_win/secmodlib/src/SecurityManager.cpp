@@ -29,19 +29,19 @@ void SecurityManager::CreateSecureDesktop(const std::string& transId) {
 	size_t lastOfSlash = rem.find_last_of('\\');
 	//wchar_t* found = wcsstr((wchar_t*)rem.c_str(), );
 	wchar_t dst[400] = { 0 };
-	wchar_t args[400] = { 0 };
+	//wchar_t args[400] = { 0 };
 	wcsncpy_s(dst, 400, rem.c_str(), lastOfSlash+1);
 	wcscat_s(dst, 400, _passEntryAppName.c_str());
-	wcscat_s(args, 400, L" ");
+	//wcscat_s(args, 400, L" ");
 	std::wstring _tId(400, L'#');
 	size_t outSize;
 	mbstowcs_s(&outSize, &_tId[0], 400, transId.c_str(), 400);
-	wcscat_s(args, 400, _tId.c_str());
+	//wcscat_s(args, 400, _tId.c_str());
 	LPCWSTR appToStart = dst;
-	LPTSTR app_args = args;
+	//LPTSTR app_args = args;
     auto log = logger_singletone::instance();
     BOOST_LOG_SEV(log.lg, info) << "CreateSecureDescktop function StartInteractiveClientProcess to enter credentials";
-	if (!StartInteractiveClientProcess(appToStart, (LPTSTR)app_args))
+	if (!StartInteractiveClientProcess(appToStart, L""))
 	{
 		throw std::runtime_error("Could not create child client process");
 	}

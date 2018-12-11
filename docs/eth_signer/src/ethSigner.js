@@ -1,6 +1,7 @@
 var Web3 = require('web3');
 const Transaction = require('ethereumjs-tx');
 const ethUtil = require('ethereumjs-util');
+const Keychain  = require('../../keychain').Keychain;
 
 const WS_PUBLIC_KEY_REQUEST_ID = 12345;
 
@@ -11,19 +12,17 @@ window.onload = function () {
   let fromAddress;
   const valueTx = 100;
 
-  const ws = new WebSocket('ws://localhost:16384/');
+  const keychain = new Keychain('ws://localhost:16384/');
 
-  ws.onopen = function() {
+  keychain.ws.onopen = function() {
     document.body.style.backgroundColor = '#cfc';
   };
-  ws.onclose = function() {
+  keychain.ws.onclose = function() {
     document.body.style.backgroundColor = null;
-  };
-  ws.onclose = function () {
     log('Websocket has been closed. Check for errors in the browser console and if KeyChain is installed');
-  }
+  };
 
-  ws.onmessage = (async (response) => {
+  keychain.ws.onmessage = (async (response) => {
     log(`KeyChain response: ${response.data}`);
     const data = JSON.parse(response.data);
     if (data.result) {
@@ -96,13 +95,13 @@ window.onload = function () {
     }
     log(`Result: ${rawHex}`);
     log(`Signing it with KeyChain: ${JSON.stringify(command)}`);
-    ws.send(JSON.stringify(command));
+    keychain.ws.send(JSON.stringify(command));
   }
 
   function getPublicKey() {
     const command = { id: WS_PUBLIC_KEY_REQUEST_ID, command: "public_key", params: { keyname } };
     log(`Getting public key by keyname from KeyChain: ${JSON.stringify(command)}`);
-    ws.send(JSON.stringify(command));
+    keychain.ws.send(JSON.stringify(command));
   }
 
   const buildTxSinature = async (signature, fromAddress, to, value, data = '') => {

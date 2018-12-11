@@ -20,7 +20,7 @@
 DESKTOP_CREATEMENU | DESKTOP_HOOKCONTROL | DESKTOP_JOURNALRECORD | \
 DESKTOP_JOURNALPLAYBACK | DESKTOP_ENUMERATE | DESKTOP_WRITEOBJECTS | \
 DESKTOP_SWITCHDESKTOP | STANDARD_RIGHTS_REQUIRED)
-
+#define FROMPROCCESS
 HDESK hOldDesktop, hNewDesktop;
 
 using namespace keychain_app;
@@ -31,7 +31,6 @@ int main(int argc, char *argv[])
 	DWORD dwWritten;
 	char buffer[9000];
 	DWORD dwRead = 0;
-	Sleep(30000);
 	HANDLE transPipe = CreateFile(TEXT("\\\\.\\pipe\\transpipe"),
 		GENERIC_READ | GENERIC_WRITE,
 		0,
@@ -46,14 +45,19 @@ int main(int argc, char *argv[])
 	}
 
 
-
+#ifdef FROMPROCCESS
 	hNewDesktop = OpenDesktopW(_T("secdesktop"), NULL, FALSE, GENERIC_ALL); //GetThreadDesktop(GetCurrentThreadId());
 	hOldDesktop = OpenDesktopW(_T("default"), NULL, FALSE, GENERIC_ALL);
 	SwitchDesktop(hNewDesktop);
 
 	SetThreadDesktop(hNewDesktop);
+#endif
+	int endIndex = -1;
 
-	QString srcTrans(buffer/*argv[1]*/);
+	QString srcTrans;
+	for (int i = 0; i < dwRead; i++) {
+		srcTrans.push_back(buffer[i]);
+	}
 	
 	auto log = logger_singletone::instance();
 	BOOST_LOG_SEV(log.lg, info) << srcTrans.toStdString();
@@ -105,7 +109,8 @@ int main(int argc, char *argv[])
 	a.exec();
 
 	//WaitForSingleObject((Q_HANDLE)a.thread, INFINITE);
-	
+#ifdef FROMPROCCESS
 	SwitchDesktop(hOldDesktop);
+#endif
 	return 0;
 }

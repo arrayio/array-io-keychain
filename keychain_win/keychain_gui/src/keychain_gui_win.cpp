@@ -24,50 +24,56 @@ keychain_gui_win::keychain_gui_win(Transaction &transaction, QWidget *parent)
 	
 	int _x = 0, _y = 204, _labelWidth = 116;
 
-
-
 	int endControlPosition = 0;
 
-	
 	bool warn = false;
-	secmod_parser_f cmd_parse;
-	auto cmd_type = cmd_parse(transaction.getTransactionText().toStdString());
-	if (!cmd_parse.is_json()) {
-		element = new UnparsedTransactionWidget(transaction, this);
-		warn = true;
+	if (transaction.getTransactionText() == "create_password") {
+		message = new QLabel(this);
+		message->setFixedSize(FIELD_WIDTH, 25);
+		message->move(132, START_POSITION);
+		message->setStyleSheet("font:16px \"Segoe UI\";background:transparent;color:rgb(123,141,167);");
+		message->setText("Please enter new password");
+		endControlPosition += 10;
+		endControlPosition = START_POSITION + 25;
 	}
 	else {
-		switch (cmd_type)
-		{
-		case keychain_app::secmod_commands::blockchain_secmod_te::ethereum: {
-			element = new EthereumWidget(transaction, this);
-			break;
-		}
-		case keychain_app::secmod_commands::blockchain_secmod_te::ethereum_swap: {
-			element = new EthereumSwapWidget(transaction, this);
-			break;
-		}
-		case keychain_app::secmod_commands::blockchain_secmod_te::bitcoin:
-		{
-			element = new BitcoinWidget(transaction, this);
-			break;
-		}
-		case keychain_app::secmod_commands::blockchain_secmod_te::rawhash:
-		{
+		secmod_parser_f cmd_parse;
+		auto cmd_type = cmd_parse(transaction.getTransactionText().toStdString());
+		if (!cmd_parse.is_json()) {
 			element = new UnparsedTransactionWidget(transaction, this);
 			warn = true;
+		}
+		else {
+			switch (cmd_type)
+			{
+			case keychain_app::secmod_commands::blockchain_secmod_te::ethereum: {
+				element = new EthereumWidget(transaction, this);
+				break;
+			}
+			case keychain_app::secmod_commands::blockchain_secmod_te::ethereum_swap: {
+				element = new EthereumSwapWidget(transaction, this);
+				break;
+			}
+			case keychain_app::secmod_commands::blockchain_secmod_te::bitcoin:
+			{
+				element = new BitcoinWidget(transaction, this);
+				break;
+			}
+			case keychain_app::secmod_commands::blockchain_secmod_te::rawhash:
+			{
+				element = new UnparsedTransactionWidget(transaction, this);
+				warn = true;
+				break;
+			}
 			break;
+			}
 		}
-		break;
-		}
+		element->move(0, START_POSITION);
+		element->SetPosition(0, START_POSITION, FIELD_WIDTH);
+		endControlPosition += 10;
+
+		endControlPosition = START_POSITION + element->GetCurrentHeight();
 	}
-
-	element->move(0, START_POSITION);
-	element->SetPosition(0, START_POSITION, FIELD_WIDTH);
-
-	endControlPosition += 10;
-
-	endControlPosition = START_POSITION + element->GetCurrentHeight();
 
 	passPhrase = new QLabel(this);
 	passPhrase->setStyleSheet("font:16px \"Segoe UI\";background:transparent;");
@@ -87,11 +93,17 @@ keychain_gui_win::keychain_gui_win(Transaction &transaction, QWidget *parent)
 	passPhraseValue->setAlignment(Qt::AlignVCenter | Qt::AlignLeft);
 	
 	endControlPosition += 35;
-	headerBlock->setFixedWidth(element->GetCurrentWidth()+20);
+	if (element!= Q_NULLPTR)
+		headerBlock->setFixedWidth(element->GetCurrentWidth()+20);
+	else
+		headerBlock->setFixedWidth(width());
 
 	OKButton = new QPushButton("SIGN", this);
 	CancelButton = new QPushButton("CANCEL", this);
-	CancelButton->move(element->GetCurrentWidth() - 209, endControlPosition);
+	if (element != Q_NULLPTR)
+		CancelButton->move(element->GetCurrentWidth() - 209, endControlPosition);
+	else
+		CancelButton->move(width() - 209, endControlPosition);
 
 	OKButton->setFixedSize(89, 25);
 	OKButton->setFlat(true);
@@ -106,17 +118,26 @@ keychain_gui_win::keychain_gui_win(Transaction &transaction, QWidget *parent)
 	CancelButton->setWindowFlags(Qt::FramelessWindowHint);
 	CancelButton->setStyleSheet("color:rgb(147,148,151);background-image: url(:/keychain_gui_win/but_cancel.png);border-style:outset;border-width:0px;border-radius:5px;font:16px \"Segoe UI\"");
 
-	OKButton->move(element->GetCurrentWidth() -112, endControlPosition);
-	setFixedHeight(endControlPosition+OKButton->height() + 15);
-	setFixedWidth(element->GetCurrentWidth()+20);
-	descriptionLabel->move(element->GetCurrentWidth() - 343, 25);
+	setFixedHeight(endControlPosition + OKButton->height() + 15);
+	if (element != Q_NULLPTR) {
+		OKButton->move(element->GetCurrentWidth() - 112, endControlPosition);
+		setFixedWidth(element->GetCurrentWidth() + 20);
+		descriptionLabel->move(element->GetCurrentWidth() - 343, 25);
+	}
+	else {
+		OKButton->move(width() - 112, endControlPosition);
+		descriptionLabel->move(width() - 363, 25);
+	}
 	
 	lockIcon = new LockIcon(this);
 	popupWindow = new PopupWindow(this);
 	popupWindow->setVisible(false);
 	lockIcon->setFixedSize(22, 22);
 	lockIcon->setSourceDialog(popupWindow);
-	lockIcon->move(element->GetCurrentWidth() -25, 28);
+	if (element != Q_NULLPTR)
+		lockIcon->move(element->GetCurrentWidth() -25, 28);
+	else
+		lockIcon->move(width() - 55, 28);
 	lockIcon->setMouseTracking(true);
 	if (warn) {
 		lockIcon->setUnSecureMode();

@@ -28,7 +28,7 @@ keychain_app::byte_seq_t SecureModuleWrapper::get_passwd_unlock(const std::strin
 
 keychain_app::byte_seq_t SecureModuleWrapper::get_passwd_on_create() const
 {
-	return _startSecureDesktop("Please enter password for your new key");
+	return _startSecureDesktop("create_password");
 }
 
 void SecureModuleWrapper::print_mnemonic(const string_list& mnemonic) const

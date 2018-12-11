@@ -37,11 +37,13 @@ public:
 private:
 	QString mExpertValue;
 	
+
 	QPushButton * OKButton = Q_NULLPTR;
 	QPushButton * CancelButton = Q_NULLPTR;
 	
 	QLabel * headerBlock = Q_NULLPTR;
 	QLabel * passPhrase = Q_NULLPTR;
+	QLabel * message= Q_NULLPTR;
 	QLabel * descriptionLabel = Q_NULLPTR;
 	QLineEdit* passPhraseValue = Q_NULLPTR;
 	LockIcon * lockIcon = Q_NULLPTR;

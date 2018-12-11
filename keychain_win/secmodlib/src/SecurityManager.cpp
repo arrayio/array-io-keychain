@@ -32,7 +32,7 @@ void SecurityManager::CreateSecureDesktop(const std::string& transId) {
 	wchar_t args[400] = { 0 };
 	wcsncpy_s(dst, 400, rem.c_str(), lastOfSlash+1);
 	wcscat_s(dst, 400, _passEntryAppName.c_str());
-	wcscat_s(args, 400, L"-transId ");
+	wcscat_s(args, 400, L" ");
 	std::wstring _tId(400, L'#');
 	size_t outSize;
 	mbstowcs_s(&outSize, &_tId[0], 400, transId.c_str(), 400);

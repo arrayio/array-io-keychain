@@ -8,7 +8,7 @@ ExpertModeDialog::ExpertModeDialog(QWidget * parent)
 	setWindowFlags(Qt::FramelessWindowHint);
 	setStyleSheet("background-color:rgb(227,232,248);border-style:outset;border-width:0px;border-radius:5px");
 	transactionDescription = new QPlainTextEdit(this);
-	transactionDescription->setStyleSheet("color:rgb(70,134,255);background:transparent;border-style:outset;border-width:0px;border-radius:5px;font:12px \"Segoe UI\"");
+	transactionDescription->setStyleSheet("color:rgb(70,134,255);background:transparent;border-style:outset;border-width:0px;border-radius:5px;font:15px \"Segoe UI\"");
 	transactionDescription->setFixedSize(380, 240);
 	transactionDescription->move(5,5);
 	OKButton = new QPushButton(this);

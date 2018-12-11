@@ -53,12 +53,13 @@ bool swap_action(std::string data, swap_cmd_t::swap_t &swap_info) {
   return true;
 }
 
-std::string create_secmod_cmd(std::vector<unsigned char> raw, blockchain_te blockchain, std::string from, int unlock_time)
+std::string create_secmod_cmd(std::vector<unsigned char> raw, blockchain_te blockchain, std::string from, int unlock_time, std::string keyname)
 {
   std::string json;
   auto log = logger_singletone::instance();
   secmod_commands::secmod_command_common cmd;
   cmd.json = true;
+  cmd.keyname = keyname;
   
   switch (blockchain)
   {
@@ -170,6 +171,18 @@ std::pair<std::string, std::string> keychain_app::read_private_key_file(keychain
     return  std::make_pair(keyfile.keyinfo.priv_key_data.as<std::string>(), keyfile.keyname);
 }
 
+std::pair<std::string, std::string> keychain_app::read_public_key_file(keychain_base* keychain, std::string keyname)
+{
+  keyfile_format::keyfile_t keyfile;
+  auto curdir = bfs::current_path();
+  auto first = bfs::directory_iterator(bfs::path(KEY_DEFAULT_PATH_));
+  auto it = std::find_if(first, bfs::directory_iterator(),find_keyfile_by_username(keyname.c_str(), &keyfile));
+  if (it == bfs::directory_iterator())
+    throw std::runtime_error("Error: keyfile could not found by keyname");
+
+  return  std::make_pair(keyfile.keyinfo.public_key, keyfile.keyname);
+}
+
 
 std::string keychain_app::read_private_key(keychain_base * keychain, std::string keyname, std::string text, int seconds)
 {
@@ -190,12 +203,12 @@ std::string keychain_app::read_private_key(keychain_base * keychain, std::string
   if (locked)
   {
     key_data = read_private_key_file(keychain, keyname, text).first;
-    if (!seconds) // unlock key
+    if (seconds) // unlock key
       keychain->key_map[keyname] = std::make_pair(key_data, std::make_pair(seconds, std::time(nullptr) ) );
   }
   else
   {
-    if (!seconds) // unlock key
+    if (seconds) // unlock key
     {
       key_data = read_private_key_file(keychain, keyname, text).first;
       keychain->key_map[keyname] = std::make_pair(key_data, std::make_pair(seconds, std::time(nullptr) ) );

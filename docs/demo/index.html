@@ -51,7 +51,7 @@
                   <input type="checkbox" id="checkbox_UNLOCK"><i class="form-icon"></i>
                 </label>
                 <span class="input-group-addon">unlock_time: </span>
-                <input type="number" class="form-input" placeholder="45" id="unlock_time_UNLOCK" title="This parameter is experimental and optional!">
+                <input type="number" class="form-input" placeholder="45" id="unlock_time_UNLOCK" title="This parameter is experimental and optional!" disabled>
               </div>
             </div>
           </div>
@@ -90,7 +90,7 @@
                   <input type="checkbox" id="checkbox_SIGN_HEX"><i class="form-icon"></i>
                 </label>
                 <span class="input-group-addon">unlock_time: </span>
-                <input type="number" class="form-input" placeholder="45" id="unlock_time_SIGN_HEX" title="This parameter is experimental and optional!">
+                <input type="number" class="form-input" placeholder="45" id="unlock_time_SIGN_HEX" title="This parameter is experimental and optional!" disabled>
               </div>
             </div>
           </div>
@@ -206,10 +206,10 @@
         attachListener('LIST');
         attachListener('LOCK');
         document.getElementById('checkbox_UNLOCK').addEventListener('click', function(e) {
-          document.getElementById('unlock_time_UNLOCK').disabled = e.target.checked;
+          document.getElementById('unlock_time_UNLOCK').disabled = !e.target.checked;
         })
         document.getElementById('checkbox_SIGN_HEX').addEventListener('click', function(e) {
-          document.getElementById('unlock_time_SIGN_HEX').disabled = e.target.checked;
+          document.getElementById('unlock_time_SIGN_HEX').disabled = !e.target.checked;
         })
       }
        

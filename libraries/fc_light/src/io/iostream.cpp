@@ -27,7 +27,7 @@ namespace fc_light {
      return o;
   }
 #ifdef USE_FC_STRING
-  ostream& operator<<( ostream& o, const fc::string& v )
+  ostream& operator<<( ostream& o, const fc_light::string& v )
   {
      o.write( v.c_str(), v.size() );
      return o;
@@ -99,7 +99,7 @@ namespace fc_light {
   }
 
 #ifdef USE_FC_STRING
-  istream& operator>>( istream& o, fc::string& v )
+  istream& operator>>( istream& o, fc_light::string& v )
   {
      assert(false && "not implemented");
      return o;

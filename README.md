@@ -3,7 +3,7 @@
 
 ## Overview
 
-**KeyChain** is a standalone app for signing transactions and generating key pairs. It stores private keys in an isolated environment where no logger, debugger or spyware can intercept them because of the [three-layer security](https://github.com/arrayio/array-io-keychain/wiki/Security#three-security-layers-of-keychain) protecting each action of the system.
+**KeyChain** is a standalone app for signing transactions and generating key pairs. It stores private keys in an isolated environment where no logger, debugger or spyware can intercept them because of the [three-layer security](https://github.com/arrayio/array-io-keychain/wiki/KeyChain-security#three-security-layers-of-keychain) protecting each action of the system.
 **KeyChain** supports transactions from and to various blockchains, including Ethereum and Ethereum classic, Litecoin, Bitcoin, Bitcoin Cash, and Bitshares. 
 
 ## Installation
@@ -12,7 +12,7 @@ Download and install KeyChain for [macOS](https://github.com/arrayio/array-io-ke
 
 After installation, connect to the demo-page: http://localhost:16384/ to check if the installation was successful and to test the KeyChain commands. In case everything went well, you will see the following page and you will be able to see responses to the commands in the "Response" box when you click on them.
 
-![new-key-demo-list](https://user-images.githubusercontent.com/34011337/49649968-d1857900-fa3b-11e8-97c1-a78cf5b6febe.png)
+![screenshot from 2018-12-10 15-57-27](https://user-images.githubusercontent.com/34011337/49734247-be211a80-fc94-11e8-8d85-c70b738ecae3.png)
 
 If you are having trouble connecting to the page, [contact us](#contact) and we will do our best to help you.
 

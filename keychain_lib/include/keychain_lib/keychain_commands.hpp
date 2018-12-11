@@ -43,6 +43,9 @@
 #include <kaitai/kaitaistream.h>
 #include "bitcoin_transaction.hpp"
 #include <regex>
+#include <fc_light/crypto/ripemd160.hpp>
+#include <fc_light/crypto/sha256.hpp>
+#include <fc_light/crypto/base58.hpp>
 
 #ifdef __linux__
 #  define KEY_DEFAULT_PATH  "/var/keychain"
@@ -83,7 +86,7 @@ enum struct sign_te {
   RSV_noncanonical
 };
 
-std::string create_secmod_cmd(std::vector<unsigned char> raw, blockchain_te blockchain, std::string from, int unlock_time);
+std::string create_secmod_cmd(std::vector<unsigned char> raw, blockchain_te blockchain, std::string from, int unlock_time, std::string keyname);
 
 using byte_seq_t = std::vector<char>;
 
@@ -196,6 +199,7 @@ void create_keyfile(const char* filename, const fc_light::variant& keyfile_var);
 size_t from_hex(const std::string& hex_str, unsigned char* out_data, size_t out_data_len );
 std::string to_hex(const uint8_t* data, size_t length);
 std::string read_private_key(keychain_base *, std::string , std::string, int);
+std::pair<std::string, std::string> read_public_key_file( keychain_base * , std::string );
 std::pair<std::string, std::string> read_private_key_file( keychain_base * , std::string , std::string );
 
 
@@ -325,7 +329,8 @@ struct keychain_command<command_te::sign_hex> : keychain_command_base
           std::vector<unsigned char> chain(32);
           std::vector<unsigned char> raw(params.transaction.length());
           std::string json;
-          std::string from = "some_address";//TODO: need to implement
+          std::string from;
+          std::string pub_key = read_public_key_file(keychain, params.keyname).first;
 
           if (!params.chainid.empty())
               auto chain_len = keychain_app::from_hex(params.chainid, chain.data(), chain.size());
@@ -337,8 +342,38 @@ struct keychain_command<command_te::sign_hex> : keychain_command_base
           if (params.keyname.empty())
               std::runtime_error("Error: keyname is not specified");
 
-          json = create_secmod_cmd(raw, params.blockchain_type, from, params.unlock_time);
+          switch (params.blockchain_type)
+          {
+              case blockchain_te::ethereum:
+              {
+                  from  = dev::toAddress(dev::FixedHash<64>(pub_key)).hex();
+                  break;
+              }
+              case blockchain_te::bitcoin:
+              {
+                  std::vector<char> pub_bin_key(64, 0);
+                  auto pub_len = keychain_app::from_hex(pub_key, (unsigned char *) pub_bin_key.data(), pub_bin_key.size());
+                  pub_bin_key.insert(pub_bin_key.begin(), 4);
+                  auto sha256 = fc_light::sha256::hash( pub_bin_key.data(), pub_bin_key.size() );
+                  auto ripemd160 = fc_light::ripemd160::hash( sha256 );
 
+                  std::vector<char> keyhash(ripemd160.data(), ripemd160.data()+ripemd160.data_size());
+                  keyhash.insert(keyhash.begin(), 0);
+
+                  sha256 = fc_light::sha256::hash( keyhash.data(), keyhash.size() );
+                  auto checksum = fc_light::sha256::hash( sha256.data(), sha256.data_size() );
+
+                  std::vector<char> addr (checksum.data(), checksum.data()+4 );
+                  addr.insert(addr.begin(), keyhash.begin(), keyhash.end());
+
+                  from = fc_light::to_base58(addr.data(), addr.size());
+                  break;
+              }
+              default:
+                  from = "";
+          }
+
+          json = create_secmod_cmd(raw, params.blockchain_type, from, params.unlock_time, params.keyname);
           std::string key_data = read_private_key(keychain, params.keyname, json , params.unlock_time);
           int pk_len = keychain_app::from_hex(key_data, (unsigned char*) private_key.data(), 32);
 

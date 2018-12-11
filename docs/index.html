@@ -51,7 +51,7 @@
                   <input type="checkbox" id="checkbox_UNLOCK"><i class="form-icon"></i>
                 </label>
                 <span class="input-group-addon">unlock_time: </span>
-                <input type="number" class="form-input" placeholder="45" id="unlock_time_UNLOCK" title="This parameter is experimental and optional!">
+                <input type="number" class="form-input" placeholder="45" id="unlock_time_UNLOCK" title="This parameter is experimental and optional!" disabled>
               </div>
             </div>
           </div>
@@ -90,7 +90,7 @@
                   <input type="checkbox" id="checkbox_SIGN_HEX"><i class="form-icon"></i>
                 </label>
                 <span class="input-group-addon">unlock_time: </span>
-                <input type="number" class="form-input" placeholder="45" id="unlock_time_SIGN_HEX" title="This parameter is experimental and optional!">
+                <input type="number" class="form-input" placeholder="45" id="unlock_time_SIGN_HEX" title="This parameter is experimental and optional!" disabled>
               </div>
             </div>
           </div>
@@ -135,67 +135,25 @@
       </div>
     </div>
     
+    <script src="keychain.js"></script>
     <script>
-      const ws = new WebSocket('ws://localhost:16384/');
+      const keychain = new Keychain('ws://localhost:16384/');
 
-      ws.onopen = function() {
+      keychain.ws.onopen = function() {
         document.body.style.backgroundColor = '#cfc';
+
+        /** Promises test */
+        keychain.method('LIST')
+        .then(data => {
+          console.log('list result: ', data);
+          return keychain.method('UNLOCK', { keyname: data.result[0]} )
+        })
+        .then(data => console.log('unlock result: ', data));
+        /** Promises test end */
       };
-      ws.onclose = function() {
+      keychain.ws.onclose = function() {      
         document.body.style.backgroundColor = null;
       };
-      ws.onmessage = function(event) {
-        document.getElementById('response').textContent = JSON.stringify(JSON.parse(event.data), undefined, 2);
-      };
-      
-      const commands = {
-        UNLOCK: {
-          command: "unlock",
-          params: {
-            keyname: null,
-            unlock_time: null
-          }
-        },
-        PUBLIC_KEY: {          
-          command: "public_key",
-          params: {
-            keyname: null
-          }
-        },
-        SIGN_HEX: {
-          command: "sign_hex",
-          params: {
-            chainid: "de5f4d8974715e20f47c8bb609547c9e66b0b9e31d521199b3d8d6af6da74cb1",
-            transaction: "871689d060721b5cec5a010080841e00000000000011130065cd1d0000000000000000",
-            blockchain_type: "array",
-            keyname: null,
-            unlock_time: null
-          }
-        },
-        SIGN_HASH: {
-          command: "sign_hash",
-          params: {
-            sign_type: "VRS_canonical",
-            hash: "fe5e4a8974715e20f47c8bb609547c9e66b0b9e31d521199b3d8d6af6da74cb1",
-            keyname: null
-          }
-        },
-        CREATE: {
-          command: "create",
-          params: {
-            keyname: "test1",
-            encrypted: true,
-            curve: "secp256k1",
-            cipher: "aes256"
-          }
-        },
-        LIST: {
-          command: "list"
-        },
-        LOCK: {
-          command: "lock"
-        }
-      }
 
       window.onload = function () {
         attachListener('UNLOCK', ['keyname', 'unlock_time']);
@@ -206,29 +164,39 @@
         attachListener('LIST');
         attachListener('LOCK');
         document.getElementById('checkbox_UNLOCK').addEventListener('click', function(e) {
-          document.getElementById('unlock_time_UNLOCK').disabled = e.target.checked;
+          document.getElementById('unlock_time_UNLOCK').disabled = !e.target.checked;
         })
         document.getElementById('checkbox_SIGN_HEX').addEventListener('click', function(e) {
-          document.getElementById('unlock_time_SIGN_HEX').disabled = e.target.checked;
+          document.getElementById('unlock_time_SIGN_HEX').disabled = !e.target.checked;
         })
       }
        
-      function attachListener(commandName, params) {
+      function attachListener(commandName, paramNames) {
         document.getElementById(`btn_${commandName}`).addEventListener('click', function() {
-          if (params) {
-            for (let i = 0; i < params.length; i++) {
-                const paramName = params[i];
-                const input = document.getElementById(`${paramName}_${commandName}`);
-                if (input.disabled) {
-                  delete commands[commandName].params[paramName];
-                } else {
-                  commands[commandName].params[paramName] = input.value;                
-                }
+          const params = {};
+          if (paramNames) {
+            for (let i = 0; i < paramNames.length; i++) {
+              const paramName = paramNames[i];
+              const input = document.getElementById(`${paramName}_${commandName}`);
+              if (!input.disabled) {
+                params[paramName] = input.value;
+              }
             }
           }
-          const data = JSON.stringify(commands[commandName], undefined, 2);
+
+          const request = Object.assign(Keychain.commands[commandName], {});
+          if (request.params) {
+            request.params = Object.assign(request.params, params);
+          }
+
+          const data = JSON.stringify(request, undefined, 2);
           document.getElementById('request').value = data;
-          ws.send(data);
+          // keychain.command(commandName, params, function(data) {
+          //   document.getElementById('response').textContent = JSON.stringify(data, undefined, 2);
+          // });
+          keychain.method(commandName, params).then((data) => {
+            document.getElementById('response').textContent = JSON.stringify(data, undefined, 2);
+          });
         });
       }
     </script>

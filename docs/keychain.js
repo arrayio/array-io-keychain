@@ -12,7 +12,8 @@ class Keychain {
     if (request.params) {
       request.params = Object.assign(request.params, params);
     }
-    this.send(request, callback);
+    this.ws.send(JSON.stringify(request));
+    this.queue.push(callback);
   }
 
   /** Promise implementation of the 'command' method */
@@ -20,11 +21,6 @@ class Keychain {
       return new Promise((resolve, reject) => {
       this.command(name, params, resolve)
     });
-  }
-
-  send(data, callback) {
-    this.ws.send(JSON.stringify(data));
-    this.queue.push(callback);
   }
 
   static get commands() {

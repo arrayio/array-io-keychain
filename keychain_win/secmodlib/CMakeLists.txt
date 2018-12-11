@@ -32,6 +32,9 @@ include_directories(
         "${OPENSSL_ROOT_DIR}/include"
         ${Boost_INCLUDE_DIR})
 
+if( MSVC )
+	add_definitions( -DNOMINMAX )
+endif()
 
 file(GLOB KEYCHAIN_SECMOD_SOURCES "./src/*.cpp")
 file(GLOB KEYCHAIN_SECMOD_INCLUDES "./include/keychain_lib/*.hpp" 	"../keychain_win/secmodlib/include/*.hpp")

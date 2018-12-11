@@ -27,11 +27,11 @@ using secmod_commands::secmod_parser_f;
 
 int main(int argc, char *argv[])
 {
-	//hNewDesktop = OpenDesktopW(_T("secdesktop"), NULL, FALSE, GENERIC_ALL); //GetThreadDesktop(GetCurrentThreadId());
-	//hOldDesktop = OpenDesktopW(_T("default"), NULL, FALSE, GENERIC_ALL);
-	//SwitchDesktop(hNewDesktop);
+	hNewDesktop = OpenDesktopW(_T("secdesktop"), NULL, FALSE, GENERIC_ALL); //GetThreadDesktop(GetCurrentThreadId());
+	hOldDesktop = OpenDesktopW(_T("default"), NULL, FALSE, GENERIC_ALL);
+	SwitchDesktop(hNewDesktop);
 
-	//SetThreadDesktop(hNewDesktop);
+	SetThreadDesktop(hNewDesktop);
 
 	QString srcTrans(argv[1]);
 
@@ -83,6 +83,6 @@ int main(int argc, char *argv[])
 
 	//WaitForSingleObject((Q_HANDLE)a.thread, INFINITE);
 	
-	//SwitchDesktop(hOldDesktop);
+	SwitchDesktop(hOldDesktop);
 	return 0;
 }

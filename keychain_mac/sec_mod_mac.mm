@@ -129,7 +129,7 @@ byte_seq_t sec_mod_mac::get_passwd_trx(const std::string& raw_trx) const
 byte_seq_t sec_mod_mac::get_passwd_on_create() const
 {
     [ApplicationShared sharedInstance];
-    NSRect frame = NSMakeRect(0, 0, 575, 261);
+    NSRect frame = NSMakeRect(0, 0, 575, 300);
     DialogWC *dialog = [[DialogWC alloc] initWithFrame:frame];
     dialog.isSignTransaction = false;
     [dialog runModal];

@@ -85,10 +85,9 @@ using keychain_app::secmod_commands::secmod_parser_f;
     [self setupPassField];
     [self setupSignButton];
     [self setupCancelButton];
-    [self checkForRedLock];
     if (!self.unlockOnly) {
         if (_isSignTransaction) {
-
+            [self checkForRedLock];
             [self setupLogoBlockhain:self.blockhainType];
             [self setupTo];
             [self setupFrom];
@@ -173,8 +172,10 @@ using keychain_app::secmod_commands::secmod_parser_f;
             [self setupTitleLabel:@"Enter the password for the new key"];
             [self setupPassConfirmField];
             [self setupLabelConfirmPassphrase];
+            [self setupRecommendationTextForPassword];
         }
     } else {
+        [self checkForRedLock];
         [self setupTitleLabel:@"Unlock"];
     }
     [[NSApplication sharedApplication] runModalForWindow:self.window];
@@ -254,7 +255,7 @@ using keychain_app::secmod_commands::secmod_parser_f;
     label.appearance = [NSAppearance appearanceNamed:NSAppearanceNameAqua];
     label.textColor = [HexToRgbColor colorWithHexColorString:@"4f4e4e"];
     label.font = [NSFont systemFontOfSize:18];
-    label.frame = NSMakeRect(22, 117, 100, 30);
+    label.frame = NSMakeRect(22, 147, 100, 30);
     [self.window.contentView addSubview:label];
 }
 
@@ -385,13 +386,24 @@ using keychain_app::secmod_commands::secmod_parser_f;
 }
 
 - (void) setupPassConfirmField {
-    passConfirm = [[NSSecureTextField alloc] initWithFrame:CGRectMake(130, 120, self.window.frame.size.width - 155, 30)];
+    passConfirm = [[NSSecureTextField alloc] initWithFrame:CGRectMake(130, 150, self.window.frame.size.width - 155, 30)];
     passConfirm.backgroundColor = [NSColor whiteColor];
     passConfirm.font = [NSFont systemFontOfSize:20];
     passConfirm.layer.cornerRadius = 4.0;
     passConfirm.nextKeyView = pass;
     passConfirm.appearance = [NSAppearance appearanceNamed:NSAppearanceNameAqua];
     [self.window.contentView addSubview:passConfirm];
+}
+
+- (void) setupRecommendationTextForPassword {
+    NSTextField *label = [NSTextField labelWithString:@"* We recommend to use more than 13 characters, to combine lowercase and uppercase letters, digits and symbols for extra safety (a-z, A-Z, 0-9, @#$%*)"];
+    label.appearance = [NSAppearance appearanceNamed:NSAppearanceNameAqua];
+    label.textColor = [HexToRgbColor colorWithHexColorString:@"4f4e4e"];
+    label.font = [NSFont systemFontOfSize:12];
+    label.frame = NSMakeRect(130, 104, 423, 45);
+    label.lineBreakMode = NSLineBreakByWordWrapping;
+    [label setContentCompressionResistancePriority:250 forOrientation:NSLayoutConstraintOrientationHorizontal];
+    [self.window.contentView addSubview:label];
 }
 
 - (void) setupSignButton {

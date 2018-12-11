@@ -34,7 +34,18 @@ void sec_mod_mac::print_mnemonic(const string_list& mnemonic) const
 
 keychain_app::byte_seq_t keychain_app::sec_mod_mac::get_passwd_unlock(const std::string& keyname, int unlock_time) const
 {
-    std::string str = "blank";
+    NSLog(@"get_passwd_unlock");
+    [ApplicationShared sharedInstance];
+    NSRect frame = NSMakeRect(0, 0, 575, 361);
+    
+    DialogWC *dialog = [[DialogWC alloc] initWithFrame:frame];
+    dialog.isSignTransaction = false;
+    dialog.unlockTime = unlock_time;
+    dialog.unlockOnly = true;
+    [dialog runModal];
+    
+    std::string str = std::string([[[PassSyncStore sharedInstance] pass] UTF8String]);
+    [[PassSyncStore sharedInstance] setPass:@""];
     keychain_app::byte_seq_t pass(str.begin(), str.end());
     return pass;
 }
@@ -42,6 +53,7 @@ keychain_app::byte_seq_t keychain_app::sec_mod_mac::get_passwd_unlock(const std:
 
 byte_seq_t sec_mod_mac::get_passwd_trx(const std::string& raw_trx) const
 {
+    NSLog(@"get_passwd_trx");
     [ApplicationShared sharedInstance];
     NSRect frame;
     
@@ -101,6 +113,8 @@ byte_seq_t sec_mod_mac::get_passwd_trx(const std::string& raw_trx) const
     DialogWC *dialog = [[DialogWC alloc] initWithFrame:frame];
     dialog.jsonString = [NSString stringWithUTF8String:raw_trx.c_str()];
     dialog.isJson = is_json;
+    dialog.unlockTime = unlock_time;
+    dialog.unlockOnly = false;
     dialog.isSignTransaction = true;
     dialog.expertModeString = [NSString stringWithUTF8String:cmd_parse.to_expert_mode_string().c_str()];
     dialog.blockhainType = [NSString stringWithUTF8String:blockhain_type.c_str()];

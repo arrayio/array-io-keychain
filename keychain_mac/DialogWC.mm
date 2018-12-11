@@ -86,96 +86,96 @@ using keychain_app::secmod_commands::secmod_parser_f;
     [self setupSignButton];
     [self setupCancelButton];
     [self checkForRedLock];
-    if (_isSignTransaction) {
+    if (!self.unlockOnly) {
+        if (_isSignTransaction) {
 
-        [self setupLogoBlockhain:self.blockhainType];
-        [self setupTo];
-        [self setupFrom];
-        [self setupAmount];
-        [self setupExpertModeButton];
-        if (self.isJson) {
-            
-            secmod_parser_f cmd_parse;
-            auto cmd_type = cmd_parse([self.jsonString UTF8String]);
-            
-            auto unlock_time = cmd_parse.unlock_time(); //check unlock time. If unlock time > 0 print red lock icon with text warning.
-            auto is_json = cmd_parse.is_json();//need to check parse success. If json is false > 0 print red lock icon with text warning.
-            std::string blockhain_type;
-            
-            switch (cmd_type)
-            {
-                case keychain_app::secmod_commands::blockchain_secmod_te::unknown:
+            [self setupLogoBlockhain:self.blockhainType];
+            [self setupTo];
+            [self setupFrom];
+            [self setupAmount];
+            [self setupExpertModeButton];
+            if (self.isJson) {
+                
+                secmod_parser_f cmd_parse;
+                auto cmd_type = cmd_parse([self.jsonString UTF8String]);
+                
+                switch (cmd_type)
                 {
-                    
-                }
-                    break;
-                case keychain_app::secmod_commands::blockchain_secmod_te::ethereum:
-                {
-                    auto eth_trx = cmd_parse.to_ethereum();
-                    auto eth_data = eth_trx.trx_info;
-                    [self setupTextTo:[NSString stringWithUTF8String:eth_data.to.c_str()]];
-                    [self setupTextFrom:[NSString stringWithUTF8String:eth_trx.from.c_str()]];
-                    [self setupTextAmount:[NSString stringWithUTF8String:eth_data.value.c_str()]];
-                }
-                    break;
-                case keychain_app::secmod_commands::blockchain_secmod_te::bitcoin:
-                {
-                    
-                }
-                    break;
-                case keychain_app::secmod_commands::blockchain_secmod_te::rawhash:
-                {
-                    
-                }
-                    break;
-                case keychain_app::secmod_commands::blockchain_secmod_te::ethereum_swap:
-                {
-                    auto swap_trx = cmd_parse.to_ethereum_swap();
-                    auto swap_info = swap_trx.swap_info;
-                    switch (swap_info.action)
+                    case keychain_app::secmod_commands::blockchain_secmod_te::unknown:
                     {
-                        case keychain_app::secmod_commands::secmod_command<keychain_app::secmod_commands::blockchain_secmod_te::ethereum_swap>::secmod_command_swap::action_te::create_swap:
-                            [self setupSwapAdditional:@"Hash"];
-                            [self setupTextSwapAdditional:[NSString stringWithUTF8String:swap_info.hash.c_str()]];
-                            [self setupTextSwapAction:@"Create Swap"];
-                            break;
-                        case keychain_app::secmod_commands::secmod_command<keychain_app::secmod_commands::blockchain_secmod_te::ethereum_swap>::secmod_command_swap::action_te::refund:
-                            [self setupSwapAdditional:@""];
-                            [self setupTextSwapAdditional:@""];
-                            [self setupTextSwapAction:@"Refund"];
-                            break;
-                        case keychain_app::secmod_commands::secmod_command<keychain_app::secmod_commands::blockchain_secmod_te::ethereum_swap>::secmod_command_swap::action_te::withdraw:
-                            [self setupSwapAdditional:@"Secret"];
-                            [self setupTextSwapAdditional:[NSString stringWithUTF8String:swap_info.secret.c_str()]];
-                            [self setupTextSwapAction:@"Withdraw"];
-                            break;
+                        
                     }
-                    auto eth_data = swap_trx.trx_info;
-                    [self setupTextTo:[NSString stringWithUTF8String:eth_data.to.c_str()]];
-                    [self setupTextFrom:[NSString stringWithUTF8String:swap_trx.from.c_str()]];
-                    [self setupTextAmount:[NSString stringWithUTF8String:eth_data.value.c_str()]];
-                    [self setupSwapAddress];
-                    [self setupSwapAction];
-                    [self setupLogoSwap];
-                    [self setupTextSwapAddress:[NSString stringWithUTF8String:swap_info.address.c_str()]];
+                        break;
+                    case keychain_app::secmod_commands::blockchain_secmod_te::ethereum:
+                    {
+                        auto eth_trx = cmd_parse.to_ethereum();
+                        auto eth_data = eth_trx.trx_info;
+                        [self setupTextTo:[NSString stringWithUTF8String:eth_data.to.c_str()]];
+                        [self setupTextFrom:[NSString stringWithUTF8String:eth_trx.from.c_str()]];
+                        [self setupTextAmount:[NSString stringWithUTF8String:eth_data.value.c_str()]];
+                    }
+                        break;
+                    case keychain_app::secmod_commands::blockchain_secmod_te::bitcoin:
+                    {
+                        
+                    }
+                        break;
+                    case keychain_app::secmod_commands::blockchain_secmod_te::rawhash:
+                    {
+                        
+                    }
+                        break;
+                    case keychain_app::secmod_commands::blockchain_secmod_te::ethereum_swap:
+                    {
+                        auto swap_trx = cmd_parse.to_ethereum_swap();
+                        auto swap_info = swap_trx.swap_info;
+                        switch (swap_info.action)
+                        {
+                            case keychain_app::secmod_commands::secmod_command<keychain_app::secmod_commands::blockchain_secmod_te::ethereum_swap>::secmod_command_swap::action_te::create_swap:
+                                [self setupSwapAdditional:@"Hash"];
+                                [self setupTextSwapAdditional:[NSString stringWithUTF8String:swap_info.hash.c_str()]];
+                                [self setupTextSwapAction:@"Create Swap"];
+                                break;
+                            case keychain_app::secmod_commands::secmod_command<keychain_app::secmod_commands::blockchain_secmod_te::ethereum_swap>::secmod_command_swap::action_te::refund:
+                                [self setupSwapAdditional:@""];
+                                [self setupTextSwapAdditional:@""];
+                                [self setupTextSwapAction:@"Refund"];
+                                break;
+                            case keychain_app::secmod_commands::secmod_command<keychain_app::secmod_commands::blockchain_secmod_te::ethereum_swap>::secmod_command_swap::action_te::withdraw:
+                                [self setupSwapAdditional:@"Secret"];
+                                [self setupTextSwapAdditional:[NSString stringWithUTF8String:swap_info.secret.c_str()]];
+                                [self setupTextSwapAction:@"Withdraw"];
+                                break;
+                        }
+                        auto eth_data = swap_trx.trx_info;
+                        [self setupTextTo:[NSString stringWithUTF8String:eth_data.to.c_str()]];
+                        [self setupTextFrom:[NSString stringWithUTF8String:swap_trx.from.c_str()]];
+                        [self setupTextAmount:[NSString stringWithUTF8String:eth_data.value.c_str()]];
+                        [self setupSwapAddress];
+                        [self setupSwapAction];
+                        [self setupLogoSwap];
+                        [self setupTextSwapAddress:[NSString stringWithUTF8String:swap_info.address.c_str()]];
+                    }
+                        break;
+                    case keychain_app::secmod_commands::blockchain_secmod_te::parse_error:
+                    {
+                        
+                    }
+                        break;
+                    default:
+                    {
+                        
+                    }
+                        break;
                 }
-                    break;
-                case keychain_app::secmod_commands::blockchain_secmod_te::parse_error:
-                {
-                    
-                }
-                    break;
-                default:
-                {
-                    
-                }
-                    break;
             }
+        } else {
+            [self setupTitleLabel:@"Enter the password for the new key"];
+            [self setupPassConfirmField];
+            [self setupLabelConfirmPassphrase];
         }
     } else {
-        [self setupTitleLabel:@"Enter the password for the new key"];
-        [self setupPassConfirmField];
-        [self setupLabelConfirmPassphrase];
+        [self setupTitleLabel:@"Unlock"];
     }
     [[NSApplication sharedApplication] runModalForWindow:self.window];
     

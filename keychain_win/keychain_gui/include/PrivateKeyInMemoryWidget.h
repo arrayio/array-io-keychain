@@ -2,22 +2,20 @@
 #define PRIVATEKEYINMEMORY_H
 
 #include <QWidget>
-#include "Transaction.h"
-#include "SecureWindowElement.h"
-#include "KeychainWidget.h"
+#include <QLabel>
 
-class PrivateKeyInMemory : public KeychainWidget
+class PrivateKeyInMemory : public QWidget
 {
 	Q_OBJECT
 public:
-	PrivateKeyInMemory(const Transaction &transaction, QWidget * parent = Q_NULLPTR);
-	void SetPosition(int x, int y, int width) override;
-	int GetCurrentHeight() override;
-	int GetCurrentWidth() override;
+	PrivateKeyInMemory(QWidget * parent = Q_NULLPTR);
+	void SetPosition(int x, int y, int labelWidth, int valueWidth);
+	void SetTime(QString timeValueStr);
 	~PrivateKeyInMemory();
 
 private:
-	SecureWindowElement * unlockTime= Q_NULLPTR;
+	QLabel * timeLabel;
+	QLabel * timeValue;
 	int currentHeight = 0;
 	int currentWidth = 0;
 };

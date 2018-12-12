@@ -70,6 +70,12 @@ class Keychain {
       },
       LOCK: {
         command: "lock"
+      },
+      ABOUT: {
+        command: "about"
+      },
+      VERSION: {
+        command: "version"
       }
     }
   }

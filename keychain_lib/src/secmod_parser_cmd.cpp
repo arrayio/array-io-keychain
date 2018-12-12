@@ -130,6 +130,10 @@ std::string secmod_parser_f::to_raw_trx_string() const
 //it is print secmod command instead of nested json transaction
 std::string secmod_parser_f::to_expert_mode_string() const 
 {
+  if (m_cmd.json == false)
+  {
+    return m_cmd.data.as<std::string>();
+  }
   try
   {
     switch (m_cmd.blockchain)

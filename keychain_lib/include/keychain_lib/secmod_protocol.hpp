@@ -131,7 +131,7 @@ struct secmod_command<blockchain_secmod_te::rawhash>
   struct secmod_command_rawhash
   {
     secmod_command_rawhash(){}
-    secmod_command_rawhash(std::string &&from_, std::string &&hash_)
+    secmod_command_rawhash(std::string &&from_, std::string hash_)
       : from(from_), hash(hash_) {}
     
     std::string from;
@@ -145,7 +145,7 @@ struct secmod_command<blockchain_secmod_te::rawhash>
 
 }
 
-FC_LIGHT_REFLECT_ENUM(keychain_app::secmod_commands::blockchain_secmod_te, (unknown)(ethereum)(bitcoin)(ethereum_swap))
+FC_LIGHT_REFLECT_ENUM(keychain_app::secmod_commands::blockchain_secmod_te, (unknown)(ethereum)(bitcoin)(rawhash)(ethereum_swap)(parse_error))
 
 FC_LIGHT_REFLECT(keychain_app::secmod_commands::secmod_command_common, (json)(blockchain)(keyname)(data)(unlock_time))
 FC_LIGHT_REFLECT(keychain_app::secmod_commands::ethereum_trx_t, (nonce)(gasPrice)(gas)(to)(value)(data)(chainid))

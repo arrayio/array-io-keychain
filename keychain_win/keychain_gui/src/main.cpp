@@ -28,6 +28,9 @@ using secmod_commands::secmod_parser_f;
 
 int main(int argc, char *argv[])
 {
+
+
+#ifdef FROMPROCCESS
 	DWORD dwWritten;
 	char buffer[9000];
 	DWORD dwRead = 0;
@@ -43,9 +46,6 @@ int main(int argc, char *argv[])
 		ReadFile(transPipe, buffer, sizeof(buffer) - 1, &dwRead, NULL);
 		CloseHandle(transPipe);
 	}
-
-
-#ifdef FROMPROCCESS
 	hNewDesktop = OpenDesktopW(_T("secdesktop"), NULL, FALSE, GENERIC_ALL); //GetThreadDesktop(GetCurrentThreadId());
 	hOldDesktop = OpenDesktopW(_T("default"), NULL, FALSE, GENERIC_ALL);
 	SwitchDesktop(hNewDesktop);
@@ -55,10 +55,12 @@ int main(int argc, char *argv[])
 	int endIndex = -1;
 
 	QString srcTrans;
+#ifdef FROMPROCCESS
 	for (int i = 0; i < dwRead; i++) {
 		srcTrans.push_back(buffer[i]);
 	}
-	
+#endif
+	//srcTrans = QString("{\"json\":true,\"blockchain\":\"bitcoin\",\"keyname\":\"my key@69a2947efc2ab973\",\"data\":{\"from\":\"16wDQNfXksgkBn5SGafK5pWjz9uofhU8mh\",\"trx_info\":{\"version\":1,\"num_vins\":1,\"vins\":[{\"txid\":\"416e9b4555180aaa0c417067a46607bc58c96f0131b2f41f7d0fb665eab03a7e\",\"output_id\":0,\"script_len\":25,\"script_sig\":\"76a91499b1ebcfc11a13df5161aba8160460fe1601d54188ac\",\"end_of_vin\":\"feffffff\"}],\"num_vouts\":2,\"vouts\":[{\"address\":\"1NAK3za9MkbAkkSBMLcvmhTD6etgB4Vhpr\",\"amount\":20000,\"script_len\":25,\"script_pub_key\":\"76a914e81d742e2c3c7acd4c29de090fc2c4d4120b2bf888ac\"},{\"address\":\"1NAK3za9MkbAkkSBMLcvmhTD6etgB4Vhpr\",\"amount\":20000,\"script_len\":25,\"script_pub_key\":\"76a914e81d742e2c3c7acd4c29de090fc2c4d4120b2bf888ac\"}],\"locktime\":0}},\"unlock_time\":0}");
 	auto log = logger_singletone::instance();
 	BOOST_LOG_SEV(log.lg, info) << "Got from pipe:" + srcTrans.toStdString();
 
@@ -71,7 +73,6 @@ int main(int argc, char *argv[])
 
 	auto unlock_time = cmd_parse.unlock_time(); //check unlock time. If unlock time > 0 print red lock icon with text warning.
 	auto is_json = cmd_parse.is_json();//need to check parse success. If json is false > 0 print red lock icon with text warning.
-	
 
 	Transaction trans(srcTrans);
 	switch (cmd_type)

@@ -34,6 +34,11 @@ blockchain_secmod_te secmod_parser_f::cmd_type() const
   return m_cmd.blockchain;
 }
 
+std::string secmod_parser_f::keyname() const
+{
+  return m_cmd.keyname;
+}
+
 int secmod_parser_f::unlock_time() const
 {
   return m_cmd.unlock_time;

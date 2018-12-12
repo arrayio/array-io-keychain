@@ -19,7 +19,9 @@ keychain_gui_win::keychain_gui_win(Transaction &transaction, QWidget *parent)
 	
 	descriptionLabel = new QLabel(this);
 	descriptionLabel->setStyleSheet("font:12px \"Segoe UI\";background:transparent;");
-	descriptionLabel->setText("<b>''CryptoKitties''</b> requires a passphrase to sign transaction<br> with keyname <b>''test_1''</b>. Are you sure you want to sign?");
+	descriptionLabel->setWordWrap(true);
+	descriptionLabel->setAlignment(Qt::AlignVCenter | Qt::AlignLeft);
+	descriptionLabel->setFixedSize(343, 68);
 	
 	
 	int _x = 0, _y = 204, _labelWidth = 116;
@@ -39,34 +41,39 @@ keychain_gui_win::keychain_gui_win(Transaction &transaction, QWidget *parent)
 	else {
 		secmod_parser_f cmd_parse;
 		auto cmd_type = cmd_parse(transaction.getTransactionText().toStdString());
+		QString kn = "key_name";
+		QString descr("Some application requires a passphrase to sign transaction with keyname <b>''"+ kn +"''</b>. Are you sure you want to sign?");
+		descriptionLabel->setText(descr);
 		if (!cmd_parse.is_json()) {
 			element = new UnparsedTransactionWidget(transaction, this);
 			warn = true;
 		}
 		else {
-			switch (cmd_type)
-			{
-			case keychain_app::secmod_commands::blockchain_secmod_te::ethereum: {
-				element = new EthereumWidget(transaction, this);
-				break;
-			}
-			case keychain_app::secmod_commands::blockchain_secmod_te::ethereum_swap: {
-				element = new EthereumSwapWidget(transaction, this);
-				break;
-			}
-			case keychain_app::secmod_commands::blockchain_secmod_te::bitcoin:
-			{
-				element = new BitcoinWidget(transaction, this);
-				break;
-			}
-			case keychain_app::secmod_commands::blockchain_secmod_te::rawhash:
-			{
-				element = new UnparsedTransactionWidget(transaction, this);
+			if (cmd_parse.unlock_time() > 0) 
 				warn = true;
+				switch (cmd_type)
+				{
+				case keychain_app::secmod_commands::blockchain_secmod_te::ethereum: {
+					element = new EthereumWidget(transaction, this);
+					break;
+				}
+				case keychain_app::secmod_commands::blockchain_secmod_te::ethereum_swap: {
+					element = new EthereumSwapWidget(transaction, this);
+					break;
+				}
+				case keychain_app::secmod_commands::blockchain_secmod_te::bitcoin:
+				{
+					element = new BitcoinWidget(transaction, this);
+					break;
+				}
+				case keychain_app::secmod_commands::blockchain_secmod_te::rawhash:
+				{
+					element = new UnparsedTransactionWidget(transaction, this);
+					warn = true;
+					break;
+				}
 				break;
-			}
-			break;
-			}
+				}
 		}
 		element->move(0, START_POSITION);
 		element->SetPosition(0, START_POSITION, FIELD_WIDTH);
@@ -122,11 +129,11 @@ keychain_gui_win::keychain_gui_win(Transaction &transaction, QWidget *parent)
 	if (element != Q_NULLPTR) {
 		OKButton->move(element->GetCurrentWidth() - 112, endControlPosition);
 		setFixedWidth(element->GetCurrentWidth() + 20);
-		descriptionLabel->move(element->GetCurrentWidth() - 343, 25);
+		descriptionLabel->move(element->GetCurrentWidth() - 420, 0);
 	}
 	else {
 		OKButton->move(width() - 112, endControlPosition);
-		descriptionLabel->move(width() - 363, 25);
+		descriptionLabel->move(width() - 420, 0);
 	}
 	
 	lockIcon = new LockIcon(this);

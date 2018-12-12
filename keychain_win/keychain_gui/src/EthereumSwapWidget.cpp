@@ -45,7 +45,7 @@ EthereumSwapWidget::EthereumSwapWidget(Transaction &transaction, QWidget * paren
 	cryptoType = new SecureWindowElement(this);
 	cryptoType->SetLabelStyle("background-image:url(:/keychain_gui_win/bg_ephir.png) no-repeat;");
 	cryptoType->SetValueStyle(valueStyle);
-	cryptoType->SetLabelAndValue("empty=ethereum99");
+	cryptoType->SetLabelAndValue("empty=ethereum");
 
 	//QList<QString> fieldList({ "From","To","Amount" });
 
@@ -65,6 +65,11 @@ EthereumSwapWidget::EthereumSwapWidget(Transaction &transaction, QWidget * paren
 	amount->SetLabelStyle(labelStyle);
 	amount->SetValueStyle(valueStyle);
 	amount->SetLabelAndValue("Amount", QString::fromStdString(eth_data.value));
+
+	if (cmd_parse.unlock_time() > 0) {
+		unlockTime = new PrivateKeyInMemory(this);
+		unlockTime->SetTime(QString::number(cmd_parse.unlock_time()));
+	}
 
 	expertModeElement = new ExpertModeElement(this);
 	expertModeElement->SetExpertModeText(QString::fromStdString(cmd_parse.to_expert_mode_string()));
@@ -98,6 +103,11 @@ void EthereumSwapWidget::SetPosition(int x, int y, int width)
 	amount->SetPosition(0, currentHeight, 116, width);
 	amount->move(0, currentHeight);
 	currentHeight += 26;
+	if (unlockTime != Q_NULLPTR) {
+		unlockTime->SetPosition(0, currentHeight, 116, width);
+		unlockTime->move(0, currentHeight);
+		currentHeight += 36;
+	}
 	expertModeElement->SetPosition(0, currentHeight, 116, width);
 	expertModeElement->move(0, currentHeight);
 	currentHeight += 60;

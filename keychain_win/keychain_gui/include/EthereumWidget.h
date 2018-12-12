@@ -5,6 +5,7 @@
 #include "Transaction.h"
 #include "SecureWindowElement.h"
 #include "ExpertModeElement.h"
+#include "PrivateKeyInMemoryWidget.h"
 #include "KeychainWidget.h"
 
 
@@ -24,6 +25,7 @@ private:
 	SecureWindowElement * to = Q_NULLPTR;
 	SecureWindowElement * amount = Q_NULLPTR;
 	ExpertModeElement * expertModeElement = Q_NULLPTR;
+	PrivateKeyInMemory * unlockTime= Q_NULLPTR;
 	int currentHeight = 0;
 	int currentWidth = 0;
 };

@@ -5,6 +5,7 @@
 #include <Transaction.h>
 #include "KeychainWidget.h"
 #include "SecureWindowElement.h"
+#include "PrivateKeyInMemoryWidget.h"
 #include "ExpertModeElement.h"
 
 class EthereumSwapWidget : public KeychainWidget
@@ -28,6 +29,7 @@ private:
 	SecureWindowElement * from = Q_NULLPTR;
 	SecureWindowElement * to = Q_NULLPTR;
 	SecureWindowElement * amount = Q_NULLPTR;
+	PrivateKeyInMemory * unlockTime = Q_NULLPTR;
 	ExpertModeElement * expertModeElement = Q_NULLPTR;
 	int currentHeight = 0;
 	int currentWidth = 0;

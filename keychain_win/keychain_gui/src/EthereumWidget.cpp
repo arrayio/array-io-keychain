@@ -35,7 +35,12 @@ EthereumWidget::EthereumWidget(Transaction &transaction, QWidget * parent)
 	amount->SetLabelAndValue("Amount", QString::fromStdString(eth_data.value));
 	amount->SetLabelStyle(labelStyle);
 	amount->SetValueStyle(valueStyle);
-	
+
+	if (cmd_parse.unlock_time() > 0) {
+		unlockTime = new PrivateKeyInMemory(this);
+		unlockTime->SetTime(QString::number(cmd_parse.unlock_time()));
+	}
+
 	expertModeElement = new ExpertModeElement(this);
 	expertModeElement->SetExpertModeText(QString::fromStdString(cmd_parse.to_expert_mode_string()));
 	
@@ -56,6 +61,11 @@ void EthereumWidget::SetPosition(int x, int y, int width)
 	amount->SetPosition(0, currentHeight, 116, width);
 	amount->move(0, currentHeight);
 	currentHeight += 26;
+	if (unlockTime != Q_NULLPTR) {
+		unlockTime->SetPosition(0, currentHeight, 116, width);
+		unlockTime->move(0, currentHeight);
+		currentHeight += 36;
+	}
 	expertModeElement->SetPosition(0, currentHeight, 116, width);
 	expertModeElement->move(0, currentHeight);
 	currentHeight += 60;

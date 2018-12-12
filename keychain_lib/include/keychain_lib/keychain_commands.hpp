@@ -21,8 +21,6 @@
 #include <fc_light/exception/exception.hpp>
 #include <fc_light/crypto/hex.hpp>
 
-
-
 #include <boost/signals2.hpp>
 
 #include "key_file_parser.hpp"
@@ -46,6 +44,8 @@
 #include <fc_light/crypto/ripemd160.hpp>
 #include <fc_light/crypto/sha256.hpp>
 #include <fc_light/crypto/base58.hpp>
+
+#include "version_info.hpp"
 
 #ifdef __linux__
 #  define KEY_DEFAULT_PATH  "/var/keychain"
@@ -71,6 +71,8 @@
 #define SWAP_F3 "1b258d50"      // "withdraw(bytes32,address)"
 
 namespace keychain_app {
+
+struct keychain_command_base;
 
 enum struct blockchain_te {
   unknown=0,
@@ -198,9 +200,10 @@ fc_light::variant open_keyfile(const char_t* filename)
 void create_keyfile(const char* filename, const fc_light::variant& keyfile_var);
 size_t from_hex(const std::string& hex_str, unsigned char* out_data, size_t out_data_len );
 std::string to_hex(const uint8_t* data, size_t length);
-std::string read_private_key(keychain_base *, std::string , std::string, int);
+std::string read_private_key(keychain_base *, std::string , std::string, int, const keychain_command_base*);
 std::pair<std::string, std::string> read_public_key_file( keychain_base * , std::string );
-std::pair<std::string, std::string> read_private_key_file( keychain_base * , std::string , std::string );
+std::pair<std::string, std::string> read_private_key_file( keychain_base * , std::string , std::string,
+                                                           int unlock_time, const keychain_command_base* );
 
 
 
@@ -234,6 +237,8 @@ namespace bfs = boost::filesystem;
 
 enum struct command_te {
     null = 0,
+    about,
+    version,
     help,
     list,
     sign_hex,
@@ -300,6 +305,49 @@ struct keychain_command: keychain_command_base
       return fc_light::json::to_string(fc_light::variant(json_error(id, "method is not implemented")));
     }
     using params_t = void;
+};
+
+
+template <>
+struct keychain_command<command_te::about>: keychain_command_base {
+  keychain_command() : keychain_command_base(command_te::list) {}
+  virtual ~keychain_command() {}
+  
+  using params_t = void;
+  
+  virtual std::string operator()(keychain_base *keychain, const fc_light::variant &params_variant, int id) const override
+  {
+    try {
+      json_response response(fc_light::variant(version_info::about()), id);
+      return fc_light::json::to_string(fc_light::variant(response));
+    }
+    catch (const std::exception &exc)
+    {
+      std::cerr << fc_light::json::to_string(fc_light::variant(json_error(id, exc.what()))) << std::endl;
+      return fc_light::json::to_string(fc_light::variant(json_error(id, exc.what())));
+    }
+  }
+};
+
+template <>
+struct keychain_command<command_te::version>: keychain_command_base {
+  keychain_command() : keychain_command_base(command_te::list) {}
+  virtual ~keychain_command() {}
+  
+  using params_t = void;
+  
+  virtual std::string operator()(keychain_base *keychain, const fc_light::variant &params_variant, int id) const override
+  {
+    try {
+      json_response response(fc_light::variant(version_info::version()), id);
+      return fc_light::json::to_string(fc_light::variant(response));
+    }
+    catch (const std::exception &exc)
+    {
+      std::cerr << fc_light::json::to_string(fc_light::variant(json_error(id, exc.what()))) << std::endl;
+      return fc_light::json::to_string(fc_light::variant(json_error(id, exc.what())));
+    }
+  }
 };
 
 template<>
@@ -374,7 +422,7 @@ struct keychain_command<command_te::sign_hex> : keychain_command_base
           }
 
           json = create_secmod_cmd(raw, params.blockchain_type, from, params.unlock_time, params.keyname);
-          std::string key_data = read_private_key(keychain, params.keyname, json , params.unlock_time);
+          std::string key_data = read_private_key(keychain, params.keyname, json , params.unlock_time, this);
           int pk_len = keychain_app::from_hex(key_data, (unsigned char*) private_key.data(), 32);
 
           switch (params.blockchain_type)
@@ -470,7 +518,7 @@ struct keychain_command<command_te::sign_hash> : keychain_command_base
             if (params.keyname.empty())
                 std::runtime_error("Error: keyname is not specified");
 
-            std::string key_data = read_private_key(keychain, params.keyname, params.hash, 0 );
+            std::string key_data = read_private_key(keychain, params.keyname, params.hash, 0, this );
 
             int pk_len = keychain_app::from_hex(key_data, (unsigned char*) private_key.data(), 32);
 
@@ -744,6 +792,7 @@ struct keychain_command<command_te::public_key>: keychain_command_base
         virtual ~keychain_command(){}
         struct params
         {
+            params():unlock_time(0){};
             std::string keyname;
             int unlock_time;
         };
@@ -755,7 +804,7 @@ struct keychain_command<command_te::public_key>: keychain_command_base
             {
                 auto params = params_variant.as<params_t>();
                 if (!params.keyname.empty())
-                    read_private_key(keychain, params.keyname, "", params.unlock_time);
+                    read_private_key(keychain, params.keyname, "", params.unlock_time, this);
                 else
                     throw std::runtime_error("keyname param is not specified");
 
@@ -809,6 +858,8 @@ constexpr auto cmd_static_list =
 FC_LIGHT_REFLECT_ENUM(
   keychain_app::command_te,
     (null)
+    (about)
+    (version)
     (help)
     (list)
     (sign_hex)

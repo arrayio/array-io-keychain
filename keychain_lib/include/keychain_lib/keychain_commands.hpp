@@ -21,8 +21,6 @@
 #include <fc_light/exception/exception.hpp>
 #include <fc_light/crypto/hex.hpp>
 
-
-
 #include <boost/signals2.hpp>
 
 #include "key_file_parser.hpp"
@@ -46,6 +44,8 @@
 #include <fc_light/crypto/ripemd160.hpp>
 #include <fc_light/crypto/sha256.hpp>
 #include <fc_light/crypto/base58.hpp>
+
+#include "version_info.hpp"
 
 #ifdef __linux__
 #  define KEY_DEFAULT_PATH  "/var/keychain"
@@ -237,6 +237,8 @@ namespace bfs = boost::filesystem;
 
 enum struct command_te {
     null = 0,
+    about,
+    version,
     help,
     list,
     sign_hex,
@@ -303,6 +305,49 @@ struct keychain_command: keychain_command_base
       return fc_light::json::to_string(fc_light::variant(json_error(id, "method is not implemented")));
     }
     using params_t = void;
+};
+
+
+template <>
+struct keychain_command<command_te::about>: keychain_command_base {
+  keychain_command() : keychain_command_base(command_te::list) {}
+  virtual ~keychain_command() {}
+  
+  using params_t = void;
+  
+  virtual std::string operator()(keychain_base *keychain, const fc_light::variant &params_variant, int id) const override
+  {
+    try {
+      json_response response(fc_light::variant(version_info::about()), id);
+      return fc_light::json::to_string(fc_light::variant(response));
+    }
+    catch (const std::exception &exc)
+    {
+      std::cerr << fc_light::json::to_string(fc_light::variant(json_error(id, exc.what()))) << std::endl;
+      return fc_light::json::to_string(fc_light::variant(json_error(id, exc.what())));
+    }
+  }
+};
+
+template <>
+struct keychain_command<command_te::version>: keychain_command_base {
+  keychain_command() : keychain_command_base(command_te::list) {}
+  virtual ~keychain_command() {}
+  
+  using params_t = void;
+  
+  virtual std::string operator()(keychain_base *keychain, const fc_light::variant &params_variant, int id) const override
+  {
+    try {
+      json_response response(fc_light::variant(version_info::version()), id);
+      return fc_light::json::to_string(fc_light::variant(response));
+    }
+    catch (const std::exception &exc)
+    {
+      std::cerr << fc_light::json::to_string(fc_light::variant(json_error(id, exc.what()))) << std::endl;
+      return fc_light::json::to_string(fc_light::variant(json_error(id, exc.what())));
+    }
+  }
 };
 
 template<>
@@ -813,6 +858,8 @@ constexpr auto cmd_static_list =
 FC_LIGHT_REFLECT_ENUM(
   keychain_app::command_te,
     (null)
+    (about)
+    (version)
     (help)
     (list)
     (sign_hex)

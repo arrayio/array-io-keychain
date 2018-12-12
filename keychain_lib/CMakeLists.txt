@@ -2,6 +2,13 @@ project( KeychainLib  )
 
 cmake_minimum_required( VERSION 3.0.2 )
 
+list( APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/git_version_gen" )
+include( GetGitRevisionDescription )
+get_git_head_revision( GIT_REFSPEC KEYCHAIN_COMMON_GIT_REVISION )
+get_git_unix_timestamp(KEYCHAIN_COMMON_GIT_REVISION_UNIX_TIMESTAMP)
+git_describe(KEYCHAIN_COMMON_GIT_REVISION_DESCRIPTION --tags)
+configure_file("${CMAKE_SOURCE_DIR}/keychain_lib/src/git_revision.cpp.in" "${CMAKE_CURRENT_BINARY_DIR}/git_revision.cpp" @ONLY)
+
 set(CMAKE_CXX_FLAGS "-std=c++14")
 
 if (NOT MSVC)
@@ -52,7 +59,7 @@ endif( MSVC )
 
 file(GLOB KEYCHAIN_LIB_SOURCES "./src/*.cpp" )
 file(GLOB KEYCHAIN_LIB_INCLUDE "./include/keychain_lib/*.hpp" )
-
+list(APPEND KEYCHAIN_LIB_SOURCES "${CMAKE_CURRENT_BINARY_DIR}/git_revision.cpp")
 
 add_library(keychain_common STATIC ${KEYCHAIN_LIB_SOURCES} ${KEYCHAIN_LIB_INCLUDE})
 target_link_libraries(keychain_common  kaitai_struct_cpp_stl_runtime)

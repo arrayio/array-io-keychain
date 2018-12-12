@@ -1,5 +1,5 @@
 //
-// Created by roman on 4/20/18.
+// Created by roman on 8/12/18.
 //
 
 #include <fc_light/exception/exception.hpp>
@@ -32,6 +32,11 @@ blockchain_secmod_te secmod_parser_f::operator()(const std::string& json)
 blockchain_secmod_te secmod_parser_f::cmd_type() const
 {
   return m_cmd.blockchain;
+}
+
+std::string secmod_parser_f::keyname() const
+{
+  return m_cmd.keyname;
 }
 
 int secmod_parser_f::unlock_time() const
@@ -130,6 +135,10 @@ std::string secmod_parser_f::to_raw_trx_string() const
 //it is print secmod command instead of nested json transaction
 std::string secmod_parser_f::to_expert_mode_string() const 
 {
+  if (m_cmd.json == false)
+  {
+    return m_cmd.data.as<std::string>();
+  }
   try
   {
     switch (m_cmd.blockchain)

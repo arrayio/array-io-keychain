@@ -80,7 +80,7 @@ BitcoinWidget::BitcoinWidget(Transaction &transaction, QWidget * parent)
 		connect(lookAll, &QPushButton::clicked, this, &BitcoinWidget::lookUpAll);
 	}
 	expertModeElement = new ExpertModeElement(this);
-	expertModeElement->SetExpertModeText(transaction.getTransactionText());
+	expertModeElement->SetExpertModeText(QString::fromStdString(cmd_parse.to_expert_mode_string()));
 }
 
 void BitcoinWidget::SetPosition(int x, int y, int width)

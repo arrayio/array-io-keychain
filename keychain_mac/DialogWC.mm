@@ -91,12 +91,10 @@ using keychain_app::secmod_commands::secmod_parser_f;
         if (_isSignTransaction) {
             [self checkForRedLock];
             [self setupLogoBlockhain:self.blockhainType];
-            [self setupTo];
-            [self setupFrom];
-            [self setupAmount];
             [self setupExpertModeButton];
-            if (self.isJson) {
-                
+            [self setupTitleLabel:[NSString stringWithFormat:@"You are trying to sign a transaction with the key \"%@\". %@", self.keyname, (self.unlockTime > 0) ? @"" : @""]];
+
+//            if (self.isJson) {
                 secmod_parser_f cmd_parse;
                 auto cmd_type = cmd_parse([self.jsonString UTF8String]);
                 
@@ -104,16 +102,21 @@ using keychain_app::secmod_commands::secmod_parser_f;
                 {
                     case keychain_app::secmod_commands::blockchain_secmod_te::unknown:
                     {
-                        
+                        [self setupBottomLabel:@"Data"];
+                        [self setupTextBottomLabel:[NSString stringWithUTF8String:cmd_parse.to_raw_trx_string().c_str()]];
+
                     }
                         break;
                     case keychain_app::secmod_commands::blockchain_secmod_te::ethereum:
                     {
                         auto eth_trx = cmd_parse.to_ethereum();
                         auto eth_data = eth_trx.trx_info;
-                        [self setupTextTo:[NSString stringWithUTF8String:eth_data.to.c_str()]];
+                        [self setupBottomLabel:@"To"];
+                        [self setupFrom];
+                        [self setupTopLabel:@"Amount"];
+                        [self setupTextBottomLabel:[NSString stringWithUTF8String:eth_data.to.c_str()]];
                         [self setupTextFrom:[NSString stringWithUTF8String:eth_trx.from.c_str()]];
-                        [self setupTextAmount:[NSString stringWithUTF8String:eth_data.value.c_str()]];
+                        [self setupTextTopLabel:[NSString stringWithUTF8String:eth_data.value.c_str()]];
                     }
                         break;
                     case keychain_app::secmod_commands::blockchain_secmod_te::bitcoin:
@@ -123,11 +126,15 @@ using keychain_app::secmod_commands::secmod_parser_f;
                         break;
                     case keychain_app::secmod_commands::blockchain_secmod_te::rawhash:
                     {
-                        
+                        NSLog(@"sign_hash!");
                     }
                         break;
                     case keychain_app::secmod_commands::blockchain_secmod_te::ethereum_swap:
                     {
+                        [self setupBottomLabel:@"To"];
+                        [self setupFrom];
+                        [self setupTopLabel:@"Amount"];
+                        
                         auto swap_trx = cmd_parse.to_ethereum_swap();
                         auto swap_info = swap_trx.swap_info;
                         switch (swap_info.action)
@@ -149,9 +156,9 @@ using keychain_app::secmod_commands::secmod_parser_f;
                                 break;
                         }
                         auto eth_data = swap_trx.trx_info;
-                        [self setupTextTo:[NSString stringWithUTF8String:eth_data.to.c_str()]];
+                        [self setupTextBottomLabel:[NSString stringWithUTF8String:eth_data.to.c_str()]];
                         [self setupTextFrom:[NSString stringWithUTF8String:swap_trx.from.c_str()]];
-                        [self setupTextAmount:[NSString stringWithUTF8String:eth_data.value.c_str()]];
+                        [self setupTextTopLabel:[NSString stringWithUTF8String:eth_data.value.c_str()]];
                         [self setupSwapAddress];
                         [self setupSwapAction];
                         [self setupLogoSwap];
@@ -169,7 +176,7 @@ using keychain_app::secmod_commands::secmod_parser_f;
                     }
                         break;
                 }
-            }
+//            }
         } else {
             [self setupTitleLabel:@"Enter the password for the new key"];
             [self setupPassConfirmField];
@@ -178,7 +185,7 @@ using keychain_app::secmod_commands::secmod_parser_f;
         }
     } else {
         [self checkForRedLock];
-        [self setupTitleLabel:@"Unlock"];
+        [self setupTitleLabel:[NSString stringWithFormat:@"You are trying to unlock the key \"%@\" for \"%d\" seconds.", self.keyname, self.unlockTime]];
     }
     [[NSApplication sharedApplication] runModalForWindow:self.window];
     
@@ -210,10 +217,10 @@ using keychain_app::secmod_commands::secmod_parser_f;
 - (void) redlockButtonClicked {
     NSString *string = @"";
     if (self.unlockTime > 0) {
-        string = [NSString stringWithFormat:@"%@Experimental unlock function is used, it may be unsafe.", string];
+        string = [NSString stringWithFormat:@"%@The \"Unlock\" command is experimental and insecure.\nWe do not recommend to use it.", string];
     }
-    if (!self.isJson) {
-        string = [NSString stringWithFormat:@"%@%@Failed to parse transaction.", ([string isEqualToString:@""]) ? @"" : @"\n\n", string];
+    if (!self.isJson && !self.unlockOnly) {
+        string = [NSString stringWithFormat:@"%@%@Failed to parse transaction.", string, ([string isEqualToString:@""]) ? @"" : @"\n\n"];
     }
     NSPopover *popover = [[NSPopover alloc] initWithContent:string doesAnimate:true];
     [popover showRelativeToRect:NSMakeRect(self.window.frame.size.width - 41, self.window.frame.size.height - 65, 19, 25) ofView:self.window.contentView.superview preferredEdge:NSRectEdgeMinY];
@@ -251,7 +258,9 @@ using keychain_app::secmod_commands::secmod_parser_f;
     label.appearance = [NSAppearance appearanceNamed:NSAppearanceNameAqua];
     label.textColor = [HexToRgbColor colorWithHexColorString:@"4f4e4e"];
     label.font = [NSFont systemFontOfSize:14];
-    label.frame = NSMakeRect(190, self.window.frame.size.height - 98, 330, 54);
+    label.frame = NSMakeRect(190, self.window.frame.size.height - 90, 330, 54);
+    label.lineBreakMode = NSLineBreakByWordWrapping;
+    [label setContentCompressionResistancePriority:250 forOrientation:NSLayoutConstraintOrientationHorizontal];
     
     [self.window.contentView addSubview:label];
 }
@@ -281,7 +290,7 @@ using keychain_app::secmod_commands::secmod_parser_f;
 }
 
 - (void) setupLabelPassphrase {
-    NSTextField *label = [NSTextField labelWithString:self.isSignTransaction ? @"Passphrase" : @"Confirm"];
+    NSTextField *label = [NSTextField labelWithString:(!self.unlockOnly && !self.isSignTransaction) ? @"Confirm" : @"Passphrase"];
     label.appearance = [NSAppearance appearanceNamed:NSAppearanceNameAqua];
     label.textColor = [HexToRgbColor colorWithHexColorString:@"4f4e4e"];
     label.font = [NSFont systemFontOfSize:18];
@@ -289,8 +298,8 @@ using keychain_app::secmod_commands::secmod_parser_f;
     [self.window.contentView addSubview:label];
 }
 
-- (void) setupTo {
-    NSTextField *label = [NSTextField labelWithString:@"To"];
+- (void) setupBottomLabel:(NSString*) string {
+    NSTextField *label = [NSTextField labelWithString:string];
     label.appearance = [NSAppearance appearanceNamed:NSAppearanceNameAqua];
     label.textColor = [HexToRgbColor colorWithHexColorString:@"4f4e4e"];
     label.font = [NSFont systemFontOfSize:18];
@@ -307,8 +316,8 @@ using keychain_app::secmod_commands::secmod_parser_f;
     [self.window.contentView addSubview:label];
 }
 
-- (void) setupAmount {
-    NSTextField *label = [NSTextField labelWithString:@"Amount"];
+- (void) setupTopLabel:(NSString *) string {
+    NSTextField *label = [NSTextField labelWithString:string];
     label.appearance = [NSAppearance appearanceNamed:NSAppearanceNameAqua];
     label.textColor = [HexToRgbColor colorWithHexColorString:@"4f4e4e"];
     label.font = [NSFont systemFontOfSize:18];
@@ -370,7 +379,7 @@ using keychain_app::secmod_commands::secmod_parser_f;
     [self.window.contentView addSubview:label];
 }
 
-- (void) setupTextTo:(NSString*)string {
+- (void) setupTextBottomLabel:(NSString*)string {
     NSTextField *label = [NSTextField labelWithString:string];
     label.appearance = [NSAppearance appearanceNamed:NSAppearanceNameAqua];
     label.textColor = [HexToRgbColor colorWithHexColorString:@"7b8da7"];
@@ -388,7 +397,7 @@ using keychain_app::secmod_commands::secmod_parser_f;
     [self.window.contentView addSubview:label];
 }
 
-- (void) setupTextAmount:(NSString*)string {
+- (void) setupTextTopLabel:(NSString*)string {
     NSTextField *label = [NSTextField labelWithString:string];
     label.appearance = [NSAppearance appearanceNamed:NSAppearanceNameAqua];
     label.textColor = [HexToRgbColor colorWithHexColorString:@"7b8da7"];

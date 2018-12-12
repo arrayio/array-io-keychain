@@ -23,6 +23,7 @@ public:
   
   blockchain_secmod_te operator()(const std::string& json);
   blockchain_secmod_te cmd_type() const;
+  std::string keyname() const;
   int unlock_time() const;
   bool is_json() const;
   ethereum_cmd to_ethereum() const;

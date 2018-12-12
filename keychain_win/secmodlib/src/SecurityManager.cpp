@@ -33,9 +33,9 @@ void SecurityManager::CreateSecureDesktop(const std::string& transId) {
 	wcsncpy_s(dst, 400, rem.c_str(), lastOfSlash+1);
 	wcscat_s(dst, 400, _passEntryAppName.c_str());
 	//wcscat_s(args, 400, L" ");
-	std::wstring _tId(400, L'#');
+	//std::wstring _tId(400, L'#');
 	size_t outSize;
-	mbstowcs_s(&outSize, &_tId[0], 400, transId.c_str(), 400);
+	//mbstowcs_s(&outSize, &_tId[0], 400, transId.c_str(), 400);
 	//wcscat_s(args, 400, _tId.c_str());
 	LPCWSTR appToStart = dst;
 	//LPTSTR app_args = args;

@@ -47,7 +47,7 @@ keychain_app::byte_seq_t SecureModuleWrapper::_startSecureDesktop(const std::str
 	HANDLE transactionPipe;
 
 	auto log = logger_singletone::instance();
-	BOOST_LOG_SEV(log.lg, info) << str;
+	BOOST_LOG_SEV(log.lg, info) << "Send to pipe:"+ str;
 
 	transactionPipe = CreateNamedPipe(TEXT("\\\\.\\pipe\\transpipe"),
 		PIPE_ACCESS_DUPLEX,
@@ -67,6 +67,7 @@ keychain_app::byte_seq_t SecureModuleWrapper::_startSecureDesktop(const std::str
 		if (ConnectNamedPipe(transactionPipe, NULL) != FALSE)   // wait for someone to connect to the pipe
 		{
 			std::string trans = str;
+			BOOST_LOG_SEV(log.lg, info) << "Send to pipe: (hardcode)" + trans;
 			trans.push_back('\0');
 			WriteFile(transactionPipe,
 				trans.c_str(),

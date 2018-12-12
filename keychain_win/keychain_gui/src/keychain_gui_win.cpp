@@ -41,8 +41,7 @@ keychain_gui_win::keychain_gui_win(Transaction &transaction, QWidget *parent)
 	else {
 		secmod_parser_f cmd_parse;
 		auto cmd_type = cmd_parse(transaction.getTransactionText().toStdString());
-		QString kn = "key_name";
-		QString descr("Some application requires a passphrase to sign transaction with keyname <b>''"+ kn +"''</b>. Are you sure you want to sign?");
+		QString descr("Some application requires a passphrase to sign transaction with keyname <b>''"+ QString::fromStdString(cmd_parse.keyname()) +"''</b>. Are you sure you want to sign?");
 		descriptionLabel->setText(descr);
 		if (!cmd_parse.is_json()) {
 			element = new UnparsedTransactionWidget(transaction, this);

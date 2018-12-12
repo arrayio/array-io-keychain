@@ -15,10 +15,10 @@ using namespace logging::trivial;
 class logger_singletone
 {
 public:
-    static const logger_singletone& instance();
+    static const logger_singletone& instance(std::string = "_keychain");
     src::severity_logger< severity_level > lg;
 private:
-    logger_singletone();
+    logger_singletone(std::string);
 };
 
 #endif //KEYCHAIN_LOGGER

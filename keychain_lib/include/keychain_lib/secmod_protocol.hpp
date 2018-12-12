@@ -58,22 +58,9 @@ struct secmod_command_common
 struct ethereum_trx_t
 {
   ethereum_trx_t () : chainid(0) {}
-  ethereum_trx_t(  std::string _nonce,
-          std::string _gasPrice,
-          std::string _gas,
-          int _chainid,
-          std::string _from,
-          std::string _to,
-          std::string _value):
-    nonce(_nonce),
-    gasPrice(_gasPrice),
-    gas(_gas),
-    chainid(_chainid),
-    to(_to),
-    value(_value){}
   std::string nonce, gasPrice, gas;
   int chainid;
-  std::string to ,value;
+  std::string to ,value, data;
 };
 
 template<>
@@ -161,7 +148,7 @@ struct secmod_command<blockchain_secmod_te::rawhash>
 FC_LIGHT_REFLECT_ENUM(keychain_app::secmod_commands::blockchain_secmod_te, (unknown)(ethereum)(bitcoin)(ethereum_swap))
 
 FC_LIGHT_REFLECT(keychain_app::secmod_commands::secmod_command_common, (json)(blockchain)(keyname)(data)(unlock_time))
-FC_LIGHT_REFLECT(keychain_app::secmod_commands::ethereum_trx_t, (nonce)(gasPrice)(gas)(chainid)(to)(value))
+FC_LIGHT_REFLECT(keychain_app::secmod_commands::ethereum_trx_t, (nonce)(gasPrice)(gas)(to)(value)(data)(chainid))
 FC_LIGHT_REFLECT(keychain_app::secmod_commands::secmod_command<keychain_app::secmod_commands::blockchain_secmod_te::ethereum>::type, (from)(trx_info))
 
 FC_LIGHT_REFLECT_ENUM(

@@ -15,14 +15,14 @@
 #include <keychain.hpp>
 
 
-logger_singletone::logger_singletone()
+logger_singletone::logger_singletone(std::string postfix)
 {
 
     typedef sinks::synchronous_sink< sinks::text_file_backend > file_sink;
 
     // Create a text file sink
     boost::shared_ptr< file_sink > sink(new file_sink(
-            keywords::file_name = std::string(LOG_DEFAULT_PATH)+  "/%Y%m%d_%H%M%S.log",
+            keywords::file_name = std::string(LOG_DEFAULT_PATH)+  "/%Y%m%d_%H%M%S"+postfix+".log",
             keywords::rotation_size = 16384,
             keywords::auto_flush = true
     ));
@@ -42,9 +42,9 @@ logger_singletone::logger_singletone()
 
 }
 
-const logger_singletone& logger_singletone::instance()
+const logger_singletone& logger_singletone::instance(std::string postfix)
 {
-    static const logger_singletone instance;
+    static const logger_singletone instance(postfix);
     return instance;
 }
 

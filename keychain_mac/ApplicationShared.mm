@@ -16,7 +16,7 @@
     static ApplicationShared *sharedInstance = nil;
     static dispatch_once_t onceToken;
     [NSApplication sharedApplication];
-    [NSWorkspace.sharedWorkspace setIcon:[[NSImage alloc] initWithContentsOfFile:[NSString stringWithFormat:@"%@/resources/logo.png", FileManager.getWorkDirectoryPath]] forFile:FileManager.getBinaryPath options:0];
+    [NSWorkspace.sharedWorkspace setIcon:[[NSImage alloc] initWithContentsOfFile:[NSString stringWithFormat:@"%@/resources/icon.png", FileManager.getWorkDirectoryPath]] forFile:FileManager.getBinaryPath options:0];
     [NSApp setActivationPolicy:NSApplicationActivationPolicyRegular];
     [[PassSyncStore sharedInstance] setPass:@""];
     dispatch_once(&onceToken, ^{

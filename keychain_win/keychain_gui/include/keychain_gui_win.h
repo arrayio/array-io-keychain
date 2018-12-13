@@ -5,6 +5,7 @@
 #include <QLayout>
 #include <QLineEdit>
 #include <QPushButton>
+#include <QMessageBox>
 #include "PopupWindow.h"
 #include "LockIcon.h"
 #include "SecureWindowElement.h"
@@ -19,6 +20,8 @@
 #include "PrivateKeyInMemoryWidget.h"
 #include <keychain_lib/secmod_parser_cmd.hpp>
 #include "UnparsedTransactionWidget.h"
+#include "PasswordEnterElement.h"
+#include "UnlockKeyWidget.h"
 
 using namespace keychain_app;
 using secmod_commands::secmod_parser_f;
@@ -42,13 +45,14 @@ private:
 	QPushButton * CancelButton = Q_NULLPTR;
 	
 	QLabel * headerBlock = Q_NULLPTR;
-	QLabel * passPhrase = Q_NULLPTR;
-	QLabel * message= Q_NULLPTR;
+	/*QLabel * passPhrase = Q_NULLPTR;
+	QLineEdit * passPhraseValue = Q_NULLPTR;*/
+	//QLabel * message= Q_NULLPTR;
 	QLabel * descriptionLabel = Q_NULLPTR;
-	QLineEdit* passPhraseValue = Q_NULLPTR;
 	LockIcon * lockIcon = Q_NULLPTR;
 	KeychainWidget * element = Q_NULLPTR;
-
+	PasswordEnterElement * password;
+	PasswordEnterElement * confirmPassword = Q_NULLPTR;
 	KeychainServiceExchange * serviceExchange =NULL;
 
 private:
@@ -59,4 +63,5 @@ public slots:
 	void transaction_sign();
 	void cancel_sign();
 	void show_transaction();
+	void checkPasswordValid();
 };

@@ -11,7 +11,6 @@ keychain_gui_win::keychain_gui_win(Transaction &transaction, QWidget *parent)
 	headerBlock = new QLabel(this);
 	headerBlock->setFixedHeight(68);
 	headerBlock->setStyleSheet("background-color:rgb(255,255,255);background-image:url(:/keychain_gui_win/header.png);background-repeat:no-repeat;");
-
 	setStyleSheet("background-color:rgb(242,243,246)");
 
 	serviceExchange = new KeychainServiceExchange();
@@ -26,19 +25,23 @@ keychain_gui_win::keychain_gui_win(Transaction &transaction, QWidget *parent)
 	
 	int _x = 0, _y = 204, _labelWidth = 116;
 
-	int endControlPosition = 0;
+	int endControlPosition = START_POSITION;
 
 	bool warn = false;
-	if (transaction.getTransactionText() == "create_password") {
-		message = new QLabel(this);
-		message->setFixedSize(FIELD_WIDTH, 25);
-		message->move(132, START_POSITION);
-		message->setStyleSheet("font:16px \"Segoe UI\";background:transparent;color:rgb(123,141,167);");
-		message->setText("Please enter new password");
+	if (transaction.isUnlockKey() != -1) {
+		element = new UnlockKeyWidget(transaction, this);
+		element->move(0, endControlPosition);
+		element->SetPosition(0, endControlPosition, FIELD_WIDTH);
 		endControlPosition += 10;
-		endControlPosition = START_POSITION + 25;
+		endControlPosition = endControlPosition + element->GetCurrentHeight();
+		descriptionLabel->setText("Unlock key with name <b>''" + transaction.unlockKeyName() + "''</b>. Are you sure you want to unlock?");
 	}
-	else {
+	if (transaction.isCreatePassword()) {
+		descriptionLabel->setStyleSheet("font:14px \"Segoe UI\";background:transparent;");
+		descriptionLabel->setText("Please enter new password");
+	}
+	if (!transaction.isCreatePassword() && transaction.isUnlockKey() == -1)
+	{
 		secmod_parser_f cmd_parse;
 		auto cmd_type = cmd_parse(transaction.getTransactionText().toStdString());
 		QString descr("Some application requires a passphrase to sign transaction with keyname <b>''"+ QString::fromStdString(cmd_parse.keyname()) +"''</b>. Are you sure you want to sign?");
@@ -74,37 +77,45 @@ keychain_gui_win::keychain_gui_win(Transaction &transaction, QWidget *parent)
 				break;
 				}
 		}
-		element->move(0, START_POSITION);
-		element->SetPosition(0, START_POSITION, FIELD_WIDTH);
+		element->move(0, endControlPosition);
+		element->SetPosition(0, endControlPosition, FIELD_WIDTH);
 		endControlPosition += 10;
-
-		endControlPosition = START_POSITION + element->GetCurrentHeight();
+		endControlPosition = endControlPosition + element->GetCurrentHeight();
 	}
 
-	passPhrase = new QLabel(this);
-	passPhrase->setStyleSheet("font:16px \"Segoe UI\";background:transparent;");
-	passPhrase->setText("Passphrase");
-	passPhrase->setFixedWidth(116);
-	passPhrase->setFixedHeight(25);
-	passPhrase->move(0, endControlPosition);
-	passPhrase->setFrameStyle(QFrame::NoFrame);
-	passPhrase->setAlignment(Qt::AlignBottom | Qt::AlignRight);
-
-	passPhraseValue = new QLineEdit(this);
-	passPhraseValue->setStyleSheet("font:16px \"Segoe UI\";background-color:white;border-style:solid;border-width:1px;border-radius:4px;border-color:rgb(225,224,224);");
-	passPhraseValue->setText("");
-	passPhraseValue->setFixedSize(FIELD_WIDTH, 25);
-	passPhraseValue->move(131, endControlPosition);
-	passPhraseValue->setEchoMode(QLineEdit::Password);
-	passPhraseValue->setAlignment(Qt::AlignVCenter | Qt::AlignLeft);
+	password = new PasswordEnterElement(transaction.isCreatePassword(), this);
+	password->SetLabel("Passphrase");
+	password->SetPosition(0, endControlPosition, FIELD_WIDTH);
+	password->move(0, endControlPosition);
+	if (transaction.isCreatePassword()) {
+		endControlPosition += password->GetElementHeigth();
+		confirmPassword = new PasswordEnterElement(false, this);
+		confirmPassword->SetPosition(0, endControlPosition, FIELD_WIDTH);
+		confirmPassword->move(0, endControlPosition);
+		confirmPassword->SetLabel("Confirm");
+		endControlPosition += confirmPassword->GetElementHeigth();
+	}
+	else
+	{
+		endControlPosition += password->GetElementHeigth();
+	}
+	endControlPosition += 10;
 	
-	endControlPosition += 35;
 	if (element!= Q_NULLPTR)
 		headerBlock->setFixedWidth(element->GetCurrentWidth()+20);
 	else
 		headerBlock->setFixedWidth(width());
-
-	OKButton = new QPushButton("SIGN", this);
+	if (transaction.isCreatePassword()) {
+		OKButton = new QPushButton("CREATE", this);
+		connect(OKButton, &QPushButton::clicked, this, &keychain_gui_win::checkPasswordValid);
+	}
+	if (transaction.isUnlockKey() != -1) {
+		OKButton = new QPushButton("UNLOCK", this);
+	}
+	if (transaction.isCreatePassword()==false && transaction.isUnlockKey()==-1)
+	{
+		OKButton = new QPushButton("SIGN", this);
+	}
 	CancelButton = new QPushButton("CANCEL", this);
 	if (element != Q_NULLPTR)
 		CancelButton->move(element->GetCurrentWidth() - 209, endControlPosition);
@@ -148,13 +159,15 @@ keychain_gui_win::keychain_gui_win(Transaction &transaction, QWidget *parent)
 	if (warn) {
 		lockIcon->setUnSecureMode();
 	}
-	this->connect(OKButton, &QPushButton::released, this, &keychain_gui_win::transaction_sign);
+	if (!transaction.isCreatePassword()) {
+		this->connect(OKButton, &QPushButton::released, this, &keychain_gui_win::transaction_sign);
+	}
 	this->connect(CancelButton, &QPushButton::released, this, &keychain_gui_win::cancel_sign);
 }
 
 void keychain_gui_win::transaction_sign() {
 	QString passPhrase("");
-	passPhrase = this->passPhraseValue->text();
+	passPhrase = password->GetValue();
 	if (passPhrase.isEmpty()) {
 		serviceExchange->EncodeError(L"empty_password", 14);
 		return;
@@ -164,11 +177,31 @@ void keychain_gui_win::transaction_sign() {
 }
 
 void keychain_gui_win::cancel_sign() {
+	serviceExchange->EncodeError(L"empty_password", 14);
 	this->close();
 }
 
 void keychain_gui_win::show_transaction()
 {
 
+}
+
+void keychain_gui_win::checkPasswordValid()
+{
+	QString passw = password->GetValue();
+	QString confPassw = confirmPassword->GetValue();
+	if (passw != confPassw) {
+		QMessageBox passwDiffer;
+		passwDiffer.setText("Password error");
+		passwDiffer.setInformativeText("Confirm and passw are differ");
+		passwDiffer.setIcon(QMessageBox::Warning);
+		passwDiffer.setStandardButtons(QMessageBox::Ok);
+		passwDiffer.exec();
+	}
+	if (password->IsValid()) {
+		QString passPhrase("");
+		serviceExchange->EncodeSuccess(passw.toStdWString(), passw.length());
+		this->close();
+	}
 }
 

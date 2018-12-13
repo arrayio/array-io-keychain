@@ -2,7 +2,7 @@ project( keychain_win_gui  )
 
 cmake_minimum_required( VERSION 3.0.2 )
 
-set(CMAKE_CXX_FLAGS "-std=c++14")
+set(CMAKE_CXX_FLAGS "-std=c++14 /EHsc")
 set(CMAKE_EXE_LINKER_FLAGS "/SUBSYSTEM:WINDOWS")
 
 set(CMAKE_WIN32_EXECUTABLE ON)

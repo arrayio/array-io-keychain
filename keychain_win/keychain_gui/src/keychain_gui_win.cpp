@@ -29,6 +29,7 @@ keychain_gui_win::keychain_gui_win(Transaction &transaction, QWidget *parent)
 
 	bool warn = false;
 	if (transaction.isUnlockKey() != -1) {
+		warn = true;
 		element = new UnlockKeyWidget(transaction, this);
 		element->move(0, endControlPosition);
 		element->SetPosition(0, endControlPosition, FIELD_WIDTH);

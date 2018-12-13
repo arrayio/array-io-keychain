@@ -54,19 +54,21 @@ void PasswordEnterElement::SetLabel(QString labelValue)
 
 bool PasswordEnterElement::IsValid()
 {
+	pValidChecks += 1;
+	if (pValidChecks > 1)
+		return true;
 	QString passwd = value->text();
-	QRegExp regSmLetter("[a-z]+");
-	QRegExp regBigLetter("[A-Z]+");
+	QRegExp regLetter("[a-zA-Z]+");
 	QRegExp regDigit("[0-9]+");
 	QRegExp regSymbol("[@#$%*]+");
-	if (regSmLetter.indexIn(passwd) != -1 
-		&& regBigLetter.indexIn(passwd) != -1
-		&& regDigit.indexIn(passwd) != -1 
-		&& regSymbol.indexIn(passwd)
-		&& passwd.length()>=13) {
+	int cCount = (regLetter.indexIn(passwd) !=-1? 1:0) + 
+		(regDigit.indexIn(passwd)!=-1?1:0) + 
+		(regSymbol.indexIn(passwd)!=-1?2:0);
+	cCount = passwd.length() >= 8 ? 1 : 0;
+	if (cCount >= 4)
 		return true;
-	}
 	description->setStyleSheet("font:10px \"Segoe UI\";background:transparent;color:rgb(240,0,0);");
+	description->setText("weak password");
 	return false;
 }
 

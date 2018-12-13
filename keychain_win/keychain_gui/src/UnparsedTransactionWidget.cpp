@@ -13,15 +13,24 @@ UnparsedTransactionWidget::UnparsedTransactionWidget(Transaction &transaction, Q
 	auto cmd_type = cmd_parse(transaction.getTransactionText().toStdString());
 
 	expertModeElement = new ExpertModeElement(this);
-	expertModeElement->SetExpertModeText(transaction.getTransactionText());
+	expertModeElement->SetExpertModeText(QString::fromStdString(cmd_parse.to_expert_mode_string()));
 
+	if (cmd_parse.unlock_time() > 0) {
+		unlockTime = new PrivateKeyInMemory(this);
+		unlockTime->SetTime(QString::number(cmd_parse.unlock_time()));
+	}
 }
 
 void UnparsedTransactionWidget::SetPosition(int x, int y, int width)
 {
 	expertModeElement->SetPosition(0, currentHeight, 116, width);
 	expertModeElement->move(0, currentHeight);
-	currentHeight += 60;
+	currentHeight += 60; 
+	if (unlockTime != Q_NULLPTR) {
+		unlockTime->SetPosition(0, currentHeight, 116, width);
+		unlockTime->move(0, currentHeight);
+		currentHeight += 36;
+	}
 	currentWidth = expertModeElement->width();
 	currentWidth = expertModeElement->width();
 	setFixedWidth(currentWidth);

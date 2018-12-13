@@ -5,6 +5,7 @@
 #include "KeychainWidget.h"
 #include "ExpertModeElement.h"
 #include "Transaction.h"
+#include "PrivateKeyInMemoryWidget.h"
 
 class UnparsedTransactionWidget : public KeychainWidget {
 	Q_OBJECT
@@ -17,6 +18,7 @@ public:
 
 private:
 	ExpertModeElement * expertModeElement = Q_NULLPTR;
+	PrivateKeyInMemory * unlockTime = Q_NULLPTR;
 	int currentHeight = 0;
 	int currentWidth = 0;
 };

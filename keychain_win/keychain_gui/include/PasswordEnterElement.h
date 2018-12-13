@@ -29,6 +29,8 @@ private:
 	QLabel *description;
 	bool pWithDescription;
 	int _height = 0;
+	int pValidChecks = 0;
+	bool pStrong = false;
 };
 
 #endif

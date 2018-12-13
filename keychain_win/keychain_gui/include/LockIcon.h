@@ -6,12 +6,13 @@
 #include <QEvent>
 #include <QMessageBox>
 #include "PopupWindow.h"
+#include "KeychainWarningMessage.h"
 
 class LockIcon : public QFrame
 {
 	Q_OBJECT
 public:
-	LockIcon(QWidget * parent=Q_NULLPTR);
+	LockIcon(const KeychainWarningMessage wMessage, QWidget * parent=Q_NULLPTR);
 	~LockIcon();
 	void setSourceDialog(PopupWindow * popup);
 	void setUnSecureMode();

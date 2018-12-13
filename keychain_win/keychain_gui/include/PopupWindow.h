@@ -3,13 +3,13 @@
 #include <QWidget>
 #include <QFrame>
 #include <QLabel>
+#include "KeychainWarningMessage.h"
 
 class PopupWindow : public QFrame
 {
 	Q_OBJECT
 public:
-	PopupWindow(QWidget* parent=Q_NULLPTR);
-	void setUnsecureText();
+	PopupWindow(const KeychainWarningMessage wMessage, QWidget* parent=Q_NULLPTR);
 	~PopupWindow();
 
 private:

@@ -7,6 +7,7 @@ keychain_gui_win::keychain_gui_win(Transaction &transaction, QWidget *parent)
 	setWindowFlags(Qt::FramelessWindowHint);
 	setFixedSize(600, 347);
 
+	KeychainWarningMessage warningMessage;
 
 	headerBlock = new QLabel(this);
 	headerBlock->setFixedHeight(68);
@@ -15,21 +16,20 @@ keychain_gui_win::keychain_gui_win(Transaction &transaction, QWidget *parent)
 
 	serviceExchange = new KeychainServiceExchange();
 
-	
+
 	descriptionLabel = new QLabel(this);
 	descriptionLabel->setStyleSheet("font:12px \"Segoe UI\";background:transparent;");
 	descriptionLabel->setWordWrap(true);
 	descriptionLabel->setAlignment(Qt::AlignVCenter | Qt::AlignLeft);
 	descriptionLabel->setFixedSize(343, 68);
-	
-	
+
+
 	int _x = 0, _y = 204, _labelWidth = 116;
 
 	int endControlPosition = START_POSITION;
 
-	bool warn = false;
 	if (transaction.isUnlockKey() != -1) {
-		warn = true;
+		warningMessage.SetWarning(KeychainWarningMessage::WarningType::HexWarning);
 		element = new UnlockKeyWidget(transaction, this);
 		element->move(0, endControlPosition);
 		element->SetPosition(0, endControlPosition, FIELD_WIDTH);
@@ -45,38 +45,39 @@ keychain_gui_win::keychain_gui_win(Transaction &transaction, QWidget *parent)
 	{
 		secmod_parser_f cmd_parse;
 		auto cmd_type = cmd_parse(transaction.getTransactionText().toStdString());
-		QString descr("Some application requires a passphrase to sign transaction with keyname <b>''"+ QString::fromStdString(cmd_parse.keyname()) +"''</b>. Are you sure you want to sign?");
+		QString descr("Some application requires a passphrase to sign transaction with keyname <b>''" + QString::fromStdString(cmd_parse.keyname()) + "''</b>. Are you sure you want to sign?");
 		descriptionLabel->setText(descr);
 		if (!cmd_parse.is_json()) {
 			element = new UnparsedTransactionWidget(transaction, this);
-			warn = true;
+			warningMessage.SetWarning(KeychainWarningMessage::WarningType::FailedWarning);
 		}
 		else {
-			if (cmd_parse.unlock_time() > 0) 
-				warn = true;
-				switch (cmd_type)
-				{
-				case keychain_app::secmod_commands::blockchain_secmod_te::ethereum: {
-					element = new EthereumWidget(transaction, this);
-					break;
-				}
-				case keychain_app::secmod_commands::blockchain_secmod_te::ethereum_swap: {
-					element = new EthereumSwapWidget(transaction, this);
-					break;
-				}
-				case keychain_app::secmod_commands::blockchain_secmod_te::bitcoin:
-				{
-					element = new BitcoinWidget(transaction, this);
-					break;
-				}
-				case keychain_app::secmod_commands::blockchain_secmod_te::rawhash:
-				{
-					element = new UnparsedTransactionWidget(transaction, this);
-					warn = true;
-					break;
-				}
+			if (cmd_parse.unlock_time() > 0) {
+				warningMessage.SetWarning(KeychainWarningMessage::WarningType::HexWarning);
+			}
+			switch (cmd_type)
+			{
+			case keychain_app::secmod_commands::blockchain_secmod_te::ethereum: {
+				element = new EthereumWidget(transaction, this);
 				break;
-				}
+			}
+			case keychain_app::secmod_commands::blockchain_secmod_te::ethereum_swap: {
+				element = new EthereumSwapWidget(transaction, this);
+				break;
+			}
+			case keychain_app::secmod_commands::blockchain_secmod_te::bitcoin:
+			{
+				element = new BitcoinWidget(transaction, this);
+				break;
+			}
+			case keychain_app::secmod_commands::blockchain_secmod_te::rawhash:
+			{
+				warningMessage.SetWarning(KeychainWarningMessage::WarningType::HashWarnig);
+				element = new UnparsedTransactionWidget(transaction, this);
+				break;
+			}
+			break;
+			}
 		}
 		element->move(0, endControlPosition);
 		element->SetPosition(0, endControlPosition, FIELD_WIDTH);
@@ -101,9 +102,9 @@ keychain_gui_win::keychain_gui_win(Transaction &transaction, QWidget *parent)
 		endControlPosition += password->GetElementHeigth();
 	}
 	endControlPosition += 10;
-	
-	if (element!= Q_NULLPTR)
-		headerBlock->setFixedWidth(element->GetCurrentWidth()+20);
+
+	if (element != Q_NULLPTR)
+		headerBlock->setFixedWidth(element->GetCurrentWidth() + 20);
 	else
 		headerBlock->setFixedWidth(width());
 	if (transaction.isCreatePassword()) {
@@ -113,7 +114,7 @@ keychain_gui_win::keychain_gui_win(Transaction &transaction, QWidget *parent)
 	if (transaction.isUnlockKey() != -1) {
 		OKButton = new QPushButton("UNLOCK", this);
 	}
-	if (transaction.isCreatePassword()==false && transaction.isUnlockKey()==-1)
+	if (transaction.isCreatePassword() == false && transaction.isUnlockKey() == -1)
 	{
 		OKButton = new QPushButton("SIGN", this);
 	}
@@ -146,20 +147,17 @@ keychain_gui_win::keychain_gui_win(Transaction &transaction, QWidget *parent)
 		OKButton->move(width() - 112, endControlPosition);
 		descriptionLabel->move(width() - 420, 0);
 	}
-	
-	lockIcon = new LockIcon(this);
-	popupWindow = new PopupWindow(this);
+
+	lockIcon = new LockIcon(warningMessage, this);
+	popupWindow = new PopupWindow(warningMessage, this);
 	popupWindow->setVisible(false);
 	lockIcon->setFixedSize(22, 22);
 	lockIcon->setSourceDialog(popupWindow);
 	if (element != Q_NULLPTR)
-		lockIcon->move(element->GetCurrentWidth() -25, 28);
+		lockIcon->move(element->GetCurrentWidth() - 25, 28);
 	else
 		lockIcon->move(width() - 55, 28);
 	lockIcon->setMouseTracking(true);
-	if (warn) {
-		lockIcon->setUnSecureMode();
-	}
 	if (!transaction.isCreatePassword()) {
 		this->connect(OKButton, &QPushButton::released, this, &keychain_gui_win::transaction_sign);
 	}

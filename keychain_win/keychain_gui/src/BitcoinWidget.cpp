@@ -67,6 +67,7 @@ BitcoinWidget::BitcoinWidget(Transaction &transaction, QWidget * parent)
 
 	if (cmd_parse.unlock_time() > 0) {
 		unlockTime = new PrivateKeyInMemory(this);
+
 		unlockTime->SetTime(QString::number(cmd_parse.unlock_time()));
 	}
 

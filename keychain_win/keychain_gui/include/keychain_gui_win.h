@@ -22,6 +22,7 @@
 #include "UnparsedTransactionWidget.h"
 #include "PasswordEnterElement.h"
 #include "UnlockKeyWidget.h"
+#include "KeychainWarningMessage.h"
 
 using namespace keychain_app;
 using secmod_commands::secmod_parser_f;

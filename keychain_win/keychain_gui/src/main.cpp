@@ -23,12 +23,12 @@ DESKTOP_SWITCHDESKTOP | STANDARD_RIGHTS_REQUIRED)
 #define FROMPROCCESS
 HDESK hOldDesktop, hNewDesktop;
 
+using namespace std;
 using namespace keychain_app;
 using secmod_commands::secmod_parser_f;
 
 int main(int argc, char *argv[])
 {
-
 
 #ifdef FROMPROCCESS
 	DWORD dwWritten;
@@ -70,29 +70,44 @@ int main(int argc, char *argv[])
 	//srcTrans = QString("{\"json\":true,\"blockchain\":\"ethereum\",\"data\":{\"nonce\":\"143\",\"gasPrice\":\"5300000000\",\"gas\":\"100000\",\"chainid\":1,\"from\":\"\",\"to\":\"843fcaaeb0cce5ffaf272f5f2ddfff3603f9c2a0\",\"value\":\"173117678552668600\"}}");
 	secmod_parser_f cmd_parse;
 	auto cmd_type = cmd_parse(srcTrans.toStdString());
-
-	auto unlock_time = cmd_parse.unlock_time(); //check unlock time. If unlock time > 0 print red lock icon with text warning.
-	auto is_json = cmd_parse.is_json();//need to check parse success. If json is false > 0 print red lock icon with text warning.
-
 	Transaction trans(srcTrans);
-	switch (cmd_type)
-	{
-	case keychain_app::secmod_commands::blockchain_secmod_te::unknown:
-	{
-		//auto trx_str = cmd_parse.to_raw_tx();//raw hex transaction
+	for (int i = 0; i < argc; i++) {
+		QString arg(argv[i]);
+		if (!arg.isEmpty()) {
+			if (arg.contains("-unlock_time")) {
+				int start = arg.indexOf('=');
+				int unlockTime = std::stoi(arg.mid(start + 1, arg.length() - start).toStdString());
+				trans.setUnlockKey(srcTrans, unlockTime);
+			}
+		}
 	}
-		break;
-	
-	case keychain_app::secmod_commands::blockchain_secmod_te::parse_error:
-	{
-		//some error msg into log
+	if (srcTrans == "create_password") {
+		trans.setCreatePassword();
 	}
+
+	if (!trans.isCreatePassword() && trans.isUnlockKey() == -1) {
+		auto unlock_time = cmd_parse.unlock_time(); //check unlock time. If unlock time > 0 print red lock icon with text warning.
+		auto is_json = cmd_parse.is_json();//need to check parse success. If json is false > 0 print red lock icon with text warning.
+
+		switch (cmd_type)
+		{
+		case keychain_app::secmod_commands::blockchain_secmod_te::unknown:
+		{
+			//auto trx_str = cmd_parse.to_raw_tx();//raw hex transaction
+		}
 		break;
-	default:
-	{
-		//some error msg into log
-	}
+
+		case keychain_app::secmod_commands::blockchain_secmod_te::parse_error:
+		{
+			//some error msg into log
+		}
 		break;
+		default:
+		{
+			//some error msg into log
+		}
+		break;
+		}
 	}
 
 	//QJsonDocument document = QJsonDocument::fromJson(/*inputJson*//*swapInputJson*/srcTrans.toUtf8());

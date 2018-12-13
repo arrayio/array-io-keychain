@@ -89,7 +89,7 @@ byte_seq_t sec_mod_mac::get_passwd_trx(const std::string& raw_trx) const
             break;
         case keychain_app::secmod_commands::blockchain_secmod_te::rawhash:
         {
-            frame = NSMakeRect(0, 0, 575, 361);
+            frame = NSMakeRect(0, 0, 1024, 285);
             blockhain_type = "hash";
         }
             break;

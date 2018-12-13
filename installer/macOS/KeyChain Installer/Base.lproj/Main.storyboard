@@ -858,11 +858,10 @@
                                 </textFieldCell>
                             </textField>
                             <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="mG7-WL-tA9">
-                                <rect key="frame" x="18" y="49" width="414" height="68"/>
+                                <rect key="frame" x="18" y="66" width="414" height="51"/>
                                 <textFieldCell key="cell" selectable="YES" alignment="center" id="S8Q-a2-CyK">
                                     <font key="font" metaFont="system"/>
-                                    <string key="title">You’re trying to install KeyChain – a standalone app for signing transactions and generating key pairs. It provides secure key storage protected with three security layers. 
-Enjoy the new level of security!</string>
+                                    <string key="title">Welcome to KeyChain - a standalone app for signing transactions and generating key pairs. To continue, click Next. Enjoy the new level of security!</string>
                                     <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
@@ -929,16 +928,27 @@ Enjoy the new level of security!</string>
                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
                             </textField>
+                            <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="UP1-hv-0UR">
+                                <rect key="frame" x="18" y="76" width="414" height="34"/>
+                                <textFieldCell key="cell" selectable="YES" alignment="center" title="You are trying to install KeyChain. To have it in your toolkit, click Install." id="1S0-Jd-jHX">
+                                    <font key="font" metaFont="system"/>
+                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
                         </subviews>
                         <constraints>
                             <constraint firstAttribute="bottom" secondItem="cdC-9J-Svi" secondAttribute="bottom" constant="20" id="6iR-TB-Zh1"/>
                             <constraint firstItem="iEN-O1-8Hp" firstAttribute="centerX" secondItem="q5J-NA-DPF" secondAttribute="centerX" id="D2J-iB-qH3"/>
                             <constraint firstItem="iEN-O1-8Hp" firstAttribute="top" secondItem="BTw-Au-wCi" secondAttribute="bottom" constant="16" id="HdB-ny-WGb"/>
+                            <constraint firstItem="UP1-hv-0UR" firstAttribute="leading" secondItem="q5J-NA-DPF" secondAttribute="leading" constant="20" id="Now-Ca-2K9"/>
+                            <constraint firstItem="UP1-hv-0UR" firstAttribute="top" secondItem="tL8-Mo-Wgr" secondAttribute="bottom" constant="31" id="OwY-Ld-uyG"/>
                             <constraint firstItem="tL8-Mo-Wgr" firstAttribute="centerX" secondItem="q5J-NA-DPF" secondAttribute="centerX" id="SRT-nS-5aj"/>
                             <constraint firstItem="cdC-9J-Svi" firstAttribute="centerX" secondItem="q5J-NA-DPF" secondAttribute="centerX" constant="41" id="Uxi-Nr-9zH"/>
                             <constraint firstAttribute="trailing" secondItem="3pT-tS-DUq" secondAttribute="trailing" constant="161" id="Xth-OJ-PNK"/>
                             <constraint firstItem="cdC-9J-Svi" firstAttribute="top" secondItem="iEN-O1-8Hp" secondAttribute="bottom" constant="20" id="Z2H-x2-G8y"/>
                             <constraint firstItem="tL8-Mo-Wgr" firstAttribute="top" secondItem="3pT-tS-DUq" secondAttribute="bottom" constant="8" id="b2T-e2-FJd"/>
+                            <constraint firstAttribute="trailing" secondItem="UP1-hv-0UR" secondAttribute="trailing" constant="20" id="b6v-jb-FOX"/>
                             <constraint firstItem="3pT-tS-DUq" firstAttribute="leading" secondItem="q5J-NA-DPF" secondAttribute="leading" constant="161" id="dhU-g4-OLD"/>
                             <constraint firstItem="3pT-tS-DUq" firstAttribute="top" secondItem="q5J-NA-DPF" secondAttribute="top" constant="16" id="t8w-9D-SOu"/>
                             <constraint firstItem="BTw-Au-wCi" firstAttribute="centerX" secondItem="q5J-NA-DPF" secondAttribute="centerX" id="to7-Td-lkY"/>
@@ -947,6 +957,7 @@ Enjoy the new level of security!</string>
                     <connections>
                         <outlet property="infoTextField" destination="BTw-Au-wCi" id="xYb-at-b9J"/>
                         <outlet property="progressSpinning" destination="iEN-O1-8Hp" id="1Lz-1B-VyQ"/>
+                        <outlet property="welcomeLabel" destination="UP1-hv-0UR" id="OxT-PR-4oj"/>
                     </connections>
                 </viewController>
                 <customObject id="Pf5-uq-fL6" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>

@@ -15,6 +15,7 @@ class ProgressVC: NSViewController {
     let fileManager = FileManager.default
     @IBOutlet weak var progressSpinning: NSProgressIndicator!
     @IBOutlet weak var infoTextField: NSTextField!
+    @IBOutlet weak var welcomeLabel: NSTextField!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -124,11 +125,14 @@ class ProgressVC: NSViewController {
     }
     
     @IBAction func installAction(_ sender: Any) {
+        self.welcomeLabel.isHidden = true
         self.progressSpinning.isHidden = false
         self.infoTextField.isHidden = false
         print("Authorize")
         ahLaunchCtl.authorize()
-        self.untar()
+        DispatchQueue.main.async {
+            self.untar()
+        }
     }
     
     /// Function fix library rpath for Binary

@@ -592,6 +592,7 @@ struct keychain_command<command_te::create>: keychain_command_base
     struct params
     {
       std::string keyname;
+      std::string description;
       bool encrypted;
       keyfile_format::cipher_etype cipher;
       keyfile_format::keyfile_t::keyinfo_t::curve_etype curve;
@@ -643,6 +644,7 @@ struct keychain_command<command_te::create>: keychain_command_base
 
         keyfile.keyinfo.public_key = pb_hex;
         keyfile.keyname = keyname;
+        keyfile.description = params.description;
         keyfile.filetype = keyfile_format::TYPE_KEY;
         keyfile.keyinfo.format = keyfile_format::keyfile_t::keyinfo_t::FORMAT_ARRAYIO;
         keyfile.keyinfo.curve_type = params.curve;
@@ -898,7 +900,7 @@ FC_LIGHT_REFLECT_ENUM(
 
 FC_LIGHT_REFLECT(keychain_app::keychain_command<keychain_app::command_te::sign_hex>::params_t, (chainid)(transaction)(blockchain_type)(keyname)(unlock_time))
 FC_LIGHT_REFLECT(keychain_app::keychain_command<keychain_app::command_te::sign_hash>::params_t, (hash)(sign_type)(keyname))
-FC_LIGHT_REFLECT(keychain_app::keychain_command<keychain_app::command_te::create>::params_t, (keyname)(encrypted)(cipher)(curve))
+FC_LIGHT_REFLECT(keychain_app::keychain_command<keychain_app::command_te::create>::params_t, (keyname)(description)(encrypted)(cipher)(curve))
 //FC_LIGHT_REFLECT(keychain_app::keychain_command<keychain_app::command_te::remove>::params_t, (keyname))
 FC_LIGHT_REFLECT(keychain_app::keychain_command<keychain_app::command_te::public_key>::params_t, (keyname))
 FC_LIGHT_REFLECT(keychain_app::keychain_command<keychain_app::command_te::set_unlock_time>::params_t, (seconds))

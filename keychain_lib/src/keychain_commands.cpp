@@ -189,7 +189,7 @@ std::pair<std::string, std::string> keychain_app::read_public_key_file(keychain_
   return  std::make_pair(keyfile.keyinfo.public_key, keyfile.keyname);
 }
 
-
+//TODO: it is more preferable to use move semantic instead copy for text argument
 std::string keychain_app::read_private_key(keychain_base * keychain, std::string keyname, std::string text, int seconds,
                                            const keychain_command_base* cmd)
 {
@@ -208,7 +208,7 @@ std::string keychain_app::read_private_key(keychain_base * keychain, std::string
   }
 
   if (locked)
-  {
+  {//TODO: it is more preferable to use move semantic instead copy for json argument
     key_data = read_private_key_file(keychain, keyname, text, seconds, cmd).first;
     if (seconds) // unlock key
       keychain->key_map[keyname] = std::make_pair(key_data, std::make_pair(seconds, std::time(nullptr) ) );
@@ -216,7 +216,7 @@ std::string keychain_app::read_private_key(keychain_base * keychain, std::string
   else
   {
     if (seconds) // unlock key
-    {
+    {//TODO: it is more preferable to use move semantic instead copy for json argument
       key_data = read_private_key_file(keychain, keyname, text, seconds, cmd).first;
       keychain->key_map[keyname] = std::make_pair(key_data, std::make_pair(seconds, std::time(nullptr) ) );
     }

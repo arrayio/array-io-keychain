@@ -44,6 +44,7 @@
 #include <fc_light/crypto/ripemd160.hpp>
 #include <fc_light/crypto/sha256.hpp>
 #include <fc_light/crypto/base58.hpp>
+#include "secmod_protocol.hpp"
 
 #include "version_info.hpp"
 
@@ -512,13 +513,32 @@ struct keychain_command<command_te::sign_hash> : keychain_command_base
     virtual std::string operator()(keychain_base* keychain, const fc_light::variant& params_variant, int id) const override
     {
         try {
+            auto log = logger_singletone::instance();
+
             auto params = params_variant.as<params_t>();
             dev::Secret private_key;
 
             if (params.keyname.empty())
                 std::runtime_error("Error: keyname is not specified");
+            std::string pub_key = read_public_key_file(keychain, params.keyname).first;
 
-            std::string key_data = read_private_key(keychain, params.keyname, params.hash, 0, this );
+            using cmd_t = secmod_commands::secmod_command<secmod_commands::blockchain_secmod_te::rawhash>::type;
+            cmd_t data(std::move(pub_key), params.hash);
+
+            secmod_commands::secmod_command_common cmd;
+            cmd.json = true;
+            cmd.keyname = params.keyname;
+            cmd.blockchain = secmod_commands::blockchain_secmod_te::rawhash;
+            cmd.unlock_time = 0;
+            cmd.data = fc_light::variant(data);
+
+            auto variant = fc_light::variant(cmd);
+            auto json = fc_light::json::to_string(variant);
+            BOOST_LOG_SEV(log.lg, info) << "sign_hash secmodule command: \n"+
+                fc_light::json::to_pretty_string(variant);
+
+            //TODO: it is more preferable to use move semantic instead copy for json argument
+            std::string key_data = read_private_key(keychain, params.keyname, json, 0, this );
 
             int pk_len = keychain_app::from_hex(key_data, (unsigned char*) private_key.data(), 32);
 

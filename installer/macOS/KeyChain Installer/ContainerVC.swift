@@ -10,7 +10,7 @@ import Cocoa
 
 class ContainerVC: NSPageController, NSPageControllerDelegate {
     
-    var viewArray = ["one", "two", "three"]
+    var viewArray = ["one", "two", "three", "four"]
     @IBOutlet weak var nextButton: NSButton!
     @IBOutlet weak var backButton: NSButton!
     
@@ -38,8 +38,10 @@ class ContainerVC: NSPageController, NSPageControllerDelegate {
         case "one":
             return self.storyboard?.instantiateController(withIdentifier: "WelcomeVC") as! WelcomeVC
         case "two":
-            return self.storyboard?.instantiateController(withIdentifier: "SelectPathVC") as! SelectPathVC
+            return self.storyboard?.instantiateController(withIdentifier: "LicenseVC") as! LicenseVC
         case "three":
+            return self.storyboard?.instantiateController(withIdentifier: "SelectPathVC") as! SelectPathVC
+        case "four":
             return self.storyboard?.instantiateController(withIdentifier: "ProgressVC") as! ProgressVC
         default:
             return self.storyboard?.instantiateController(withIdentifier: identifier) as! NSViewController
@@ -70,6 +72,9 @@ class ContainerVC: NSPageController, NSPageControllerDelegate {
             self.nextButton.isHidden = false
             break
         case 2:
+            self.backButton.isEnabled = true
+            self.nextButton.isHidden = false
+        case 3:
             self.backButton.isEnabled = true
             self.nextButton.isHidden = true
         default:

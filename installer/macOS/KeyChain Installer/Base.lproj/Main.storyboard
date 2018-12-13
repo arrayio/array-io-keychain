@@ -964,6 +964,187 @@
             </objects>
             <point key="canvasLocation" x="1105" y="692"/>
         </scene>
+        <!--LicenseVC-->
+        <scene sceneID="5ac-4m-1ht">
+            <objects>
+                <viewController storyboardIdentifier="LicenseVC" id="WZs-Aq-YdK" customClass="LicenseVC" customModule="KeyChain_Installer" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" id="hhK-dh-wf8">
+                        <rect key="frame" x="0.0" y="0.0" width="450" height="300"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                        <subviews>
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Auy-Cj-Tez">
+                                <rect key="frame" x="18" y="263" width="414" height="17"/>
+                                <textFieldCell key="cell" lineBreakMode="clipping" title="By clicking &quot;Next&quot;, your are agree with the above license terms." id="bYR-Z1-zH5">
+                                    <font key="font" metaFont="systemSemibold" size="13"/>
+                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                            <scrollView borderType="none" horizontalLineScroll="10" horizontalPageScroll="10" verticalLineScroll="10" verticalPageScroll="10" hasHorizontalScroller="NO" translatesAutoresizingMaskIntoConstraints="NO" id="wDY-pX-uZw">
+                                <rect key="frame" x="20" y="50" width="410" height="195"/>
+                                <clipView key="contentView" drawsBackground="NO" copiesOnScroll="NO" id="4hi-xQ-vp4">
+                                    <rect key="frame" x="0.0" y="0.0" width="410" height="195"/>
+                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                    <subviews>
+                                        <textView importsGraphics="NO" richText="NO" verticallyResizable="YES" baseWritingDirection="leftToRight" findStyle="bar" smartInsertDelete="YES" id="g3g-3i-3YG">
+                                            <rect key="frame" x="0.0" y="0.0" width="410" height="425"/>
+                                            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                            <color key="textColor" red="0.14118" green="0.16078000000000001" blue="0.18038999999999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                            <size key="minSize" width="410" height="195"/>
+                                            <size key="maxSize" width="410" height="10000000"/>
+                                            <attributedString key="textStorage">
+                                                <fragment>
+                                                    <string key="content">MIT License
+</string>
+                                                    <attributes>
+                                                        <color key="NSBackgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                        <color key="NSColor" red="0.14118" green="0.16078000000000001" blue="0.18038999999999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                        <font key="NSFont" size="14" name="HelveticaNeue"/>
+                                                        <real key="NSKern" value="0.0"/>
+                                                        <paragraphStyle key="NSParagraphStyle" alignment="left" lineBreakMode="wordWrapping" baseWritingDirection="leftToRight" defaultTabInterval="36" tighteningFactorForTruncation="0.0" allowsDefaultTighteningForTruncation="NO">
+                                                            <tabStops/>
+                                                        </paragraphStyle>
+                                                        <color key="NSStrokeColor" red="0.14118" green="0.16078000000000001" blue="0.18038999999999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                    </attributes>
+                                                </fragment>
+                                                <fragment>
+                                                    <string key="content" base64-UTF8="YES">
+Cg
+</string>
+                                                    <attributes>
+                                                        <color key="NSColor" red="0.14118" green="0.16078000000000001" blue="0.18038999999999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                        <font key="NSFont" size="14" name="HelveticaNeue"/>
+                                                        <real key="NSKern" value="0.0"/>
+                                                        <paragraphStyle key="NSParagraphStyle" alignment="left" lineBreakMode="wordWrapping" baseWritingDirection="leftToRight" defaultTabInterval="36" tighteningFactorForTruncation="0.0" allowsDefaultTighteningForTruncation="NO">
+                                                            <tabStops/>
+                                                        </paragraphStyle>
+                                                        <color key="NSStrokeColor" red="0.14118" green="0.16078000000000001" blue="0.18038999999999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                    </attributes>
+                                                </fragment>
+                                                <fragment>
+                                                    <string key="content">Copyright (c) 2018 KeyChain
+</string>
+                                                    <attributes>
+                                                        <color key="NSBackgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                        <color key="NSColor" red="0.14118" green="0.16078000000000001" blue="0.18038999999999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                        <font key="NSFont" size="14" name="HelveticaNeue"/>
+                                                        <real key="NSKern" value="0.0"/>
+                                                        <paragraphStyle key="NSParagraphStyle" alignment="left" lineBreakMode="wordWrapping" baseWritingDirection="leftToRight" defaultTabInterval="36" tighteningFactorForTruncation="0.0" allowsDefaultTighteningForTruncation="NO">
+                                                            <tabStops/>
+                                                        </paragraphStyle>
+                                                        <color key="NSStrokeColor" red="0.14118" green="0.16078000000000001" blue="0.18038999999999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                    </attributes>
+                                                </fragment>
+                                                <fragment>
+                                                    <string key="content" base64-UTF8="YES">
+Cg
+</string>
+                                                    <attributes>
+                                                        <color key="NSColor" red="0.14118" green="0.16078000000000001" blue="0.18038999999999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                        <font key="NSFont" size="14" name="HelveticaNeue"/>
+                                                        <real key="NSKern" value="0.0"/>
+                                                        <paragraphStyle key="NSParagraphStyle" alignment="left" lineBreakMode="wordWrapping" baseWritingDirection="leftToRight" defaultTabInterval="36" tighteningFactorForTruncation="0.0" allowsDefaultTighteningForTruncation="NO">
+                                                            <tabStops/>
+                                                        </paragraphStyle>
+                                                        <color key="NSStrokeColor" red="0.14118" green="0.16078000000000001" blue="0.18038999999999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                    </attributes>
+                                                </fragment>
+                                                <fragment>
+                                                    <string key="content">Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+</string>
+                                                    <attributes>
+                                                        <color key="NSBackgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                        <color key="NSColor" red="0.14118" green="0.16078000000000001" blue="0.18038999999999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                        <font key="NSFont" size="14" name="HelveticaNeue"/>
+                                                        <real key="NSKern" value="0.0"/>
+                                                        <paragraphStyle key="NSParagraphStyle" alignment="left" lineBreakMode="wordWrapping" baseWritingDirection="leftToRight" defaultTabInterval="36" tighteningFactorForTruncation="0.0" allowsDefaultTighteningForTruncation="NO">
+                                                            <tabStops/>
+                                                        </paragraphStyle>
+                                                        <color key="NSStrokeColor" red="0.14118" green="0.16078000000000001" blue="0.18038999999999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                    </attributes>
+                                                </fragment>
+                                                <fragment>
+                                                    <string key="content" base64-UTF8="YES">
+Cg
+</string>
+                                                    <attributes>
+                                                        <color key="NSColor" red="0.14118" green="0.16078000000000001" blue="0.18038999999999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                        <font key="NSFont" size="14" name="HelveticaNeue"/>
+                                                        <real key="NSKern" value="0.0"/>
+                                                        <paragraphStyle key="NSParagraphStyle" alignment="left" lineBreakMode="wordWrapping" baseWritingDirection="leftToRight" defaultTabInterval="36" tighteningFactorForTruncation="0.0" allowsDefaultTighteningForTruncation="NO">
+                                                            <tabStops/>
+                                                        </paragraphStyle>
+                                                        <color key="NSStrokeColor" red="0.14118" green="0.16078000000000001" blue="0.18038999999999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                    </attributes>
+                                                </fragment>
+                                                <fragment>
+                                                    <string key="content">The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+</string>
+                                                    <attributes>
+                                                        <color key="NSBackgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                        <color key="NSColor" red="0.14118" green="0.16078000000000001" blue="0.18038999999999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                        <font key="NSFont" size="14" name="HelveticaNeue"/>
+                                                        <real key="NSKern" value="0.0"/>
+                                                        <paragraphStyle key="NSParagraphStyle" alignment="left" lineBreakMode="wordWrapping" baseWritingDirection="leftToRight" defaultTabInterval="36" tighteningFactorForTruncation="0.0" allowsDefaultTighteningForTruncation="NO">
+                                                            <tabStops/>
+                                                        </paragraphStyle>
+                                                        <color key="NSStrokeColor" red="0.14118" green="0.16078000000000001" blue="0.18038999999999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                    </attributes>
+                                                </fragment>
+                                                <fragment>
+                                                    <string key="content" base64-UTF8="YES">
+Cg
+</string>
+                                                    <attributes>
+                                                        <color key="NSColor" red="0.14118" green="0.16078000000000001" blue="0.18038999999999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                        <font key="NSFont" size="14" name="HelveticaNeue"/>
+                                                        <real key="NSKern" value="0.0"/>
+                                                        <paragraphStyle key="NSParagraphStyle" alignment="left" lineBreakMode="wordWrapping" baseWritingDirection="leftToRight" defaultTabInterval="36" tighteningFactorForTruncation="0.0" allowsDefaultTighteningForTruncation="NO">
+                                                            <tabStops/>
+                                                        </paragraphStyle>
+                                                        <color key="NSStrokeColor" red="0.14118" green="0.16078000000000001" blue="0.18038999999999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                    </attributes>
+                                                </fragment>
+                                                <fragment>
+                                                    <string key="content">THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.</string>
+                                                    <attributes>
+                                                        <color key="NSBackgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                        <color key="NSColor" red="0.14118" green="0.16078000000000001" blue="0.18038999999999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                        <font key="NSFont" size="14" name="HelveticaNeue"/>
+                                                        <real key="NSKern" value="0.0"/>
+                                                        <paragraphStyle key="NSParagraphStyle" alignment="left" lineBreakMode="wordWrapping" baseWritingDirection="leftToRight" defaultTabInterval="36" tighteningFactorForTruncation="0.0" allowsDefaultTighteningForTruncation="NO">
+                                                            <tabStops/>
+                                                        </paragraphStyle>
+                                                        <color key="NSStrokeColor" red="0.14118" green="0.16078000000000001" blue="0.18038999999999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                    </attributes>
+                                                </fragment>
+                                            </attributedString>
+                                            <color key="insertionPointColor" name="textColor" catalog="System" colorSpace="catalog"/>
+                                        </textView>
+                                    </subviews>
+                                </clipView>
+                                <scroller key="verticalScroller" wantsLayer="YES" verticalHuggingPriority="750" horizontal="NO" id="oFn-Wd-lk4">
+                                    <rect key="frame" x="394" y="0.0" width="16" height="195"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                </scroller>
+                            </scrollView>
+                        </subviews>
+                        <constraints>
+                            <constraint firstAttribute="trailing" secondItem="wDY-pX-uZw" secondAttribute="trailing" constant="20" id="5tF-Dd-Hw1"/>
+                            <constraint firstAttribute="trailing" secondItem="Auy-Cj-Tez" secondAttribute="trailing" constant="20" id="GLx-Yv-KSO"/>
+                            <constraint firstItem="Auy-Cj-Tez" firstAttribute="leading" secondItem="hhK-dh-wf8" secondAttribute="leading" constant="20" id="eql-mr-Bxe"/>
+                            <constraint firstItem="wDY-pX-uZw" firstAttribute="top" secondItem="Auy-Cj-Tez" secondAttribute="bottom" constant="18" id="jfp-UC-Sdf"/>
+                            <constraint firstItem="Auy-Cj-Tez" firstAttribute="top" secondItem="hhK-dh-wf8" secondAttribute="top" constant="20" id="m5q-hc-fZ6"/>
+                            <constraint firstItem="wDY-pX-uZw" firstAttribute="leading" secondItem="hhK-dh-wf8" secondAttribute="leading" constant="20" id="tYN-ch-Vkh"/>
+                            <constraint firstAttribute="bottom" secondItem="wDY-pX-uZw" secondAttribute="bottom" constant="50" id="xoQ-71-KHu"/>
+                        </constraints>
+                    </view>
+                </viewController>
+                <customObject id="36l-nI-poG" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1105" y="1048"/>
+        </scene>
     </scenes>
     <resources>
         <image name="logo" width="128" height="108"/>

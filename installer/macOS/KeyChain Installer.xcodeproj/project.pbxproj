@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		065E4561476CAD7D2A088F20 /* Pods_Keychain_Installer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D45CE400EF06130F590AA706 /* Pods_Keychain_Installer.framework */; };
+		A793A32921C2672B0061249D /* LicenseVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = A793A32821C2672B0061249D /* LicenseVC.swift */; };
 		A7B3C13921B7FC2900317E54 /* bin.tar.gz in Resources */ = {isa = PBXBuildFile; fileRef = A7B3C13821B7FC2900317E54 /* bin.tar.gz */; };
 		A7E7F73E21A6B0CE0021ED5E /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7E7F73D21A6B0CE0021ED5E /* AppDelegate.swift */; };
 		A7E7F74221A6B0D10021ED5E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A7E7F74121A6B0D10021ED5E /* Assets.xcassets */; };
@@ -28,6 +29,7 @@
 /* Begin PBXFileReference section */
 		3E4F1444A32878A98C804499 /* Pods-Keychain Installer.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Keychain Installer.release.xcconfig"; path = "Pods/Target Support Files/Pods-Keychain Installer/Pods-Keychain Installer.release.xcconfig"; sourceTree = "<group>"; };
 		A0679F4132141184C33311C6 /* Pods-Keychain Installer.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Keychain Installer.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Keychain Installer/Pods-Keychain Installer.debug.xcconfig"; sourceTree = "<group>"; };
+		A793A32821C2672B0061249D /* LicenseVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LicenseVC.swift; sourceTree = "<group>"; };
 		A7B3C13821B7FC2900317E54 /* bin.tar.gz */ = {isa = PBXFileReference; lastKnownFileType = archive.gzip; path = bin.tar.gz; sourceTree = "<group>"; };
 		A7E7F73A21A6B0CD0021ED5E /* KeyChain Installer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "KeyChain Installer.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		A7E7F73D21A6B0CE0021ED5E /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -104,6 +106,7 @@
 				A7E7F74F21A6B3430021ED5E /* SelectPathVC.swift */,
 				A7E7F75121A6B35B0021ED5E /* ProgressVC.swift */,
 				A7EDE3B521AE99B400D912FC /* WelcomeVC.swift */,
+				A793A32821C2672B0061249D /* LicenseVC.swift */,
 				A7E7F75321A6B4360021ED5E /* LocalStorage.swift */,
 				A7E7F75521A6B4520021ED5E /* AppleScriptManager.swift */,
 				A7E7F75721A6B4620021ED5E /* Alerts.swift */,
@@ -236,6 +239,7 @@
 				A7E7F75E21A6B4CC0021ED5E /* StringLocalize.swift in Sources */,
 				A7E7F75A21A6B4860021ED5E /* Consts.swift in Sources */,
 				A7EDE3B621AE99B400D912FC /* WelcomeVC.swift in Sources */,
+				A793A32921C2672B0061249D /* LicenseVC.swift in Sources */,
 				A7E7F75421A6B4360021ED5E /* LocalStorage.swift in Sources */,
 				A7E7F75221A6B35B0021ED5E /* ProgressVC.swift in Sources */,
 				A7E7F75021A6B3430021ED5E /* SelectPathVC.swift in Sources */,

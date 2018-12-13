@@ -7,7 +7,7 @@ LockIcon::LockIcon(QWidget * parent)
 {
 	this->setFixedHeight(25);
 	this->setFixedWidth(25);
-	this->setStyleSheet("background-image:url(:/keychain_gui_win/lock.png);border-style:outset;border-width:0px;height:22px;width:22px");
+	this->setStyleSheet("background:transparent;background-image:url(:/keychain_gui_win/lock.png);border-style:outset;border-width:0px;height:22px;width:22px");
 	
 }
 
@@ -23,7 +23,7 @@ void LockIcon::setSourceDialog(PopupWindow * popup)
 
 void LockIcon::setUnSecureMode()
 {
-	this->setStyleSheet("background-image:url(:/keychain_gui_win/unsecure_lock.png);border-style:outset;border-width:0px;height:22px;width:22px");
+	this->setStyleSheet("background:transparent;background-image:url(:/keychain_gui_win/unsecure_lock.png);border-style:outset;border-width:0px;height:22px;width:22px");
 	_popup->setUnsecureText();
 }
 

@@ -23,7 +23,7 @@ ExpertModeElement::ExpertModeElement(QWidget * parent)
 	moreButton = new QPushButton(this);
 	moreButton->setFixedSize(13, 7);
 	moreButton->setFlat(true);
-	moreButton->setStyleSheet("background-image:url(:/keychain_gui_win/more_arrow.png);border-style:outset;border-width:0px;");
+	moreButton->setStyleSheet("background:transparent;background-image:url(:/keychain_gui_win/more_arrow.png);border-style:outset;border-width:0px;");
 	moreButton->setWindowFlags(Qt::FramelessWindowHint);
 	moreButton->setCursor(Qt::PointingHandCursor);
 	connect(moreButton, &QPushButton::clicked, this, &ExpertModeElement::showMoreForExpert);

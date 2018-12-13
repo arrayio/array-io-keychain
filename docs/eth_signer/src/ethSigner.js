@@ -1,17 +1,21 @@
 var Web3 = require('web3');
 const Transaction = require('ethereumjs-tx');
 const ethUtil = require('ethereumjs-util');
-const Keychain  = require('../../keychain').Keychain;
+const WS  = require('../../keychain').WS;
 
 window.onload = function () {
   const endpoint = document.getElementById('input-endpoint').value;
   const web3 = new Web3(new Web3.providers.HttpProvider(endpoint));
   const valueTx = 100;
 
-  const keychain = new Keychain('ws://localhost:16384/');
+  const keychain = new WS('ws://localhost:16384/');
 
   keychain.ws.onopen = function() {
     document.body.style.backgroundColor = '#cfc';
+    keychain.method({command: 'version'})
+    .then(data => {
+      document.getElementById('version').innerText = data.result;
+    })
   };
   keychain.ws.onclose = function() {
     document.body.style.backgroundColor = null;
@@ -24,7 +28,7 @@ window.onload = function () {
     let fromAddress;
     
     log(`Getting public key by keyname from KeyChain: ${keyname}`);
-    keychain.method('PUBLIC_KEY', { keyname }).then(data => {
+    keychain.method({ command: 'public_key', params: { keyname } }).then(data => {
       log(`Rusult: ${data.result}`);
       const publicKey = `0x${data.result}`;
       return ethUtil.publicToAddress(publicKey).toString('hex');
@@ -37,7 +41,7 @@ window.onload = function () {
       log(`Result: ${rawHex}`);
       const params = { keyname, transaction: rawHex, blockchain_type: "ethereum" };
       log(`Signing it with KeyChain: ${JSON.stringify(params)}}`);
-      return keychain.method('SIGN_HEX', params);
+      return keychain.method({command: 'sign_hex',  params });
     }).then( data => {
       const signature = data.result;
       log(`Signature: ${signature}`);

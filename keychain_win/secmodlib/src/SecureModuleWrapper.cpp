@@ -23,7 +23,7 @@ keychain_app::byte_seq_t SecureModuleWrapper::get_passwd_unlock(const std::strin
 	//TODO: need to implement
 	//it is experimental future
 	//need ot print red lock icon on user dialog window
-	return keychain_app::byte_seq_t();
+	return _startSecureDesktop(keyname, unlock_time);
 }
 
 keychain_app::byte_seq_t SecureModuleWrapper::get_passwd_on_create() const
@@ -36,7 +36,7 @@ void SecureModuleWrapper::print_mnemonic(const string_list& mnemonic) const
 	//TODO: need implementation
 }
 
-keychain_app::byte_seq_t SecureModuleWrapper::_startSecureDesktop(const std::string& str) const
+keychain_app::byte_seq_t SecureModuleWrapper::_startSecureDesktop(const std::string& str, int unlock_time) const
 {
 	std::vector<char> result_pass;
 	result_pass.reserve(512);
@@ -61,7 +61,7 @@ keychain_app::byte_seq_t SecureModuleWrapper::_startSecureDesktop(const std::str
 	DWORD writtenSize;
 	DWORD lastErrror;
 	DisconnectNamedPipe(transactionPipe);
-	_secman.CreateSecureDesktop(str);
+	_secman.CreateSecureDesktop(unlock_time);
 	while (transactionPipe != INVALID_HANDLE_VALUE) {
 		DWORD dwWritten;
 		if (ConnectNamedPipe(transactionPipe, NULL) != FALSE)   // wait for someone to connect to the pipe

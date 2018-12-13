@@ -537,6 +537,7 @@ struct keychain_command<command_te::sign_hash> : keychain_command_base
             BOOST_LOG_SEV(log.lg, info) << "sign_hash secmodule command: \n"+
                 fc_light::json::to_pretty_string(variant);
 
+            //TODO: it is more preferable to use move semantic instead copy for json argument
             std::string key_data = read_private_key(keychain, params.keyname, json, 0, this );
 
             int pk_len = keychain_app::from_hex(key_data, (unsigned char*) private_key.data(), 32);

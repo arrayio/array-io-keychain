@@ -81,7 +81,7 @@ int main(int argc, char *argv[])
 			}
 		}
 	}
-	if (srcTrans == "create_password") {
+	if (srcTrans.indexOf("create_password")!=-1) {
 		trans.setCreatePassword();
 	}
 

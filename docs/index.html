@@ -19,7 +19,7 @@
         </div>
         <div class="column col mx-2 my-2">
           <h1>KeyChain demo</h1>
-          <h6>Test the WebSocket commands of KeyСhain v.0.9 - a highly secure key management app for generating keys and signing transactions.</h6>
+          <h6>Test the WebSocket commands of KeyChain <span id="version"></span> - a highly secure key management app for generating keys and signing transactions.</h6>
           <h6>Documentation: <a href="https://github.com/arrayio/array-io-keychain/wiki/KeyChain-Protocol">KeyChain Protocol</a></h6>
         </div>
       </div>
@@ -116,6 +116,16 @@
           <button class="btn btn-primary input-group-btn" id="btn_CREATE">Create</button>
         </div>
       </div>
+      <div class="columns m-1">
+        <div class="column col-2">
+          <button class="btn btn-primary input-group-btn" id="btn_ABOUT">About</button>
+        </div>
+      </div>
+      <div class="columns m-1">
+        <div class="column col-2">
+          <button class="btn btn-primary input-group-btn" id="btn_VERSION">Version</button>
+        </div>
+      </div>
     </div>
     <div class="container">
       <div class="columns">
@@ -142,14 +152,10 @@
       keychain.ws.onopen = function() {
         document.body.style.backgroundColor = '#cfc';
 
-        /** Promises test */
-        keychain.method('LIST')
+        keychain.method('VERSION')
         .then(data => {
-          console.log('list result: ', data);
-          return keychain.method('UNLOCK', { keyname: data.result[0]} )
+          document.getElementById('version').innerText = data.result;
         })
-        .then(data => console.log('unlock result: ', data));
-        /** Promises test end */
       };
       keychain.ws.onclose = function() {      
         document.body.style.backgroundColor = null;
@@ -163,6 +169,8 @@
         attachListener('CREATE');
         attachListener('LIST');
         attachListener('LOCK');
+        attachListener('ABOUT');
+        attachListener('VERSION');
         document.getElementById('checkbox_UNLOCK').addEventListener('click', function(e) {
           document.getElementById('unlock_time_UNLOCK').disabled = !e.target.checked;
         })
@@ -191,9 +199,6 @@
 
           const data = JSON.stringify(request, undefined, 2);
           document.getElementById('request').value = data;
-          // keychain.command(commandName, params, function(data) {
-          //   document.getElementById('response').textContent = JSON.stringify(data, undefined, 2);
-          // });
           keychain.method(commandName, params).then((data) => {
             document.getElementById('response').textContent = JSON.stringify(data, undefined, 2);
           });

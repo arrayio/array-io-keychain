@@ -118,8 +118,6 @@ If you need help interacting with KeyChain, please do not hesitate to contact us
 
 - [Twitter](https://twitter.com/ProjectArray)
 
-- [Facebook](https://www.facebook.com/Array.IO/)
-
 - [Telegram](https://t.me/arrayio)
 
 - [Stackoverflow](https://stackoverflow.com/users/10429540/array-io)

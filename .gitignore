@@ -5,7 +5,7 @@
 /sec_win_passwd/pass_ent_app/x64/Debug
 /.project
 /build*
-/nmake-build/*
+/*build/*
 /3rd-party-components/lib/*
 /3rd-party-components
 /cmake-build-debug*

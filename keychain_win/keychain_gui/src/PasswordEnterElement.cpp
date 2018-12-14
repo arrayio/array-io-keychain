@@ -16,6 +16,7 @@ PasswordEnterElement::PasswordEnterElement(bool passwordCreate, QWidget * parent
 	value->setStyleSheet(passPhraseStyle);
 	value->setEchoMode(QLineEdit::Password);
 	value->setAlignment(Qt::AlignVCenter | Qt::AlignLeft);
+	value->setFocus();
 	pCreatePassword = false;
 	if (passwordCreate) {
 		pCreatePassword = true;

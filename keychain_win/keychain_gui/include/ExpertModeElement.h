@@ -5,6 +5,7 @@
 #include <QLabel>
 #include <QPushButton>
 #include "ExpertModeDialog.h"
+#include "ExpertModeLabel.h"
 
 class ExpertModeElement : public QWidget
 {
@@ -18,7 +19,7 @@ public:
 
 private:
 	QLabel * expertLabel;
-	QLabel * expertValue;
+	ExpertModeLabel * expertValue;
 	QPushButton * moreButton;
 
 	QString expertModeText;

@@ -1,17 +1,21 @@
 var Web3 = require('web3');
 const Transaction = require('ethereumjs-tx');
 const ethUtil = require('ethereumjs-util');
-const Keychain  = require('../../keychain').Keychain;
+const WS  = require('../../keychain').WS;
+let rawHexGlobal;
 
 window.onload = function () {
-  const endpoint = document.getElementById('input-endpoint').value;
-  const web3 = new Web3(new Web3.providers.HttpProvider(endpoint));
+  let web3;
   const valueTx = 100;
 
-  const keychain = new Keychain('ws://localhost:16384/');
+  const keychain = new WS('ws://localhost:16384/');
 
   keychain.ws.onopen = function() {
     document.body.style.backgroundColor = '#cfc';
+    keychain.method({command: 'version'})
+    .then(data => {
+      document.getElementById('version').innerText = data.result;
+    })
   };
   keychain.ws.onclose = function() {
     document.body.style.backgroundColor = null;
@@ -19,13 +23,18 @@ window.onload = function () {
   };
 
   document.getElementById('btn_SIGN').addEventListener('click', function() {
+    const endpoint = document.getElementById('input-endpoint').value;
+    web3 = new Web3(new Web3.providers.HttpProvider(endpoint));
     const keyname = document.getElementById('input-keyname').value;
     const toAddress = document.getElementById('input-to-address').value;
     let fromAddress;
     
     log(`Getting public key by keyname from KeyChain: ${keyname}`);
-    keychain.method('PUBLIC_KEY', { keyname }).then(data => {
-      log(`Rusult: ${data.result}`);
+    keychain.method({ command: 'public_key', params: { keyname } }).then(data => {
+      log(`Result: ${JSON.stringify(data)}`);
+      if (data.error) {
+        throw data.error;
+      }
       const publicKey = `0x${data.result}`;
       return ethUtil.publicToAddress(publicKey).toString('hex');
     }).then( data => {
@@ -37,7 +46,7 @@ window.onload = function () {
       log(`Result: ${rawHex}`);
       const params = { keyname, transaction: rawHex, blockchain_type: "ethereum" };
       log(`Signing it with KeyChain: ${JSON.stringify(params)}}`);
-      return keychain.method('SIGN_HEX', params);
+      return keychain.method({command: 'sign_hex',  params });
     }).then( data => {
       const signature = data.result;
       log(`Signature: ${signature}`);
@@ -46,15 +55,20 @@ window.onload = function () {
       log(`Transaction built, rawHex: ${rawHex}`);
       log(`Please, publish your transaction`);
       saveRawHex(rawHex);
+    }).catch( (error) => {
+      log(error);
     })
   });
 
   document.getElementById('btn_PUBLISH').addEventListener('click', async function() {
-    const rawHex = document.getElementById('rawHex').innerText;
-    log(`Sending signed transaction: ${rawHex}`);
+    if (!rawHexGlobal) {
+      log('Please sign your transaction');
+      return;
+    }
+    log(`Sending signed transaction: ${rawHexGlobal}`);
     try {
       document.getElementById('progress').style.display = 'inline-block';
-      const result = await web3.eth.sendSignedTransaction(`0x${rawHex}`);
+      const result = await web3.eth.sendSignedTransaction(`0x${rawHexGlobal}`);
       document.getElementById('progress').style.display = 'none';
       log(`Transfer result: \n${JSON.stringify(result, undefined, 2)}`);
       document.getElementById('etherscanLink').innerHTML = `<a href='https://ropsten.etherscan.io/tx/${result.transactionHash}'>Etherscan Link</a>`;
@@ -111,6 +125,7 @@ const rsv = (signature, chainId) => {
 
 function saveRawHex(rawHex) {
   document.getElementById('rawHex').innerText = rawHex;
+  rawHexGlobal = rawHex;
 }
 
 function log(message) {

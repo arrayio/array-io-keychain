@@ -50,4 +50,12 @@ std::string keychain_app::version_info::version()
   return version_string;
 }
 
+std::string keychain_app::version_info::short_version()
+{
+  static const std::regex VERSION_REGEXP("^\\d+\\.\\d+");
+  auto ver_str = version_info::version();
+  auto it = std::sregex_iterator(ver_str.begin(), ver_str.end(), VERSION_REGEXP);
+  return it->str();
+}
+
 

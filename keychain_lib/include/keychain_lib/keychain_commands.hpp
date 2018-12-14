@@ -641,10 +641,11 @@ struct keychain_command<command_te::create>: keychain_command_base
           keyfile.keyinfo.priv_key_data = std::move(pr_hex);
           keyfile.keyinfo.encrypted = false;
         }
-
+        
         keyfile.keyinfo.public_key = pb_hex;
         keyfile.keyname = keyname;
         keyfile.description = params.description;
+        keyfile.keychain_version = version_info::short_version();
         keyfile.filetype = keyfile_format::TYPE_KEY;
         keyfile.keyinfo.format = keyfile_format::keyfile_t::keyinfo_t::FORMAT_ARRAYIO;
         keyfile.keyinfo.curve_type = params.curve;

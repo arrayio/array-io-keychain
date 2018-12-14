@@ -146,6 +146,7 @@ keychain_gui_win::keychain_gui_win(Transaction &transaction, QWidget *parent)
 	else
 		lockIcon->move(width() - 55, 28);
 	lockIcon->setMouseTracking(true);
+	password->setFocus();
 	this->connect(OKButton, &QPushButton::released, this, &keychain_gui_win::transaction_sign);
 	this->connect(CancelButton, &QPushButton::released, this, &keychain_gui_win::cancel_sign);
 }

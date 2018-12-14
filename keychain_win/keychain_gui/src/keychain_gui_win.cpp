@@ -89,18 +89,7 @@ keychain_gui_win::keychain_gui_win(Transaction &transaction, QWidget *parent)
 	password->SetLabel("Passphrase");
 	password->SetPosition(0, endControlPosition, FIELD_WIDTH);
 	password->move(0, endControlPosition);
-	if (transaction.isCreatePassword()) {
-		endControlPosition += password->GetElementHeigth();
-		confirmPassword = new PasswordEnterElement(false, this);
-		confirmPassword->SetPosition(0, endControlPosition, FIELD_WIDTH);
-		confirmPassword->move(0, endControlPosition);
-		confirmPassword->SetLabel("Confirm");
-		endControlPosition += confirmPassword->GetElementHeigth();
-	}
-	else
-	{
-		endControlPosition += password->GetElementHeigth();
-	}
+	endControlPosition += password->GetElementHeigth();
 	endControlPosition += 10;
 
 	if (element != Q_NULLPTR)
@@ -109,7 +98,6 @@ keychain_gui_win::keychain_gui_win(Transaction &transaction, QWidget *parent)
 		headerBlock->setFixedWidth(width());
 	if (transaction.isCreatePassword()) {
 		OKButton = new QPushButton("CREATE", this);
-		connect(OKButton, &QPushButton::clicked, this, &keychain_gui_win::checkPasswordValid);
 	}
 	if (transaction.isUnlockKey() != -1) {
 		OKButton = new QPushButton("UNLOCK", this);
@@ -158,9 +146,7 @@ keychain_gui_win::keychain_gui_win(Transaction &transaction, QWidget *parent)
 	else
 		lockIcon->move(width() - 55, 28);
 	lockIcon->setMouseTracking(true);
-	if (!transaction.isCreatePassword()) {
-		this->connect(OKButton, &QPushButton::released, this, &keychain_gui_win::transaction_sign);
-	}
+	this->connect(OKButton, &QPushButton::released, this, &keychain_gui_win::transaction_sign);
 	this->connect(CancelButton, &QPushButton::released, this, &keychain_gui_win::cancel_sign);
 }
 
@@ -183,24 +169,5 @@ void keychain_gui_win::cancel_sign() {
 void keychain_gui_win::show_transaction()
 {
 
-}
-
-void keychain_gui_win::checkPasswordValid()
-{
-	QString passw = password->GetValue();
-	QString confPassw = confirmPassword->GetValue();
-	if (passw != confPassw) {
-		QMessageBox passwDiffer;
-		passwDiffer.setText("Password error");
-		passwDiffer.setInformativeText("Confirm and passw are differ");
-		passwDiffer.setIcon(QMessageBox::Warning);
-		passwDiffer.setStandardButtons(QMessageBox::Ok);
-		passwDiffer.exec();
-	}
-	if (password->IsValid()) {
-		QString passPhrase("");
-		serviceExchange->EncodeSuccess(passw.toStdWString(), passw.length());
-		this->close();
-	}
 }
 

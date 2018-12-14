@@ -53,7 +53,6 @@ private:
 	LockIcon * lockIcon = Q_NULLPTR;
 	KeychainWidget * element = Q_NULLPTR;
 	PasswordEnterElement * password;
-	PasswordEnterElement * confirmPassword = Q_NULLPTR;
 	KeychainServiceExchange * serviceExchange =NULL;
 
 private:
@@ -64,5 +63,4 @@ public slots:
 	void transaction_sign();
 	void cancel_sign();
 	void show_transaction();
-	void checkPasswordValid();
 };

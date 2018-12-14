@@ -12,11 +12,10 @@ class PasswordEnterElement : public QWidget
 {
 	Q_OBJECT
 public:
-	PasswordEnterElement(bool withDescription = false, QWidget * parent=Q_NULLPTR);
+	PasswordEnterElement(bool passwordCreate = false, QWidget * parent=Q_NULLPTR);
 	~PasswordEnterElement();
 	void SetPosition(int x, int y, int valueWidth);
 	void SetLabel(QString label);
-	bool IsValid();
 	void SetLabelStyle(QString style);
 	void SetValueStyle(QString style);
 	QString GetValue();
@@ -24,13 +23,19 @@ public:
 
 private:
 	//Ui::SecureWindowElement ui;
-	QLabel *label;
-	QLineEdit *value;
+	QLabel *label = Q_NULLPTR;
+	QLineEdit *value = Q_NULLPTR;
 	QLabel *description;
-	bool pWithDescription;
+	QLabel *labelConfirm = Q_NULLPTR;
+	QLineEdit *valueConfirm = Q_NULLPTR;
+	bool pCreatePassword;
 	int _height = 0;
 	int pValidChecks = 0;
 	bool pStrong = false;
+
+public slots:
+	void checkStrength(const QString &text);
+	void checkConfirm(const QString &text);
 };
 
 #endif

@@ -14,10 +14,10 @@ public:
 
 public:
 	KeychainWarningMessage() {
-		_messages[0] = "This transaction is verified.Your private keys are kept in an isolated environment to ensure a strong layer of protection.";
-		_messages[1] = "Experimental function 'unlock key' has been activated.During this time KeyChain will be able to sign transactions without the user confirmation.";
-		_messages[2] = "Using transaction hash does not provide any information about the transaction.Use the transaction hash only if you trust the app requesting the signature.";
-		_messages[3] = "KeyChain can provide only hex view of the transaction without additional information, such as address, amount, and any other additional information.Confim the transaction only if you trust the app requesting the signature.";
+		_messages[0] = "This transaction is verified. Your private keys are kept in an isolated environment to ensure a strong layer of protection.";
+		_messages[1] = "Experimental function 'unlock key' has been activated. During this time KeyChain will be able to sign transactions without the user confirmation.";
+		_messages[2] = "Using transaction hash does not provide any information about the transaction. Use the transaction hash only if you trust the app requesting the signature.";
+		_messages[3] = "KeyChain can provide only hex view of the transaction without additional information, such as address, amount, and any other additional information. Confim the transaction only if you trust the app requesting the signature.";
 	}
 
 	void SetWarning(WarningType warning) {

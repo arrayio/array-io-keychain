@@ -15,7 +15,6 @@ public:
 private:
 	QLabel * header;
 	QLabel * body;
-	QLabel * more;
 };
 #endif
 

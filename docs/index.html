@@ -11,6 +11,13 @@
   </head>
   <body>
     <div class="container">
+      <div class="columns" id="error" style="display: none">
+        <div class="column my-2">
+          <div class="toast toast-error">
+            WebSocket connection failed. Check if KeyChain is installed
+          </div>
+        </div>
+      </div>
       <div class="columns">
         <div class="column col-2 ">
         </div>
@@ -160,6 +167,10 @@
       keychain.ws.onclose = function() {      
         document.body.style.backgroundColor = null;
       };
+
+      keychain.ws.onerror = function() {
+        document.getElementById('error').style.display = 'block';
+      }
 
       window.onload = function () {
         attachListener('UNLOCK', ['keyname', 'unlock_time']);

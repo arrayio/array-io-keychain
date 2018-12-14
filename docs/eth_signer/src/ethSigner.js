@@ -19,7 +19,10 @@ window.onload = function () {
   };
   keychain.ws.onclose = function() {
     document.body.style.backgroundColor = null;
-    log('Websocket has been closed. Check for errors in the browser console and if KeyChain is installed');
+  };
+
+  keychain.ws.onerror = function() {
+    document.getElementById('error').style.display = 'block';
   };
 
   document.getElementById('btn_SIGN').addEventListener('click', function() {

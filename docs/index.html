@@ -166,11 +166,8 @@
       };
       keychain.ws.onclose = function() {      
         document.body.style.backgroundColor = null;
-      };
-
-      keychain.ws.onerror = function() {
         document.getElementById('error').style.display = 'block';
-      }
+      };
 
       window.onload = function () {
         attachListener('UNLOCK', ['keyname', 'unlock_time']);

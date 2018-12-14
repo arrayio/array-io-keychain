@@ -19,9 +19,6 @@ window.onload = function () {
   };
   keychain.ws.onclose = function() {
     document.body.style.backgroundColor = null;
-  };
-
-  keychain.ws.onerror = function() {
     document.getElementById('error').style.display = 'block';
   };
 

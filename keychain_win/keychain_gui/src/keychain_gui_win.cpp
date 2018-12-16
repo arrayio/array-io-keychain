@@ -167,8 +167,15 @@ void keychain_gui_win::cancel_sign() {
 	this->close();
 }
 
-void keychain_gui_win::show_transaction()
-{
 
+void keychain_gui_win::keyPressEvent(QKeyEvent *event)
+{
+	if (event->key() == Qt::Key_Escape) {
+		serviceExchange->EncodeError(L"empty_password", 14);
+		this->close();
+	}
+	else {
+		keyPressEvent(event);
+	}
 }
 

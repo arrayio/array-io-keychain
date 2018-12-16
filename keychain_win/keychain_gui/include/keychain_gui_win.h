@@ -55,6 +55,9 @@ private:
 	PasswordEnterElement * password;
 	KeychainServiceExchange * serviceExchange =NULL;
 
+protected:
+	void keyPressEvent(QKeyEvent *event) override;
+
 private:
 	const int FIELD_WIDTH = 446;
 	const int START_POSITION = 96;
@@ -62,5 +65,4 @@ private:
 public slots:
 	void transaction_sign();
 	void cancel_sign();
-	void show_transaction();
 };

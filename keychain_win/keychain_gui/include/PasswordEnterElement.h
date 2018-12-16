@@ -20,6 +20,7 @@ public:
 	void SetValueStyle(QString style);
 	QString GetValue();
 	int GetElementHeigth();
+	void setValueFocus();
 
 private:
 	//Ui::SecureWindowElement ui;

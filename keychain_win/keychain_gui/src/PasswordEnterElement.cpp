@@ -130,3 +130,9 @@ void PasswordEnterElement::checkConfirm(const QString & text)
 	else
 		valueConfirm->setStyleSheet("font:16px \"Segoe UI\";background-color:rgb(255,140,140);border-style:solid;border-width:1px;border-radius:4px;border-color:rgb(149,0,0);");
 }
+
+
+void PasswordEnterElement::setValueFocus()
+{
+	value->setFocus();
+}

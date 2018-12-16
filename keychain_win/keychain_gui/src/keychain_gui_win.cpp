@@ -29,7 +29,7 @@ keychain_gui_win::keychain_gui_win(Transaction &transaction, QWidget *parent)
 	int endControlPosition = START_POSITION;
 
 	if (transaction.isUnlockKey() != -1) {
-		warningMessage.SetWarning(KeychainWarningMessage::WarningType::HexWarning);
+		warningMessage.SetWarning(KeychainWarningMessage::WarningType::UnlockWarning);
 		element = new UnlockKeyWidget(transaction, this);
 		element->move(0, endControlPosition);
 		element->SetPosition(0, endControlPosition, FIELD_WIDTH);
@@ -39,6 +39,7 @@ keychain_gui_win::keychain_gui_win(Transaction &transaction, QWidget *parent)
 	}
 	if (transaction.isCreatePassword()) {
 		descriptionLabel->setStyleSheet("font:14px \"Segoe UI\";background:transparent;");
+		warningMessage.SetWarning(KeychainWarningMessage::WarningType::CreateWarning);
 		descriptionLabel->setText("Please enter new password");
 	}
 	if (!transaction.isCreatePassword() && transaction.isUnlockKey() == -1)
@@ -50,10 +51,13 @@ keychain_gui_win::keychain_gui_win(Transaction &transaction, QWidget *parent)
 		if (!cmd_parse.is_json()) {
 			element = new UnparsedTransactionWidget(transaction, this);
 			warningMessage.SetWarning(KeychainWarningMessage::WarningType::FailedWarning);
+			if (cmd_parse.unlock_time() > 0) {
+				warningMessage.SetWarning(KeychainWarningMessage::WarningType::UnlockWarning);
+			}
 		}
 		else {
 			if (cmd_parse.unlock_time() > 0) {
-				warningMessage.SetWarning(KeychainWarningMessage::WarningType::HexWarning);
+				warningMessage.SetWarning(KeychainWarningMessage::WarningType::UnlockWarning);
 			}
 			switch (cmd_type)
 			{
@@ -73,6 +77,9 @@ keychain_gui_win::keychain_gui_win(Transaction &transaction, QWidget *parent)
 			case keychain_app::secmod_commands::blockchain_secmod_te::rawhash:
 			{
 				warningMessage.SetWarning(KeychainWarningMessage::WarningType::HashWarnig);
+				if (cmd_parse.unlock_time() > 0) {
+					warningMessage.SetWarning(KeychainWarningMessage::WarningType::UnlockWarning);
+				}
 				element = new UnparsedTransactionWidget(transaction, this);
 				break;
 			}
@@ -148,6 +155,7 @@ keychain_gui_win::keychain_gui_win(Transaction &transaction, QWidget *parent)
 	lockIcon->setMouseTracking(true);
 	this->connect(OKButton, &QPushButton::released, this, &keychain_gui_win::transaction_sign);
 	this->connect(CancelButton, &QPushButton::released, this, &keychain_gui_win::cancel_sign);
+	_roundCorners();
 	password->setValueFocus();
 }
 
@@ -168,6 +176,34 @@ void keychain_gui_win::cancel_sign() {
 }
 
 
+void keychain_gui_win::_roundCorners()
+{
+	int radius = 10;
+	QRegion region(0, 0, width(), height(), QRegion::Rectangle);
+ 
+    // top left
+    QRegion round (0, 0, 2* radius, 2* radius, QRegion::Ellipse);
+    QRegion corner(0, 0, radius, radius, QRegion::Rectangle);
+    region = region.subtracted(corner.subtracted(round));
+ 
+    // top right
+    round = QRegion(width()-2* radius, 0, 2* radius, 2* radius, QRegion::Ellipse);
+    corner = QRegion(width()- radius, 0, radius, radius, QRegion::Rectangle);
+    region = region.subtracted(corner.subtracted(round));
+ 
+    // bottom right
+    round = QRegion(width()-2* radius, height()-2* radius, 2* radius, 2* radius, QRegion::Ellipse);
+    corner = QRegion(width()- radius, height()- radius, radius, radius, QRegion::Rectangle);
+    region = region.subtracted(corner.subtracted(round));
+ 
+    // bottom left
+    round = QRegion(0, height()-2* radius, 2* radius, 2* radius, QRegion::Ellipse);
+    corner = QRegion(0, height()- radius, radius, radius, QRegion::Rectangle);
+    region = region.subtracted(corner.subtracted(round));
+ 
+    setMask(region);
+}
+
 void keychain_gui_win::keyPressEvent(QKeyEvent *event)
 {
 	if (event->key() == Qt::Key_Escape) {
@@ -178,4 +214,6 @@ void keychain_gui_win::keyPressEvent(QKeyEvent *event)
 		keyPressEvent(event);
 	}
 }
+
+
 

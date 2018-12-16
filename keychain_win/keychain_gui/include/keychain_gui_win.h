@@ -55,6 +55,9 @@ private:
 	PasswordEnterElement * password;
 	KeychainServiceExchange * serviceExchange =NULL;
 
+private:
+	void _roundCorners();
+
 protected:
 	void keyPressEvent(QKeyEvent *event) override;
 

@@ -60,6 +60,7 @@ private:
 
 protected:
 	void keyPressEvent(QKeyEvent *event) override;
+	void closeEvent(QCloseEvent * event) override;
 
 private:
 	const int FIELD_WIDTH = 446;

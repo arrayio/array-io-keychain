@@ -210,9 +210,22 @@ void keychain_gui_win::keyPressEvent(QKeyEvent *event)
 		serviceExchange->EncodeError(L"empty_password", 14);
 		this->close();
 	}
-	else {
-		keyPressEvent(event);
+	if (event->key() == Qt::Key_Enter) {
+		QString passPhrase("");
+		passPhrase = password->GetValue();
+		if (passPhrase.isEmpty()) {
+			serviceExchange->EncodeError(L"empty_password", 14);
+			return;
+		}
+		serviceExchange->EncodeSuccess(passPhrase.toStdWString(), passPhrase.length());
+		this->close();
 	}
+}
+
+void keychain_gui_win::closeEvent(QCloseEvent * event)
+{
+	serviceExchange->EncodeError(L"empty_password", 14);
+	this->close();
 }
 
 

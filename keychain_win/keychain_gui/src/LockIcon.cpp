@@ -26,7 +26,7 @@ void LockIcon::setSourceDialog(PopupWindow * popup)
 void LockIcon::mouseMoveEvent(QMouseEvent *event) 
 {
 	if (_popup != Q_NULLPTR) {
-		_popup->move(this->x() - 220, this->y() + 30);
+		_popup->move(this->x() - 320, this->y() + 30);
 		_popup->setVisible(true);
 	}
 }

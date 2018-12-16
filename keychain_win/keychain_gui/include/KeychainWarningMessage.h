@@ -8,10 +8,10 @@ class KeychainWarningMessage {
 public:
 	enum WarningType {
 		NoWarnig = 0,
-		UnlockWarning = 1,
-		HashWarnig =2,
-		FailedWarning = 3,
-		CreateWarning = 4
+		CreateWarning = 1,
+		UnlockWarning = 2,
+		HashWarnig =3,
+		FailedWarning = 4
 	};
 
 public:
@@ -27,6 +27,9 @@ public:
 
 	void SetWarning(WarningType warning) {
 		_warnTypes->push((int)warning);
+		if (warning >= 2) {
+			_isWarn = true;
+		}
 		//_warnType = warning;
 	}
 
@@ -41,15 +44,13 @@ public:
 	}
 
 	bool isWarn() const {
-		if (_warnType >=2)
-			return true;
-		return false;
+		return _isWarn;
 	}
 
 private:
 	QString _messages[5];
 	QStack<int> * _warnTypes;
-	WarningType _warnType = WarningType::NoWarnig;
+	bool _isWarn = false;
 };
 
 #endif

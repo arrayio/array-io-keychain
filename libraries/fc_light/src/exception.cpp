@@ -180,11 +180,18 @@ namespace fc_light
    {
       fc_light::stringstream ss;
       ss << what() << ":";
+      bool first_occur = true;
       for( auto itr = my->_elog.begin(); itr != my->_elog.end(); ++itr )
       {
-         if( itr->get_format().size() )
-            ss << " " << fc_light::format_string( itr->get_format(), itr->get_data() );
-   //      ss << "    " << itr->get_context().to_string() <<"\n";
+        if (first_occur)
+        {
+          first_occur = false;
+          ss << " ";
+        }
+        else
+          ss << " => ";
+        if( itr->get_format().size() )
+          ss << fc_light::format_string( itr->get_format(), itr->get_data() );
       }
       return ss.str();
    }

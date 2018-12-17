@@ -152,13 +152,6 @@ std::vector<unsigned char> get_hash( const unit_list_t &list, encoder_t encoder 
   return encoder.result();
 }
 
-
-struct keychain_error: std::runtime_error
-{
-  keychain_error(int id_, const char* errmsg): std::runtime_error(errmsg), id(id_){}
-  int id;
-};
-
 class keychain_base
 {
 public:

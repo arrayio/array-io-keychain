@@ -20,7 +20,7 @@ encryptor_singletone::encryptor_singletone()
   if (!m_ctx)
   {
     ERR_print_errors_fp(stderr);
-    throw std::runtime_error("Error: can't create EVP cipher context");
+    FC_LIGHT_THROW_EXCEPTION(fc_light::encryption_exception, "Can't create EVP cipher context");
   }
 }
 
@@ -59,21 +59,21 @@ keyfile_format::encrypted_data encryptor_singletone::encrypt_keydata(keyfile_for
 
   if(1 != EVP_EncryptInit_ex(m_ctx, get_cipher(etype), NULL, reinterpret_cast<const uint8_t*>(key_hash), iv.data()))
   {
-    ERR_print_errors_fp(stderr);
-    throw std::runtime_error("Error: EVP_EncryptInit_ex");
+    //TODO: need to print OpenSSL detailed error string
+    FC_LIGHT_THROW_EXCEPTION(fc_light::encryption_exception, "Error: EVP_EncryptInit_ex");
   }
   iv.resize(EVP_CIPHER_CTX_iv_length(m_ctx));
   enc_data.iv = to_hex(iv.data(), iv.size());
   if(1 != EVP_EncryptUpdate(m_ctx, enc_byte_data.data(), &length, reinterpret_cast<const uint8_t*>(data.c_str()), data.size()))
   {
-    ERR_print_errors_fp(stderr);
-    throw std::runtime_error("Error: EVP_EncryptUpdate");
+    //TODO: need to print OpenSSL detailed error string
+    FC_LIGHT_THROW_EXCEPTION(fc_light::encryption_exception, "Error: EVP_EncryptUpdate");
   }
   enc_length = length;
   if(1 != EVP_EncryptFinal_ex(m_ctx, enc_byte_data.data() + enc_length, &length))
   {
-    ERR_print_errors_fp(stderr);
-    throw std::runtime_error("Error: EVP_EncryptFinal_ex");
+    //TODO: need to print OpenSSL detailed error string
+    FC_LIGHT_THROW_EXCEPTION(fc_light::encryption_exception, "Error: EVP_EncryptFinal_ex");
   }
   enc_length += length;
   enc_byte_data.resize(enc_length);
@@ -112,19 +112,19 @@ std::string encryptor_singletone::decrypt_keydata(const byte_seq_t& key, keyfile
   
   if(1 != EVP_DecryptInit_ex(m_ctx, get_cipher(data.cipher_type), NULL, reinterpret_cast<const uint8_t*>(key_hash), iv.data()))
   {
-//    ERR_print_errors_fp(stderr);
-    throw std::runtime_error("Error: EVP_EncryptInit_ex");
+    //TODO: need to print OpenSSL detailed error string
+    FC_LIGHT_THROW_EXCEPTION(fc_light::encryption_exception, "Error: EVP_DecryptInit_ex");
   }
   if(1 != EVP_DecryptUpdate(m_ctx, decr_byte_data.data(), &length, enc_byte_data.data(), enc_byte_data.size()))
   {
-//    ERR_print_errors_fp(stderr);
-    throw std::runtime_error("Error: EVP_EncryptUpdate");
+    //TODO: need to print OpenSSL detailed error string
+    FC_LIGHT_THROW_EXCEPTION(fc_light::encryption_exception, "Error: EVP_DecryptUpdate");
   }
   decr_length = length;
   if(1 != EVP_DecryptFinal_ex(m_ctx, decr_byte_data.data() + decr_length, &length))
   {
-//    ERR_print_errors_fp(stderr);
-    throw std::runtime_error("Error: EVP_EncryptFinal_ex");
+    //TODO: need to print OpenSSL detailed error string
+    FC_LIGHT_THROW_EXCEPTION(fc_light::encryption_exception, "Error: EVP_DecryptFinal_ex");
   }
   decr_length += length;
   decr_byte_data.resize(decr_length);
@@ -157,6 +157,7 @@ const EVP_CIPHER * encryptor_singletone::get_cipher(cipher_etype etype)
     case cipher_etype::aes256: return EVP_aes_256_cbc();
     //TODO: need to add other cipher algorithms
     default:
-      throw std::runtime_error("Error: unsupported type of key cipher algorithm");
+      FC_LIGHT_THROW_EXCEPTION(fc_light::encryption_exception,
+                               "Unsupported type of key cipher algorithm, cipher_etype = ${etype}", ("etype", etype));
   }
 }

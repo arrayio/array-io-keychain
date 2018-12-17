@@ -50,9 +50,10 @@ keychain::keychain(const secure_dlg_mod_base* secure_dlg)
 
   if(!bfs::exists(key_dir))
   {
-      auto res = bfs::create_directories(key_dir);
-      if(res == false)
-          throw std::runtime_error("Error: can not create key directory");
+    auto res = bfs::create_directories(key_dir);
+    if(res == false)
+      FC_LIGHT_THROW_EXCEPTION(fc_light::internal_error_exception,
+                               "Can not create key directory, path = ${directory}", ("directory", key_dir.string()));
   }
 
   get_passwd_trx.connect(std::bind(&secure_dlg_mod_base::get_passwd_trx, secure_dlg, std::placeholders::_1));
@@ -88,6 +89,10 @@ std::string keychain::operator()(const fc_light::variant& command) {
     return fc_light::json::to_string(
       fc_light::variant(keychain_app::json_error(cmd.id, fc_light::std_exception_code, e.what())));
   }
+  catch( ... ) {
+    return fc_light::json::to_string(
+      fc_light::variant(keychain_app::json_error(cmd.id, fc_light::unhandled_exception_code)));
+   }
 }
 
 const keychain_commands_singletone& keychain_commands_singletone::instance()

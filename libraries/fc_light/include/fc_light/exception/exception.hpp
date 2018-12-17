@@ -18,14 +18,16 @@ namespace fc_light
      /** for exceptions we threw that don't have an assigned code */
      unspecified_exception_code        = 0,
      unhandled_exception_code          , ///< for unhandled 3rd party exceptions
+     std_exception_code                , ///< for std::exceptions (3rd party)
      command_not_implemented_code      , ///< command is not implemented
      command_depreciated_code          , ///< command is depreciates
-     password_input_error_code         , ///< get password error
-     internal_error_code               , ///< some internal error
-     timeout_exception_code            , ///< timeout exceptions
      invalid_arg_exception_code        , ///< invalid command arguments
-     file_not_found_exception_code     ,
+     password_input_error_code         , ///< get password error
+     privkey_not_found_code            , ///< private key not found
+     timeout_exception_code            , ///< timeout exceptions
      parse_error_exception_code        ,
+     internal_error_code               , ///< some internal error
+     file_not_found_exception_code     ,
      key_not_found_exception_code      ,
      bad_cast_exception_code           ,
      assert_exception_code             ,
@@ -35,8 +37,7 @@ namespace fc_light
      underflow_code                    ,
      divide_by_zero_code               ,
      out_of_range_exception_code       ,
-     eof_exception_code                ,
-     std_exception_code
+     eof_exception_code
    };
 
    /**
@@ -274,7 +275,13 @@ namespace fc_light
   /**
    * @brief get password error
    */
-  FC_LIGHT_DECLARE_EXCEPTION( password_input_exception, password_input_error_code, "Password input error");
+  FC_LIGHT_DECLARE_EXCEPTION( password_input_exception, password_input_error_code, "Password Input Error");
+
+  /**
+   * @brief get password error
+   */
+  FC_LIGHT_DECLARE_EXCEPTION( privkey_not_found_exception, privkey_not_found_code, "Private Key Not Found");
+
 
   FC_LIGHT_DECLARE_EXCEPTION( timeout_exception, timeout_exception_code, "Timeout" );
   FC_LIGHT_DECLARE_EXCEPTION( file_not_found_exception, file_not_found_exception_code, "File Not Found" );

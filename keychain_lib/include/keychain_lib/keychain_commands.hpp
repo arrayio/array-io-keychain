@@ -173,7 +173,8 @@ fc_light::variant open_keyfile(const char_t* filename)
 {
   std::ifstream fin = std::ifstream(filename);
   if(!fin.is_open())
-    throw std::runtime_error("Error: cannot open keyfile");
+    FC_LIGHT_THROW_EXCEPTION(fc_light::internal_error_exception,
+                             "Cannot open keyfile, file = ${keyfile}", ("keyfile", filename));
   std::array<char, 1024> read_buf;
   memset(read_buf.data(), 0x00, read_buf.size());
   auto pbuf = read_buf.data();
@@ -189,7 +190,8 @@ fc_light::variant open_keyfile(const char_t* filename)
     read_count += fin.gcount() - 1;
   }
   if(!fin.good()&&read_count==0)
-    throw std::runtime_error("Error: cannot read keyfile");
+    FC_LIGHT_THROW_EXCEPTION(fc_light::internal_error_exception,
+                             "Cannot read keyfile, file = ${keyfile}", ("keyfile", filename));
   return fc_light::json::from_string(std::string(read_buf.begin(), read_buf.end()), fc_light::json::strict_parser);
 }
 
@@ -378,7 +380,7 @@ struct keychain_command<command_te::sign_hex> : keychain_command_base
     raw.resize(trans_len);
   
     if (params.keyname.empty())
-      std::runtime_error("Error: keyname is not specified");
+      FC_LIGHT_THROW_EXCEPTION(fc_light::invalid_arg_exception, "Keyname is not specified");
   
     switch (params.blockchain_type)
     {
@@ -454,7 +456,8 @@ struct keychain_command<command_te::sign_hex> : keychain_command_base
         break;
       }
       default:
-        throw std::runtime_error("unknown blockchain_type");
+        FC_LIGHT_THROW_EXCEPTION(fc_light::invalid_arg_exception,
+                                 "Unknown blockchain_type, blockchain = ${type}", ("type", params.blockchain_type));
     }
   
     json_response response(to_hex(signature.data(), signature.size()).c_str(), id);
@@ -573,7 +576,8 @@ struct keychain_command<command_te::create>: keychain_command_base
           break;
         default:
         {
-          throw std::runtime_error("Error: unsupported curve format");
+          FC_LIGHT_THROW_EXCEPTION(fc_light::invalid_arg_exception,
+                                   "Unsupported curve format, curve = ${type}", ("type", params.curve));
         }
       }
 
@@ -581,7 +585,7 @@ struct keychain_command<command_te::create>: keychain_command_base
       {
         auto passwd = *keychain->get_passwd_on_create();
         if (passwd.empty())
-          throw std::runtime_error("Error: can't get password");
+          FC_LIGHT_THROW_EXCEPTION(fc_light::password_input_exception, "");
         auto& encryptor = encryptor_singletone::instance();
         auto enc_data = encryptor.encrypt_keydata(params.cipher, passwd, pr_hex);
         keyfile.keyinfo.priv_key_data = fc_light::variant(enc_data);
@@ -600,13 +604,13 @@ struct keychain_command<command_te::create>: keychain_command_base
       keyfile.keyinfo.format = keyfile_format::keyfile_t::keyinfo_t::FORMAT_ARRAYIO;
       keyfile.keyinfo.curve_type = params.curve;
 
-      if(filename.empty())
-        throw std::runtime_error("Error: keyname (filename) is empty");
+      if(filename.empty())//TODO: need to fix error output, need to provide params info
+        FC_LIGHT_THROW_EXCEPTION(fc_light::internal_error_exception, "Keyname (filename) is empty");
 
       auto first = bfs::directory_iterator(bfs::path(KEY_DEFAULT_PATH_));
       auto it = std::find_if(first, bfs::directory_iterator(),find_keyfile_by_username(keyfile.keyname.c_str()));
-      if(it != bfs::directory_iterator())
-        throw std::runtime_error("Error: keyfile for this user is already exist");
+      if(it != bfs::directory_iterator())//TODO: need to fix error output, need to provide params info
+        FC_LIGHT_THROW_EXCEPTION(fc_light::internal_error_exception, "Keyfile for this user is already exist");
       create_keyfile(filename.c_str(), fc_light::variant(keyfile));
 
       json_response response(keyname, id);
@@ -683,13 +687,13 @@ struct keychain_command<command_te::public_key>: keychain_command_base
     keyfile_format::keyfile_t keyfile;
 
     if (params.keyname.empty())
-      std::runtime_error("Error: keyname is not specified");
+      FC_LIGHT_THROW_EXCEPTION(fc_light::invalid_arg_exception, "Keyname is not specified");
 
     auto curdir = bfs::current_path();
     auto first = bfs::directory_iterator(bfs::path(KEY_DEFAULT_PATH_));
     auto it = std::find_if(first, bfs::directory_iterator(),find_keyfile_by_username(params.keyname.c_str(), &keyfile));
     if (it == bfs::directory_iterator())
-      throw std::runtime_error("Error: keyfile could not found by keyname");
+      FC_LIGHT_THROW_EXCEPTION(fc_light::privkey_not_found_exception, "Keyfile could not found by keyname");
     
     json_response response(keyfile.keyinfo.public_key.c_str(), id);
     return fc_light::json::to_string(fc_light::variant(response));
@@ -729,7 +733,7 @@ struct keychain_command<command_te::unlock>: keychain_command_base
     if (!params.keyname.empty())
       read_private_key(keychain, params.keyname, "", params.unlock_time, this);
     else
-      throw std::runtime_error("keyname param is not specified");
+      FC_LIGHT_THROW_EXCEPTION(fc_light::invalid_arg_exception, "Keyname is not specified");
 
     json_response response(true, id);
     return fc_light::json::to_string(fc_light::variant(response));

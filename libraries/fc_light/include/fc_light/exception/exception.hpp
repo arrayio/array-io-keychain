@@ -484,3 +484,20 @@ namespace fc_light
                 std::current_exception() ); \
    }
 
+#define FC_LIGHT_CAPTURE_TYPECHANGE_AND_RETHROW( EXCEPTION, LOG_LEVEL, FORMAT, ... ) \
+   catch( fc_light::exception& er ) { \
+      EXCEPTION er_(er.get_log()); \
+      er_.append_log( FC_LIGHT_LOG_MESSAGE( LOG_LEVEL, FORMAT, __VA_ARGS__ ) ); \
+      throw er_; \
+   } catch( const std::exception& e ) {  \
+      fc_light::exception fce( \
+                FC_LIGHT_LOG_MESSAGE( warn, "${what}: ",FC_LIGHT_FORMAT_ARG_PARAMS(__VA_ARGS__)("what",e.what())), \
+                fc_light::std_exception_code,\
+                typeid(e).name(), \
+                e.what() ) ; throw fce;\
+   } catch( ... ) {  \
+      throw fc_light::unhandled_exception( \
+                FC_LIGHT_LOG_MESSAGE( warn, "",FC_LIGHT_FORMAT_ARG_PARAMS(__VA_ARGS__)), \
+                std::current_exception() ); \
+   }
+

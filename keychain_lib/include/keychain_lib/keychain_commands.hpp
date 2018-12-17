@@ -362,7 +362,13 @@ struct keychain_command<command_te::sign_hex> : keychain_command_base
   
   virtual std::string operator()(keychain_base* keychain, const fc_light::variant& params_variant, int id) const override
   {
-    auto params = params_variant.as<params_t>();
+    params_t params;
+    try
+    {
+      params = params_variant.as<params_t>();
+    }
+    FC_LIGHT_CAPTURE_TYPECHANGE_AND_RETHROW (fc_light::invalid_arg_exception, error, "Cannot parse command params")
+    
     unit_list_t unit_list;
     dev::Secret private_key;
     std::array<unsigned char, 65> signature = {0};
@@ -484,8 +490,14 @@ struct keychain_command<command_te::sign_hash> : keychain_command_base
   virtual std::string operator()(keychain_base* keychain, const fc_light::variant& params_variant, int id) const override
   {
     auto log = logger_singletone::instance();
-
-    auto params = params_variant.as<params_t>();
+  
+    params_t params;
+    try
+    {
+      params = params_variant.as<params_t>();
+    }
+    FC_LIGHT_CAPTURE_TYPECHANGE_AND_RETHROW (fc_light::invalid_arg_exception, error, "Cannot parse command params")
+    
     dev::Secret private_key;
 
     if (params.keyname.empty())
@@ -555,7 +567,13 @@ struct keychain_command<command_te::create>: keychain_command_base
     using params_t = params;
     virtual std::string operator()(keychain_base* keychain, const fc_light::variant& params_variant, int id) const override
     {
-      auto params = params_variant.as<params_t>();
+      params_t params;
+      try
+      {
+        params = params_variant.as<params_t>();
+      }
+      FC_LIGHT_CAPTURE_TYPECHANGE_AND_RETHROW (fc_light::invalid_arg_exception, error, "Cannot parse command params")
+      
       keyfile_format::keyfile_t keyfile;
       std::string pr_hex, pb_hex;
       dev::h256 hash;
@@ -682,8 +700,15 @@ struct keychain_command<command_te::public_key>: keychain_command_base
     std::string keyname;
   };
   using params_t = params;
-  virtual std::string operator()(keychain_base* keychain, const fc_light::variant& params_variant, int id) const override {
-    auto params = params_variant.as<params_t>();
+  virtual std::string operator()(keychain_base* keychain, const fc_light::variant& params_variant, int id) const override
+  {
+    params_t params;
+    try
+    {
+      params = params_variant.as<params_t>();
+    }
+    FC_LIGHT_CAPTURE_TYPECHANGE_AND_RETHROW (fc_light::invalid_arg_exception, error, "Cannot parse command params")
+    
     keyfile_format::keyfile_t keyfile;
 
     if (params.keyname.empty())
@@ -729,7 +754,13 @@ struct keychain_command<command_te::unlock>: keychain_command_base
 
   virtual std::string operator()(keychain_base* keychain, const fc_light::variant& params_variant, int id) const override
   {
-    auto params = params_variant.as<params_t>();
+    params_t params;
+    try
+    {
+      params = params_variant.as<params_t>();
+    }
+    FC_LIGHT_CAPTURE_TYPECHANGE_AND_RETHROW (fc_light::invalid_arg_exception, error, "Cannot parse command params")
+    
     if (!params.keyname.empty())
       read_private_key(keychain, params.keyname, "", params.unlock_time, this);
     else

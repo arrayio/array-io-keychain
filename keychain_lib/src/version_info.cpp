@@ -10,6 +10,7 @@
 
 #include <fc_light/time.hpp>
 #include <regex>
+#include <fc_light/exception/exception.hpp>
 
 using namespace keychain_app::version_info;
 
@@ -43,7 +44,7 @@ std::string keychain_app::version_info::version()
   std::string description_string( git_revision_description );
   auto it = std::sregex_iterator(description_string.begin(), description_string.end(), VERSION_REGEXP);
   if(it == std::sregex_iterator())
-    throw std::runtime_error("Invalid version string has been returned by Git");
+;//    throw FC_LIGHT_THROW_EXCEPTION(fc_light::enternal_error_exception_code, "Invalid version string has been returned by Git");
   auto version_string = it->str();
   auto replace_pos = version_string.find('-');
   version_string[replace_pos] = '.';

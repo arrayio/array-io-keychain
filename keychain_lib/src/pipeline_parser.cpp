@@ -74,8 +74,14 @@ int pipeline_parser::run()
         }
         catch(fc_light::exception& exc)
         {
-          std::cerr << fc_light::json::to_string(fc_light::variant(json_error(0, exc.to_detail_string().c_str()))) << std::endl;
-          std::string res = fc_light::json::to_string(fc_light::variant(json_error(0, exc.what())));
+          auto err_logs = exc.get_log();
+          std::vector<fc_light::log_context> log_contexts(err_logs.size());
+          std::transform(err_logs.begin(), err_logs.end(), log_contexts.begin(), [](const auto& val){
+            return val.get_context();
+          });
+          std::string res = fc_light::json::to_string(
+            fc_light::variant(keychain_app::json_error(0, exc.code(), exc.to_string().c_str(), fc_light::variant(log_contexts))));
+          
           std::stringstream strbuf(std::ios_base::out);
           strbuf << res << std::endl;
           std::string output = strbuf.str();
@@ -94,7 +100,8 @@ int pipeline_parser::run()
           it = read_buf.begin() + i;
         }
         else
-          throw std::runtime_error("size of read buffer is too large");
+          FC_LIGHT_THROW_EXCEPTION(fc_light::invalid_arg_exception,
+                                   "Can not reallocate read buffer for input command, may be input command is too large?");
       }
 
       break;//goto fread()
@@ -120,7 +127,7 @@ pipeline_parser::iter_range pipeline_parser::cut_json_obj(pipeline_parser::buf_i
         break;
       case json_parser::RBRACE:
         if ( brace_count == 0 )//NOTE: we can inter to this case only, if RBRACE will detect before LBRACE
-          throw std::runtime_error("Parse error: common error while counting figure braces");
+          FC_LIGHT_THROW_EXCEPTION(fc_light::parse_error_exception, "RBRACE will detect before LBRACE");
         --brace_count;
         if (brace_count == 0)
           found = true;
@@ -134,7 +141,7 @@ pipeline_parser::iter_range pipeline_parser::cut_json_obj(pipeline_parser::buf_i
         break;
       default:
         if ( brace_count == 0 )//NOTE: symbols are not into figure braces
-          throw std::runtime_error("Parse error: common error while parsing command - unexpected symbols");
+          FC_LIGHT_THROW_EXCEPTION(fc_light::parse_error_exception, "Symbols are not into figure braces = ${symbol}", ("symbol", &(*it)));
     }
   }
   if(found)

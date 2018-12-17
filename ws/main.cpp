@@ -13,8 +13,8 @@
 int main() {
 
     struct passwd* pw = getpwnam(user);
-    std::system (xhost);
-    switch (fork())
+    auto child = fork();
+    switch (child)
     {
         case (-1): throw std::runtime_error("fork()");
         case 0:
@@ -30,7 +30,26 @@ int main() {
         }
         default: break;
     }
-    if (wait(NULL) == -1)   throw std::runtime_error("wait()");
+    int status;
+    if (waitpid(child, &status, WNOHANG) == -1)   throw std::runtime_error("wait()");
+
+    pid_t prev = 0;
+    while  (true)
+    {
+        char buf[512];
+        FILE *pipe = popen("pidof -s Xorg", "r");
+        fgets(buf, sizeof(buf), pipe);
+        pclose( pipe );
+        auto cur = strtoul(buf, NULL, 10);
+
+        if (cur !=  prev)
+        {
+            std::system (xhost);
+            prev = cur;
+        }
+        sleep (10);
+    }
+
     return 0;
 }
 

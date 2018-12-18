@@ -12,15 +12,30 @@ RawHashWidget::RawHashWidget(Transaction &transaction, QWidget * parent)
 	auto cmd_type = cmd_parse(transaction.getTransactionText().toStdString());
 	auto raw_hash = cmd_parse.to_rawhash();
 
+
 	from = new SecureWindowElement(this);
 	from->SetLabelAndValue("From", QString::fromStdString(raw_hash.from));
 	from->SetLabelStyle(labelStyle);
 	from->SetValueStyle(valueStyle);
 
+	QFont fromFont = from->font();
+	QString fromStr = QString::fromStdString(raw_hash.from);
+
+	QFontMetrics fromFM(fromFont);
+	int fromWidth = fromFM.width(fromStr);
+
 	hash = new SecureWindowElement(this);
 	hash->SetLabelAndValue("Hash", QString::fromStdString(raw_hash.hash));
 	hash->SetLabelStyle(labelStyle);
 	hash->SetValueStyle(valueStyle);
+	QFont hashFont = hash->font();
+	QString hashStr = QString::fromStdString(raw_hash.hash);
+	QFontMetrics hashFM(fromFont);
+	int hashWidth = hashFM.width(hashStr);
+	if (hashWidth >= fromWidth)
+		max_width = hashWidth;
+	else
+		max_width = fromWidth;
 
 	if (cmd_parse.unlock_time() > 0) {
 		unlockTime = new PrivateKeyInMemory(this);
@@ -28,12 +43,14 @@ RawHashWidget::RawHashWidget(Transaction &transaction, QWidget * parent)
 	}
 
 	expertModeElement = new ExpertModeElement(this);
-	expertModeElement->SetExpertModeText(QString::fromStdString(cmd_parse.to_expert_mode_string()));
+	expertModeElement->SetExpertModeText(QString::fromStdString(cmd_parse.to_expert_mode_string()), false);
 
 }
 
 void RawHashWidget::SetPosition(int x, int y, int width)
 {
+	if (max_width > width)
+		width = max_width;
 	from->SetPosition(0, 0, 116, width);
 	from->move(0, currentHeight);
 	currentHeight += 26;

@@ -50,8 +50,14 @@ void ExpertModeElement::SetPosition(int x, int y, int labelWidth, int valueWidth
 	_labelX = x;*/
 }
 
-void ExpertModeElement::SetExpertModeText(QString expertMode)
+void ExpertModeElement::SetExpertModeText(QString expertMode, bool cut)
 {
+	if (!cut)
+	{
+		expertValue->setText(expertMode);
+		expertModeText = expertMode;
+		return;
+	}
 	expertModeText = expertMode;
 	QString transText = expertMode;
 	transText = transText.insert(40, '\n');

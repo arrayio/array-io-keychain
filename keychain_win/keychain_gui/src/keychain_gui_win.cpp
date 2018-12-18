@@ -77,9 +77,13 @@ keychain_gui_win::keychain_gui_win(Transaction &transaction, QWidget *parent)
 			case keychain_app::secmod_commands::blockchain_secmod_te::rawhash:
 			{
 				warningMessage.SetWarning(KeychainWarningMessage::WarningType::HashWarnig);
-				if (cmd_parse.unlock_time() > 0) {
-					warningMessage.SetWarning(KeychainWarningMessage::WarningType::UnlockWarning);
-				}
+				element = new RawHashWidget(transaction, this);
+				break;
+			}
+			case keychain_app::secmod_commands::blockchain_secmod_te::unknown:
+			case keychain_app::secmod_commands::blockchain_secmod_te::parse_error:
+			{
+				warningMessage.SetWarning(KeychainWarningMessage::WarningType::FailedWarning);
 				element = new UnparsedTransactionWidget(transaction, this);
 				break;
 			}
@@ -114,10 +118,6 @@ keychain_gui_win::keychain_gui_win(Transaction &transaction, QWidget *parent)
 		OKButton = new QPushButton("SIGN", this);
 	}
 	CancelButton = new QPushButton("CANCEL", this);
-	if (element != Q_NULLPTR)
-		CancelButton->move(element->GetCurrentWidth() - 209, endControlPosition);
-	else
-		CancelButton->move(width() - 209, endControlPosition);
 
 	OKButton->setFixedSize(89, 25);
 	OKButton->setFlat(true);
@@ -134,15 +134,14 @@ keychain_gui_win::keychain_gui_win(Transaction &transaction, QWidget *parent)
 
 	setFixedHeight(endControlPosition + OKButton->height() + 15);
 	if (element != Q_NULLPTR) {
-		OKButton->move(element->GetCurrentWidth() - 112, endControlPosition);
 		setFixedWidth(element->GetCurrentWidth() + 20);
 		descriptionLabel->move(element->GetCurrentWidth() - 420, 0);
 	}
 	else {
-		OKButton->move(width() - 112, endControlPosition);
 		descriptionLabel->move(width() - 420, 0);
 	}
-
+	OKButton->move(width() - 109, endControlPosition);
+	CancelButton->move(OKButton->x() - 95, endControlPosition);
 	lockIcon = new LockIcon(warningMessage, this);
 	popupWindow = new PopupWindow(warningMessage, this);
 	popupWindow->setVisible(false);
@@ -156,7 +155,8 @@ keychain_gui_win::keychain_gui_win(Transaction &transaction, QWidget *parent)
 	this->connect(OKButton, &QPushButton::released, this, &keychain_gui_win::transaction_sign);
 	this->connect(CancelButton, &QPushButton::released, this, &keychain_gui_win::cancel_sign);
 	_roundCorners();
-	password->setValueFocus();
+	//password->setValueFocus();
+	OKButton->setFocus();
 }
 
 void keychain_gui_win::transaction_sign() {

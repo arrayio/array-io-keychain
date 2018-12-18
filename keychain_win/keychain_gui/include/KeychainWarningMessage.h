@@ -39,8 +39,13 @@ public:
 			int _mIndex = (int)_warnTypes->pop();
 			_message += _messages[_mIndex];
 			_message += '\n';
+			_message += '\n';
 		}
 		return _message;
+	}
+
+	int MessgeCount() const {
+		return _warnTypes->length();
 	}
 
 	bool isWarn() const {

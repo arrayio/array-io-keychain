@@ -14,7 +14,7 @@ class ExpertModeElement : public QWidget
 public:
 	ExpertModeElement(QWidget* parent = Q_NULLPTR);
 	~ExpertModeElement();
-	void SetExpertModeText(QString expertMode);
+	void SetExpertModeText(QString expertMode, bool cut=true);
 	void SetPosition(int x, int y, int labelWidth, int valueWidth);
 
 private:

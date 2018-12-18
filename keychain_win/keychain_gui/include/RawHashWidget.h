@@ -23,6 +23,7 @@ private:
 	SecureWindowElement * hash = Q_NULLPTR;
 	ExpertModeElement * expertModeElement = Q_NULLPTR;
 	PrivateKeyInMemory * unlockTime = Q_NULLPTR;
+	int max_width = 0;
 	int currentHeight = 0;
 	int currentWidth = 0;
 };

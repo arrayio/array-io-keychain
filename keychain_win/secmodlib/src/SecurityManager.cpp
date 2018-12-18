@@ -18,6 +18,7 @@ SecurityManager::~SecurityManager() {
 void SecurityManager::CreateSecureDesktop(const int unlock_time) {
 	HINSTANCE hInst = GetModuleHandle(NULL);
 	TCHAR curDirectory[500];
+	
 	GetCurrentDirectory(500, curDirectory);
 	LPCWSTR commandLine = GetCommandLine();
 	std::wstring rem(commandLine);
@@ -37,6 +38,10 @@ void SecurityManager::CreateSecureDesktop(const int unlock_time) {
 		wcscat_s(args, 400, L" -unlock_t=");
 		std::wstring _tId(400, L'#');
 		size_t outSize;
+		size_t tSize = rem.length() + to_string(unlock_time).length()+11;
+		if (tSize>400) {
+			_tId.resize(tSize, '#');
+		}
 		mbstowcs_s(&outSize, &_tId[0], 400, to_string(unlock_time).c_str(), 400);
 		wcscat_s(args, 400, _tId.c_str());
 		app_args = args;

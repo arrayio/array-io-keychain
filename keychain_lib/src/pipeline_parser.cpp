@@ -80,7 +80,7 @@ int pipeline_parser::run()
             return val.get_context();
           });
           std::string res = fc_light::json::to_string(
-            fc_light::variant(keychain_app::json_error(0, exc.code(), exc.to_string().c_str(), fc_light::variant(log_contexts))));
+            fc_light::variant(keychain_app::json_error(0, static_cast<fc_light::exception_code>(exc.code()), exc.to_string().c_str(), fc_light::variant(log_contexts))));
           
           std::stringstream strbuf(std::ios_base::out);
           strbuf << res << std::endl;

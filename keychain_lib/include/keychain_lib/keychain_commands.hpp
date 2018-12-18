@@ -225,16 +225,17 @@ struct json_response
 
 struct json_error
 {
-  json_error(int id_, int err_code, const std::string& msg_ = "",  const fc_light::variant& trace_ = fc_light::variant())
+  json_error(int id_, fc_light::exception_code err_code, const std::string& msg_ = "",  const fc_light::variant& trace_ = fc_light::variant())
     : id(id_), error(err_code, msg_, trace_){}
     
   int id;
   struct error_t
   {
-    error_t(int code_, const std::string& message_, const fc_light::variant& trace_)
-      : code(code_), message(message_), trace(trace_){}
+    error_t(fc_light::exception_code code_, const std::string& message_, const fc_light::variant& trace_)
+      : code(static_cast<int>(code_)), name(code_), message(message_), trace(trace_){}
     error_t(): code(0) {}
     int code;
+    fc_light::exception_code name;
     std::string message;
     fc_light::variant trace;
   } error;
@@ -828,7 +829,7 @@ FC_LIGHT_REFLECT(keychain_app::keychain_command<keychain_app::command_te::set_un
 FC_LIGHT_REFLECT(keychain_app::keychain_command<keychain_app::command_te::unlock>::params_t, (keyname)(unlock_time))
 FC_LIGHT_REFLECT(keychain_app::keychain_command_common, (command)(id)(params))
 FC_LIGHT_REFLECT(keychain_app::json_response, (id)(result))
-FC_LIGHT_REFLECT(keychain_app::json_error::error_t, (code)(message)(trace))
+FC_LIGHT_REFLECT(keychain_app::json_error::error_t, (code)(name)(message)(trace))
 FC_LIGHT_REFLECT(keychain_app::json_error, (id)(error))
 FC_LIGHT_REFLECT_ENUM(keychain_app::blockchain_te, (unknown)(bitshares)(array)(ethereum)(bitcoin))
 FC_LIGHT_REFLECT_ENUM(keychain_app::sign_te, (unknown)(VRS_canonical)(RSV_noncanonical))

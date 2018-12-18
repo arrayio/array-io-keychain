@@ -501,3 +501,29 @@ namespace fc_light
                 std::current_exception() ); \
    }
 
+#include <fc_light/reflect/reflect.hpp>
+
+FC_LIGHT_REFLECT_ENUM(
+  fc_light::exception_code,
+(unspecified_exception_code)
+(unhandled_exception_code)
+(std_exception_code)
+(command_not_implemented_code)
+(command_depreciated_code)
+(invalid_arg_exception_code)
+(password_input_error_code)
+(privkey_not_found_code)
+(timeout_exception_code)
+(parse_error_exception_code)
+(internal_error_code)
+(file_not_found_exception_code)
+(key_not_found_exception_code)
+(bad_cast_exception_code)
+(assert_exception_code)
+(encryption_error_code)
+(null_optional_code)
+(overflow_code)
+(underflow_code)
+(divide_by_zero_code)
+(out_of_range_exception_code)
+(eof_exception_code))

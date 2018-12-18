@@ -76,7 +76,7 @@ std::string keychain::operator()(const fc_light::variant& command) {
       return val.get_context();
     });
     return fc_light::json::to_string(
-      fc_light::variant(keychain_app::json_error(id, er.code(), er.to_string().c_str(), fc_light::variant(log_contexts))));
+      fc_light::variant(keychain_app::json_error(id, static_cast<fc_light::exception_code >(er.code()), er.to_string().c_str(), fc_light::variant(log_contexts))));
   };
   
   keychain_command_common cmd;

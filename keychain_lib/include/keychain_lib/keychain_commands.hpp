@@ -620,7 +620,6 @@ struct keychain_command<command_te::create>: keychain_command_base
       keyfile.description = params.description;
       keyfile.keychain_version = version_info::short_version();
       keyfile.filetype = keyfile_format::TYPE_KEY;
-      keyfile.keyinfo.format = keyfile_format::keyfile_t::keyinfo_t::FORMAT_ARRAYIO;
       keyfile.keyinfo.curve_type = params.curve;
 
       if(filename.empty())//TODO: need to fix error output, need to provide params info

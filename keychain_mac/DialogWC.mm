@@ -44,7 +44,7 @@ using keychain_app::secmod_commands::secmod_parser_f;
                                                name:NSWindowWillCloseNotification
                                              object:nil];
     window.titlebarAppearsTransparent = YES;
-    window.titleVisibility = NSWindowTitleHidden;
+    //window.titleVisibility = NSWindowTitleHidden;
     window.backgroundColor = [NSColor whiteColor];
     [window center];
     return [super initWithWindow:window];
@@ -100,6 +100,7 @@ using keychain_app::secmod_commands::secmod_parser_f;
             {
                 case keychain_app::secmod_commands::blockchain_secmod_te::unknown:
                 {
+                    [self.window setTitle:@"Sign hex"];
                     [self setupBottomLabel:@"Data"];
                     [self setupTextBottomLabel:[NSString stringWithUTF8String:cmd_parse.to_raw_trx_string().c_str()]];
 
@@ -107,6 +108,7 @@ using keychain_app::secmod_commands::secmod_parser_f;
                     break;
                 case keychain_app::secmod_commands::blockchain_secmod_te::ethereum:
                 {
+                    [self.window setTitle:@"Sign transaction"];
                     auto eth_trx = cmd_parse.to_ethereum();
                     auto eth_data = eth_trx.trx_info;
                     [self setupBottomLabel:@"To"];
@@ -119,11 +121,12 @@ using keychain_app::secmod_commands::secmod_parser_f;
                     break;
                 case keychain_app::secmod_commands::blockchain_secmod_te::bitcoin:
                 {
-                    
+                    [self.window setTitle:@"Sign transaction"];
                 }
                     break;
                 case keychain_app::secmod_commands::blockchain_secmod_te::rawhash:
                 {
+                    [self.window setTitle:@"Sign hash"];
                     isHash = true;
                     auto raw_cmd = cmd_parse.to_rawhash();
                     [self setupBottomLabel:@"Hash"];
@@ -134,6 +137,7 @@ using keychain_app::secmod_commands::secmod_parser_f;
                     break;
                 case keychain_app::secmod_commands::blockchain_secmod_te::ethereum_swap:
                 {
+                    [self.window setTitle:@"Sign transaction"];
                     [self setupBottomLabel:@"To"];
                     [self setupFrom];
                     [self setupTopLabel:@"Amount"];
@@ -179,24 +183,27 @@ using keychain_app::secmod_commands::secmod_parser_f;
                 }
                     break;
             }
-            [self checkForRedLock];
+//            [self checkForRedLock];
         } else {
+            [self.window setTitle:@"Create password"];
             [self setupTitleLabel:@"Enter the password for the new key"];
             [self setupPassConfirmField];
             [self setupLabelConfirmPassphrase];
             [self setupRecommendationTextForPassword];
         }
     } else {
-        [self checkForRedLock];
+        [self.window setTitle:@"Unlock private key"];
+//        [self checkForRedLock];
         [self setupTitleLabel:[NSString stringWithFormat:@"You are trying to unlock the key \"%@\" for \"%d\" seconds.", self.keyname, self.unlockTime]];
     }
+    [self checkForRedLock];
     [[NSApplication sharedApplication] runModalForWindow:self.window];
     
     [self.window setFrame:NSMakeRect(0, 0, 575, 500) display:true];
 }
 
 - (void) checkForRedLock {
-    if (self.unlockTime > 0 || !self.isJson || isHash) {
+    if (self.isSignTransaction && (self.unlockTime > 0 || !self.isJson || isHash)) {
         [self setupLogoRedLock];
     } else {
         [self setupLogoGreenLock];
@@ -236,7 +243,12 @@ using keychain_app::secmod_commands::secmod_parser_f;
 }
 
 - (void) greenlockButtonClicked {
-    NSString *string = @"This transaction is secure";
+    NSString *string;
+    if (_isSignTransaction) {
+        string = @"This transaction is successfully parsed by the core module.\nNo threats detected. You can now review the transaction details.";
+    } else {
+        string = @"Your private key is encrypted and secure.";
+    }
     NSPopover *popover = [[NSPopover alloc] initWithContent:string doesAnimate:true];
     [popover showRelativeToRect:NSMakeRect(self.window.frame.size.width - 41, self.window.frame.size.height - 65, 19, 25) ofView:self.window.contentView.superview preferredEdge:NSRectEdgeMinY];
 }

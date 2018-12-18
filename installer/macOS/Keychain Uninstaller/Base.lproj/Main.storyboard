@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="14460.31" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="B8D-0N-5wS">
     <dependencies>
-        <deployment identifier="macosx"/>
         <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="14460.31"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -12,11 +11,11 @@
                 <application id="hnw-xV-0zn" sceneMemberID="viewController">
                     <menu key="mainMenu" title="Main Menu" systemMenu="main" id="AYu-sK-qS6">
                         <items>
-                            <menuItem title="KeyChain Installer" id="1Xt-HY-uBw">
+                            <menuItem title="Keychain Uninstaller" id="1Xt-HY-uBw">
                                 <modifierMask key="keyEquivalentModifierMask"/>
-                                <menu key="submenu" title="KeyChain Installer" systemMenu="apple" id="uQy-DD-JDr">
+                                <menu key="submenu" title="Keychain Uninstaller" systemMenu="apple" id="uQy-DD-JDr">
                                     <items>
-                                        <menuItem title="About KeyChain Installer" id="5kV-Vb-QxS">
+                                        <menuItem title="About Keychain Uninstaller" id="5kV-Vb-QxS">
                                             <modifierMask key="keyEquivalentModifierMask"/>
                                             <connections>
                                                 <action selector="orderFrontStandardAboutPanel:" target="Ady-hI-5gd" id="Exp-CZ-Vem"/>
@@ -30,7 +29,7 @@
                                             <menu key="submenu" title="Services" systemMenu="services" id="hz9-B4-Xy5"/>
                                         </menuItem>
                                         <menuItem isSeparatorItem="YES" id="4je-JR-u6R"/>
-                                        <menuItem title="Hide KeyChain Installer" keyEquivalent="h" id="Olw-nP-bQN">
+                                        <menuItem title="Hide Keychain Uninstaller" keyEquivalent="h" id="Olw-nP-bQN">
                                             <connections>
                                                 <action selector="hide:" target="Ady-hI-5gd" id="PnN-Uc-m68"/>
                                             </connections>
@@ -48,7 +47,7 @@
                                             </connections>
                                         </menuItem>
                                         <menuItem isSeparatorItem="YES" id="kCx-OE-vgT"/>
-                                        <menuItem title="Quit KeyChain Installer" keyEquivalent="q" id="4sb-4s-VLi">
+                                        <menuItem title="Quit Keychain Uninstaller" keyEquivalent="q" id="4sb-4s-VLi">
                                             <connections>
                                                 <action selector="terminate:" target="Ady-hI-5gd" id="Te7-pn-YzF"/>
                                             </connections>
@@ -661,7 +660,7 @@
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <menu key="submenu" title="Help" systemMenu="help" id="F2S-fz-NVQ">
                                     <items>
-                                        <menuItem title="KeyChain Installer Help" keyEquivalent="?" id="FKE-Sm-Kum">
+                                        <menuItem title="Keychain Uninstaller Help" keyEquivalent="?" id="FKE-Sm-Kum">
                                             <connections>
                                                 <action selector="showHelp:" target="Ady-hI-5gd" id="y7X-2Q-9no"/>
                                             </connections>
@@ -675,7 +674,7 @@
                         <outlet property="delegate" destination="Voe-Tx-rLC" id="PrD-fu-P6m"/>
                     </connections>
                 </application>
-                <customObject id="Voe-Tx-rLC" customClass="AppDelegate" customModule="KeyChain_Installer" customModuleProvider="target"/>
+                <customObject id="Voe-Tx-rLC" customClass="AppDelegate" customModule="Keychain_Uninstaller" customModuleProvider="target"/>
                 <customObject id="YLy-65-1bz" customClass="NSFontManager"/>
                 <customObject id="Ady-hI-5gd" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
@@ -685,8 +684,8 @@
         <scene sceneID="R2V-B0-nI4">
             <objects>
                 <windowController id="B8D-0N-5wS" sceneMemberID="viewController">
-                    <window key="window" title="KeyChain Installer v0.10" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" animationBehavior="default" id="IQv-IB-iLA">
-                        <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES"/>
+                    <window key="window" title="Window" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" animationBehavior="default" id="IQv-IB-iLA">
+                        <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
                         <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
                         <rect key="contentRect" x="196" y="240" width="480" height="270"/>
                         <rect key="screenRect" x="0.0" y="0.0" width="1680" height="1027"/>
@@ -695,455 +694,62 @@
                         </connections>
                     </window>
                     <connections>
-                        <segue destination="1FD-G9-cEA" kind="relationship" relationship="window.shadowedContentViewController" id="hDJ-6W-hcQ"/>
+                        <segue destination="XfG-lQ-9wD" kind="relationship" relationship="window.shadowedContentViewController" id="cq2-FE-JQM"/>
                     </connections>
                 </windowController>
                 <customObject id="Oky-zY-oP4" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="75" y="250"/>
         </scene>
-        <!--ContainerVC-->
-        <scene sceneID="iKx-kt-vJy">
+        <!--View Controller-->
+        <scene sceneID="hIz-AP-VOD">
             <objects>
-                <pagecontroller storyboardIdentifier="ContainerVC" id="1FD-G9-cEA" customClass="ContainerVC" customModule="KeyChain_Installer" customModuleProvider="target" sceneMemberID="viewController">
-                    <view key="view" id="hhb-bZ-4Os">
-                        <rect key="frame" x="0.0" y="0.0" width="450" height="359"/>
+                <customObject id="rPt-NT-nkU" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
+                <viewController id="XfG-lQ-9wD" customClass="ViewController" customModule="Keychain_Uninstaller" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" wantsLayer="YES" id="m2S-Jp-Qdl">
+                        <rect key="frame" x="0.0" y="0.0" width="480" height="270"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
-                            <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="fAj-v8-o2M">
-                                <rect key="frame" x="228" y="13" width="69" height="32"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                <buttonCell key="cell" type="push" title="Next" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="3Qg-lP-pXw">
-                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                    <font key="font" metaFont="system"/>
-                                    <connections>
-                                        <action selector="navigateForward:" target="oxz-tc-nBJ" id="EWR-if-GuZ"/>
-                                    </connections>
-                                </buttonCell>
-                            </button>
-                            <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="XHp-rm-deL">
-                                <rect key="frame" x="153" y="13" width="70" height="32"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                <buttonCell key="cell" type="push" title="Back" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="ukZ-zg-Mcf">
-                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                    <font key="font" metaFont="system"/>
-                                </buttonCell>
-                                <connections>
-                                    <action selector="navigateBack:" target="oxz-tc-nBJ" id="JEF-Fi-tlo"/>
-                                </connections>
-                            </button>
-                        </subviews>
-                    </view>
-                    <connections>
-                        <outlet property="backButton" destination="XHp-rm-deL" id="JLk-qy-geW"/>
-                        <outlet property="nextButton" destination="fAj-v8-o2M" id="LgJ-UA-W97"/>
-                    </connections>
-                </pagecontroller>
-                <customObject id="oxz-tc-nBJ" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="75" y="721.5"/>
-        </scene>
-        <!--Select PathVC-->
-        <scene sceneID="XxV-Sg-Awa">
-            <objects>
-                <viewController storyboardIdentifier="SelectPathVC" id="hd9-Qg-Rxp" customClass="SelectPathVC" customModule="KeyChain_Installer" customModuleProvider="target" sceneMemberID="viewController">
-                    <view key="view" id="nX7-7N-2dt">
-                        <rect key="frame" x="0.0" y="0.0" width="450" height="300"/>
-                        <autoresizingMask key="autoresizingMask"/>
-                        <subviews>
-                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="dVL-Ck-nfh">
-                                <rect key="frame" x="18" y="104" width="414" height="17"/>
-                                <textFieldCell key="cell" lineBreakMode="clipping" title="Select path directory for installation" id="YSw-2X-5jG">
-                                    <font key="font" usesAppearanceFont="YES"/>
+                            <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="o6Q-3z-ycK">
+                                <rect key="frame" x="176" y="142" width="128" height="108"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="128" id="19u-HV-Wq8"/>
+                                    <constraint firstAttribute="height" constant="108" id="zLm-Cd-Y2k"/>
+                                </constraints>
+                                <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="logo" id="nO1-VS-vgp"/>
+                            </imageView>
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="0KT-5p-KWr">
+                                <rect key="frame" x="133" y="107" width="215" height="27"/>
+                                <textFieldCell key="cell" lineBreakMode="clipping" alignment="center" title="KeyChain Unintaller" id="zSY-la-w1C">
+                                    <font key="font" metaFont="system" size="22"/>
                                     <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
                             </textField>
-                            <pathControl verticalHuggingPriority="750" allowsExpansionToolTips="YES" translatesAutoresizingMaskIntoConstraints="NO" id="8bq-7x-LW1">
-                                <rect key="frame" x="20" y="66" width="320" height="22"/>
-                                <pathCell key="cell" selectable="YES" editable="YES" alignment="left" id="c11-gN-FJV">
+                            <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="P6E-Rh-Hk3">
+                                <rect key="frame" x="199" y="13" width="85" height="32"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <buttonCell key="cell" type="push" title="Unistall" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="7Ox-P0-mVS">
+                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                     <font key="font" metaFont="system"/>
-                                    <url key="url" string="file:///~/Keychain"/>
-                                </pathCell>
-                            </pathControl>
-                            <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="v8X-Yk-ypN">
-                                <rect key="frame" x="18" y="34" width="260" height="18"/>
-                                <buttonCell key="cell" type="check" title="Automatic start when the system boots" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="fiM-PH-BgQ">
+                                </buttonCell>
+                            </button>
+                            <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="sTu-yb-Pnt">
+                                <rect key="frame" x="118" y="83" width="245" height="18"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <buttonCell key="cell" type="check" title="Save private keys" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="an1-da-xfJ">
                                     <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                     <font key="font" metaFont="system"/>
                                 </buttonCell>
-                                <connections>
-                                    <action selector="selectAutoLoadAction:" target="hd9-Qg-Rxp" id="wRS-yf-xFs"/>
-                                </connections>
                             </button>
-                            <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="V9G-UG-Iom">
-                                <rect key="frame" x="342" y="51" width="94" height="32"/>
-                                <constraints>
-                                    <constraint firstAttribute="width" constant="82" id="X5f-pA-T93"/>
-                                </constraints>
-                                <buttonCell key="cell" type="push" title="Select" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="pgo-ge-EgJ">
-                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                    <font key="font" metaFont="system"/>
-                                </buttonCell>
-                                <connections>
-                                    <action selector="selectPathAction:" target="hd9-Qg-Rxp" id="iwl-YD-Ywe"/>
-                                </connections>
-                            </button>
-                            <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="Bog-LI-xFU">
-                                <rect key="frame" x="161" y="176" width="128" height="108"/>
-                                <constraints>
-                                    <constraint firstAttribute="width" constant="128" id="O8g-Vp-Hpn"/>
-                                    <constraint firstAttribute="height" constant="108" id="SFq-dG-K7m"/>
-                                </constraints>
-                                <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="logo" id="1EX-Jr-HRd"/>
-                            </imageView>
-                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="2J7-dJ-Rk4">
-                                <rect key="frame" x="177" y="141" width="97" height="27"/>
-                                <textFieldCell key="cell" lineBreakMode="clipping" alignment="center" title="KeyChain" id="s9x-D3-VjZ">
-                                    <font key="font" metaFont="system" size="22"/>
-                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
-                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
-                                </textFieldCell>
-                            </textField>
                         </subviews>
                         <constraints>
-                            <constraint firstItem="V9G-UG-Iom" firstAttribute="leading" secondItem="8bq-7x-LW1" secondAttribute="trailing" constant="8" id="E57-6h-Zfo"/>
-                            <constraint firstItem="dVL-Ck-nfh" firstAttribute="top" secondItem="2J7-dJ-Rk4" secondAttribute="bottom" constant="20" id="Geo-Yk-nmo"/>
-                            <constraint firstItem="8bq-7x-LW1" firstAttribute="top" secondItem="dVL-Ck-nfh" secondAttribute="bottom" constant="16" id="HNR-Zo-zKw"/>
-                            <constraint firstItem="Bog-LI-xFU" firstAttribute="leading" secondItem="nX7-7N-2dt" secondAttribute="leading" constant="161" id="SM3-sL-spq"/>
-                            <constraint firstItem="v8X-Yk-ypN" firstAttribute="top" secondItem="8bq-7x-LW1" secondAttribute="bottom" constant="16" id="WhJ-pr-zib"/>
-                            <constraint firstAttribute="trailing" secondItem="Bog-LI-xFU" secondAttribute="trailing" constant="161" id="Y39-UQ-beP"/>
-                            <constraint firstItem="Bog-LI-xFU" firstAttribute="top" secondItem="nX7-7N-2dt" secondAttribute="top" constant="16" id="aOz-OO-32A"/>
-                            <constraint firstItem="V9G-UG-Iom" firstAttribute="top" secondItem="dVL-Ck-nfh" secondAttribute="bottom" constant="25" id="ajV-hV-Oz0"/>
-                            <constraint firstItem="8bq-7x-LW1" firstAttribute="leading" secondItem="nX7-7N-2dt" secondAttribute="leading" constant="20" id="c1U-bv-Dca"/>
-                            <constraint firstItem="2J7-dJ-Rk4" firstAttribute="centerX" secondItem="nX7-7N-2dt" secondAttribute="centerX" id="n4U-SA-SqD"/>
-                            <constraint firstAttribute="trailing" secondItem="V9G-UG-Iom" secondAttribute="trailing" constant="20" id="noN-0A-gqP"/>
-                            <constraint firstItem="2J7-dJ-Rk4" firstAttribute="top" secondItem="Bog-LI-xFU" secondAttribute="bottom" constant="8" id="tMg-28-66D"/>
-                            <constraint firstItem="v8X-Yk-ypN" firstAttribute="leading" secondItem="nX7-7N-2dt" secondAttribute="leading" constant="20" id="thc-U8-WTJ"/>
-                            <constraint firstAttribute="trailing" secondItem="dVL-Ck-nfh" secondAttribute="trailing" constant="20" id="vM0-xG-pyA"/>
-                            <constraint firstItem="dVL-Ck-nfh" firstAttribute="leading" secondItem="nX7-7N-2dt" secondAttribute="leading" constant="20" id="wNU-DE-Jjl"/>
-                        </constraints>
-                    </view>
-                    <connections>
-                        <outlet property="autoLoadSelector" destination="v8X-Yk-ypN" id="gaY-Yf-pRu"/>
-                        <outlet property="pathControl" destination="8bq-7x-LW1" id="EVR-14-Hgu"/>
-                    </connections>
-                </viewController>
-                <customObject id="vew-DU-Xuy" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="594" y="692"/>
-        </scene>
-        <!--WelcomeVC-->
-        <scene sceneID="OQ3-iJ-CuJ">
-            <objects>
-                <viewController storyboardIdentifier="WelcomeVC" id="iIV-0J-O9j" customClass="WelcomeVC" customModule="KeyChain_Installer" customModuleProvider="target" sceneMemberID="viewController">
-                    <view key="view" id="Cdp-We-zDz">
-                        <rect key="frame" x="0.0" y="0.0" width="450" height="300"/>
-                        <autoresizingMask key="autoresizingMask"/>
-                        <subviews>
-                            <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="LAX-f6-bTN">
-                                <rect key="frame" x="161" y="176" width="128" height="108"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="108" id="NgY-sJ-VB0"/>
-                                    <constraint firstAttribute="width" constant="128" id="goD-UL-I4j"/>
-                                </constraints>
-                                <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="logo" id="Kja-h5-Rhl"/>
-                            </imageView>
-                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="qCw-tT-n9B">
-                                <rect key="frame" x="177" y="141" width="97" height="27"/>
-                                <textFieldCell key="cell" lineBreakMode="clipping" alignment="center" title="KeyChain" id="Hhk-Pz-olf">
-                                    <font key="font" metaFont="system" size="22"/>
-                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
-                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
-                                </textFieldCell>
-                            </textField>
-                            <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="mG7-WL-tA9">
-                                <rect key="frame" x="18" y="66" width="414" height="51"/>
-                                <textFieldCell key="cell" selectable="YES" alignment="center" id="S8Q-a2-CyK">
-                                    <font key="font" metaFont="system"/>
-                                    <string key="title">Welcome to KeyChain - a standalone app for signing transactions and generating key pairs. To continue, click Next. Enjoy the new level of security!</string>
-                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
-                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
-                                </textFieldCell>
-                            </textField>
-                        </subviews>
-                        <constraints>
-                            <constraint firstItem="qCw-tT-n9B" firstAttribute="top" secondItem="LAX-f6-bTN" secondAttribute="bottom" constant="8" id="68p-kt-0vS"/>
-                            <constraint firstItem="LAX-f6-bTN" firstAttribute="leading" secondItem="Cdp-We-zDz" secondAttribute="leading" constant="161" id="6BP-hI-vw6"/>
-                            <constraint firstItem="mG7-WL-tA9" firstAttribute="leading" secondItem="Cdp-We-zDz" secondAttribute="leading" constant="20" id="Bm3-nb-OQ5"/>
-                            <constraint firstAttribute="trailing" secondItem="mG7-WL-tA9" secondAttribute="trailing" constant="20" id="Q9z-5N-7wL"/>
-                            <constraint firstItem="qCw-tT-n9B" firstAttribute="centerX" secondItem="Cdp-We-zDz" secondAttribute="centerX" id="Yq7-yG-zLQ"/>
-                            <constraint firstItem="LAX-f6-bTN" firstAttribute="top" secondItem="Cdp-We-zDz" secondAttribute="top" constant="16" id="eAv-Nm-47P"/>
-                            <constraint firstAttribute="trailing" secondItem="LAX-f6-bTN" secondAttribute="trailing" constant="161" id="h8a-ft-7up"/>
-                            <constraint firstItem="mG7-WL-tA9" firstAttribute="top" secondItem="qCw-tT-n9B" secondAttribute="bottom" constant="24" id="vVO-PB-B4R"/>
+                            <constraint firstItem="0KT-5p-KWr" firstAttribute="top" secondItem="o6Q-3z-ycK" secondAttribute="bottom" constant="8" id="aaV-tH-ZjQ"/>
                         </constraints>
                     </view>
                 </viewController>
-                <customObject id="sWX-uP-vau" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="594" y="1048"/>
-        </scene>
-        <!--ProgressVC-->
-        <scene sceneID="pS0-Y0-mKy">
-            <objects>
-                <viewController storyboardIdentifier="ProgressVC" id="oZd-jx-WVe" customClass="ProgressVC" customModule="KeyChain_Installer" customModuleProvider="target" sceneMemberID="viewController">
-                    <view key="view" id="q5J-NA-DPF">
-                        <rect key="frame" x="0.0" y="0.0" width="450" height="300"/>
-                        <autoresizingMask key="autoresizingMask"/>
-                        <subviews>
-                            <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="cdC-9J-Svi">
-                                <rect key="frame" x="228" y="13" width="76" height="32"/>
-                                <buttonCell key="cell" type="push" title="Install" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="c9d-nL-qiH">
-                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                    <font key="font" metaFont="system"/>
-                                </buttonCell>
-                                <connections>
-                                    <action selector="installAction:" target="oZd-jx-WVe" id="BXP-ml-VP4"/>
-                                </connections>
-                            </button>
-                            <progressIndicator wantsLayer="YES" horizontalHuggingPriority="750" verticalHuggingPriority="750" maxValue="100" bezeled="NO" indeterminate="YES" controlSize="small" style="spinning" translatesAutoresizingMaskIntoConstraints="NO" id="iEN-O1-8Hp">
-                                <rect key="frame" x="217" y="61" width="16" height="16"/>
-                            </progressIndicator>
-                            <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="3pT-tS-DUq">
-                                <rect key="frame" x="161" y="176" width="128" height="108"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="108" id="Gzb-Vx-W31"/>
-                                    <constraint firstAttribute="width" constant="128" id="Net-vO-vCE"/>
-                                </constraints>
-                                <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="logo" id="lZk-PF-nXj"/>
-                            </imageView>
-                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="tL8-Mo-Wgr">
-                                <rect key="frame" x="177" y="141" width="97" height="27"/>
-                                <textFieldCell key="cell" lineBreakMode="clipping" alignment="center" title="KeyChain" id="Bt7-Rc-9Pe">
-                                    <font key="font" metaFont="system" size="22"/>
-                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
-                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
-                                </textFieldCell>
-                            </textField>
-                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="BTw-Au-wCi">
-                                <rect key="frame" x="190" y="93" width="70" height="17"/>
-                                <textFieldCell key="cell" lineBreakMode="clipping" title="Installing..." id="b59-ri-3N5">
-                                    <font key="font" metaFont="system"/>
-                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
-                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
-                                </textFieldCell>
-                            </textField>
-                            <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="UP1-hv-0UR">
-                                <rect key="frame" x="18" y="76" width="414" height="34"/>
-                                <textFieldCell key="cell" selectable="YES" alignment="center" title="You are trying to install KeyChain. To have it in your toolkit, click Install." id="1S0-Jd-jHX">
-                                    <font key="font" metaFont="system"/>
-                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
-                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
-                                </textFieldCell>
-                            </textField>
-                        </subviews>
-                        <constraints>
-                            <constraint firstAttribute="bottom" secondItem="cdC-9J-Svi" secondAttribute="bottom" constant="20" id="6iR-TB-Zh1"/>
-                            <constraint firstItem="iEN-O1-8Hp" firstAttribute="centerX" secondItem="q5J-NA-DPF" secondAttribute="centerX" id="D2J-iB-qH3"/>
-                            <constraint firstItem="iEN-O1-8Hp" firstAttribute="top" secondItem="BTw-Au-wCi" secondAttribute="bottom" constant="16" id="HdB-ny-WGb"/>
-                            <constraint firstItem="UP1-hv-0UR" firstAttribute="leading" secondItem="q5J-NA-DPF" secondAttribute="leading" constant="20" id="Now-Ca-2K9"/>
-                            <constraint firstItem="UP1-hv-0UR" firstAttribute="top" secondItem="tL8-Mo-Wgr" secondAttribute="bottom" constant="31" id="OwY-Ld-uyG"/>
-                            <constraint firstItem="tL8-Mo-Wgr" firstAttribute="centerX" secondItem="q5J-NA-DPF" secondAttribute="centerX" id="SRT-nS-5aj"/>
-                            <constraint firstItem="cdC-9J-Svi" firstAttribute="centerX" secondItem="q5J-NA-DPF" secondAttribute="centerX" constant="41" id="Uxi-Nr-9zH"/>
-                            <constraint firstAttribute="trailing" secondItem="3pT-tS-DUq" secondAttribute="trailing" constant="161" id="Xth-OJ-PNK"/>
-                            <constraint firstItem="cdC-9J-Svi" firstAttribute="top" secondItem="iEN-O1-8Hp" secondAttribute="bottom" constant="20" id="Z2H-x2-G8y"/>
-                            <constraint firstItem="tL8-Mo-Wgr" firstAttribute="top" secondItem="3pT-tS-DUq" secondAttribute="bottom" constant="8" id="b2T-e2-FJd"/>
-                            <constraint firstAttribute="trailing" secondItem="UP1-hv-0UR" secondAttribute="trailing" constant="20" id="b6v-jb-FOX"/>
-                            <constraint firstItem="3pT-tS-DUq" firstAttribute="leading" secondItem="q5J-NA-DPF" secondAttribute="leading" constant="161" id="dhU-g4-OLD"/>
-                            <constraint firstItem="3pT-tS-DUq" firstAttribute="top" secondItem="q5J-NA-DPF" secondAttribute="top" constant="16" id="t8w-9D-SOu"/>
-                            <constraint firstItem="BTw-Au-wCi" firstAttribute="centerX" secondItem="q5J-NA-DPF" secondAttribute="centerX" id="to7-Td-lkY"/>
-                        </constraints>
-                    </view>
-                    <connections>
-                        <outlet property="infoTextField" destination="BTw-Au-wCi" id="xYb-at-b9J"/>
-                        <outlet property="progressSpinning" destination="iEN-O1-8Hp" id="1Lz-1B-VyQ"/>
-                        <outlet property="welcomeLabel" destination="UP1-hv-0UR" id="OxT-PR-4oj"/>
-                    </connections>
-                </viewController>
-                <customObject id="Pf5-uq-fL6" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="1105" y="692"/>
-        </scene>
-        <!--LicenseVC-->
-        <scene sceneID="5ac-4m-1ht">
-            <objects>
-                <viewController storyboardIdentifier="LicenseVC" id="WZs-Aq-YdK" customClass="LicenseVC" customModule="KeyChain_Installer" customModuleProvider="target" sceneMemberID="viewController">
-                    <view key="view" id="hhK-dh-wf8">
-                        <rect key="frame" x="0.0" y="0.0" width="450" height="300"/>
-                        <autoresizingMask key="autoresizingMask"/>
-                        <subviews>
-                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Auy-Cj-Tez">
-                                <rect key="frame" x="18" y="50" width="414" height="17"/>
-                                <textFieldCell key="cell" lineBreakMode="clipping" title="By clicking Next, you agree with the above license terms." id="bYR-Z1-zH5">
-                                    <font key="font" metaFont="systemSemibold" size="13"/>
-                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
-                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
-                                </textFieldCell>
-                            </textField>
-                            <scrollView borderType="none" horizontalLineScroll="10" horizontalPageScroll="10" verticalLineScroll="10" verticalPageScroll="10" hasHorizontalScroller="NO" translatesAutoresizingMaskIntoConstraints="NO" id="wDY-pX-uZw">
-                                <rect key="frame" x="20" y="85" width="410" height="195"/>
-                                <clipView key="contentView" drawsBackground="NO" copiesOnScroll="NO" id="4hi-xQ-vp4">
-                                    <rect key="frame" x="0.0" y="0.0" width="410" height="195"/>
-                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                                    <subviews>
-                                        <textView importsGraphics="NO" richText="NO" verticallyResizable="YES" baseWritingDirection="leftToRight" findStyle="bar" smartInsertDelete="YES" id="g3g-3i-3YG">
-                                            <rect key="frame" x="0.0" y="-18" width="410" height="425"/>
-                                            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                                            <color key="textColor" red="0.14118" green="0.16078000000000001" blue="0.18038999999999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
-                                            <size key="minSize" width="410" height="195"/>
-                                            <size key="maxSize" width="410" height="10000000"/>
-                                            <attributedString key="textStorage">
-                                                <fragment>
-                                                    <string key="content">MIT License
-</string>
-                                                    <attributes>
-                                                        <color key="NSBackgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                                        <color key="NSColor" red="0.14118" green="0.16078000000000001" blue="0.18038999999999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                                        <font key="NSFont" size="14" name="HelveticaNeue"/>
-                                                        <real key="NSKern" value="0.0"/>
-                                                        <paragraphStyle key="NSParagraphStyle" alignment="left" lineBreakMode="wordWrapping" baseWritingDirection="leftToRight" defaultTabInterval="36" tighteningFactorForTruncation="0.0" allowsDefaultTighteningForTruncation="NO">
-                                                            <tabStops/>
-                                                        </paragraphStyle>
-                                                        <color key="NSStrokeColor" red="0.14118" green="0.16078000000000001" blue="0.18038999999999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                                    </attributes>
-                                                </fragment>
-                                                <fragment>
-                                                    <string key="content" base64-UTF8="YES">
-Cg
-</string>
-                                                    <attributes>
-                                                        <color key="NSColor" red="0.14118" green="0.16078000000000001" blue="0.18038999999999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                                        <font key="NSFont" size="14" name="HelveticaNeue"/>
-                                                        <real key="NSKern" value="0.0"/>
-                                                        <paragraphStyle key="NSParagraphStyle" alignment="left" lineBreakMode="wordWrapping" baseWritingDirection="leftToRight" defaultTabInterval="36" tighteningFactorForTruncation="0.0" allowsDefaultTighteningForTruncation="NO">
-                                                            <tabStops/>
-                                                        </paragraphStyle>
-                                                        <color key="NSStrokeColor" red="0.14118" green="0.16078000000000001" blue="0.18038999999999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                                    </attributes>
-                                                </fragment>
-                                                <fragment>
-                                                    <string key="content">Copyright (c) 2018 KeyChain
-</string>
-                                                    <attributes>
-                                                        <color key="NSBackgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                                        <color key="NSColor" red="0.14118" green="0.16078000000000001" blue="0.18038999999999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                                        <font key="NSFont" size="14" name="HelveticaNeue"/>
-                                                        <real key="NSKern" value="0.0"/>
-                                                        <paragraphStyle key="NSParagraphStyle" alignment="left" lineBreakMode="wordWrapping" baseWritingDirection="leftToRight" defaultTabInterval="36" tighteningFactorForTruncation="0.0" allowsDefaultTighteningForTruncation="NO">
-                                                            <tabStops/>
-                                                        </paragraphStyle>
-                                                        <color key="NSStrokeColor" red="0.14118" green="0.16078000000000001" blue="0.18038999999999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                                    </attributes>
-                                                </fragment>
-                                                <fragment>
-                                                    <string key="content" base64-UTF8="YES">
-Cg
-</string>
-                                                    <attributes>
-                                                        <color key="NSColor" red="0.14118" green="0.16078000000000001" blue="0.18038999999999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                                        <font key="NSFont" size="14" name="HelveticaNeue"/>
-                                                        <real key="NSKern" value="0.0"/>
-                                                        <paragraphStyle key="NSParagraphStyle" alignment="left" lineBreakMode="wordWrapping" baseWritingDirection="leftToRight" defaultTabInterval="36" tighteningFactorForTruncation="0.0" allowsDefaultTighteningForTruncation="NO">
-                                                            <tabStops/>
-                                                        </paragraphStyle>
-                                                        <color key="NSStrokeColor" red="0.14118" green="0.16078000000000001" blue="0.18038999999999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                                    </attributes>
-                                                </fragment>
-                                                <fragment>
-                                                    <string key="content">Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
-</string>
-                                                    <attributes>
-                                                        <color key="NSBackgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                                        <color key="NSColor" red="0.14118" green="0.16078000000000001" blue="0.18038999999999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                                        <font key="NSFont" size="14" name="HelveticaNeue"/>
-                                                        <real key="NSKern" value="0.0"/>
-                                                        <paragraphStyle key="NSParagraphStyle" alignment="left" lineBreakMode="wordWrapping" baseWritingDirection="leftToRight" defaultTabInterval="36" tighteningFactorForTruncation="0.0" allowsDefaultTighteningForTruncation="NO">
-                                                            <tabStops/>
-                                                        </paragraphStyle>
-                                                        <color key="NSStrokeColor" red="0.14118" green="0.16078000000000001" blue="0.18038999999999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                                    </attributes>
-                                                </fragment>
-                                                <fragment>
-                                                    <string key="content" base64-UTF8="YES">
-Cg
-</string>
-                                                    <attributes>
-                                                        <color key="NSColor" red="0.14118" green="0.16078000000000001" blue="0.18038999999999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                                        <font key="NSFont" size="14" name="HelveticaNeue"/>
-                                                        <real key="NSKern" value="0.0"/>
-                                                        <paragraphStyle key="NSParagraphStyle" alignment="left" lineBreakMode="wordWrapping" baseWritingDirection="leftToRight" defaultTabInterval="36" tighteningFactorForTruncation="0.0" allowsDefaultTighteningForTruncation="NO">
-                                                            <tabStops/>
-                                                        </paragraphStyle>
-                                                        <color key="NSStrokeColor" red="0.14118" green="0.16078000000000001" blue="0.18038999999999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                                    </attributes>
-                                                </fragment>
-                                                <fragment>
-                                                    <string key="content">The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-</string>
-                                                    <attributes>
-                                                        <color key="NSBackgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                                        <color key="NSColor" red="0.14118" green="0.16078000000000001" blue="0.18038999999999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                                        <font key="NSFont" size="14" name="HelveticaNeue"/>
-                                                        <real key="NSKern" value="0.0"/>
-                                                        <paragraphStyle key="NSParagraphStyle" alignment="left" lineBreakMode="wordWrapping" baseWritingDirection="leftToRight" defaultTabInterval="36" tighteningFactorForTruncation="0.0" allowsDefaultTighteningForTruncation="NO">
-                                                            <tabStops/>
-                                                        </paragraphStyle>
-                                                        <color key="NSStrokeColor" red="0.14118" green="0.16078000000000001" blue="0.18038999999999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                                    </attributes>
-                                                </fragment>
-                                                <fragment>
-                                                    <string key="content" base64-UTF8="YES">
-Cg
-</string>
-                                                    <attributes>
-                                                        <color key="NSColor" red="0.14118" green="0.16078000000000001" blue="0.18038999999999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                                        <font key="NSFont" size="14" name="HelveticaNeue"/>
-                                                        <real key="NSKern" value="0.0"/>
-                                                        <paragraphStyle key="NSParagraphStyle" alignment="left" lineBreakMode="wordWrapping" baseWritingDirection="leftToRight" defaultTabInterval="36" tighteningFactorForTruncation="0.0" allowsDefaultTighteningForTruncation="NO">
-                                                            <tabStops/>
-                                                        </paragraphStyle>
-                                                        <color key="NSStrokeColor" red="0.14118" green="0.16078000000000001" blue="0.18038999999999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                                    </attributes>
-                                                </fragment>
-                                                <fragment>
-                                                    <string key="content">THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.</string>
-                                                    <attributes>
-                                                        <color key="NSBackgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                                        <color key="NSColor" red="0.14118" green="0.16078000000000001" blue="0.18038999999999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                                        <font key="NSFont" size="14" name="HelveticaNeue"/>
-                                                        <real key="NSKern" value="0.0"/>
-                                                        <paragraphStyle key="NSParagraphStyle" alignment="left" lineBreakMode="wordWrapping" baseWritingDirection="leftToRight" defaultTabInterval="36" tighteningFactorForTruncation="0.0" allowsDefaultTighteningForTruncation="NO">
-                                                            <tabStops/>
-                                                        </paragraphStyle>
-                                                        <color key="NSStrokeColor" red="0.14118" green="0.16078000000000001" blue="0.18038999999999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                                    </attributes>
-                                                </fragment>
-                                            </attributedString>
-                                            <color key="insertionPointColor" name="textColor" catalog="System" colorSpace="catalog"/>
-                                        </textView>
-                                    </subviews>
-                                </clipView>
-                                <scroller key="verticalScroller" wantsLayer="YES" verticalHuggingPriority="750" horizontal="NO" id="oFn-Wd-lk4">
-                                    <rect key="frame" x="394" y="0.0" width="16" height="195"/>
-                                    <autoresizingMask key="autoresizingMask"/>
-                                </scroller>
-                            </scrollView>
-                        </subviews>
-                        <constraints>
-                            <constraint firstItem="wDY-pX-uZw" firstAttribute="top" secondItem="hhK-dh-wf8" secondAttribute="top" constant="20" id="Qeo-gl-Z0c"/>
-                            <constraint firstItem="wDY-pX-uZw" firstAttribute="leading" secondItem="hhK-dh-wf8" secondAttribute="leading" constant="20" id="d3Z-U3-EAc"/>
-                            <constraint firstItem="Auy-Cj-Tez" firstAttribute="top" secondItem="wDY-pX-uZw" secondAttribute="bottom" constant="18" id="f8g-4p-wYp"/>
-                            <constraint firstAttribute="bottom" secondItem="Auy-Cj-Tez" secondAttribute="bottom" constant="50" id="l1G-Qn-Pg8"/>
-                            <constraint firstAttribute="trailing" secondItem="wDY-pX-uZw" secondAttribute="trailing" constant="20" id="lZa-7T-6Tv"/>
-                            <constraint firstAttribute="trailing" secondItem="Auy-Cj-Tez" secondAttribute="trailing" constant="20" id="som-eP-ubG"/>
-                            <constraint firstItem="Auy-Cj-Tez" firstAttribute="leading" secondItem="hhK-dh-wf8" secondAttribute="leading" constant="20" id="tQt-oQ-hHn"/>
-                        </constraints>
-                    </view>
-                </viewController>
-                <customObject id="36l-nI-poG" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="1105" y="1048"/>
+            <point key="canvasLocation" x="75" y="655"/>
         </scene>
     </scenes>
     <resources>

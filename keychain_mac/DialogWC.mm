@@ -18,11 +18,12 @@
 
 using keychain_app::secmod_commands::secmod_parser_f;
 
-@interface DialogWC () {
+@interface DialogWC () <NSTableViewDelegate, NSTableViewDataSource> {
     NSSecureTextField *pass;
     NSSecureTextField *passConfirm;
     NSButton *redLockButton;
     BOOL isHash;
+    NSMutableArray *dataForBitcoin;
 }
 
 @end
@@ -122,6 +123,18 @@ using keychain_app::secmod_commands::secmod_parser_f;
                 case keychain_app::secmod_commands::blockchain_secmod_te::bitcoin:
                 {
                     [self.window setTitle:@"Sign transaction"];
+                    if (cmd_parse.is_json()) {
+                        dataForBitcoin = [NSMutableArray new];
+                        auto btc_trx = cmd_parse.to_bitcoin();
+                        for (int i = 0; i < btc_trx.trx_info.num_vouts; i++) {
+                            auto vout = btc_trx.trx_info.vouts[i];
+                            NSDictionary *dict = @{@"key1": [NSString stringWithUTF8String:vout.address.c_str()], @"key2": [NSString stringWithFormat:@"%llu", vout.amount]};
+                            [dataForBitcoin addObject:dict];
+                        }
+                        [self setupTopLabel:@"From"];
+                        [self setupTextTopLabel:[NSString stringWithUTF8String:btc_trx.from.c_str()]];
+                        [self createTableView];
+                    }
                 }
                     break;
                 case keychain_app::secmod_commands::blockchain_secmod_te::rawhash:
@@ -202,6 +215,43 @@ using keychain_app::secmod_commands::secmod_parser_f;
     [self.window setFrame:NSMakeRect(0, 0, 575, 500) display:true];
 }
 
+- (void) createTableView {
+    NSScrollView *scrollView = [[NSScrollView alloc] initWithFrame:CGRectMake(22, 110, self.window.frame.size.width - 44, 80)];
+    scrollView.backgroundColor = [NSColor clearColor];
+    [scrollView setBorderType:NSBezelBorder];
+    NSTableView *tableView = [[NSTableView alloc] initWithFrame:scrollView.frame];
+//    tableView.headerView = nil;
+    tableView.rowSizeStyle = NSTableViewRowSizeStyleLarge;
+    tableView.backgroundColor = [NSColor clearColor];
+    NSTableColumn *tCol;
+    tCol = [[NSTableColumn alloc] initWithIdentifier:[NSString stringWithFormat:@"key1"]];
+    [[tCol headerCell] setStringValue:@"To"];
+    [tCol setWidth:self.window.frame.size.width - 149];
+    [tableView addTableColumn:tCol];
+    tCol = [[NSTableColumn alloc] initWithIdentifier:[NSString stringWithFormat:@"key2"]];
+    [[tCol headerCell] setStringValue:@"Amount"];
+    [tCol setWidth:100];
+    [tableView addTableColumn:tCol];
+    
+//    [tableView setUsesAlternatingRowBackgroundColors:YES];
+//    [tableView setGridStyleMask:NSTableViewSolidVerticalGridLineMask];
+//    [myTableView setGridColor:[NSColor redColor]];
+//    [tableView setRowHeight:23.0];
+    [tableView setDelegate:self];
+    [tableView setDataSource:self];
+    [tableView setSelectionHighlightStyle:NSTableViewSelectionHighlightStyleNone];
+    [tableView setAutoresizesSubviews:YES];
+    
+    [scrollView setHasVerticalScroller:YES];
+//    scrollView.verticalScroller = NSScrollerStyleOverlay;
+    [scrollView setHasHorizontalScroller:NO];
+    scrollView.horizontalScrollElasticity = NSScrollElasticityNone;
+    [scrollView setAutoresizesSubviews:YES];
+    [scrollView setAutoresizingMask:NSViewWidthSizable|NSViewHeightSizable];
+    [scrollView setDocumentView:tableView];
+    [self.window.contentView addSubview:scrollView];
+}
+
 - (void) checkForRedLock {
     if (self.isSignTransaction && (self.unlockTime > 0 || !self.isJson || isHash)) {
         [self setupLogoRedLock];
@@ -276,7 +326,7 @@ using keychain_app::secmod_commands::secmod_parser_f;
         NSLog(@"path %@", path);
         imageView.image = image;
         [self.window.contentView addSubview:imageView];
-    } else if ([blockhain isEqualToString:@"bitcoun"]) {
+    } else if ([blockhain isEqualToString:@"bitcoin"]) {
         NSImageView *imageView = [[NSImageView alloc] initWithFrame:NSMakeRect(22, 224, 25, 35)];
         NSString *path = [NSString stringWithFormat:@"%@/%@", FileManager.getWorkDirectoryPath, @"resources/bitcoin.png"];
         NSImage *image = [[NSImage alloc] initWithContentsOfFile:path];
@@ -532,6 +582,22 @@ using keychain_app::secmod_commands::secmod_parser_f;
     dispatch_async(dispatch_get_main_queue(), ^{
         [NSApp stopModal];
     });
+}
+
+- (id)tableView:(NSTableView *)aTableView objectValueForTableColumn:(NSTableColumn *)aTableColumn row:(NSInteger)rowIndex
+{
+    // NSString *aString = [NSString stringWithFormat:@"%@, Row %ld",[aTableColumn identifier],(long)rowIndex];
+    NSString *aString;
+    aString = [[dataForBitcoin objectAtIndex:rowIndex] objectForKey:[aTableColumn identifier]];
+    return aString;
+}
+
+// TableView Datasource method implementation
+- (NSInteger)numberOfRowsInTableView:(NSTableView *)tableView
+{
+    //we have only one table in the screen and thus we are not checking the row count based on the target table view
+//    long recordCount = [self.dataArray count];
+    return dataForBitcoin.count;
 }
 
 @end

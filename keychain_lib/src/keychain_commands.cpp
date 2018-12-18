@@ -26,8 +26,8 @@ bool swap_action(std::string data, swap_cmd_t::swap_t &swap_info) {
     if (data.length() != 8 + 64 + 64)
       return false;
     
-    auto hash = data.substr(8, 64);
-    auto address = data.substr(8 + 64, 64);
+    auto hash = data.substr(8, 40);
+    auto address = data.substr(8 + 64+24, 40);
     swap_info.action = swap_cmd_t::action_te::create_swap;
     swap_info.hash = hash;
     swap_info.address = address;

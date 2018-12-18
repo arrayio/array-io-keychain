@@ -68,22 +68,36 @@ keychain::~keychain()
 }
 
 std::string keychain::operator()(const fc_light::variant& command) {
-  keychain_command_common cmd;
-  try
+  auto print_exception = [](int id, fc_light::exception &er) -> std::string
   {
-    cmd = command.as<keychain_command_common>();
-    auto cmd_map = keychain_commands_singletone::instance();
-    auto p_func = cmd_map[cmd.command];
-    return (*p_func)(this, cmd.params, cmd.id);
-  }
-  catch( fc_light::exception& er ) {
     auto err_logs = er.get_log();
     std::vector<fc_light::log_context> log_contexts(err_logs.size());
     std::transform(err_logs.begin(), err_logs.end(), log_contexts.begin(), [](const auto& val){
       return val.get_context();
     });
     return fc_light::json::to_string(
-      fc_light::variant(keychain_app::json_error(cmd.id, er.code(), er.to_string().c_str(), fc_light::variant(log_contexts))));
+      fc_light::variant(keychain_app::json_error(id, er.code(), er.to_string().c_str(), fc_light::variant(log_contexts))));
+  };
+  
+  keychain_command_common cmd;
+  try
+  {
+    cmd = command.as<keychain_command_common>();
+  }
+  catch( fc_light::bad_cast_exception& er)
+  {
+    fc_light::parse_error_exception er_(er.get_log());
+    er_.append_log( FC_LIGHT_LOG_MESSAGE( error, "cannot parse command" ) );
+    return print_exception(cmd.id, er_);
+  }
+  try
+  {
+    auto cmd_map = keychain_commands_singletone::instance();
+    auto p_func = cmd_map[cmd.command];
+    return (*p_func)(this, cmd.params, cmd.id);
+  }
+  catch( fc_light::exception& er ) {
+    return print_exception(cmd.id, er);
   }
   catch( const std::exception& e ) {
     return fc_light::json::to_string(

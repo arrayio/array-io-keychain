@@ -25,7 +25,7 @@ namespace fc_light
      password_input_error_code         , ///< get password error
      privkey_not_found_code            , ///< private key not found
      timeout_exception_code            , ///< timeout exceptions
-     parse_error_exception_code        ,
+     parse_error_exception_code        , ///< cannot parse command
      internal_error_code               , ///< some internal error
      file_not_found_exception_code     ,
      key_not_found_exception_code      ,

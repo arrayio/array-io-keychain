@@ -220,13 +220,14 @@ using keychain_app::secmod_commands::secmod_parser_f;
     NSScrollView *scrollView = [[NSScrollView alloc] initWithFrame:CGRectMake(22, 110, self.window.frame.size.width - 44, 150)];
     scrollView.backgroundColor = [NSColor clearColor];
     [scrollView setBorderType:NSBezelBorder];
+    
     NSTableView *tableView = [[NSTableView alloc] initWithFrame:scrollView.bounds];
-//    tableView.headerView = nil;
     tableView.rowSizeStyle = NSTableViewRowSizeStyleLarge;
     tableView.backgroundColor = [NSColor clearColor];
     tableView.appearance = [NSAppearance appearanceNamed:NSAppearanceNameAqua];
 
     NSTableColumn *tCol;
+    
     tCol = [[NSTableColumn alloc] initWithIdentifier:[NSString stringWithFormat:@"key1"]];
     id cell = [tCol dataCell];
     [cell setFont: [NSFont systemFontOfSize:18]];
@@ -234,8 +235,8 @@ using keychain_app::secmod_commands::secmod_parser_f;
     [tCol setWidth:self.window.frame.size.width - 149];
     tCol.editable = false;
     [[tCol dataCell] setVerticalCentering:YES];
-//    [[tCol dataCell] setAppearance:[NSAppearance appearanceNamed:NSAppearanceNameAqua]];
     [tableView addTableColumn:tCol];
+    
     tCol = [[NSTableColumn alloc] initWithIdentifier:[NSString stringWithFormat:@"key2"]];
     cell = [tCol dataCell];
     [cell setFont: [NSFont systemFontOfSize:18]];
@@ -243,12 +244,10 @@ using keychain_app::secmod_commands::secmod_parser_f;
     [tCol setWidth:100];
     tCol.editable = false;
     [[tCol dataCell] setVerticalCentering:YES];
-//    [[tCol dataCell] setAppearance:[NSAppearance appearanceNamed:NSAppearanceNameAqua]];
     [tableView addTableColumn:tCol];
     
     [tableView setUsesAlternatingRowBackgroundColors:YES];
     [tableView setGridStyleMask:NSTableViewSolidVerticalGridLineMask];
-//    [myTableView setGridColor:[NSColor redColor]];
     [tableView setRowHeight:23.0];
     [tableView setDelegate:self];
     [tableView setDataSource:self];
@@ -257,7 +256,6 @@ using keychain_app::secmod_commands::secmod_parser_f;
     
     scrollView.appearance = [NSAppearance appearanceNamed:NSAppearanceNameAqua];
     [scrollView setHasVerticalScroller:YES];
-//    scrollView.verticalScroller = [NSScroller ;
     [scrollView setHasHorizontalScroller:NO];
     scrollView.horizontalScrollElasticity = NSScrollElasticityNone;
     [scrollView setAutoresizesSubviews:YES];

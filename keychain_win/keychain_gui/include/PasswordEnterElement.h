@@ -7,6 +7,7 @@
 #include <QFrame>
 #include  <QLineEdit>
 #include <QRegexp>
+#include "PasswordLineEdit.h"
 
 class PasswordEnterElement : public QWidget
 {
@@ -21,11 +22,15 @@ public:
 	QString GetValue();
 	int GetElementHeigth();
 	void setValueFocus();
+	void checkFinishedEnterance();
+
+signals:
+	void finishEnterPassword();
 
 private:
 	//Ui::SecureWindowElement ui;
 	QLabel *label = Q_NULLPTR;
-	QLineEdit *value = Q_NULLPTR;
+	PasswordLineEdit *value = Q_NULLPTR;
 	QLabel *description;
 	QLabel *labelConfirm = Q_NULLPTR;
 	QLineEdit *valueConfirm = Q_NULLPTR;

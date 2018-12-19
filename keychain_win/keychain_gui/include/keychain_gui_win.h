@@ -70,4 +70,5 @@ private:
 public slots:
 	void transaction_sign();
 	void cancel_sign();
+	void set_sign_focus();
 };

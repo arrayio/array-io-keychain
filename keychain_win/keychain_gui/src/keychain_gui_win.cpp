@@ -125,7 +125,7 @@ keychain_gui_win::keychain_gui_win(Transaction &transaction, QWidget *parent)
 	OKButton->setFixedSize(89, 25);
 	OKButton->setFlat(true);
 	OKButton->setCursor(Qt::PointingHandCursor);
-	OKButton->setStyleSheet("color:white;background-image: url(:/keychain_gui_win/but_ok.png);border-style:outset;border-width:0px;border-radius:5px;font:16px \"Segoe UI\"");
+	OKButton->setStyleSheet("color:white;background-color:rgb(70,134,255);border-style:outset;border-width:0px;border-radius:5px;font:16px \"Segoe UI\"");
 	OKButton->setWindowFlags(Qt::FramelessWindowHint);
 
 
@@ -158,8 +158,8 @@ keychain_gui_win::keychain_gui_win(Transaction &transaction, QWidget *parent)
 	this->connect(OKButton, &QPushButton::released, this, &keychain_gui_win::transaction_sign);
 	this->connect(CancelButton, &QPushButton::released, this, &keychain_gui_win::cancel_sign);
 	_roundCorners();
-	//password->setValueFocus();
-	OKButton->setFocus();
+	password->setValueFocus();
+	connect(password, &PasswordEnterElement::finishEnterPassword, this, &keychain_gui_win::set_sign_focus);
 }
 
 void keychain_gui_win::transaction_sign() {
@@ -176,6 +176,12 @@ void keychain_gui_win::transaction_sign() {
 void keychain_gui_win::cancel_sign() {
 	serviceExchange->EncodeError(L"empty_password", 14);
 	this->close();
+}
+
+void keychain_gui_win::set_sign_focus()
+{
+	//OKButton->setStyleSheet("color:white;background-color:rgb(179,205,255);border-style:outset;border-width:0px;border-radius:5px;font:16px \"Segoe UI\"");
+	OKButton->setFocus();
 }
 
 

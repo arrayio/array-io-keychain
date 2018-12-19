@@ -82,7 +82,15 @@ class UninstallerManager {
     }
     
     func deleteFile (_ file: String, step: UninstallerManagerSteps) {
-        
+        if fileManager.fileExists(atPath: file) {
+            do {
+                try fileManager.removeItem(atPath: file)
+                delegate?.endOfStep(step)
+            } catch let error as NSError {
+                print(error)
+                delegate?.failOfStep(step)
+            }
+        }
     }
     
 }

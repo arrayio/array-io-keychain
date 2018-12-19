@@ -37,6 +37,12 @@ PasswordEnterElement::PasswordEnterElement(bool passwordCreate, QWidget * parent
 		valueConfirm->setEchoMode(QLineEdit::Password);
 		valueConfirm->setAlignment(Qt::AlignVCenter | Qt::AlignLeft);
 
+		confirmDescription = new QLabel(this);
+		confirmDescription->setWordWrap(true);
+		confirmDescription->setStyleSheet("font:10px \"Segoe UI\";background:transparent;color:rgb(147,148,151);");
+		confirmDescription->setAlignment(Qt::AlignTop | Qt::AlignLeft);
+		confirmDescription->setText("");
+
 		labelConfirm->setText("Confirm");
 		connect(value, &QLineEdit::textEdited, this, &PasswordEnterElement::checkStrength);
 		connect(value, &PasswordLineEdit::finishEnter, this, &PasswordEnterElement::setFocusOnConfirm);
@@ -68,7 +74,10 @@ void PasswordEnterElement::SetPosition(int x, int y, int valueWidth)
 		labelConfirm->setFixedSize(116, 25);
 		valueConfirm->setFixedSize(valueWidth, 25);
 		valueConfirm->move(116 + 16, _height);
-		_height += 25;
+		_height += 25; 
+		confirmDescription->move(valueConfirm->x(), _height);
+		confirmDescription->setFixedSize(valueConfirm->width(), 13);
+		_height += 18;
 	}
 	setFixedSize(116 + valueWidth + 16, _height);
 }
@@ -130,10 +139,18 @@ void PasswordEnterElement::checkConfirm(const QString & text)
 {
 	if (value == Q_NULLPTR)
 		return;
-	if (value->	text() == text) 
+	if (value->text() == text) {
 		valueConfirm->setStyleSheet("font:16px \"Segoe UI\";background-color:rgb(120,255,113);border-style:solid;border-width:1px;border-radius:4px;border-color:rgb(0,113,0);");
-	else
+		confirmDescription->setStyleSheet("font:10px \"Segoe UI\";background:transparent;color:rgb(0,113,0);");
+		isSame = true;
+		confirmDescription->setText("Confirm password ok");
+	}
+	else {
+		confirmDescription->setText("Confirm password error");
+		confirmDescription->setStyleSheet("font:10px \"Segoe UI\";background:transparent;color:rgb(149,0,0);");
+		isSame = false;
 		valueConfirm->setStyleSheet("font:16px \"Segoe UI\";background-color:rgb(255,140,140);border-style:solid;border-width:1px;border-radius:4px;border-color:rgb(149,0,0);");
+	}
 }
 
 
@@ -144,6 +161,9 @@ void PasswordEnterElement::setValueFocus()
 
 void PasswordEnterElement::checkFinishedEnterance()
 {
+	if (pCreatePassword)
+		if (!isSame)
+			return;
 	emit finishEnterPassword();
 }
 

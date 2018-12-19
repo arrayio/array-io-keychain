@@ -34,11 +34,13 @@ private:
 	PasswordLineEdit *value = Q_NULLPTR;
 	QLabel *description;
 	QLabel *labelConfirm = Q_NULLPTR;
+	QLabel *confirmDescription;
 	PasswordLineEdit *valueConfirm = Q_NULLPTR;
 	bool pCreatePassword;
 	int _height = 0;
 	int pValidChecks = 0;
 	bool pStrong = false;
+	bool isSame = false;
 
 public slots:
 	void checkStrength(const QString &text);

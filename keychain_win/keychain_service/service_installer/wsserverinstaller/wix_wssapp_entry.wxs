@@ -1,8 +1,8 @@
-<?xml version="1.0"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
 	
 	<!-- Set product information -->
-   <Product Id="*" UpgradeCode="{E975488E-8EC8-4643-8C76-7CBCBC698C6C}" 	 
+   <Product Id="*" UpgradeCode="{703B3388-5BB5-4D23-84A5-4E882E7A1142}" 	 
 			Name="KeyChain" Language="1033" Version="1.0.2" 
 			Manufacturer="Array.IO">
 	
@@ -11,61 +11,66 @@
     <Media Id="1" Cabinet="setup.cab" EmbedCab="yes" />
 	<Property Id="MSIUSEREALADMINDETECTION" Value="1" />
 	
+	<!-- Upgrade package and media information -->
 	<MajorUpgrade
 	Schedule="afterInstallInitialize"
 	DowngradeErrorMessage="A later version of [ProductName] is already installed. Setup will now exit."/>
+	
+	<!-- Check if .NET Framework 3.5 is installed -->
+	<PropertyRef Id="NETFRAMEWORK35" />
 	
 	<!-- Override root install directory path -->
 	<SetDirectory Id="RootInstallDrive" Value="C:\Program Files" />
 	
 	<!-- Fragment of sources to install -->
+	<!-- Every build - new GUID values -->
     <Directory Id="TARGETDIR" Name="SourceDir">
 		<Directory Id="RootInstallDrive">
 			<Directory Id="INSTALLLOCATION" Name="KeyChain">
-				<Component Id="Component1" DiskId="1" Guid="{46840884-EDE8-4425-B0E9-6EEECE8C1E9A}">
+				<Component Id="Component1" DiskId="1" Guid="{960E7827-BFEC-4549-AD01-281298454029}">
 					<File Id="File0" Name="websocketwrapper.exe" Source="websocketwrapper.exe" />
 				</Component>
-				<Component Id="Component2" DiskId="1" Guid="{46840884-EDE8-4425-B0E9-6EEECE8C1E9B}">
+				<Component Id="Component2" DiskId="1" Guid="{7B20D317-3D09-45F1-BDE8-E191110F2246}">
 					<File Id="File1" Name="servicewrapper.exe" Source="servicewrapper.exe" />
 				</Component>
-				<Component Id="Component3" DiskId="1" Guid="{46840884-EDE8-4425-B0E9-6EEECE8C1E9C}">
+				<Component Id="Component3" DiskId="1" Guid="{D02371BB-0536-43E1-B260-5024DD7B1C23}">
 					<File Id="File2" Name="servicewrapper.xml" Source="servicewrapper.xml" />
 				</Component>
-				<Component Id="Component4" DiskId="1" Guid="{46840884-EDE8-4425-B0E9-6EEECE8C1E9D}">
+				<Component Id="Component4" DiskId="1" Guid="{04CE4E2D-8ACC-49F9-BFF1-427BD348EC11}">
 					<File Id="File3" Name="wsservicerunner.bat" Source="wsservicerunner.bat" />
 				</Component>
-				<Component Id="Component5" DiskId="1" Guid="{46840884-EDE8-4425-B0E9-6EEECE8C1E9E}">
+				<Component Id="Component5" DiskId="1" Guid="{DC2E38B8-4562-433E-85BC-21A4CB286B58}">
 					<File Id="File4" Name="delete_wsservice.bat" Source="delete_wsservice.bat" />
 				</Component>
-				<Component Id="Component6" DiskId="1" Guid="{46840884-EDE8-4425-B0E9-6EEECE8C1E91}">
+				<Component Id="Component6" DiskId="1" Guid="{94C1CA57-4CD4-4013-83F7-F7EFADA19C87}">
 					<File Id="File5" Name="wsservice_manager.bat" Source="wsservice_manager.bat" />
 				</Component>
-				<Component Id="Component7" DiskId="1" Guid="{46840884-EDE8-4425-B0E9-6EEECE8C1E92}">
+				<Component Id="Component7" DiskId="1" Guid="{C784E9B4-833E-438C-8F22-C1DC2570DEFD}">
 					<File Id="File6" Name="keychain.exe" Source="keychain.exe" />
 				</Component>
-				<Component Id="Component8" DiskId="1" Guid="{46840884-EDE8-4425-B0E9-6EEECE8C1E93}">
+				<Component Id="Component8" DiskId="1" Guid="{B6305F1D-7458-4813-BB38-232909C9397B}">
 					<File Id="File7" Name="keychain_win_gui.exe" Source="keychain_win_gui.exe" />
 				</Component>
-				<Component Id="Component9" DiskId="1" Guid="{46840884-EDE8-4425-B0E9-6EEECE8C1E94}">
+				<Component Id="Component9" DiskId="1" Guid="{AA4C9685-9A3C-4DB1-B3BA-E8E001D4E9B1}">
 					<File Id="File8" Name="keychainrunner.bat" Source="keychainrunner.bat" />
 				</Component>
 				<Directory Id="DemoComponents" Name="Demo">
-					<Component Id="Component10" DiskId="1" Guid="{46840884-EDE8-4425-B0E9-6EEECE8C1E95}">
+					<Component Id="Component10" DiskId="1" Guid="{406EF78F-04A5-4C04-9523-020F7961B864}">
 					<File Id="File9" Name="index.html" Source="demo\index.html" />
 					</Component>
-					<Component Id="Component11" DiskId="1" Guid="{46840884-EDE8-4425-B0E9-6EEECE8C1E96}">
+					<Component Id="Component11" DiskId="1" Guid="{F6330CE6-27F9-4A58-AD9D-7DE03EB81EFF}">
 					<File Id="File10" Name="logo.png" Source="demo\logo.png" />
 					<CreateFolder/>
 					</Component>
-					<Component Id="Component12" DiskId="1" Guid="{46840884-EDE8-4425-B0E9-6EEECE8C1E97}">
+					<Component Id="Component12" DiskId="1" Guid="{64873936-03EA-46D6-90D1-169EDCCE4B2D}">
 						<File Id="File11" Name="spectre.min.css" Source="demo\spectre.min.css" />
 					<CreateFolder/>
 					</Component>
 				</Directory>
-				<Component Id="Component13" DiskId="1" Guid="{46840884-EDE8-4425-B0E9-6EEECE8C1E98}">
+				<Component Id="Component13" DiskId="1" Guid="{FD17E591-D67E-41C6-A815-E7DC61E388BF}">
 					<File Id="File12" Name="libcrypto-1_1-x64.dll" Source="libcrypto-1_1-x64.dll" />
 				</Component>
-				<Component Id="Component14" DiskId="1" Guid="{46840884-EDE8-4425-B0E9-6EEECE8C1E99}">
+				<Component Id="Component14" DiskId="1" Guid="{1BEA67A0-5446-431E-BF9F-6724ECC77299}">
 					<File Id="File13" Name="check_service.bat" Source="check_service.bat" />
 				</Component>
 			</Directory>
@@ -74,8 +79,7 @@
 	
 	<!-- Install directory source text override -->
 	<Property Id="WIXUI_INSTALLDIR" Value="INSTALLLOCATION" />
-	<UIRef Id="WixUI_InstallDir" />
-	
+
 	<!-- Set custom icons and images in dialogs -->
 	<WixVariable Id="WixUIBannerBmp" Value="keychain_banner.jpg" />
 	<WixVariable Id="WixUIDialogBmp" Value="keychain_dialog_banner.jpg" /> 
@@ -161,6 +165,11 @@
 			<MergeRef Id="CrtPolicy_x86"/>
 		<?endif?> 
 	</Feature>
+	
+	<!-- Define the installer UI -->
+	<UI>
+		<UIRef Id="CustomWixUI_Mondo" />
+    </UI>
 	
    </Product>
 </Wix>

@@ -34,6 +34,10 @@ if(WIN32)
 	   "${wixsrcpath}/servicewrapper.exe"
 	   "${wixsrcpath}/servicewrapper.xml"
 	   "${wixsrcpath}/wix_wssapp_entry.wxs"
+	   "${wixsrcpath}/CustomWixUI_Mondo.wxs"
+	   "${wixsrcpath}/CustomInstallDirDlg.wxs"
+	   "${wixsrcpath}/CustomLicenseAgreementDlg.wxs"
+	   "${wixsrcpath}/en-us.wxl"
 	   "${wixsrcpath}/wsservice_manager.bat"
 	   "${wixsrcpath}/delete_wsservice.bat"
 	   "${wixsrcpath}/wsservicerunner.bat"
@@ -83,8 +87,23 @@ if(WIN32)
 	#-xo - this flag tells the linker to output an XML representation of the MSI, instead of the actual MSI,  required to use the -bf switch
 	add_custom_command(TARGET wssdeploy
 					   POST_BUILD
-		               COMMAND ${WIX_PATH}/candle.exe ${installerpath}/wix_wssapp_entry.wxs -dProcessorArchitecture=${TARGET_PLATFORM} -bf -xo -out ${installerpath}/wix_wssapp_entry.wixobj
-		               COMMAND ${WIX_PATH}/light.exe -ext WixUIExtension ${installerpath}/wix_wssapp_entry.wixobj -out ${installerpath}/${PROJECT_NAME}.msi
+		               COMMAND ${WIX_PATH}/candle.exe 
+					   ${installerpath}/wix_wssapp_entry.wxs 
+					   ${installerpath}/CustomLicenseAgreementDlg.wxs 
+					   ${installerpath}/CustomInstallDirDlg.wxs 
+					   ${installerpath}/CustomWixUI_Mondo.wxs 
+					   -dProcessorArchitecture=${TARGET_PLATFORM} 
+					   -bf -xo -out ${installerpath}/
+		               COMMAND ${WIX_PATH}/light.exe 
+					   -sice:ICE20
+					   -ext WixUIExtension 
+					   -ext WixNetfxExtension 
+					   ${installerpath}/wix_wssapp_entry.wixobj 
+					   ${installerpath}/CustomLicenseAgreementDlg.wixobj 
+					   ${installerpath}/CustomInstallDirDlg.wixobj 
+					   ${installerpath}/CustomWixUI_Mondo.wixobj 
+					   -cultures:en-us -loc ${installerpath}/en-us.wxl 
+					   -out ${installerpath}/${PROJECT_NAME}.msi
 					   VERBATIM)
 
 	endif()

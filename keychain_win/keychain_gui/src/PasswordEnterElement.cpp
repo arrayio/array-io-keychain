@@ -89,22 +89,24 @@ void PasswordEnterElement::SetLabel(QString labelValue)
 
 void PasswordEnterElement::checkStrength(const QString &text)
 {
-	QRegExp regLetter("[a-zA-Z]+");
-	QRegExp regDigit("[0-9]+");
-	QRegExp regSymbol("[@#$%*]+");
-		if (regSymbol.indexIn(text) != -1) {
-			if (text.length() >= 8)
-			{
-				description->setStyleSheet("font:10px \"Segoe UI\";background:transparent;color:rgb(0,113,0);");
-				value->setStyleSheet("font:16px \"Segoe UI\";background-color:rgb(120,255,113);border-style:solid;border-width:1px;border-radius:4px;border-color:rgb(0,113,0);");
-				return;
-			}
+	CheckPasswordStrength passwordChecker;
+	switch (passwordChecker.check(text)) {
+		case CheckPasswordStrength::strong: {
+			description->setStyleSheet("font:10px \"Segoe UI\";background:transparent;color:rgb(0,113,0);");
+			value->setStyleSheet("font:16px \"Segoe UI\";background-color:rgb(120,255,113);border-style:solid;border-width:1px;border-radius:4px;border-color:rgb(0,113,0);");
+			break;
+		}
+		case CheckPasswordStrength::middle: {
 			description->setStyleSheet("font:10px \"Segoe UI\";background:transparent;color:rgb(255,142,4);");
 			value->setStyleSheet("font:16px \"Segoe UI\";background-color:rgb(255,230,85);border-style:solid;border-width:1px;border-radius:4px;border-color:rgb(255,142,4);");
-			return;
+			break;
 		}
-	description->setStyleSheet("font:10px \"Segoe UI\";background:transparent;color:rgb(149,0,101);");
-	value->setStyleSheet("font:16px \"Segoe UI\";background-color:rgb(255,140,140);border-style:solid;border-width:1px;border-radius:4px;border-color:rgb(149,0,0);");
+		case CheckPasswordStrength::weak: {
+			description->setStyleSheet("font:10px \"Segoe UI\";background:transparent;color:rgb(149,0,101);");
+			value->setStyleSheet("font:16px \"Segoe UI\";background-color:rgb(255,140,140);border-style:solid;border-width:1px;border-radius:4px;border-color:rgb(149,0,0);");
+			break;
+		}
+	}
 	if (pCreatePassword) {
 		if (!valueConfirm->text().isEmpty()) {
 			if (valueConfirm->text() == text)

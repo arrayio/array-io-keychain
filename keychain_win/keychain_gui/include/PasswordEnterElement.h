@@ -8,6 +8,7 @@
 #include  <QLineEdit>
 #include <QRegexp>
 #include "PasswordLineEdit.h"
+#include "CheckPasswordStrength.h"
 
 class PasswordEnterElement : public QWidget
 {

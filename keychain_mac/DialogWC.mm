@@ -224,6 +224,8 @@ using keychain_app::secmod_commands::secmod_parser_f;
 //    tableView.headerView = nil;
     tableView.rowSizeStyle = NSTableViewRowSizeStyleLarge;
     tableView.backgroundColor = [NSColor clearColor];
+    tableView.appearance = [NSAppearance appearanceNamed:NSAppearanceNameAqua];
+
     NSTableColumn *tCol;
     tCol = [[NSTableColumn alloc] initWithIdentifier:[NSString stringWithFormat:@"key1"]];
     id cell = [tCol dataCell];
@@ -232,6 +234,7 @@ using keychain_app::secmod_commands::secmod_parser_f;
     [tCol setWidth:self.window.frame.size.width - 149];
     tCol.editable = false;
     [[tCol dataCell] setVerticalCentering:YES];
+//    [[tCol dataCell] setAppearance:[NSAppearance appearanceNamed:NSAppearanceNameAqua]];
     [tableView addTableColumn:tCol];
     tCol = [[NSTableColumn alloc] initWithIdentifier:[NSString stringWithFormat:@"key2"]];
     cell = [tCol dataCell];
@@ -240,6 +243,7 @@ using keychain_app::secmod_commands::secmod_parser_f;
     [tCol setWidth:100];
     tCol.editable = false;
     [[tCol dataCell] setVerticalCentering:YES];
+//    [[tCol dataCell] setAppearance:[NSAppearance appearanceNamed:NSAppearanceNameAqua]];
     [tableView addTableColumn:tCol];
     
     [tableView setUsesAlternatingRowBackgroundColors:YES];
@@ -251,6 +255,7 @@ using keychain_app::secmod_commands::secmod_parser_f;
     [tableView setSelectionHighlightStyle:NSTableViewSelectionHighlightStyleNone];
     [tableView setAutoresizesSubviews:YES];
     
+    scrollView.appearance = [NSAppearance appearanceNamed:NSAppearanceNameAqua];
     [scrollView setHasVerticalScroller:YES];
 //    scrollView.verticalScroller = [NSScroller ;
     [scrollView setHasHorizontalScroller:NO];

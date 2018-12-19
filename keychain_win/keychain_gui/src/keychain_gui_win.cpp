@@ -159,7 +159,7 @@ keychain_gui_win::keychain_gui_win(Transaction &transaction, QWidget *parent)
 	this->connect(CancelButton, &QPushButton::released, this, &keychain_gui_win::cancel_sign);
 	_roundCorners();
 	password->setValueFocus();
-	connect(password, &PasswordEnterElement::finishEnterPassword, this, &keychain_gui_win::set_sign_focus);
+	connect(password, &PasswordEnterElement::finishEnterPassword, this, &keychain_gui_win::transaction_sign);
 }
 
 void keychain_gui_win::transaction_sign() {
@@ -181,7 +181,7 @@ void keychain_gui_win::cancel_sign() {
 void keychain_gui_win::set_sign_focus()
 {
 	//OKButton->setStyleSheet("color:white;background-color:rgb(179,205,255);border-style:outset;border-width:0px;border-radius:5px;font:16px \"Segoe UI\"");
-	OKButton->setFocus();
+	
 }
 
 

@@ -8,24 +8,27 @@
 
 namespace fc_light
 {
-   FC_LIGHT_REGISTER_EXCEPTIONS( (timeout_exception)
-                           (file_not_found_exception)
-                           (parse_error_exception)
-                           (invalid_arg_exception)
-                           (invalid_operation_exception)
-                           (key_not_found_exception)
-                           (bad_cast_exception)
-                           (out_of_range_exception)
-                           (canceled_exception)
-                           (assert_exception)
-                           (eof_exception)
-                           (unknown_host_exception)
-                           (null_optional)
-                           (aes_exception)
-                           (overflow_exception)
-                           (underflow_exception)
-                           (divide_by_zero_exception)
-                         )
+   FC_LIGHT_REGISTER_EXCEPTIONS(
+     (command_not_implemented_exception)
+     (command_depreciated)
+     (password_input_exception)
+     (privkey_not_found_exception)
+     (internal_error_exception)
+     (timeout_exception)
+     (invalid_arg_exception)
+     (parse_error_exception)
+     (file_not_found_exception)
+     (key_not_found_exception)
+     (bad_cast_exception)
+     (assert_exception)
+     (encryption_exception)
+     (null_optional)
+     (overflow_exception)
+     (underflow_exception)
+     (divide_by_zero_exception)
+     (out_of_range_exception)
+     (eof_exception)
+  )
 
    namespace detail
    {
@@ -177,11 +180,18 @@ namespace fc_light
    {
       fc_light::stringstream ss;
       ss << what() << ":";
+      bool first_occur = true;
       for( auto itr = my->_elog.begin(); itr != my->_elog.end(); ++itr )
       {
-         if( itr->get_format().size() )
-            ss << " " << fc_light::format_string( itr->get_format(), itr->get_data() );
-   //      ss << "    " << itr->get_context().to_string() <<"\n";
+        if (first_occur)
+        {
+          first_occur = false;
+          ss << " ";
+        }
+        else
+          ss << " => ";
+        if( itr->get_format().size() )
+          ss << fc_light::format_string( itr->get_format(), itr->get_data() );
       }
       return ss.str();
    }

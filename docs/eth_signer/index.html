@@ -6,13 +6,20 @@
   </head>
   <body>
     <div class="container">
+      <div class="columns" id="error" style="display: none">
+        <div class="column my-2">
+          <div class="toast toast-error">
+            WebSocket connection failed. Check if KeyChain is installed
+          </div>
+        </div>
+      </div>
       <div class="columns">
         <div class="column col-2">
           <img src="../assets/logo.png">
         </div>
         <div class="column col mx-2 my-2">
           <h1>ETH Signer</h1>
-          <h6>Sign and publish Ethereum transactions with KeyСhain v.0.9 - a highly secure key management app.</h6>
+          <h6>Sign and publish Ethereum transactions with KeyСhain <span id="version"></span> - a highly secure key management app.</h6>
           <h6>Documentation: <a href="https://github.com/arrayio/array-io-keychain/wiki/How-to-sign-Ethereum-transaction-via-KeyChain">How to sign Ethereum transaction via KeyChain</a></h6>
         </div>
       </div>

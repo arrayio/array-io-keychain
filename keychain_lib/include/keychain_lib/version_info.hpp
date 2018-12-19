@@ -28,6 +28,7 @@ struct about_info
 
 about_info about(); //return variant map that can be serialized into string,
 std::string version();
+std::string short_version();
 
 } }
 

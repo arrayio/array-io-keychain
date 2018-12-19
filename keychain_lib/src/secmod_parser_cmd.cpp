@@ -54,7 +54,7 @@ secmod_parser_f::ethereum_cmd secmod_parser_f::to_ethereum() const
   auto check = m_cmd.blockchain == blockchain_secmod_te::ethereum && m_cmd.json;
   assert(check);
   if(!check)
-    throw std::runtime_error("secmod_parser_f::to_ethereum(): cast error");
+    throw std::runtime_error("secmod_parser_f::to_ethereum(): cast error");//TODO: need to use FC_LIGHT exception instead
   try
   {
     return m_cmd.data.as<ethereum_cmd>();
@@ -63,7 +63,7 @@ secmod_parser_f::ethereum_cmd secmod_parser_f::to_ethereum() const
   {
     auto log = logger_singletone::instance();
     BOOST_LOG_SEV(log.lg, error) << "secmod_parser_f::to_ethereum(): " << exc.what();
-    throw std::runtime_error("secmod_parser_f::to_ethereum() error: parse error");
+    throw std::runtime_error("secmod_parser_f::to_ethereum() error: parse error");//TODO: need to use FC_LIGHT exception instead
   }
 }
 
@@ -72,7 +72,7 @@ secmod_parser_f::bitcoin_cmd secmod_parser_f::to_bitcoin() const
   auto check = m_cmd.blockchain == blockchain_secmod_te::bitcoin && m_cmd.json;
   assert(check);
   if(!check)
-    throw std::runtime_error("secmod_parser_f::to_bitcoin(): cast error");
+    throw std::runtime_error("secmod_parser_f::to_bitcoin(): cast error");//TODO: need to use FC_LIGHT exception instead
   try
   {
     return m_cmd.data.as<bitcoin_cmd>();
@@ -81,7 +81,7 @@ secmod_parser_f::bitcoin_cmd secmod_parser_f::to_bitcoin() const
   {
     auto log = logger_singletone::instance();
     BOOST_LOG_SEV(log.lg, error) << "ssecmod_parser_f::to_bitcoin(): " << exc.what();
-    throw std::runtime_error("secmod_parser_f::to_bitcoin() error: pasrse error");
+    throw std::runtime_error("secmod_parser_f::to_bitcoin() error: pasrse error");//TODO: need to use FC_LIGHT exception instead
   }
 }
 
@@ -90,7 +90,7 @@ secmod_parser_f::ethereum_swap_cmd secmod_parser_f::to_ethereum_swap() const
   auto check = m_cmd.blockchain == blockchain_secmod_te::ethereum_swap && m_cmd.json;
   assert(check);
   if(!check)
-    throw std::runtime_error("secmod_parser_f::to_ethereum_swap(): cast error");
+    throw std::runtime_error("secmod_parser_f::to_ethereum_swap(): cast error");//TODO: need to use FC_LIGHT exception instead
   try
   {
     return m_cmd.data.as<ethereum_swap_cmd>();
@@ -99,7 +99,7 @@ secmod_parser_f::ethereum_swap_cmd secmod_parser_f::to_ethereum_swap() const
   {
     auto log = logger_singletone::instance();
     BOOST_LOG_SEV(log.lg, error) << "secmod_parser_f::to_ethereum_swap(): " << exc.what();
-    throw std::runtime_error("secmod_parser_f::to_ethereum_swap() error: parse error");
+    throw std::runtime_error("secmod_parser_f::to_ethereum_swap() error: parse error");//TODO: need to use FC_LIGHT exception instead
   }
 }
 
@@ -108,7 +108,7 @@ secmod_parser_f::rawhash_cmd secmod_parser_f::to_rawhash() const
   auto check = m_cmd.blockchain == blockchain_secmod_te::rawhash && m_cmd.json;
   assert(check);
   if(!check)
-    throw std::runtime_error("secmod_parser_f::to_rawhash(): cast error");
+    throw std::runtime_error("secmod_parser_f::to_rawhash(): cast error");//TODO: need to use FC_LIGHT exception instead
   try
   {
     return m_cmd.data.as<rawhash_cmd>();
@@ -117,7 +117,7 @@ secmod_parser_f::rawhash_cmd secmod_parser_f::to_rawhash() const
   {
     auto log = logger_singletone::instance();
     BOOST_LOG_SEV(log.lg, error) << "secmod_parser secmod_parser_f::to_rawhash(): " << exc.what();
-    throw std::runtime_error("secmod_parser_f::to_rawhash(): parse error");
+    throw std::runtime_error("secmod_parser_f::to_rawhash(): parse error");//TODO: need to use FC_LIGHT exception instead
   }
 }
 
@@ -126,7 +126,7 @@ std::string secmod_parser_f::to_raw_trx_string() const
   auto check = !m_cmd.json && m_cmd.blockchain == blockchain_secmod_te::unknown;
   assert(check);
   if(!check)
-    throw std::runtime_error("secmod_parser_f::to_raw_tx(): cast error");
+    throw std::runtime_error("secmod_parser_f::to_raw_tx(): cast error");//TODO: need to use FC_LIGHT exception instead
   return m_cmd.data.as<std::string>();
 }
 

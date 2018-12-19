@@ -39,6 +39,8 @@ struct keyfile_t
 {
   file_type filetype;
   std::string keyname;
+  std::string description;
+  std::string keychain_version;
   struct keyinfo_t
   {
     enum key_format
@@ -71,7 +73,7 @@ FC_LIGHT_REFLECT_ENUM(keychain_app::keyfile_format::keyfile_t::keyinfo_t::key_fo
 FC_LIGHT_REFLECT_ENUM(keychain_app::keyfile_format::keyfile_t::keyinfo_t::curve_etype, (unknown)(secp256k1))
 FC_LIGHT_REFLECT(keychain_app::keyfile_format::encrypted_data, (cipher_type)(iv)(enc_data))
 FC_LIGHT_REFLECT(keychain_app::keyfile_format::keyfile_t::keyinfo_t, (format)(encrypted)(curve_type)(priv_key_data)(public_key))
-FC_LIGHT_REFLECT(keychain_app::keyfile_format::keyfile_t, (filetype)(keyname)(keyinfo))
+FC_LIGHT_REFLECT(keychain_app::keyfile_format::keyfile_t, (filetype)(keyname)(description)(keychain_version)(keyinfo))
 
 
 #endif //KEYCHAINAPP_KEY_FILE_PARSER_HPP

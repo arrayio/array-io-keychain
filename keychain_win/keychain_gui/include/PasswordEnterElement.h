@@ -23,6 +23,7 @@ public:
 	int GetElementHeigth();
 	void setValueFocus();
 	void checkFinishedEnterance();
+	void setFocusOnConfirm();
 
 signals:
 	void finishEnterPassword();
@@ -33,7 +34,7 @@ private:
 	PasswordLineEdit *value = Q_NULLPTR;
 	QLabel *description;
 	QLabel *labelConfirm = Q_NULLPTR;
-	QLineEdit *valueConfirm = Q_NULLPTR;
+	PasswordLineEdit *valueConfirm = Q_NULLPTR;
 	bool pCreatePassword;
 	int _height = 0;
 	int pValidChecks = 0;

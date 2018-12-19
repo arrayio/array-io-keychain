@@ -31,7 +31,7 @@ PasswordEnterElement::PasswordEnterElement(bool passwordCreate, QWidget * parent
 		labelConfirm->setStyleSheet(labelStyle);
 		labelConfirm->setAlignment(Qt::AlignBottom | Qt::AlignRight);
 
-		valueConfirm = new QLineEdit(this);
+		valueConfirm = new PasswordLineEdit(this);
 		valueConfirm->setText("");
 		valueConfirm->setStyleSheet(passPhraseStyle);
 		valueConfirm->setEchoMode(QLineEdit::Password);
@@ -39,9 +39,13 @@ PasswordEnterElement::PasswordEnterElement(bool passwordCreate, QWidget * parent
 
 		labelConfirm->setText("Confirm");
 		connect(value, &QLineEdit::textEdited, this, &PasswordEnterElement::checkStrength);
+		connect(value, &PasswordLineEdit::finishEnter, this, &PasswordEnterElement::setFocusOnConfirm);
 		connect(valueConfirm, &QLineEdit::textEdited, this, &PasswordEnterElement::checkConfirm);
+		connect(valueConfirm, &PasswordLineEdit::finishEnter, this, &PasswordEnterElement::checkFinishedEnterance);
 	}
-	connect(value, &PasswordLineEdit::finishEnter, this, &PasswordEnterElement::checkFinishedEnterance);
+	else {
+		connect(value, &PasswordLineEdit::finishEnter, this, &PasswordEnterElement::checkFinishedEnterance);
+	}
 }
 
 PasswordEnterElement::~PasswordEnterElement()
@@ -141,4 +145,9 @@ void PasswordEnterElement::setValueFocus()
 void PasswordEnterElement::checkFinishedEnterance()
 {
 	emit finishEnterPassword();
+}
+
+void PasswordEnterElement::setFocusOnConfirm()
+{
+	valueConfirm->setFocus();
 }

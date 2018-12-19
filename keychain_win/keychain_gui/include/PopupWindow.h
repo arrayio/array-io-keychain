@@ -3,6 +3,7 @@
 #include <QWidget>
 #include <QFrame>
 #include <QLabel>
+#include <math.h>
 #include "KeychainWarningMessage.h"
 
 class PopupWindow : public QFrame

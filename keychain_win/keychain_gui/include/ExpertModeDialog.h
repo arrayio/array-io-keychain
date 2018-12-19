@@ -16,6 +16,8 @@ public:
 	~ExpertModeDialog();
 	void SetExpertModeText(QString string);
 
+protected: 
+	void keyPressEvent(QKeyEvent *event) override; 
 private: 
 	QPlainTextEdit * transactionDescription;
 	QPushButton * OKButton;

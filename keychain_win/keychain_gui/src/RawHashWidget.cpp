@@ -42,8 +42,8 @@ RawHashWidget::RawHashWidget(Transaction &transaction, QWidget * parent)
 		unlockTime->SetTime(QString::number(cmd_parse.unlock_time()));
 	}
 
-	expertModeElement = new ExpertModeElement(this);
-	expertModeElement->SetExpertModeText(QString::fromStdString(cmd_parse.to_expert_mode_string()), false);
+	//expertModeElement = new ExpertModeElement(this);
+	//expertModeElement->SetExpertModeText(QString::fromStdString(cmd_parse.to_expert_mode_string()), false);
 
 }
 
@@ -62,9 +62,9 @@ void RawHashWidget::SetPosition(int x, int y, int width)
 		unlockTime->move(0, currentHeight);
 		currentHeight += 36;
 	}
-	expertModeElement->SetPosition(0, currentHeight, 116, width);
-	expertModeElement->move(0, currentHeight);
-	currentHeight += 60;
+	//expertModeElement->SetPosition(0, currentHeight, 116, width);
+	//expertModeElement->move(0, currentHeight);
+	//currentHeight += 60;
 	currentWidth = from->width();
 	currentWidth = from->width();
 	setFixedWidth(currentWidth);

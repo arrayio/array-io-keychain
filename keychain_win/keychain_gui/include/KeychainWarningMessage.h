@@ -35,11 +35,16 @@ public:
 
 	QString GetMessage() const {
 		QString _message("");
+		bool isFirst = true;
 		while (!_warnTypes->isEmpty()) {
+			if (isFirst == false) {
+				_message += '\n';
+				_message += '\n';
+			}
 			int _mIndex = (int)_warnTypes->pop();
 			_message += _messages[_mIndex];
-			_message += '\n';
-			_message += '\n';
+			if (isFirst)
+				isFirst = false;
 		}
 		return _message;
 	}

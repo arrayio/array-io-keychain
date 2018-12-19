@@ -23,17 +23,18 @@ PopupWindow::PopupWindow(const KeychainWarningMessage wMessage, QWidget *parent)
 	QFont myFont= body->font();
 	int mCount = wMessage.MessgeCount();
 	QString messageStr = wMessage.GetMessage();
-
+	myFont.setPixelSize(14);
 	QFontMetrics fm(myFont);
 	int k = myFont.pixelSize();
+
 	int strWidth = fm.width(messageStr);
-	int strHeight = fm.height() + fm.lineSpacing() + fm.lineWidth();
-	int numLines = (strWidth / 350)+ mCount;
+	int strHeight = k+k/2;
+	int numLines = std::ceil(strWidth / 350.0)+((mCount>1)?((mCount-1)*2):0);
 
 	
 	body->setText(messageStr);
-	this->setFixedHeight((strHeight * numLines)+30);
-	body->setFixedHeight(strHeight*numLines+15);
+	body->setFixedHeight(strHeight*numLines+20);
+	this->setFixedHeight(body->height()+10);
 	
 	body->setAlignment(Qt::AlignJustify);
 	if (wMessage.isWarn()==false) {

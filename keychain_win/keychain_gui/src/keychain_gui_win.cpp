@@ -63,15 +63,18 @@ keychain_gui_win::keychain_gui_win(Transaction &transaction, QWidget *parent)
 			{
 			case keychain_app::secmod_commands::blockchain_secmod_te::ethereum: {
 				element = new EthereumWidget(transaction, this);
+				warningMessage.SetWarning(KeychainWarningMessage::WarningType::NoWarnig);
 				break;
 			}
 			case keychain_app::secmod_commands::blockchain_secmod_te::ethereum_swap: {
 				element = new EthereumSwapWidget(transaction, this);
+				warningMessage.SetWarning(KeychainWarningMessage::WarningType::NoWarnig);
 				break;
 			}
 			case keychain_app::secmod_commands::blockchain_secmod_te::bitcoin:
 			{
 				element = new BitcoinWidget(transaction, this);
+				warningMessage.SetWarning(KeychainWarningMessage::WarningType::NoWarnig);
 				break;
 			}
 			case keychain_app::secmod_commands::blockchain_secmod_te::rawhash:

@@ -15,6 +15,7 @@
 #import "FileManager.h"
 #include <keychain_lib/secmod_parser_cmd.hpp>
 #import "keychain-Swift.h"
+#import "MiddleAlignedTextFieldCell.h"
 
 using keychain_app::secmod_commands::secmod_parser_f;
 
@@ -131,8 +132,8 @@ using keychain_app::secmod_commands::secmod_parser_f;
                             NSDictionary *dict = @{@"key1": [NSString stringWithUTF8String:vout.address.c_str()], @"key2": [NSString stringWithFormat:@"%llu", vout.amount]};
                             [dataForBitcoin addObject:dict];
                         }
-                        [self setupTopLabel:@"From"];
-                        [self setupTextTopLabel:[NSString stringWithUTF8String:btc_trx.from.c_str()]];
+                        [self setupSwapAddress:@"From"];
+                        [self setupTextSwapAddress:[NSString stringWithUTF8String:btc_trx.from.c_str()]];
                         [self createTableView];
                     }
                 }
@@ -179,7 +180,7 @@ using keychain_app::secmod_commands::secmod_parser_f;
                     [self setupTextBottomLabel:[NSString stringWithUTF8String:eth_data.to.c_str()]];
                     [self setupTextFrom:[NSString stringWithUTF8String:swap_trx.from.c_str()]];
                     [self setupTextTopLabel:[NSString stringWithUTF8String:eth_data.value.c_str()]];
-                    [self setupSwapAddress];
+                    [self setupSwapAddress:@"Address"];
                     [self setupSwapAction];
                     [self setupLogoSwap];
                     [self setupTextSwapAddress:[NSString stringWithUTF8String:swap_info.address.c_str()]];
@@ -216,38 +217,48 @@ using keychain_app::secmod_commands::secmod_parser_f;
 }
 
 - (void) createTableView {
-    NSScrollView *scrollView = [[NSScrollView alloc] initWithFrame:CGRectMake(22, 110, self.window.frame.size.width - 44, 80)];
+    NSScrollView *scrollView = [[NSScrollView alloc] initWithFrame:CGRectMake(22, 110, self.window.frame.size.width - 44, 150)];
     scrollView.backgroundColor = [NSColor clearColor];
     [scrollView setBorderType:NSBezelBorder];
-    NSTableView *tableView = [[NSTableView alloc] initWithFrame:scrollView.frame];
+    NSTableView *tableView = [[NSTableView alloc] initWithFrame:scrollView.bounds];
 //    tableView.headerView = nil;
     tableView.rowSizeStyle = NSTableViewRowSizeStyleLarge;
     tableView.backgroundColor = [NSColor clearColor];
     NSTableColumn *tCol;
     tCol = [[NSTableColumn alloc] initWithIdentifier:[NSString stringWithFormat:@"key1"]];
+    id cell = [tCol dataCell];
+    [cell setFont: [NSFont systemFontOfSize:18]];
     [[tCol headerCell] setStringValue:@"To"];
     [tCol setWidth:self.window.frame.size.width - 149];
+    tCol.editable = false;
+    [[tCol dataCell] setVerticalCentering:YES];
     [tableView addTableColumn:tCol];
     tCol = [[NSTableColumn alloc] initWithIdentifier:[NSString stringWithFormat:@"key2"]];
+    cell = [tCol dataCell];
+    [cell setFont: [NSFont systemFontOfSize:18]];
     [[tCol headerCell] setStringValue:@"Amount"];
     [tCol setWidth:100];
+    tCol.editable = false;
+    [[tCol dataCell] setVerticalCentering:YES];
     [tableView addTableColumn:tCol];
     
-//    [tableView setUsesAlternatingRowBackgroundColors:YES];
-//    [tableView setGridStyleMask:NSTableViewSolidVerticalGridLineMask];
+    [tableView setUsesAlternatingRowBackgroundColors:YES];
+    [tableView setGridStyleMask:NSTableViewSolidVerticalGridLineMask];
 //    [myTableView setGridColor:[NSColor redColor]];
-//    [tableView setRowHeight:23.0];
+    [tableView setRowHeight:23.0];
     [tableView setDelegate:self];
     [tableView setDataSource:self];
     [tableView setSelectionHighlightStyle:NSTableViewSelectionHighlightStyleNone];
     [tableView setAutoresizesSubviews:YES];
     
     [scrollView setHasVerticalScroller:YES];
-//    scrollView.verticalScroller = NSScrollerStyleOverlay;
+//    scrollView.verticalScroller = [NSScroller ;
     [scrollView setHasHorizontalScroller:NO];
     scrollView.horizontalScrollElasticity = NSScrollElasticityNone;
     [scrollView setAutoresizesSubviews:YES];
     [scrollView setAutoresizingMask:NSViewWidthSizable|NSViewHeightSizable];
+    [scrollView setAutohidesScrollers:false];
+    [scrollView setScrollerStyle:NSScrollerStyleLegacy];
     [scrollView setDocumentView:tableView];
     [self.window.contentView addSubview:scrollView];
 }
@@ -327,7 +338,7 @@ using keychain_app::secmod_commands::secmod_parser_f;
         imageView.image = image;
         [self.window.contentView addSubview:imageView];
     } else if ([blockhain isEqualToString:@"bitcoin"]) {
-        NSImageView *imageView = [[NSImageView alloc] initWithFrame:NSMakeRect(22, 224, 25, 35)];
+        NSImageView *imageView = [[NSImageView alloc] initWithFrame:NSMakeRect(22, self.window.frame.size.height - 135, 25, 35)];
         NSString *path = [NSString stringWithFormat:@"%@/%@", FileManager.getWorkDirectoryPath, @"resources/bitcoin.png"];
         NSImage *image = [[NSImage alloc] initWithContentsOfFile:path];
         NSLog(@"path %@", path);
@@ -417,8 +428,8 @@ using keychain_app::secmod_commands::secmod_parser_f;
     [self.window.contentView addSubview:label];
 }
 
-- (void) setupSwapAddress {
-    NSTextField *label = [NSTextField labelWithString:@"Address"];
+- (void) setupSwapAddress:(NSString *) string {
+    NSTextField *label = [NSTextField labelWithString:string];
     label.appearance = [NSAppearance appearanceNamed:NSAppearanceNameAqua];
     label.textColor = [HexToRgbColor colorWithHexColorString:@"4f4e4e"];
     label.font = [NSFont systemFontOfSize:18];

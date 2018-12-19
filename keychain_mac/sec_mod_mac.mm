@@ -83,7 +83,7 @@ byte_seq_t sec_mod_mac::get_passwd_trx(const std::string& raw_trx) const
             break;
         case keychain_app::secmod_commands::blockchain_secmod_te::bitcoin:
         {
-            frame = NSMakeRect(0, 0, 575, is_json ? 361 : 240);
+            frame = NSMakeRect(0, 0, 575, is_json ? 440 : 240);
             blockhain_type = "bitcoin";
         }
             break;

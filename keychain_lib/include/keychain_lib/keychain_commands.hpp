@@ -14,8 +14,12 @@
 #include <boost/hana/range.hpp>
 #include <boost/filesystem.hpp>
 
+#include <eth-crypto/core/FixedHash.h>
+#include <eth-crypto/crypto/Common.h>
+
 #include <fc_light/variant.hpp>
 #include <fc_light/io/json.hpp>
+#include <fc_light/io/raw.hpp>
 #include <fc_light/reflect/reflect.hpp>
 #include <fc_light/reflect/variant.hpp>
 #include <fc_light/exception/exception.hpp>
@@ -25,11 +29,10 @@
 
 #include <boost/signals2.hpp>
 
+#include "eth_types_conversion.hpp"
 #include "key_file_parser.hpp"
 #include "key_encryptor.hpp"
 #include "sign_define.hpp"
-#include <eth-crypto/core/FixedHash.h>
-#include <eth-crypto/crypto/Common.h>
 #include <secp256k1_ext.hpp>
 
 #include <openssl/sha.h>
@@ -108,14 +111,15 @@ public:
 class sha2_256_encoder
 {
 public:
+    using result_t = dev::FixedHash<32>;
     sha2_256_encoder();
     ~sha2_256_encoder();
-    void write(const unsigned  char * d, uint32_t dlen );
-    std::vector<unsigned char> result ();
+    void write(const char * d, uint32_t dlen );
+    result_t result();
 private:
     SHA256_CTX ctx;
 };
-
+/*
 class sha3_256_encoder
 {
 public:
@@ -127,9 +131,9 @@ private:
     EVP_MD_CTX* ctx;
     std::function<const EVP_MD* (void)> m_evp_sha_func;
 };
-
+*/
 template<typename encoder_t>
-std::vector<unsigned char> get_hash( const unit_list_t &list, encoder_t encoder )
+typename encoder_t::result_t get_hash( const unit_list_t &list, encoder_t encoder )
 {
   class unit_visitor
   {
@@ -138,7 +142,7 @@ std::vector<unsigned char> get_hash( const unit_list_t &list, encoder_t encoder 
 
       void operator()(const std::vector<unsigned char>& val)
       {
-        m_enc->write( static_cast<const unsigned char*>(val.data()), val.size());
+        m_enc->write(reinterpret_cast<const char*>(val.data()), val.size());
       }
       encoder_t * m_enc;
   };
@@ -165,7 +169,7 @@ public:
     boost::signals2::signal<void(const string_list&)> print_mnemonic;
 
     // {keyname, {private_key {unlock_time, time_stamp}} }
-    std::unordered_map<std::string, std::pair<std::string, std::pair<int, std::time_t>>> key_map;
+    std::unordered_map<std::string, std::pair<dev::Secret, std::pair<int, std::time_t>>> key_map;
 };
 
 template <typename char_t>
@@ -198,9 +202,9 @@ fc_light::variant open_keyfile(const char_t* filename)
 void create_keyfile(const char* filename, const fc_light::variant& keyfile_var);
 size_t from_hex(const std::string& hex_str, unsigned char* out_data, size_t out_data_len );
 std::string to_hex(const uint8_t* data, size_t length);
-std::string read_private_key(keychain_base *, std::string , std::string, int, const keychain_command_base*);
+dev::Secret read_private_key(keychain_base *, std::string , std::string, int, const keychain_command_base*);
 std::pair<std::string, std::string> read_public_key_file( keychain_base * , std::string );
-std::pair<std::string, std::string> read_private_key_file( keychain_base * , std::string , std::string,
+std::pair<dev::Secret, std::string> read_private_key_file( keychain_base * , std::string , std::string,
                                                            int unlock_time, const keychain_command_base* );
 
 
@@ -371,7 +375,6 @@ struct keychain_command<command_te::sign_hex> : keychain_command_base
     FC_LIGHT_CAPTURE_TYPECHANGE_AND_RETHROW (fc_light::invalid_arg_exception, error, "cannot parse command params")
     
     unit_list_t unit_list;
-    dev::Secret private_key;
     std::array<unsigned char, 65> signature = {0};
     std::vector<unsigned char> chain(32);
     std::vector<unsigned char> raw(params.transaction.length());
@@ -421,8 +424,7 @@ struct keychain_command<command_te::sign_hex> : keychain_command_base
     }
   
     json = create_secmod_cmd(raw, params.blockchain_type, from, params.unlock_time, params.keyname);
-    std::string key_data = read_private_key(keychain, params.keyname, json , params.unlock_time, this);
-    int pk_len = keychain_app::from_hex(key_data, (unsigned char*) private_key.data(), 32);
+    auto private_key = read_private_key(keychain, params.keyname, json , params.unlock_time, this);
   
     switch (params.blockchain_type)
     {
@@ -441,7 +443,7 @@ struct keychain_command<command_te::sign_hex> : keychain_command_base
           unit_list.push_back(chain);
         unit_list.push_back(raw);
 
-        signature = dev::sign(private_key,dev::FixedHash<32>(((byte const*) get_hash(unit_list, sha3_256_encoder()).data()),
+        signature = dev::sign(private_key,dev::FixedHash<32>(((byte const*) get_hash(unit_list, dev::openssl::sha3_256_encoder()).data()),
                                    dev::FixedHash<32>::ConstructFromPointerType::ConstructFromPointer)).asArray();
         break;
       }
@@ -456,7 +458,7 @@ struct keychain_command<command_te::sign_hex> : keychain_command_base
         unit_list.push_back(raw);
         auto hash = get_hash(unit_list, sha2_256_encoder());
         unit_list.clear();
-        unit_list.push_back(hash);
+        unit_list.push_back(hash.asBytes());
         auto hash2 = get_hash(unit_list, sha2_256_encoder());
         signature = dev::sign(private_key,dev::FixedHash<32>(((byte const*) hash2.data()),
                                    dev::FixedHash<32>::ConstructFromPointerType::ConstructFromPointer)).asArray();
@@ -498,8 +500,6 @@ struct keychain_command<command_te::sign_hash> : keychain_command_base
       params = params_variant.as<params_t>();
     }
     FC_LIGHT_CAPTURE_TYPECHANGE_AND_RETHROW (fc_light::invalid_arg_exception, error, "cannot parse command params")
-    
-    dev::Secret private_key;
 
     if (params.keyname.empty())
       FC_LIGHT_THROW_EXCEPTION( fc_light::parse_error_exception, "keyname is not specified" );
@@ -520,9 +520,7 @@ struct keychain_command<command_te::sign_hash> : keychain_command_base
     BOOST_LOG_SEV(log.lg, info) << "sign_hash secmodule command: \n" + fc_light::json::to_pretty_string(variant);
 
     //TODO: it is more preferable to use move semantic instead copy for json argument
-    std::string key_data = read_private_key(keychain, params.keyname, json, 0, this );
-
-    int pk_len = keychain_app::from_hex(key_data, (unsigned char*) private_key.data(), 32);
+    auto private_key = read_private_key(keychain, params.keyname, json, 0, this );
 
     //NOTE: using vector instead array because move semantic is implemented in the vector
     std::vector<unsigned char> hash(params.hash.length());
@@ -576,18 +574,18 @@ struct keychain_command<command_te::create>: keychain_command_base
       FC_LIGHT_CAPTURE_TYPECHANGE_AND_RETHROW (fc_light::invalid_arg_exception, error, "cannot parse command params")
       
       keyfile_format::keyfile_t keyfile;
-      std::string pr_hex, pb_hex;
+      dev::Secret priv_key;
+      std::string pb_hex;
       dev::h256 hash;
       std::string filename, keyname;
       switch (params.curve)
       {
         case keyfile_format::keyfile_t::keyinfo_t::curve_etype::secp256k1:
         {
-          dev::KeyPair keys = dev::KeyPair::create();
+          auto keys = dev::KeyPair::create();
           pb_hex = keys.pub().hex();
           hash = dev::ethash::sha3_ethash(keys.pub());
-          pr_hex = to_hex(reinterpret_cast<const uint8_t *>(keys.secret().data()), 32);
-
+          priv_key = keys.secret();
           filename    = hash.hex().substr(0,16);
           keyname       = params.keyname + "@"+ filename;
           filename += ".json";
@@ -606,12 +604,12 @@ struct keychain_command<command_te::create>: keychain_command_base
         if (passwd.empty())
           FC_LIGHT_THROW_EXCEPTION(fc_light::password_input_exception, "");
         auto& encryptor = encryptor_singletone::instance();
-        auto enc_data = encryptor.encrypt_keydata(params.cipher, passwd, pr_hex);
+        auto enc_data = encryptor.encrypt_private_key(params.cipher, passwd, priv_key);
         keyfile.keyinfo.priv_key_data = fc_light::variant(enc_data);
         keyfile.keyinfo.encrypted = true;
       }
       else{
-        keyfile.keyinfo.priv_key_data = std::move(pr_hex);
+        keyfile.keyinfo.priv_key_data = fc_light::variant(priv_key);
         keyfile.keyinfo.encrypted = false;
       }
       

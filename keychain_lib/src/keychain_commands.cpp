@@ -145,7 +145,7 @@ std::string create_secmod_cmd(std::vector<unsigned char> raw, blockchain_te bloc
 
 using namespace keychain_app;
 
-std::pair<std::string, std::string> keychain_app::read_private_key_file(keychain_base* keychain,
+std::pair<dev::Secret, std::string> keychain_app::read_private_key_file(keychain_base* keychain,
         std::string keyname, std::string text, int unlock_time, const keychain_command_base * cmd)
 {
   keyfile_format::keyfile_t keyfile;
@@ -171,10 +171,10 @@ std::pair<std::string, std::string> keychain_app::read_private_key_file(keychain
       passwd = *(keychain->get_passwd_trx(text.empty() ? keyfile.keyname: text));
     if (passwd.empty())
       FC_LIGHT_THROW_EXCEPTION(fc_light::password_input_exception, "");
-    return  std::make_pair(encryptor.decrypt_keydata(passwd, encrypted_data), keyfile.keyname);
+    return  std::make_pair(encryptor.decrypt_private_key(passwd, encrypted_data), keyfile.keyname);
   }
   else
-    return  std::make_pair(keyfile.keyinfo.priv_key_data.as<std::string>(), keyfile.keyname);
+    return  std::make_pair(keyfile.keyinfo.priv_key_data.as<dev::Secret>(), keyfile.keyname);
 }
 
 std::pair<std::string, std::string> keychain_app::read_public_key_file(keychain_base* keychain, std::string keyname)
@@ -190,11 +190,11 @@ std::pair<std::string, std::string> keychain_app::read_public_key_file(keychain_
 }
 
 //TODO: it is more preferable to use move semantic instead copy for text argument
-std::string keychain_app::read_private_key(keychain_base * keychain, std::string keyname, std::string text, int seconds,
+dev::Secret keychain_app::read_private_key(keychain_base * keychain, std::string keyname, std::string text, int seconds,
                                            const keychain_command_base* cmd)
 {
   bool locked = true;
-  std::string key_data;
+  dev::Secret key_data;
 
   auto map = keychain->key_map.find(keyname);
   if (map != keychain->key_map.end())
@@ -286,19 +286,19 @@ sha2_256_encoder::sha2_256_encoder()
 
 sha2_256_encoder::~sha2_256_encoder(){};
 
-void sha2_256_encoder::write(const unsigned char * d, uint32_t dlen )
+void sha2_256_encoder::write(const char * d, uint32_t dlen )
 {
     SHA256_Update( &ctx, d, dlen);
 }
 
-std::vector<unsigned char> sha2_256_encoder::result ()
+sha2_256_encoder::result_t sha2_256_encoder::result ()
 {
-  std::vector<unsigned char> out(32);
+  result_t out;
   SHA256_Final(static_cast<unsigned char *>(out.data()), &ctx);
   return out;
 }
 
-
+/*
 sha3_256_encoder::sha3_256_encoder(): ctx(EVP_MD_CTX_create()), m_evp_sha_func (EVP_sha3_256)
 {
   EVP_DigestInit_ex(ctx, EVP_sha3_256(), NULL);
@@ -324,4 +324,4 @@ std::vector<unsigned char> sha3_256_encoder::result()
   FC_LIGHT_ASSERT(digest_len == out.size(), "Invalid sha3_256 hash size has been written");
   return out;
 }
-
+*/

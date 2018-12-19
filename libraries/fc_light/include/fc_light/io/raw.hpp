@@ -124,6 +124,32 @@ namespace fc_light {
       s.write((const char*)&v.data[0],N*sizeof(T));
     }
 
+
+    template<typename Stream>
+    inline void pack( Stream& s, const dev::Address& v) {
+      s.write((const char*)v.data(),v.size);
+    }
+
+    template<typename Stream>
+    inline void pack( Stream& s, const dev::Public& v) {
+      s.write((const char*)v.data(),v.size);
+    }
+
+    template<typename Stream>
+    inline void pack( Stream& s, const dev::Signature& v) {
+      s.write((const char*)v.data(),v.size);
+    }
+
+    template<typename Stream>
+    inline void pack( Stream& s, const dev::Secret& v) {
+      s.write((const char*)v.data(),v.size);
+    }
+
+    template<typename Stream>
+    inline void pack( Stream& s, const dev::h256& v) {
+      s.write((const char*)v.data(),v.size);
+    }
+
     template<typename Stream, typename T>
     inline void pack( Stream& s, const std::shared_ptr<T>& v)
     {
@@ -136,6 +162,36 @@ namespace fc_light {
       s.read((char*)&v.data[0],N*sizeof(T));
     } FC_LIGHT_RETHROW_EXCEPTIONS( warn, "fc_light::array<type,length>", ("type",fc_light::get_typename<T>::name())("length",N) ) }
 
+    template<typename Stream>
+    inline void unpack( Stream& s, dev::Signature& v)
+    { try {
+        s.read((char*)v.data(),v.size);
+    } FC_LIGHT_RETHROW_EXCEPTIONS( warn, "dev::Signature" ) }
+
+    template<typename Stream>
+    inline void unpack( Stream& s, dev::Secret& v)
+    { try {
+        s.read((char*)v.data(),v.size);
+      } FC_LIGHT_RETHROW_EXCEPTIONS( warn, "dev::Secret" ) }
+
+    template<typename Stream>
+    inline void unpack( Stream& s, dev::Address& v)
+    { try {
+        s.read((char*)v.data(),v.size);
+    } FC_LIGHT_RETHROW_EXCEPTIONS( warn, "dev::Address" ) }
+
+    template<typename Stream>
+    inline void unpack( Stream& s, dev::Public& v)
+    { try {
+        s.read((char*)v.data(),v.size);
+    } FC_LIGHT_RETHROW_EXCEPTIONS( warn, "dev::Public" ) }
+
+    template<typename Stream>
+    inline void unpack( Stream& s, dev::h256& v)
+    { try {
+        s.read((char*)v.data(),v.size);
+    } FC_LIGHT_RETHROW_EXCEPTIONS( warn, "dev::h256" ) }
+    
     template<typename Stream, typename T>
     inline void unpack( Stream& s, std::shared_ptr<T>& v)
     { try {

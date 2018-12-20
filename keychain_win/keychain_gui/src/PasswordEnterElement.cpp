@@ -153,6 +153,7 @@ void PasswordEnterElement::checkConfirm(const QString & text)
 		isSame = false;
 		valueConfirm->setStyleSheet("font:16px \"Segoe UI\";background-color:rgb(255,140,140);border-style:solid;border-width:1px;border-radius:4px;border-color:rgb(149,0,0);");
 	}
+	emit changePassword();
 }
 
 
@@ -172,4 +173,9 @@ void PasswordEnterElement::checkFinishedEnterance()
 void PasswordEnterElement::setFocusOnConfirm()
 {
 	valueConfirm->setFocus();
+}
+
+bool PasswordEnterElement::validConfirm()
+{
+	return isSame;
 }

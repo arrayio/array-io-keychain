@@ -58,6 +58,7 @@ private:
 
 private:
 	void _roundCorners();
+	void _disableSignButton();
 
 protected:
 	void keyPressEvent(QKeyEvent *event) override;

@@ -160,6 +160,9 @@ keychain_gui_win::keychain_gui_win(Transaction &transaction, QWidget *parent)
 	_roundCorners();
 	password->setValueFocus();
 	connect(password, &PasswordEnterElement::finishEnterPassword, this, &keychain_gui_win::transaction_sign);
+	if (transaction.isCreatePassword()) {
+		connect(password, &PasswordEnterElement::changePassword, this, &keychain_gui_win::_disableSignButton);
+	}
 }
 
 void keychain_gui_win::transaction_sign() {
@@ -211,6 +214,18 @@ void keychain_gui_win::_roundCorners()
     region = region.subtracted(corner.subtracted(round));
  
     setMask(region);
+}
+
+void keychain_gui_win::_disableSignButton()
+{
+	if (!password->validConfirm()) {
+		OKButton->setStyleSheet("color:white;background-color:rgb(147,184,255);border-style:outset;border-width:0px;border-radius:5px;font:16px \"Segoe UI\"");
+		OKButton->setDisabled(true);
+	}
+	else {
+		OKButton->setStyleSheet("color:white;background-color:rgb(70,134,255);border-style:outset;border-width:0px;border-radius:5px;font:16px \"Segoe UI\"");
+		OKButton->setDisabled(false);
+	}
 }
 
 void keychain_gui_win::keyPressEvent(QKeyEvent *event)

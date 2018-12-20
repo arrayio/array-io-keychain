@@ -25,9 +25,11 @@ public:
 	void setValueFocus();
 	void checkFinishedEnterance();
 	void setFocusOnConfirm();
+	bool validConfirm();
 
 signals:
 	void finishEnterPassword();
+	void changePassword();
 
 private:
 	//Ui::SecureWindowElement ui;

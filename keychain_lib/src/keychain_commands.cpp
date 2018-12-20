@@ -174,7 +174,10 @@ std::pair<dev::Secret, std::string> keychain_app::read_private_key_file(keychain
     return  std::make_pair(encryptor.decrypt_private_key(passwd, encrypted_data), keyfile.keyname);
   }
   else
-    return  std::make_pair(keyfile.keyinfo.priv_key_data.as<dev::Secret>(), keyfile.keyname);
+  {
+    auto res = std::make_pair(keyfile.keyinfo.priv_key_data.as<dev::Secret>(), keyfile.keyname);
+    return res;
+  }
 }
 
 std::pair<std::string, std::string> keychain_app::read_public_key_file(keychain_base* keychain, std::string keyname)
@@ -194,7 +197,7 @@ dev::Secret keychain_app::read_private_key(keychain_base * keychain, std::string
                                            const keychain_command_base* cmd)
 {
   bool locked = true;
-  dev::Secret key_data;
+  dev::Secret key;
 
   auto map = keychain->key_map.find(keyname);
   if (map != keychain->key_map.end())
@@ -209,22 +212,22 @@ dev::Secret keychain_app::read_private_key(keychain_base * keychain, std::string
 
   if (locked)
   {//TODO: it is more preferable to use move semantic instead copy for json argument
-    key_data = read_private_key_file(keychain, keyname, text, seconds, cmd).first;
+    key = read_private_key_file(keychain, keyname, text, seconds, cmd).first;
     if (seconds) // unlock key
-      keychain->key_map[keyname] = std::make_pair(key_data, std::make_pair(seconds, std::time(nullptr) ) );
+      keychain->key_map[keyname] = std::make_pair(key, std::make_pair(seconds, std::time(nullptr) ) );
   }
   else
   {
     if (seconds) // unlock key
     {//TODO: it is more preferable to use move semantic instead copy for json argument
-      key_data = read_private_key_file(keychain, keyname, text, seconds, cmd).first;
-      keychain->key_map[keyname] = std::make_pair(key_data, std::make_pair(seconds, std::time(nullptr) ) );
+      key = read_private_key_file(keychain, keyname, text, seconds, cmd).first;
+      keychain->key_map[keyname] = std::make_pair(key, std::make_pair(seconds, std::time(nullptr) ) );
     }
     else
-      key_data = keychain->key_map[keyname].first;
+      key = keychain->key_map[keyname].first;
   }
 
-  return key_data;
+  return key;
 }
 
 std::string keychain_app::to_hex(const uint8_t* data, size_t length)

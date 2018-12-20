@@ -298,6 +298,20 @@ namespace fc_light {
         s.read( value.data(), value.size() );
     }
 
+    // std::vector<char>
+    template<typename Stream> inline void pack( Stream& s, const std::vector<unsigned char>& value ) {
+      fc_light::raw::pack( s, unsigned_int((uint32_t)value.size()) );
+      if( value.size() )
+        s.write( &value.front(), (uint32_t)value.size() );
+    }
+    template<typename Stream> inline void unpack( Stream& s, std::vector<unsigned char>& value ) {
+      unsigned_int size; fc_light::raw::unpack( s, size );
+      FC_LIGHT_ASSERT( size.value < MAX_ARRAY_ALLOC_SIZE );
+      value.resize(size.value);
+      if( value.size() )
+        s.read( value.data(), value.size() );
+    }
+
     // fc_light::string
     template<typename Stream> inline void pack( Stream& s, const fc_light::string& v )  {
       fc_light::raw::pack( s, unsigned_int((uint32_t)v.size()));

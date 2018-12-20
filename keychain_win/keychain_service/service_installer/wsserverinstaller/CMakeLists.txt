@@ -22,7 +22,7 @@ if(WIN32)
 		set(openssl_path "${OPENSSL_ROOT_DIR}")
 		message(STATUS "OPENSSL PATH: ${openssl_path}")
 		file(GLOB_RECURSE globalcrypto FOLLOW_SYMLINKS ${OPENSSL_ROOT_DIR}/libcrypto-1_1-x64.dll)
-		list(GET globalcrypto 1 cryptolib)
+		list(GET globalcrypto 0 cryptolib)
 		message(STATUS "FOUND LIBCRYPTO: ${cryptolib}")
 	endif()
 

@@ -26,8 +26,8 @@ bool swap_action(std::string data, swap_cmd_t::swap_t &swap_info) {
     if (data.length() != 8 + 64 + 64)
       return false;
     
-    auto hash = data.substr(8, 64);
-    auto address = data.substr(8 + 64, 64);
+    auto hash = data.substr(8, 40);
+    auto address = data.substr(8 + 64+24, 40);
     swap_info.action = swap_cmd_t::action_te::create_swap;
     swap_info.hash = hash;
     swap_info.address = address;
@@ -153,7 +153,7 @@ std::pair<std::string, std::string> keychain_app::read_private_key_file(keychain
   auto first = bfs::directory_iterator(bfs::path(KEY_DEFAULT_PATH_));
   auto it = std::find_if(first, bfs::directory_iterator(),find_keyfile_by_username(keyname.c_str(), &keyfile));
   if (it == bfs::directory_iterator())
-    throw std::runtime_error("Error: keyfile could not found by keyname");
+    FC_LIGHT_THROW_EXCEPTION( fc_light::key_not_found_exception, "Keyfile could not found by keyname ${keyname}", ("keyname", keyname.c_str()));
 
   if(keyfile.keyinfo.encrypted)
   {
@@ -166,11 +166,11 @@ std::pair<std::string, std::string> keychain_app::read_private_key_file(keychain
 
     byte_seq_t passwd;
     if (cmd->e_type == command_te::unlock)
-        passwd = *(keychain->get_passwd_unlock(keyfile.keyname, unlock_time));
+      passwd = *(keychain->get_passwd_unlock(keyfile.keyname, unlock_time));
     else
-        passwd = *(keychain->get_passwd_trx(text.empty() ? keyfile.keyname: text));
+      passwd = *(keychain->get_passwd_trx(text.empty() ? keyfile.keyname: text));
     if (passwd.empty())
-      throw std::runtime_error("Error: can't get password");
+      FC_LIGHT_THROW_EXCEPTION(fc_light::password_input_exception, "");
     return  std::make_pair(encryptor.decrypt_keydata(passwd, encrypted_data), keyfile.keyname);
   }
   else
@@ -184,7 +184,7 @@ std::pair<std::string, std::string> keychain_app::read_public_key_file(keychain_
   auto first = bfs::directory_iterator(bfs::path(KEY_DEFAULT_PATH_));
   auto it = std::find_if(first, bfs::directory_iterator(),find_keyfile_by_username(keyname.c_str(), &keyfile));
   if (it == bfs::directory_iterator())
-    throw std::runtime_error("Error: keyfile could not found by keyname");
+    FC_LIGHT_THROW_EXCEPTION( fc_light::key_not_found_exception, "Keyfile could not found by keyname ${keyname}", ("keyname", keyname.c_str()));
 
   return  std::make_pair(keyfile.keyinfo.public_key, keyfile.keyname);
 }
@@ -244,8 +244,8 @@ uint8_t from_hex_symbol( char c )
     return c - 'a' + 10;
   if( c >= 'A' && c <= 'F' )
     return c - 'A' + 10;
-  throw std::runtime_error("Error: Invalid hex character");
-}
+  FC_LIGHT_THROW_EXCEPTION(fc_light::bad_cast_exception, "Invalid hex character");
+ }
 
 size_t keychain_app::from_hex( const std::string& hex_str, unsigned char* out_data, size_t out_data_len )
 {
@@ -271,11 +271,11 @@ void keychain_app::create_keyfile(const char* filename, const fc_light::variant&
 {
   bfs::path filepath(std::string(KEY_DEFAULT_PATH_"/") +std::string(filename));
   if(bfs::exists(filepath))
-    throw std::runtime_error("Error: can not create keyfile, file is currently exist");
+    FC_LIGHT_THROW_EXCEPTION(fc_light::internal_error_exception, "Can not create keyfile (${filename}), file is currently exist", ("filename", filename));
 
   auto fout = std::ofstream(filepath.c_str());
   if(!fout.is_open())
-    throw std::runtime_error("Error: cannot open keyfile");
+    FC_LIGHT_THROW_EXCEPTION(fc_light::internal_error_exception, "Cannot open keyfile (${filename})", ("filename", filename));
   fout << fc_light::json::to_pretty_string(keyfile_var) << std::endl;
 }
 

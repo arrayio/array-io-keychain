@@ -15,28 +15,29 @@ namespace fc_light
 
    enum exception_code
    {
-       /** for exceptions we threw that don't have an assigned code */
-       unspecified_exception_code        = 0,
-       unhandled_exception_code          = 1, ///< for unhandled 3rd party exceptions
-       timeout_exception_code            = 2, ///< timeout exceptions
-       file_not_found_exception_code     = 3,
-       parse_error_exception_code        = 4,
-       invalid_arg_exception_code        = 5,
-       key_not_found_exception_code      = 6,
-       bad_cast_exception_code           = 7,
-       out_of_range_exception_code       = 8,
-       canceled_exception_code           = 9,
-       assert_exception_code             = 10,
-       eof_exception_code                = 11,
-       std_exception_code                = 13,
-       invalid_operation_exception_code  = 14,
-       unknown_host_exception_code       = 15,
-       null_optional_code                = 16,
-       aes_error_code                    = 18,
-       overflow_code                     = 19,
-       underflow_code                    = 20,
-       divide_by_zero_code               = 21,
-       transaction_dependency_code       = 22
+     /** for exceptions we threw that don't have an assigned code */
+     unspecified_exception_code        = 0,
+     unhandled_exception_code          , ///< for unhandled 3rd party exceptions
+     std_exception_code                , ///< for std::exceptions (3rd party)
+     command_not_implemented_code      , ///< command is not implemented
+     command_depreciated_code          , ///< command is depreciates
+     invalid_arg_exception_code        , ///< invalid command arguments
+     password_input_error_code         , ///< get password error
+     privkey_not_found_code            , ///< private key not found
+     timeout_exception_code            , ///< timeout exceptions
+     parse_error_exception_code        , ///< cannot parse command
+     internal_error_code               , ///< some internal error
+     file_not_found_exception_code     ,
+     key_not_found_exception_code      ,
+     bad_cast_exception_code           ,
+     assert_exception_code             ,
+     encryption_error_code             ,
+     null_optional_code                ,
+     overflow_code                     ,
+     underflow_code                    ,
+     divide_by_zero_code               ,
+     out_of_range_exception_code       ,
+     eof_exception_code
    };
 
    /**
@@ -261,6 +262,27 @@ namespace fc_light
   #define FC_LIGHT_DECLARE_EXCEPTION( TYPE, CODE, WHAT ) \
       FC_LIGHT_DECLARE_DERIVED_EXCEPTION( TYPE, fc_light::exception, CODE, WHAT )
 
+  /**
+   * @brief command not implemented
+   */
+  FC_LIGHT_DECLARE_EXCEPTION( command_not_implemented_exception, command_not_implemented_code, "Command Not Implemented" );
+
+  /**
+   * @brief command not implemented
+   */
+  FC_LIGHT_DECLARE_EXCEPTION( command_depreciated, command_depreciated_code, "Command Depretiated" );
+  
+  /**
+   * @brief get password error
+   */
+  FC_LIGHT_DECLARE_EXCEPTION( password_input_exception, password_input_error_code, "Password Input Error");
+
+  /**
+   * @brief get password error
+   */
+  FC_LIGHT_DECLARE_EXCEPTION( privkey_not_found_exception, privkey_not_found_code, "Private Key Not Found");
+
+
   FC_LIGHT_DECLARE_EXCEPTION( timeout_exception, timeout_exception_code, "Timeout" );
   FC_LIGHT_DECLARE_EXCEPTION( file_not_found_exception, file_not_found_exception_code, "File Not Found" );
   /**
@@ -274,27 +296,15 @@ namespace fc_light
   FC_LIGHT_DECLARE_EXCEPTION( key_not_found_exception, key_not_found_exception_code, "Key Not Found" );
   FC_LIGHT_DECLARE_EXCEPTION( bad_cast_exception, bad_cast_exception_code, "Bad Cast" );
   FC_LIGHT_DECLARE_EXCEPTION( out_of_range_exception, out_of_range_exception_code, "Out of Range" );
-
-  /** @brief if an operation is unsupported or not valid this may be thrown */
-  FC_LIGHT_DECLARE_EXCEPTION( invalid_operation_exception,
-                        invalid_operation_exception_code,
-                        "Invalid Operation" );
-  /** @brief if an host name can not be resolved this may be thrown */
-  FC_LIGHT_DECLARE_EXCEPTION( unknown_host_exception,
-                         unknown_host_exception_code,
-                         "Unknown Host" );
-
-  /**
-   *  @brief used to report a canceled Operation
-   */
-  FC_LIGHT_DECLARE_EXCEPTION( canceled_exception, canceled_exception_code, "Canceled" );
+  
   /**
    *  @brief used inplace of assert() to report violations of pre conditions.
    */
   FC_LIGHT_DECLARE_EXCEPTION( assert_exception, assert_exception_code, "Assert Exception" );
   FC_LIGHT_DECLARE_EXCEPTION( eof_exception, eof_exception_code, "End Of File" );
-  FC_LIGHT_DECLARE_EXCEPTION( null_optional, null_optional_code, "null optional" );
-  FC_LIGHT_DECLARE_EXCEPTION( aes_exception, aes_error_code, "AES error" );
+  FC_LIGHT_DECLARE_EXCEPTION( null_optional, null_optional_code, "Null optional" );
+  FC_LIGHT_DECLARE_EXCEPTION( encryption_exception, encryption_error_code, "Encryption error" );
+  FC_LIGHT_DECLARE_EXCEPTION( internal_error_exception, internal_error_code, "Internal error" );
   FC_LIGHT_DECLARE_EXCEPTION( overflow_exception, overflow_code, "Integer Overflow" );
   FC_LIGHT_DECLARE_EXCEPTION( underflow_exception, underflow_code, "Integer Underflow" );
   FC_LIGHT_DECLARE_EXCEPTION( divide_by_zero_exception, divide_by_zero_code, "Integer Divide By Zero" );
@@ -474,3 +484,46 @@ namespace fc_light
                 std::current_exception() ); \
    }
 
+#define FC_LIGHT_CAPTURE_TYPECHANGE_AND_RETHROW( EXCEPTION, LOG_LEVEL, FORMAT, ... ) \
+   catch( fc_light::exception& er ) { \
+      EXCEPTION er_(er.get_log()); \
+      er_.append_log( FC_LIGHT_LOG_MESSAGE( LOG_LEVEL, FORMAT, __VA_ARGS__ ) ); \
+      throw er_; \
+   } catch( const std::exception& e ) {  \
+      fc_light::exception fce( \
+                FC_LIGHT_LOG_MESSAGE( warn, "${what}: ",FC_LIGHT_FORMAT_ARG_PARAMS(__VA_ARGS__)("what",e.what())), \
+                fc_light::std_exception_code,\
+                typeid(e).name(), \
+                e.what() ) ; throw fce;\
+   } catch( ... ) {  \
+      throw fc_light::unhandled_exception( \
+                FC_LIGHT_LOG_MESSAGE( warn, "",FC_LIGHT_FORMAT_ARG_PARAMS(__VA_ARGS__)), \
+                std::current_exception() ); \
+   }
+
+#include <fc_light/reflect/reflect.hpp>
+
+FC_LIGHT_REFLECT_ENUM(
+  fc_light::exception_code,
+(unspecified_exception_code)
+(unhandled_exception_code)
+(std_exception_code)
+(command_not_implemented_code)
+(command_depreciated_code)
+(invalid_arg_exception_code)
+(password_input_error_code)
+(privkey_not_found_code)
+(timeout_exception_code)
+(parse_error_exception_code)
+(internal_error_code)
+(file_not_found_exception_code)
+(key_not_found_exception_code)
+(bad_cast_exception_code)
+(assert_exception_code)
+(encryption_error_code)
+(null_optional_code)
+(overflow_code)
+(underflow_code)
+(divide_by_zero_code)
+(out_of_range_exception_code)
+(eof_exception_code))

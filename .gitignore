@@ -16,6 +16,8 @@
 /keychain_lib/CMakeFiles/*
 /passentry_gui/cmake-build-debug/*
 /passentry_gui/.idea/*
+/ws/cmake-build-debug/*
+/ws/.idea/*
 *.user
 *.a
 *.cbp

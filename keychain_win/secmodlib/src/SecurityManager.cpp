@@ -51,7 +51,7 @@ void SecurityManager::CreateSecureDesktop(const int unlock_time) {
     BOOST_LOG_SEV(log.lg, info) << "CreateSecureDescktop function StartInteractiveClientProcess to enter credentials";
 	if (!StartInteractiveClientProcess(appToStart, app_args))
 	{
-		throw std::runtime_error("Could not create child client process");
+		FC_LIGHT_THROW_EXCEPTION(fc_light::password_input_error_code,"Could not create child client process for pass_entry_app");
 	}
 }
 

@@ -24,7 +24,7 @@ set(CMAKE_AUTOMOC ON)
 find_library(LIB_PTHREAD NAME pthread HINTS "/usr/lib/x86_64-linux-gnu")
 
 SET(BOOST_COMPONENTS)
-LIST(APPEND BOOST_COMPONENTS date_time system filesystem program_options signals serialization chrono unit_test_framework locale iostreams)
+LIST(APPEND BOOST_COMPONENTS date_time system filesystem program_options serialization chrono unit_test_framework locale iostreams)
 SET( Boost_USE_STATIC_LIBS ON CACHE STRING "ON or OFF" )
 
 set(Boost_USE_MULTITHREADED ON)
@@ -34,6 +34,9 @@ FIND_PACKAGE(Boost 1.65 REQUIRED COMPONENTS ${BOOST_COMPONENTS})
 SET(Boost_LIBRARIES ${Boost_LIBRARIES})
 
 include_directories(
+        "include"
+        "../../keychain_lib/include"
+        "../../libraries/kaitai_struct_cpp_stl_runtime"
         "../../libraries/fc_light/include"
         "/usr/include/libcxxabi"
         "${OPENSSL_ROOT_DIR}/include"
@@ -43,8 +46,8 @@ include_directories(
 find_package(Qt5Widgets CONFIG REQUIRED)
 find_library(LIB_OPENSSL NAME crypto  HINTS "${OPENSSL_ROOT_DIR}/lib")
 
-file(GLOB GUI_SOURCES "./*.cpp")
-file(GLOB GUI_INCLUDE "./*.hpp")
+file(GLOB GUI_SOURCES "./src/*.cpp")
+file(GLOB GUI_INCLUDE "./include/*.hpp")
 
 add_executable(passentry_gui ${GUI_SOURCES} ${GUI_INCLUDE})
 

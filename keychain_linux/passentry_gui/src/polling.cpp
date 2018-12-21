@@ -21,7 +21,7 @@ void Polling::Select()
     if (FD_ISSET(STDIN_FILENO, &readfds))
     {
         size_t cnt = read(STDIN_FILENO, from(it), remain(it));
-        if (cnt ==-1 ) throw std::runtime_error("gui reading error");
+        if (cnt ==-1 ) throw std::runtime_error("passentry_gui reading error");
 
         it += cnt;
         while (true)

@@ -3,7 +3,7 @@ cmake_minimum_required (VERSION 3.3)
 
 set (CMAKE_INCLUDE_CURRENT_DIR ON)
 
-find_package(ZLIB)
+#find_package(ZLIB)
 
 find_path(ICONV_INCLUDE_DIRS iconv.h)
 mark_as_advanced(ICONV_INCLUDE_DIRS)

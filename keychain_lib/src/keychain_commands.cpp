@@ -35,7 +35,7 @@ bool swap_action(std::string data, swap_cmd_t::swap_t &swap_info) {
     if (data.length() != 8 + 64)
       return false;
     
-    auto address = data.substr(8, 64);
+    auto address = data.substr(8+24, 40);
     swap_info.action = swap_cmd_t::action_te::refund;
     swap_info.address = address;
   } else if (func == SWAP_F3) {
@@ -43,7 +43,7 @@ bool swap_action(std::string data, swap_cmd_t::swap_t &swap_info) {
       return false;
     
     auto secret = data.substr(8, 64);
-    auto address = data.substr(8 + 64, 64);
+    auto address = data.substr(8 + 64+24, 40);
     swap_info.action = swap_cmd_t::action_te::withdraw;
     swap_info.address = address;
     swap_info.secret = secret;

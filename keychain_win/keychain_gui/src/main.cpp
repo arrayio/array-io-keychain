@@ -29,7 +29,7 @@ using secmod_commands::secmod_parser_f;
 
 int main(int argc, char *argv[])
 {
-
+	auto log = logger_singletone::instance();
 #ifdef FROMPROCCESS
 	DWORD dwWritten;
 	char buffer[9000];
@@ -41,6 +41,7 @@ int main(int argc, char *argv[])
 		OPEN_EXISTING,
 		0,
 		NULL);
+	BOOST_LOG_SEV(log.lg, info) << GetLastError();
 	if (transPipe != INVALID_HANDLE_VALUE)
 	{
 		ReadFile(transPipe, buffer, sizeof(buffer) - 1, &dwRead, NULL);
@@ -61,7 +62,7 @@ int main(int argc, char *argv[])
 	}
 #endif
 	//srcTrans = QString("{\"json\":true,\"blockchain\":\"bitcoin\",\"keyname\":\"my key@69a2947efc2ab973\",\"data\":{\"from\":\"16wDQNfXksgkBn5SGafK5pWjz9uofhU8mh\",\"trx_info\":{\"version\":1,\"num_vins\":1,\"vins\":[{\"txid\":\"416e9b4555180aaa0c417067a46607bc58c96f0131b2f41f7d0fb665eab03a7e\",\"output_id\":0,\"script_len\":25,\"script_sig\":\"76a91499b1ebcfc11a13df5161aba8160460fe1601d54188ac\",\"end_of_vin\":\"feffffff\"}],\"num_vouts\":2,\"vouts\":[{\"address\":\"1NAK3za9MkbAkkSBMLcvmhTD6etgB4Vhpr\",\"amount\":20000,\"script_len\":25,\"script_pub_key\":\"76a914e81d742e2c3c7acd4c29de090fc2c4d4120b2bf888ac\"},{\"address\":\"1NAK3za9MkbAkkSBMLcvmhTD6etgB4Vhpr\",\"amount\":20000,\"script_len\":25,\"script_pub_key\":\"76a914e81d742e2c3c7acd4c29de090fc2c4d4120b2bf888ac\"}],\"locktime\":0}},\"unlock_time\":0}");
-	auto log = logger_singletone::instance();
+	
 	BOOST_LOG_SEV(log.lg, info) << "Got from pipe:" + srcTrans.toStdString();
 
 	//QString inputJson("{\"json\":true,\"blockchain\":\"ethereum\",\"data\":{\"nonce\":\"143\",\"gasPrice\":\"5300000000\",\"gas\":\"100000\",\"chainid\":1,\"from\":\"\",\"to\":\"843fcaaeb0cce5ffaf272f5f2ddfff3603f9c2a0\",\"value\":\"173117678552668600\"}}");

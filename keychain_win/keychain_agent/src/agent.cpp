@@ -211,9 +211,11 @@ BOOL StartInteractiveClientProcess(
 		ZeroMemory(&si, sizeof(STARTUPINFO));
 		si.cb = sizeof(STARTUPINFO);
 		if (fromServcie == TRUE) {
+			BOOST_LOG_SEV(log.lg, info) << "FromService";
 			si.lpDesktop = (LPTSTR)TEXT("winsta0\\default");
 		}
 		if (fromServcie == FALSE) {
+			BOOST_LOG_SEV(log.lg, info) << "From application";
 			si.lpDesktop = (LPTSTR)TEXT("winsta0\\secdesktop");
 		}
 		si.dwX = 500;

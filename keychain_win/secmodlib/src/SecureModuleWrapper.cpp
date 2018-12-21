@@ -137,9 +137,13 @@ keychain_app::byte_seq_t SecureModuleWrapper::_startSecureDesktop(const std::str
                     &DataVerify))
                 {
                     //here is decrypted password
-                    printf("The decrypted data is: %s\n", DataVerify.pbData);
+                    //printf("The decrypted data is: %s\n", DataVerify.pbData);
                     result_pass.resize(DataVerify.cbData);
                     std::strncpy(result_pass.data(), (char*)DataVerify.pbData, result_pass.size());
+					std::string resPass(result_pass.data());
+					if (resPass.find("cancel_pass_enterance") != -1) {
+						result_pass.resize(0);
+					}
                     //printf("The description of the data was: %S\n", pDescrOut);
                 }
                 else {

@@ -109,11 +109,16 @@ void PasswordEnterElement::checkStrength(const QString &text)
 	}
 	if (pCreatePassword) {
 		if (!valueConfirm->text().isEmpty()) {
-			if (valueConfirm->text() == text)
+			if (valueConfirm->text() == text) {
+				isSame = true;
 				valueConfirm->setStyleSheet("font:16px \"Segoe UI\";background-color:rgb(120,255,113);border-style:solid;border-width:1px;border-radius:4px;border-color:rgb(0,113,0);");
-			else
+			}
+			else {
+				isSame = false;
 				valueConfirm->setStyleSheet("font:16px \"Segoe UI\";background-color:rgb(255,140,140);border-style:solid;border-width:1px;border-radius:4px;border-color:rgb(149,0,0);");
+			}
 		}
+		emit changePassword();
 	}
 }
 

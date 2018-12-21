@@ -31,6 +31,7 @@ include_directories(
 		"${CMAKE_SOURCE_DIR}/libraries/eth-crypto/include"
 		"${CMAKE_SOURCE_DIR}/libraries/secp256k1/include"
 		"${CMAKE_SOURCE_DIR}/libraries/secp256k1_ext/include"
+		"${CMAKE_SOURCE_DIR}/libraries/kaitai_struct_cpp_stl_runtime"
 		"${CMAKE_SOURCE_DIR}/keychain_win/secmodlib/include"
         "${OPENSSL_ROOT_DIR}/include"
         ${Boost_INCLUDE_DIR})
@@ -40,4 +41,5 @@ file(GLOB KEYCHAIN_WIN_SERVICE_SOURCES "./src/*.cpp")
 file(GLOB KEYCHAIN_WIN_SERVICE_INCLUDES "./include/keychain_lib/*.hpp" 	"${CMAKE_SOURCE_DIR}/keychain_win/secmodlib/include/*.hpp")
 
 add_executable(keychain_service_win ${KEYCHAIN_WIN_SERVICE_SOURCES} ${KEYCHAIN_WIN_SERVICE_INCLUDES})
-target_link_libraries(keychain_service_win keychain_agent keychain_common secmodlib fc_light secp256k1 eth-crypto ${LIB_OPENSSL} ${Boost_LIBRARIES} Crypt32.lib Userenv.lib Wtsapi32.lib)
+target_link_libraries(keychain_service_win keychain_agent keychain_common secmodlib kaitai_struct_cpp_stl_runtime fc_light secp256k1 eth-crypto ${LIB_OPENSSL} ${Boost_LIBRARIES} Crypt32.lib Userenv.lib Wtsapi32.lib)
+

@@ -40,6 +40,7 @@ namespace fc_light
          static variants variants_from_string( const string& utf8_str, parse_type ptype = legacy_parser );
          static string   to_string( const variant& v, output_formatting format = stringify_large_ints_and_doubles );
          static string   to_pretty_string( const variant& v, output_formatting format = stringify_large_ints_and_doubles );
+         static string   pretty_print( const fc_light::string&, uint8_t );
 
          static bool     is_valid( const std::string& json_str, parse_type ptype = legacy_parser );
 

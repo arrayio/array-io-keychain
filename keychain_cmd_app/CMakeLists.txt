@@ -4,6 +4,8 @@ cmake_minimum_required( VERSION 3.0.2 )
 
 set(CMAKE_CXX_FLAGS "-std=c++14")
 
+SET(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -ldl -pthread")
+
 if(MSVC)
 	set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}  /EHsc" )
 	set( CMAKE_VS_PLATFORM_TOOLSET "LLVM-vs2017")
@@ -16,7 +18,7 @@ if (NOT MSVC)
     endif()
 endif()
 if(APPLE)
-	SET(CMAKE_EXE_LINKER_FLAGS "-framework Cocoa" "-weak_framework QuartzCore")
+	SET(CMAKE_EXE_LINKER_FLAGS "-framework Cocoa -weak_framework QuartzCore")
 endif()
 
 SET(BOOST_COMPONENTS)
@@ -47,6 +49,7 @@ if ( ${CMAKE_HOST_SYSTEM_NAME} MATCHES "Linux")
             "../libraries/eth-crypto/include"
             "../libraries/secp256k1/include"
             "../libraries/secp256k1_ext/include"
+            "${CMAKE_SOURCE_DIR}/libraries/kaitai_struct_cpp_stl_runtime"
             "${OPENSSL_ROOT_DIR}/include"
             "/usr/include/libcxxabi"
             ${Boost_INCLUDE_DIR})
@@ -81,15 +84,16 @@ else()
             "../libraries/eth-crypto/include"
             "../libraries/secp256k1/include"
             "../libraries/secp256k1_ext/include"
+            "${CMAKE_SOURCE_DIR}/libraries/kaitai_struct_cpp_stl_runtime"
             "${OPENSSL_ROOT_DIR}/include"
             ${Boost_INCLUDE_DIR})
 
     file(GLOB KEYCHAIN_SOURCES "./*.cpp"  )
     file(GLOB KEYCHAIN_INCLUDE "./*.hpp"  )
     if(APPLE) 
-	file(GLOB KEYCHAIN_INCLUDE "./*.h*" "../keychain_mac/*.h*"  )
-	file(GLOB KEYCHAIN_SOURCES ("./*.m*" "./*.cpp" "../keychain_mac/*.m*" "../keychain_mac/*.cpp" ) )
-    endif()
+	file(GLOB KEYCHAIN_INCLUDE "./*.h*" "../keychain_mac/*.h*" )
+	file(GLOB KEYCHAIN_SOURCES ("./*.m*" "./*.cpp" "../keychain_mac/*.m*" "../keychain_mac/*.cpp" "../keychain_mac/*.swift" ) )
+   endif()
     add_executable(keychain ${KEYCHAIN_SOURCES} ${KEYCHAIN_INCLUDE} )
 
 	if (MSVC)

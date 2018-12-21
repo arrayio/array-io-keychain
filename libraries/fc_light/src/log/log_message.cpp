@@ -157,7 +157,7 @@ namespace fc_light
                ( "file",         my->file                )
                ( "line",         my->line                )
                ( "method",       my->method              )
-               ( "hostname",     my->hostname            )
+//               ( "hostname",     my->hostname            )
                ( "timestamp",    variant(my->timestamp)  );
 
       if( my->context.size() ) 

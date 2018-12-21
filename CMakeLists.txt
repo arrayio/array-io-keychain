@@ -11,6 +11,9 @@ add_subdirectory(./keychain_lib)
 add_subdirectory(./libraries/secp256k1_ext)
 add_subdirectory(./libraries/eth-crypto)
 add_subdirectory(./libraries/fc_light)
+add_subdirectory(./libraries)
+
+
 
 if( MSVC )
   add_subdirectory(./keychain_win)

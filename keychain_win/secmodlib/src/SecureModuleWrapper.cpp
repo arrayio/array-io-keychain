@@ -13,14 +13,22 @@ SecureModuleWrapper::~SecureModuleWrapper()
 	//TODO: need implementation
 }
 
-keychain_app::byte_seq_t SecureModuleWrapper::get_passwd_trx_raw(const std::string& raw_trx) const
+keychain_app::byte_seq_t SecureModuleWrapper::get_passwd_trx(const std::string& json_cmd) const
 {
-	return _startSecureDesktop(raw_trx);
+	return _startSecureDesktop(json_cmd);
+}
+
+keychain_app::byte_seq_t SecureModuleWrapper::get_passwd_unlock(const std::string& keyname, int unlock_time) const
+{
+	//TODO: need to implement
+	//it is experimental future
+	//need ot print red lock icon on user dialog window
+	return _startSecureDesktop(keyname, unlock_time);
 }
 
 keychain_app::byte_seq_t SecureModuleWrapper::get_passwd_on_create() const
 {
-	return _startSecureDesktop("Please enter password for your new key");
+	return _startSecureDesktop("create_password");
 }
 
 void SecureModuleWrapper::print_mnemonic(const string_list& mnemonic) const
@@ -28,14 +36,52 @@ void SecureModuleWrapper::print_mnemonic(const string_list& mnemonic) const
 	//TODO: need implementation
 }
 
-keychain_app::byte_seq_t SecureModuleWrapper::_startSecureDesktop(const std::string& str) const
+keychain_app::byte_seq_t SecureModuleWrapper::_startSecureDesktop(const std::string& str, int unlock_time) const
 {
 	std::vector<char> result_pass;
 	result_pass.reserve(512);
 	HANDLE hPipe;
 	char buffer[1024];
 	DWORD dwRead;
-	_secman.CreateSecureDesktop(str);
+	
+	HANDLE transactionPipe;
+
+	auto log = logger_singletone::instance();
+	BOOST_LOG_SEV(log.lg, info) << "Send to pipe:"+ str;
+
+	transactionPipe = CreateNamedPipe(TEXT("\\\\.\\pipe\\transpipe"),
+		PIPE_ACCESS_DUPLEX,
+		PIPE_TYPE_BYTE | PIPE_READMODE_BYTE | PIPE_WAIT, 
+		1,
+		9000 * 16,
+		9000 * 16,
+		NMPWAIT_USE_DEFAULT_WAIT,
+		NULL);
+
+	DWORD writtenSize;
+	DWORD lastErrror;
+	DisconnectNamedPipe(transactionPipe);
+	_secman.CreateSecureDesktop(unlock_time);
+	while (transactionPipe != INVALID_HANDLE_VALUE) {
+		DWORD dwWritten;
+		if (ConnectNamedPipe(transactionPipe, NULL) != FALSE)   // wait for someone to connect to the pipe
+		{
+			std::string trans = str;
+			BOOST_LOG_SEV(log.lg, info) << "Send to pipe: (hardcode)" + trans;
+			trans.push_back('\0');
+			WriteFile(transactionPipe,
+				trans.c_str(),
+				trans.length(),   // = length of string + terminating '\0' !!!
+				&dwWritten,
+				NULL);
+			CloseHandle(transactionPipe);
+			DisconnectNamedPipe(transactionPipe);
+			break;
+		}
+		//lastErrror = GetLastError();
+		//throw std::runtime_error("Error: can't write pipe transaction");
+	}
+
 	//initializing security attributes
 	SECURITY_ATTRIBUTES  sa;
 	sa.nLength = sizeof(SECURITY_ATTRIBUTES);
@@ -47,7 +93,8 @@ keychain_app::byte_seq_t SecureModuleWrapper::_startSecureDesktop(const std::str
 		&(sa.lpSecurityDescriptor),
 		NULL
 	))
-		throw std::runtime_error("Error: can't receive password: ConvertStringSecurityDescriptorToSecurityDescriptor error");
+		FC_LIGHT_THROW_EXCEPTION(fc_light::password_input_exception,
+														 "Can't receive password: ConvertStringSecurityDescriptorToSecurityDescriptor error");
 	hPipe = CreateNamedPipe(TEXT("\\\\.\\pipe\\keychainpass"),
 		PIPE_ACCESS_DUPLEX,
 		PIPE_TYPE_BYTE | PIPE_READMODE_BYTE | PIPE_WAIT,   // FILE_FLAG_FIRST_PIPE_INSTANCE is not needed but forces CreateNamedPipe(..) to fail if the pipe already exists...
@@ -58,7 +105,7 @@ keychain_app::byte_seq_t SecureModuleWrapper::_startSecureDesktop(const std::str
 		&sa);
 	std::vector<wchar_t> password(256, 0x00);
 	if (hPipe == INVALID_HANDLE_VALUE)
-		throw std::runtime_error("Error: can't receive password: INVALID_HANDLE_VALUE");
+		FC_LIGHT_THROW_EXCEPTION(fc_light::password_input_exception,"Can't receive password: INVALID_HANDLE_VALUE");
 
     const int MAX_WAIT_TIME = 1000;
     /*if (WaitForSingleObject(hPipe, MAX_WAIT_TIME) == WAIT_OBJECT_0)

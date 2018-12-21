@@ -10,7 +10,7 @@ class SecurityManager {
 public:
 	SecurityManager();
 	~SecurityManager();
-	void CreateSecureDesktop(const std::string& transId);
+	void CreateSecureDesktop(const int unlock_time=0);
 private :
 	
 	const std::wstring _passEntryAppName = L"keychain_win_gui.exe";

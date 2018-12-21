@@ -19,11 +19,19 @@ void sec_mod_linux::print_mnemonic(const string_list& mnemonic) const
 {
 }
 
-byte_seq_t sec_mod_linux::get_passwd_trx_raw(const std::string& raw_trx) const
+byte_seq_t sec_mod_linux::get_passwd_trx(const std::string& raw_trx) const
 {
     auto pass_entry = pass_entry_term();
     auto map_instance = map_translate_singletone::instance(pass_entry._display);
     auto pass = pass_entry.fork_gui(map_instance.map, raw_trx);
+    return pass;
+}
+
+byte_seq_t sec_mod_linux::get_passwd_unlock(const std::string& keyname, int unlock_time) const
+{
+    auto pass_entry = pass_entry_term();
+    auto map_instance = map_translate_singletone::instance(pass_entry._display);
+    auto pass = pass_entry.fork_gui(map_instance.map, keyname  + std::string(", unlock_time: "+ std::to_string(unlock_time)));
     return pass;
 }
 

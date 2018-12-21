@@ -1,0 +1,11 @@
+#include "git_revision.hpp"
+
+#define KEYCHAIN_COMMON_GIT_REVISION_SHA "@KEYCHAIN_COMMON_GIT_REVISION@"
+#define KEYCHAIN_COMMON_GIT_REVISION_UNIX_TIMESTAMP @KEYCHAIN_COMMON_GIT_REVISION_UNIX_TIMESTAMP@
+#define KEYCHAIN_COMMON_GIT_REVISION_DESCRIPTION "@KEYCHAIN_COMMON_GIT_REVISION_DESCRIPTION@"
+
+namespace keychain_app { namespace version_info {
+const char* const git_revision_sha = KEYCHAIN_COMMON_GIT_REVISION_SHA;
+const uint32_t git_revision_unix_timestamp = KEYCHAIN_COMMON_GIT_REVISION_UNIX_TIMESTAMP;
+const char* const git_revision_description = KEYCHAIN_COMMON_GIT_REVISION_DESCRIPTION;
+}}

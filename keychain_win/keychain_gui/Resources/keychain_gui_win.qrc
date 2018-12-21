@@ -1,0 +1,17 @@
+<RCC>
+    <qresource prefix="/keychain_gui_win">
+        <file>background.png</file>
+        <file>bg_edit.png</file>
+        <file>bg_ephir.png</file>
+        <file>but_cancel.png</file>
+        <file>but_ok.png</file>
+        <file>lock.png</file>
+        <file>notify_back.png</file>
+        <file>expert.png</file>
+        <file>more_arrow.png</file>
+        <file>header.png</file>
+        <file>swap_logo.png</file>
+        <file>btc_logo.png</file>
+        <file>unsecure_lock.png</file>
+    </qresource>
+</RCC>

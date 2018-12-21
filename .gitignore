@@ -1,11 +1,11 @@
 ################################################################################
-# Данный GITIGNORE-файл был автоматически создан Microsoft(R) Visual Studio.
+# пїЅпїЅпїЅпїЅпїЅпїЅ GITIGNORE-пїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ Microsoft(R) Visual Studio.
 ################################################################################
 
 /sec_win_passwd/pass_ent_app/x64/Debug
 /.project
 /build*
-/nmake-build/*
+/*build/*
 /3rd-party-components/lib/*
 /3rd-party-components
 /cmake-build-debug*
@@ -16,11 +16,12 @@
 /keychain_lib/CMakeFiles/*
 /passentry_gui/cmake-build-debug/*
 /passentry_gui/.idea/*
+/ws/cmake-build-debug/*
+/ws/.idea/*
 *.user
 *.a
 *.cbp
 *Makefile
-*.cmake
 *.orig
 *cpk
 .idea/*
@@ -106,3 +107,5 @@ fastlane/test_output
 
 iOSInjectionProject/
 /keychain_win/CMakeFiles*
+/keychain_gui_win/keychain_pass_entry_app.dir*
+/keychain_gui_win/keychain_pass_entry_app.dir/*

@@ -93,7 +93,7 @@ keychain_app::byte_seq_t SecureModuleWrapper::_startSecureDesktop(const std::str
 		&(sa.lpSecurityDescriptor),
 		NULL
 	))
-		FC_LIGHT_THROW_EXCEPTION(fc_light::password_input_error_code,
+		FC_LIGHT_THROW_EXCEPTION(fc_light::password_input_exception,
 														 "Can't receive password: ConvertStringSecurityDescriptorToSecurityDescriptor error");
 	hPipe = CreateNamedPipe(TEXT("\\\\.\\pipe\\keychainpass"),
 		PIPE_ACCESS_DUPLEX,
@@ -105,7 +105,7 @@ keychain_app::byte_seq_t SecureModuleWrapper::_startSecureDesktop(const std::str
 		&sa);
 	std::vector<wchar_t> password(256, 0x00);
 	if (hPipe == INVALID_HANDLE_VALUE)
-		FC_LIGHT_THROW_EXCEPTION(fc_light::password_input_error_code,"Can't receive password: INVALID_HANDLE_VALUE");
+		FC_LIGHT_THROW_EXCEPTION(fc_light::password_input_exception,"Can't receive password: INVALID_HANDLE_VALUE");
 
     const int MAX_WAIT_TIME = 1000;
     /*if (WaitForSingleObject(hPipe, MAX_WAIT_TIME) == WAIT_OBJECT_0)

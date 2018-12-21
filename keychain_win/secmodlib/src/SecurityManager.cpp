@@ -1,5 +1,7 @@
-#include "SecurityManager.h"
+#include <fc_light/exception/exception.hpp>
 #include <keychain_lib/keychain_logger.hpp>
+
+#include "SecurityManager.h"
 
 using namespace std;
 
@@ -51,7 +53,7 @@ void SecurityManager::CreateSecureDesktop(const int unlock_time) {
     BOOST_LOG_SEV(log.lg, info) << "CreateSecureDescktop function StartInteractiveClientProcess to enter credentials";
 	if (!StartInteractiveClientProcess(appToStart, app_args))
 	{
-		FC_LIGHT_THROW_EXCEPTION(fc_light::password_input_error_code,"Could not create child client process for pass_entry_app");
+		FC_LIGHT_THROW_EXCEPTION(fc_light::password_input_exception,"Could not create child client process for pass_entry_app");
 	}
 }
 

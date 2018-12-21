@@ -73,6 +73,15 @@
 				<Component Id="Component14" DiskId="1" Guid="{1BEA67A0-5446-431E-BF9F-6724ECC77299}">
 					<File Id="File13" Name="check_service.bat" Source="check_service.bat" />
 				</Component>
+				<Component Id="Component15" DiskId="1" Guid="{A38FD763-1614-4127-BF89-23D0A9369D86}">
+					<File Id="File14" Name="Qt5Cored.dll" Source="Qt5Cored.dll" />
+				</Component>
+				<Component Id="Component16" DiskId="1" Guid="{586BD0CB-FE69-47FD-9475-4D042F7A65DA}">
+					<File Id="File15" Name="Qt5Widgetsd.dll" Source="Qt5Widgetsd.dll" />
+				</Component>
+				<Component Id="Component17" DiskId="1" Guid="{BE0A2A0C-55AC-4D92-9839-D98559B99F92}">
+					<File Id="File16" Name="Qt5Guid.dll" Source="Qt5Guid.dll" />
+				</Component>
 			</Directory>
 		</Directory>
     </Directory>
@@ -107,6 +116,9 @@
 		<ComponentRef Id="Component12" />
 		<ComponentRef Id="Component13" />
 		<ComponentRef Id="Component14" />
+		<ComponentRef Id="Component15" />
+		<ComponentRef Id="Component16" />
+		<ComponentRef Id="Component17" />
     </Feature>
 	
     <!-- Global Run Action -->

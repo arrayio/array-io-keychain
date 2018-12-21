@@ -1,1 +1,1 @@
-keychain.exe --mode=test_run
+keychain.exe

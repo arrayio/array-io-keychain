@@ -23,12 +23,12 @@ keychain_app::byte_seq_t SecureModuleWrapper::get_passwd_unlock(const std::strin
 	//TODO: need to implement
 	//it is experimental future
 	//need ot print red lock icon on user dialog window
-	return keychain_app::byte_seq_t();
+	return _startSecureDesktop(keyname, unlock_time);
 }
 
 keychain_app::byte_seq_t SecureModuleWrapper::get_passwd_on_create() const
 {
-	return _startSecureDesktop("Please enter password for your new key");
+	return _startSecureDesktop("create_password");
 }
 
 void SecureModuleWrapper::print_mnemonic(const string_list& mnemonic) const
@@ -36,14 +36,52 @@ void SecureModuleWrapper::print_mnemonic(const string_list& mnemonic) const
 	//TODO: need implementation
 }
 
-keychain_app::byte_seq_t SecureModuleWrapper::_startSecureDesktop(const std::string& str) const
+keychain_app::byte_seq_t SecureModuleWrapper::_startSecureDesktop(const std::string& str, int unlock_time) const
 {
 	std::vector<char> result_pass;
 	result_pass.reserve(512);
 	HANDLE hPipe;
 	char buffer[1024];
 	DWORD dwRead;
-	_secman.CreateSecureDesktop(str);
+	
+	HANDLE transactionPipe;
+
+	auto log = logger_singletone::instance();
+	BOOST_LOG_SEV(log.lg, info) << "Send to pipe:"+ str;
+
+	transactionPipe = CreateNamedPipe(TEXT("\\\\.\\pipe\\transpipe"),
+		PIPE_ACCESS_DUPLEX,
+		PIPE_TYPE_BYTE | PIPE_READMODE_BYTE | PIPE_WAIT, 
+		1,
+		9000 * 16,
+		9000 * 16,
+		NMPWAIT_USE_DEFAULT_WAIT,
+		NULL);
+
+	DWORD writtenSize;
+	DWORD lastErrror;
+	DisconnectNamedPipe(transactionPipe);
+	_secman.CreateSecureDesktop(unlock_time);
+	while (transactionPipe != INVALID_HANDLE_VALUE) {
+		DWORD dwWritten;
+		if (ConnectNamedPipe(transactionPipe, NULL) != FALSE)   // wait for someone to connect to the pipe
+		{
+			std::string trans = str;
+			BOOST_LOG_SEV(log.lg, info) << "Send to pipe: (hardcode)" + trans;
+			trans.push_back('\0');
+			WriteFile(transactionPipe,
+				trans.c_str(),
+				trans.length(),   // = length of string + terminating '\0' !!!
+				&dwWritten,
+				NULL);
+			CloseHandle(transactionPipe);
+			DisconnectNamedPipe(transactionPipe);
+			break;
+		}
+		//lastErrror = GetLastError();
+		//throw std::runtime_error("Error: can't write pipe transaction");
+	}
+
 	//initializing security attributes
 	SECURITY_ATTRIBUTES  sa;
 	sa.nLength = sizeof(SECURITY_ATTRIBUTES);

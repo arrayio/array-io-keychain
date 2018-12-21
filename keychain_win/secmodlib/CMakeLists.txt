@@ -28,9 +28,13 @@ include_directories(
 		"${CMAKE_SOURCE_DIR}/libraries/eth-crypto/include"
 		"${CMAKE_SOURCE_DIR}/libraries/secp256k1/include"
 		"${CMAKE_SOURCE_DIR}/libraries/secp256k1_ext/include"
+		"${CMAKE_SOURCE_DIR}/libraries/kaitai_struct_cpp_stl_runtime"
         "${OPENSSL_ROOT_DIR}/include"
         ${Boost_INCLUDE_DIR})
 
+if( MSVC )
+	add_definitions( -DNOMINMAX )
+endif()
 
 file(GLOB KEYCHAIN_SECMOD_SOURCES "./src/*.cpp")
 file(GLOB KEYCHAIN_SECMOD_INCLUDES "./include/keychain_lib/*.hpp" 	"../keychain_win/secmodlib/include/*.hpp")

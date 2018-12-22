@@ -29,7 +29,7 @@ using secmod_commands::secmod_parser_f;
 
 int main(int argc, char *argv[])
 {
-	auto log = logger_singletone::instance();
+	auto log = logger_singletone::instance("keychain_gui");
 #ifdef FROMPROCCESS
 	DWORD dwWritten;
 	char buffer[9000];
@@ -47,31 +47,27 @@ int main(int argc, char *argv[])
 		ReadFile(transPipe, buffer, sizeof(buffer) - 1, &dwRead, NULL);
 		CloseHandle(transPipe);
 	}
+	hOldDesktop = OpenDesktop(_T("default"), NULL, FALSE, GENERIC_ALL);
 	hNewDesktop = OpenDesktopW(_T("secdesktop"), NULL, FALSE, GENERIC_ALL); //GetThreadDesktop(GetCurrentThreadId());
-	hOldDesktop = OpenDesktopW(_T("default"), NULL, FALSE, GENERIC_ALL);
 	SwitchDesktop(hNewDesktop);
-
+	if (hNewDesktop == NULL) {
+		hNewDesktop = CreateDesktop(L"secdesktop", NULL, NULL, 0, DESKTOP_ALL, NULL);
+		BOOST_LOG_SEV(log.lg, info) << "SecurityDescktop" << GetLastError();
+	}
+	if (hOldDesktop == NULL)
+		BOOST_LOG_SEV(log.lg, info) <<"olddescktop" << GetLastError();
+	SwitchDesktop(hNewDesktop);
 	SetThreadDesktop(hNewDesktop);
 #endif
 	int endIndex = -1;
-
 	QString srcTrans;
 #ifdef FROMPROCCESS
 	for (int i = 0; i < dwRead; i++) {
 		srcTrans.push_back(buffer[i]);
 	}
 #endif
-	//srcTrans = QString("{\"json\":true,\"blockchain\":\"bitcoin\",\"keyname\":\"my key@69a2947efc2ab973\",\"data\":{\"from\":\"16wDQNfXksgkBn5SGafK5pWjz9uofhU8mh\",\"trx_info\":{\"version\":1,\"num_vins\":1,\"vins\":[{\"txid\":\"416e9b4555180aaa0c417067a46607bc58c96f0131b2f41f7d0fb665eab03a7e\",\"output_id\":0,\"script_len\":25,\"script_sig\":\"76a91499b1ebcfc11a13df5161aba8160460fe1601d54188ac\",\"end_of_vin\":\"feffffff\"}],\"num_vouts\":2,\"vouts\":[{\"address\":\"1NAK3za9MkbAkkSBMLcvmhTD6etgB4Vhpr\",\"amount\":20000,\"script_len\":25,\"script_pub_key\":\"76a914e81d742e2c3c7acd4c29de090fc2c4d4120b2bf888ac\"},{\"address\":\"1NAK3za9MkbAkkSBMLcvmhTD6etgB4Vhpr\",\"amount\":20000,\"script_len\":25,\"script_pub_key\":\"76a914e81d742e2c3c7acd4c29de090fc2c4d4120b2bf888ac\"}],\"locktime\":0}},\"unlock_time\":0}");
-	
 	BOOST_LOG_SEV(log.lg, info) << "Got from pipe:" + srcTrans.toStdString();
-
-	//QString inputJson("{\"json\":true,\"blockchain\":\"ethereum\",\"data\":{\"nonce\":\"143\",\"gasPrice\":\"5300000000\",\"gas\":\"100000\",\"chainid\":1,\"from\":\"\",\"to\":\"843fcaaeb0cce5ffaf272f5f2ddfff3603f9c2a0\",\"value\":\"173117678552668600\"}}");
-
-	//QString swapInputJson("{\"json\":true,\"blockchain\":\"ethereum\",\"data\":{\"nonce\":\"143\",\"gasPrice\":\"5300000000\",\"gas\":\"100000\",\"chainid\":1,\"from\":\"\",\"to\":\"843fcaaeb0cce5ffaf272f5f2ddfff3603f9c2a0\",\"value\":\"173117678552668600\"},\"swap\":{\"action\":\"createSwap\",\"hash\":\"9dfc35e9b351731c7d8dd1f47351627eeffaaa1b000000000000000000000000\",\"address\":\"000000000000000000000000f59284b3e6631c49283d94fb4b09029b9d3f335f\"}}");
-	//srcTrans = QString("{\"json\":true,\"blockchain\":\"ethereum\",\"data\":{\"nonce\":\"143\",\"gasPrice\":\"5300000000\",\"gas\":\"100000\",\"chainid\":1,\"from\":\"\",\"to\":\"843fcaaeb0cce5ffaf272f5f2ddfff3603f9c2a0\",\"value\":\"173117678552668600\"}}");
-	
 	Transaction trans(srcTrans);
-
 	for (int i = 0; i < argc; i++) {
 		QString arg(argv[i]);
 		if (!arg.isEmpty()) {
@@ -87,41 +83,12 @@ int main(int argc, char *argv[])
 	if (srcTrans.indexOf("create_password")!=-1) {
 		trans.setCreatePassword();
 	}
-
 	if (!trans.isCreatePassword() && trans.isUnlockKey() == -1) {
 		secmod_parser_f cmd_parse;
 		auto cmd_type = cmd_parse(srcTrans.toStdString());
 		auto unlock_time = cmd_parse.unlock_time(); //check unlock time. If unlock time > 0 print red lock icon with text warning.
 		auto is_json = cmd_parse.is_json();//need to check parse success. If json is false > 0 print red lock icon with text warning.
-
-		switch (cmd_type)
-		{
-		case keychain_app::secmod_commands::blockchain_secmod_te::unknown:
-		{
-			//auto trx_str = cmd_parse.to_raw_tx();//raw hex transaction
-		}
-		break;
-
-		case keychain_app::secmod_commands::blockchain_secmod_te::parse_error:
-		{
-			//some error msg into log
-		}
-		break;
-		default:
-		{
-			//some error msg into log
-		}
-		break;
-		}
 	}
-
-	//QJsonDocument document = QJsonDocument::fromJson(/*inputJson*//*swapInputJson*/srcTrans.toUtf8());
-	//if (document.isObject()) {
-	//	trans.read(document.object());
-	//}
-	//QString expert("{\"json\":false,\"blockchain\":\"ethereum\",\"data\":\"fd1069fd32ab5a1da25b010080841e000000000000071140420f000000000000000000\"}");
-	//trans.setExpertMode(expert);
-	
 
 	QApplication a(argc, argv);
 	keychain_gui_win w(trans);
@@ -129,7 +96,6 @@ int main(int argc, char *argv[])
 
 	a.exec();
 
-	//WaitForSingleObject((Q_HANDLE)a.thread, INFINITE);
 #ifdef FROMPROCCESS
 	SwitchDesktop(hOldDesktop);
 #endif

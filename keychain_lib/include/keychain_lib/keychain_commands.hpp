@@ -761,6 +761,10 @@ struct keychain_command<command_te::unlock>: keychain_command_base
       params = params_variant.as<params_t>();
     }
     FC_LIGHT_CAPTURE_TYPECHANGE_AND_RETHROW (fc_light::invalid_arg_exception, error, "cannot parse command params")
+
+	if (params.unlock_time <= 0)
+		FC_LIGHT_THROW_EXCEPTION(fc_light::invalid_arg_exception,
+			"unlock_time invalid or not specified, unlock_time = ${UNLOCK_TIME}", ("UNLOCK_TIME", params.unlock_time));
     
     if (!params.keyname.empty())
       read_private_key(keychain, params.keyname, "", params.unlock_time, this);

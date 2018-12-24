@@ -4,6 +4,7 @@
 
 #include "cmd_parser.hpp"
 #include <keychain_lib/keychain_logger.hpp>
+#include <keychain_lib/version_info.hpp>
 
 
 using namespace keychain_app;
@@ -14,7 +15,7 @@ int main(int argc, char* argv[])
 {
   auto log = logger_singletone::instance();
 
-  BOOST_LOG_SEV(log.lg, info) << "Start";
+  BOOST_LOG_SEV(log.lg, info) << "KeyChain application started, version = " << keychain_app::version_info::version();
 
 #ifdef LINUX
   BOOST_LOG_SEV(log.lg, info) << "OS: Linux";

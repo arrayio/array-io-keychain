@@ -15,7 +15,7 @@ using namespace logging::trivial;
 class logger_singletone
 {
 public:
-    static const logger_singletone& instance(std::string = "_keychain");
+    static const logger_singletone& instance(std::string = "keychain");
     src::severity_logger< severity_level > lg;
 private:
     logger_singletone(std::string);

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
     <title>ETH Signer</title>
     <link rel="stylesheet" href="../assets/spectre.min.css">
@@ -15,7 +15,7 @@
       </div>
       <div class="columns">
         <div class="column col-2">
-          <img src="../assets/logo.png">
+          <img src="../assets/logo.png" alt="KeyChain logo">
         </div>
         <div class="column col mx-2 my-2">
           <h1>ETH Signer</h1>
@@ -105,10 +105,8 @@
               throw data.error;
             }
             const publicKey = `0x${data.result}`;
-            console.log('publicKey: ', publicKey);
             return EthJS.Util.publicToAddress(publicKey).toString('hex');
           }).then( data => {
-            console.log('data1: ', data);
             fromAddress = data;
             log(`"From" address calculated from public key: ${fromAddress}`);
             log('Building transaction with empty signature');

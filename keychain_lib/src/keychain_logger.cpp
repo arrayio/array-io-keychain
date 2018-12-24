@@ -22,7 +22,7 @@ logger_singletone::logger_singletone(std::string postfix)
 
     // Create a text file sink
     boost::shared_ptr< file_sink > sink(new file_sink(
-            keywords::file_name = std::string(LOG_DEFAULT_PATH)+  "/%Y%m%d_%H%M%S"+postfix+".log",
+            keywords::file_name = std::string(LOG_DEFAULT_PATH)+  "/%Y%m%d_%H%M%S_"+postfix+".log",
             keywords::rotation_size = 16384,
             keywords::auto_flush = true
     ));

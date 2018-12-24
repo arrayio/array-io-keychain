@@ -18,6 +18,11 @@ void KeychainServiceExchange::EncodeError(const std::wstring &mes, unsigned int 
 	_sendToPipe(L"empty_password", std::wcslen(L"empty_password"));
 };
 
+void KeychainServiceExchange::EncodeCancel()
+{
+	_sendToPipe(L"cancel_pass_enterance", std::wcslen(L"cancel_pass_enterance"));
+};
+
 void KeychainServiceExchange::EncodeSuccess(const std::wstring &mes, unsigned int len)
 {
 	_sendToPipe(mes, len);

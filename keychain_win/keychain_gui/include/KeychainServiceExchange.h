@@ -24,6 +24,7 @@ public:
 	KeychainServiceExchange();
 	~KeychainServiceExchange();
 	void EncodeError(const std::wstring &mes, unsigned int len);
+	void EncodeCancel();
 	void EncodeSuccess(const std::wstring &mes, unsigned int len);
 	bool Decode(std::string &outString, int &result);
 private:

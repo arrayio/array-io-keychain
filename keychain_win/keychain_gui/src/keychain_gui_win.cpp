@@ -177,7 +177,7 @@ void keychain_gui_win::transaction_sign() {
 }
 
 void keychain_gui_win::cancel_sign() {
-	serviceExchange->EncodeError(L"empty_password", 14);
+	serviceExchange->EncodeCancel();
 	this->close();
 }
 
@@ -231,7 +231,7 @@ void keychain_gui_win::_disableSignButton()
 void keychain_gui_win::keyPressEvent(QKeyEvent *event)
 {
 	if (event->key() == Qt::Key_Escape) {
-		serviceExchange->EncodeError(L"empty_password", 14);
+		serviceExchange->EncodeCancel();
 		this->close();
 	}
 	if (event->key() == Qt::Key_Enter) {
@@ -248,7 +248,7 @@ void keychain_gui_win::keyPressEvent(QKeyEvent *event)
 
 void keychain_gui_win::closeEvent(QCloseEvent * event)
 {
-	serviceExchange->EncodeError(L"empty_password", 14);
+	serviceExchange->EncodeCancel();
 	this->close();
 }
 

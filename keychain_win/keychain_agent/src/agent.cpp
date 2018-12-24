@@ -160,11 +160,13 @@ BOOL StartInteractiveClientProcess(
 			DESKTOP_ALL, 
 			NULL);
 
+		if (secureDesktop == NULL)
+			BOOST_LOG_SEV(log.lg, info) << "Secure descktop create ERROR: "<< GetLastError();
 		latError = GetLastError();
 
 		//SwitchDesktop(secureDesktop);
 
-		BOOST_LOG_SEV(log.lg, info) << "Create secure desktop";
+		BOOST_LOG_SEV(log.lg, info) << "Create secure desktop" << latError;
 
 		// Restore the caller's window station.
 
@@ -236,7 +238,7 @@ BOOL StartInteractiveClientProcess(
 				NULL,
 				NULL,
 				TRUE,
-				NORMAL_PRIORITY_CLASS | CREATE_UNICODE_ENVIRONMENT,              // pointer to process SECURITY_ATTRIBUTES
+				NORMAL_PRIORITY_CLASS | CREATE_UNICODE_ENVIRONMENT | 0x00400000,              // pointer to process SECURITY_ATTRIBUTES
 				enviroment,              // pointer to new environment block 
 				NULL,              // name of current directory 
 				&si,               // pointer to STARTUPINFO structure

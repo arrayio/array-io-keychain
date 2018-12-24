@@ -9,7 +9,7 @@
 #include <QString>
 #include <cwchar>
 #include <keychain_lib/keychain_logger.hpp>
-
+#include <keychain_lib/version_info.hpp>
 #include <keychain_lib/secmod_parser_cmd.hpp>
 
 #pragma comment(lib, "advapi32.lib") //TODO: this is bad practice, need to add this depenedencies to CMakeLists.txt
@@ -30,6 +30,7 @@ using secmod_commands::secmod_parser_f;
 int main(int argc, char *argv[])
 {
 	auto log = logger_singletone::instance("keychain_gui");
+	BOOST_LOG_SEV(log.lg, info) << "KeyChain gui application started, version = " << keychain_app::version_info::version();
 #ifdef FROMPROCCESS
 	DWORD dwWritten;
 	char buffer[9000];

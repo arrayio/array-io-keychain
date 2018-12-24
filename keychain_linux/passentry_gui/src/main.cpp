@@ -1,3 +1,5 @@
+#include "keychain_gui_win.h"
+
 #include "widget.hpp"
 #include <QApplication>
 #include <QDesktopWidget>
@@ -9,7 +11,12 @@ Q_DECLARE_METATYPE(std::string)
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
-    Widget w;
+//    Widget w;
+
+    QString srcTrans;
+    Transaction trans(srcTrans);
+
+    keychain_gui_win w(trans);
 
     const QRect sz = QApplication::desktop()->availableGeometry(&w);
     w.resize(sz.width() / 6, sz.height() * 1 / 6);
@@ -19,7 +26,6 @@ int main(int argc, char *argv[])
     w.show();
    return a.exec();
 }
-
 
 
 

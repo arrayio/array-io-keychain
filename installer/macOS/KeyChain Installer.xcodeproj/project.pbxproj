@@ -8,12 +8,17 @@
 
 /* Begin PBXBuildFile section */
 		065E4561476CAD7D2A088F20 /* Pods_Keychain_Installer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D45CE400EF06130F590AA706 /* Pods_Keychain_Installer.framework */; };
-		A76B8BFF21C914C30051EC91 /* ContainerVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = A76B8BFE21C914C30051EC91 /* ContainerVC.swift */; };
+		A776F48D21D0C696006736C9 /* Print.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7E7F75B21A6B4A60021ED5E /* Print.swift */; };
+		A776F48F21D0C92E006736C9 /* UninstallVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = A776F48E21D0C92E006736C9 /* UninstallVC.swift */; };
+		A776F49021D0D147006736C9 /* Alerts.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7E7F75721A6B4620021ED5E /* Alerts.swift */; };
 		A793A32921C2672B0061249D /* LicenseVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = A793A32821C2672B0061249D /* LicenseVC.swift */; };
 		A793A32B21C26DBB0061249D /* bin.tar.gz in Resources */ = {isa = PBXBuildFile; fileRef = A793A32A21C26DBB0061249D /* bin.tar.gz */; };
 		A799115F21C41AD500CB13B7 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A799115E21C41AD500CB13B7 /* AppDelegate.swift */; };
 		A799116321C41AD500CB13B7 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A799116221C41AD500CB13B7 /* Assets.xcassets */; };
 		A799116621C41AD500CB13B7 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A799116421C41AD500CB13B7 /* Main.storyboard */; };
+		A7A912B621CCE12D00A7594E /* NotificationExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7E7F75F21A6B6C70021ED5E /* NotificationExtensions.swift */; };
+		A7A912B721CCF43A00A7594E /* Consts.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7E7F75921A6B4860021ED5E /* Consts.swift */; };
+		A7A912B821CCF8BD00A7594E /* AppleScriptManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7E7F75521A6B4520021ED5E /* AppleScriptManager.swift */; };
 		A7DF22B621CA7BA3008F2364 /* UnistallerManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7DF22B521CA7BA3008F2364 /* UnistallerManager.swift */; };
 		A7DF22B721CA7BA3008F2364 /* UnistallerManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7DF22B521CA7BA3008F2364 /* UnistallerManager.swift */; };
 		A7DF22B821CA7CC0008F2364 /* Pods_Keychain_Installer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D45CE400EF06130F590AA706 /* Pods_Keychain_Installer.framework */; };
@@ -31,12 +36,15 @@
 		A7E7F75E21A6B4CC0021ED5E /* StringLocalize.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7E7F75D21A6B4CC0021ED5E /* StringLocalize.swift */; };
 		A7E7F76021A6B6C70021ED5E /* NotificationExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7E7F75F21A6B6C70021ED5E /* NotificationExtensions.swift */; };
 		A7EDE3B621AE99B400D912FC /* WelcomeVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7EDE3B521AE99B400D912FC /* WelcomeVC.swift */; };
+		DA4E417DD788A5149CA75505 /* Pods_Keychain_Uninstaller.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A1FECE3906833024E5D5394D /* Pods_Keychain_Uninstaller.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		3E4F1444A32878A98C804499 /* Pods-Keychain Installer.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Keychain Installer.release.xcconfig"; path = "Pods/Target Support Files/Pods-Keychain Installer/Pods-Keychain Installer.release.xcconfig"; sourceTree = "<group>"; };
+		6FF41F077014844269A8A241 /* Pods-Keychain Uninstaller.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Keychain Uninstaller.release.xcconfig"; path = "Pods/Target Support Files/Pods-Keychain Uninstaller/Pods-Keychain Uninstaller.release.xcconfig"; sourceTree = "<group>"; };
 		A0679F4132141184C33311C6 /* Pods-Keychain Installer.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Keychain Installer.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Keychain Installer/Pods-Keychain Installer.debug.xcconfig"; sourceTree = "<group>"; };
-		A76B8BFE21C914C30051EC91 /* ContainerVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContainerVC.swift; sourceTree = "<group>"; };
+		A1FECE3906833024E5D5394D /* Pods_Keychain_Uninstaller.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Keychain_Uninstaller.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		A776F48E21D0C92E006736C9 /* UninstallVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UninstallVC.swift; sourceTree = "<group>"; };
 		A793A32821C2672B0061249D /* LicenseVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LicenseVC.swift; sourceTree = "<group>"; };
 		A793A32A21C26DBB0061249D /* bin.tar.gz */ = {isa = PBXFileReference; lastKnownFileType = archive.gzip; path = bin.tar.gz; sourceTree = "<group>"; };
 		A799115C21C41AD500CB13B7 /* Keychain Uninstaller.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Keychain Uninstaller.app"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -63,6 +71,7 @@
 		A7E7F75D21A6B4CC0021ED5E /* StringLocalize.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StringLocalize.swift; sourceTree = "<group>"; };
 		A7E7F75F21A6B6C70021ED5E /* NotificationExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationExtensions.swift; sourceTree = "<group>"; };
 		A7EDE3B521AE99B400D912FC /* WelcomeVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WelcomeVC.swift; sourceTree = "<group>"; };
+		B54DFD96CC353D5979D05C6B /* Pods-Keychain Uninstaller.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Keychain Uninstaller.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Keychain Uninstaller/Pods-Keychain Uninstaller.debug.xcconfig"; sourceTree = "<group>"; };
 		D45CE400EF06130F590AA706 /* Pods_Keychain_Installer.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Keychain_Installer.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -72,6 +81,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				A7DF22B821CA7CC0008F2364 /* Pods_Keychain_Installer.framework in Frameworks */,
+				DA4E417DD788A5149CA75505 /* Pods_Keychain_Uninstaller.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -91,6 +101,8 @@
 			children = (
 				A0679F4132141184C33311C6 /* Pods-Keychain Installer.debug.xcconfig */,
 				3E4F1444A32878A98C804499 /* Pods-Keychain Installer.release.xcconfig */,
+				B54DFD96CC353D5979D05C6B /* Pods-Keychain Uninstaller.debug.xcconfig */,
+				6FF41F077014844269A8A241 /* Pods-Keychain Uninstaller.release.xcconfig */,
 			);
 			name = Pods;
 			sourceTree = "<group>";
@@ -99,6 +111,7 @@
 			isa = PBXGroup;
 			children = (
 				D45CE400EF06130F590AA706 /* Pods_Keychain_Installer.framework */,
+				A1FECE3906833024E5D5394D /* Pods_Keychain_Uninstaller.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -107,7 +120,7 @@
 			isa = PBXGroup;
 			children = (
 				A799115E21C41AD500CB13B7 /* AppDelegate.swift */,
-				A76B8BFE21C914C30051EC91 /* ContainerVC.swift */,
+				A776F48E21D0C92E006736C9 /* UninstallVC.swift */,
 				A7DF22B521CA7BA3008F2364 /* UnistallerManager.swift */,
 				A799116221C41AD500CB13B7 /* Assets.xcassets */,
 				A799116421C41AD500CB13B7 /* Main.storyboard */,
@@ -169,9 +182,11 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = A799116B21C41AD500CB13B7 /* Build configuration list for PBXNativeTarget "Keychain Uninstaller" */;
 			buildPhases = (
+				8C1C23683425932B2482533E /* [CP] Check Pods Manifest.lock */,
 				A799115821C41AD500CB13B7 /* Sources */,
 				A799115921C41AD500CB13B7 /* Frameworks */,
 				A799115A21C41AD500CB13B7 /* Resources */,
+				BDF03CB31EDE36AF03CCA285 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -261,6 +276,42 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		8C1C23683425932B2482533E /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-Keychain Uninstaller-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		BDF03CB31EDE36AF03CCA285 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${SRCROOT}/Pods/Target Support Files/Pods-Keychain Uninstaller/Pods-Keychain Uninstaller-frameworks.sh",
+				"${BUILT_PRODUCTS_DIR}/AHLaunchCtl-macOS10.14/AHLaunchCtl.framework",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/AHLaunchCtl.framework",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Keychain Uninstaller/Pods-Keychain Uninstaller-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
 		F277DCD0D7489B32C4CC8A9A /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -286,7 +337,7 @@
 			);
 			inputPaths = (
 				"${SRCROOT}/Pods/Target Support Files/Pods-Keychain Installer/Pods-Keychain Installer-frameworks.sh",
-				"${BUILT_PRODUCTS_DIR}/AHLaunchCtl/AHLaunchCtl.framework",
+				"${BUILT_PRODUCTS_DIR}/AHLaunchCtl-macOS10.10/AHLaunchCtl.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
@@ -304,9 +355,14 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A76B8BFF21C914C30051EC91 /* ContainerVC.swift in Sources */,
+				A7A912B721CCF43A00A7594E /* Consts.swift in Sources */,
+				A776F48D21D0C696006736C9 /* Print.swift in Sources */,
+				A776F49021D0D147006736C9 /* Alerts.swift in Sources */,
+				A776F48F21D0C92E006736C9 /* UninstallVC.swift in Sources */,
 				A7DF22B721CA7BA3008F2364 /* UnistallerManager.swift in Sources */,
+				A7A912B621CCE12D00A7594E /* NotificationExtensions.swift in Sources */,
 				A799115F21C41AD500CB13B7 /* AppDelegate.swift in Sources */,
+				A7A912B821CCF8BD00A7594E /* AppleScriptManager.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -355,9 +411,11 @@
 /* Begin XCBuildConfiguration section */
 		A799116921C41AD500CB13B7 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = B54DFD96CC353D5979D05C6B /* Pods-Keychain Uninstaller.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = "Keychain Uninstaller/Keychain_Uninstaller.entitlements";
+				CODE_SIGN_IDENTITY = "Mac Developer";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = 8YBKQD6YZD;
@@ -368,15 +426,18 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "io.array.Keychain-Uninstaller";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_VERSION = 4.2;
 			};
 			name = Debug;
 		};
 		A799116A21C41AD500CB13B7 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 6FF41F077014844269A8A241 /* Pods-Keychain Uninstaller.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = "Keychain Uninstaller/Keychain_Uninstaller.entitlements";
+				CODE_SIGN_IDENTITY = "Mac Developer";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = 8YBKQD6YZD;
@@ -387,6 +448,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "io.array.Keychain-Uninstaller";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_VERSION = 4.2;
 			};
 			name = Release;

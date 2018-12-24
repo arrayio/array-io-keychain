@@ -23,7 +23,11 @@ if(WIN32)
 		message(STATUS "OPENSSL PATH: ${openssl_path}")
 		file(GLOB_RECURSE globalcrypto FOLLOW_SYMLINKS ${OPENSSL_ROOT_DIR}/libcrypto-1_1-x64.dll)
 		list(GET globalcrypto 0 cryptolib)
-		message(STATUS "FOUND LIBCRYPTO: ${cryptolib}")
+		if(globalcrypto)
+			message(STATUS "FOUND LIBCRYPTO: ${cryptolib}")
+		else()
+			message(FATAL_ERROR "CANNOT FIND OPENSSL DYNAMIC LIBRARY")
+		endif()
 	endif()
 
 	#set copy files to alias

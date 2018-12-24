@@ -74,13 +74,13 @@
 					<File Id="File13" Name="check_service.bat" Source="check_service.bat" />
 				</Component>
 				<Component Id="Component15" DiskId="1" Guid="{A38FD763-1614-4127-BF89-23D0A9369D86}">
-					<File Id="File14" Name="Qt5Cored.dll" Source="Qt5Cored.dll" />
+					<File Id="File14" Name="Qt5Core.dll" Source="Qt5Core.dll" />
 				</Component>
 				<Component Id="Component16" DiskId="1" Guid="{586BD0CB-FE69-47FD-9475-4D042F7A65DA}">
-					<File Id="File15" Name="Qt5Widgetsd.dll" Source="Qt5Widgetsd.dll" />
+					<File Id="File15" Name="Qt5Widgets.dll" Source="Qt5Widgets.dll" />
 				</Component>
 				<Component Id="Component17" DiskId="1" Guid="{BE0A2A0C-55AC-4D92-9839-D98559B99F92}">
-					<File Id="File16" Name="Qt5Guid.dll" Source="Qt5Guid.dll" />
+					<File Id="File16" Name="Qt5Gui.dll" Source="Qt5Gui.dll" />
 				</Component>
 			</Directory>
 		</Directory>
@@ -154,14 +154,14 @@
 		<!-- Handle x64 vcredist files -->
 		<!-- Or use $(env.CommonProgramFiles) alias if it's not x86 in folder name -->
 		<?if $(var.ProcessorArchitecture)="AMD64" or $(var.ProcessorArchitecture)="x64" or $(var.ProcessorArchitecture)="Intel64" ?> 
-			<Merge Id="CrtFiles_x64" SourceFile="C:\IDE\MVS2017\VC\Redist\MSVC\14.15.26706\MergeModules\Microsoft_VC141_CRT_x64.msm" DiskId="1" Language="0"/>
-			<Merge Id="CrtPolicy_x64" SourceFile="C:\IDE\MVS2017\VC\Redist\MSVC\14.15.26706\MergeModules\Microsoft_VC141_DebugCRT_x64.msm" DiskId="1" Language="0"/>
+			<Merge Id="CrtFiles_x64" SourceFile="C:\IDE\MVS2017\VC\Redist\MSVC\14.14.26405\MergeModules\Microsoft_VC141_CRT_x64.msm" DiskId="1" Language="0"/>
+			<Merge Id="CrtPolicy_x64" SourceFile="C:\IDE\MVS2017\VC\Redist\MSVC\14.14.26405\MergeModules\Microsoft_VC141_DebugCRT_x64.msm" DiskId="1" Language="0"/>
 		<?endif?>
 		<!-- Handle x64 vcredist files -->
 		<?if $(var.ProcessorArchitecture)="x86" or $(var.ProcessorArchitecture)="Intel" ?> 
 			<!-- (VC141) -->
-			<Merge Id="CrtFiles_x86" SourceFile="C:\IDE\MVS2017\VC\Redist\MSVC\14.15.26706\MergeModules\Microsoft_VC141_CRT_x86.msm" DiskId="1" Language="0"/>
-			<Merge Id="CrtPolicy_x86" SourceFile="C:\IDE\MVS2017\VC\Redist\MSVC\14.15.26706\MergeModules\Microsoft_VC141_DebugCRT_x86.msm" DiskId="1" Language="0"/>
+			<Merge Id="CrtFiles_x86" SourceFile="C:\IDE\MVS2017\VC\Redist\MSVC\14.14.26405\MergeModules\Microsoft_VC141_CRT_x86.msm" DiskId="1" Language="0"/>
+			<Merge Id="CrtPolicy_x86" SourceFile="C:\IDE\MVS2017\VC\Redist\MSVC\14.14.26405\MergeModules\Microsoft_VC141_DebugCRT_x86.msm" DiskId="1" Language="0"/>
 		<?endif?> 
 		<?warning Architecture type: $(var.ProcessorArchitecture) ?>
 	</DirectoryRef>

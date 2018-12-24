@@ -197,6 +197,15 @@
 					<CreateFolder/>
 					</Component>
 				</Directory>
+				<Component Id="Component46" DiskId="1" Guid="{EC710269-58E5-4D45-863F-642F1FFCC886}">
+				<File Id="File45" Name="Qt5Qml.dll" Source="Qt5Qml.dll" />
+				</Component>
+				<Component Id="Component47" DiskId="1" Guid="{9D8E5429-8C39-4BE0-AC4B-8D110CAD3959}">
+				<File Id="File46" Name="Qt5Svg.dll" Source="Qt5Svg.dll" />
+				</Component>
+				<Component Id="Component48" DiskId="1" Guid="{F6376145-758C-4BA1-A83A-F1919B85C1C9}">
+				<File Id="File47" Name="Qt5Xml.dll" Source="Qt5Xml.dll" />
+				</Component>
 			</Directory>
 		</Directory>
     </Directory>
@@ -262,6 +271,9 @@
 		<ComponentRef Id="Component43" />
 		<ComponentRef Id="Component44" />
 		<ComponentRef Id="Component45" />
+		<ComponentRef Id="Component46" />
+		<ComponentRef Id="Component47" />
+		<ComponentRef Id="Component48" />
     </Feature>
 	
     <!-- Global Run Action -->

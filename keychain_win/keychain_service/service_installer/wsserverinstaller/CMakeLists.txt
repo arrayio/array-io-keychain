@@ -37,7 +37,10 @@ if(WIN32)
 	else()
 		file(GLOB_RECURSE qtlinklibs FOLLOW_SYMLINKS ${Qt5_DIR}/Qt5Widgets.dll 
 													 ${Qt5_DIR}/Qt5Core.dll
-													 ${Qt5_DIR}/Qt5Gui.dll)
+													 ${Qt5_DIR}/Qt5Gui.dll
+													 ${Qt5_DIR}/Qt5Qml.dll
+													 ${Qt5_DIR}/Qt5Xml.dll
+													 ${Qt5_DIR}/Qt5Svg.dll)
 		message(STATUS "QT LIB FILES: ${qtlinklibs}")
 		file(GLOB_RECURSE qtlinkplatforms FOLLOW_SYMLINKS ${Qt5_DIR}/plugins/platforms/*.dll)
 		message(STATUS "QT PLATFORM FILES: ${qtlinkplatforms}")

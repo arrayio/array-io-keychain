@@ -160,7 +160,7 @@ public:
     virtual ~keychain_base();
     virtual std::string operator()(const fc_light::variant& command) = 0;
     boost::signals2::signal<byte_seq_t(const std::string&)> get_passwd_trx;
-	  boost::signals2::signal<byte_seq_t(const std::string&,int)> get_passwd_unlock;//TODO: need to call in unlock command handler
+    boost::signals2::signal<byte_seq_t(const std::string&,int)> get_passwd_unlock;//TODO: need to call in unlock command handler
     boost::signals2::signal<byte_seq_t(void)> get_passwd_on_create;
     boost::signals2::signal<void(const string_list&)> print_mnemonic;
 
@@ -761,6 +761,10 @@ struct keychain_command<command_te::unlock>: keychain_command_base
       params = params_variant.as<params_t>();
     }
     FC_LIGHT_CAPTURE_TYPECHANGE_AND_RETHROW (fc_light::invalid_arg_exception, error, "cannot parse command params")
+
+	if (params.unlock_time <= 0)
+		FC_LIGHT_THROW_EXCEPTION(fc_light::invalid_arg_exception,
+			"unlock_time invalid or not specified, unlock_time = ${UNLOCK_TIME}", ("UNLOCK_TIME", params.unlock_time));
     
     if (!params.keyname.empty())
       read_private_key(keychain, params.keyname, "", params.unlock_time, this);

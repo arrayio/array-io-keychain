@@ -29,7 +29,20 @@ if(WIN32)
 			message(FATAL_ERROR "CANNOT FIND OPENSSL DYNAMIC LIBRARY")
 		endif()
 	endif()
-
+	
+	#find Qt 5 dll files to link and build finally with msi
+	message(STATUS "QT ROOT DIR: ${Qt5_DIR}")
+	if("$ENV{Qt5_DIR}" OR "${Qt5_DIR}" STREQUAL "")
+		message(FATAL_ERROR "CANNOT FIND QT5 LIBRARY")
+	else()
+		file(GLOB_RECURSE qtlinklibs FOLLOW_SYMLINKS ${Qt5_DIR}/Qt5Widgets.dll 
+													 ${Qt5_DIR}/Qt5Core.dll
+													 ${Qt5_DIR}/Qt5Gui.dll)
+		message(STATUS "QT LIB FILES: ${qtlinklibs}")
+		file(GLOB_RECURSE qtlinkplatforms FOLLOW_SYMLINKS ${Qt5_DIR}/plugins/platforms/*.dll)
+		message(STATUS "QT PLATFORM FILES: ${qtlinkplatforms}")
+	endif()
+	
 	#set copy files to alias
 	set( PREBUILD_FILES
 	   "${wixsrcpath}/keychainrunner.bat"
@@ -51,18 +64,22 @@ if(WIN32)
 	   "${wixsrcpath}/keychain_logo_minimal.ico"
 	   "${wixsrcpath}/keychain_dialog_banner.jpg"
 	   ${cryptolib}
+	   ${qtlinklibs}
 	)
 
 	message(STATUS "PREBUILD FILES: ${PREBUILD_FILES}")
 	
-	#copy demo files
+	#set alias to demo files
 	set( DEMO_FILES
 		${CMAKE_CURRENT_SOURCE_DIR}/demo/index.html
 		${CMAKE_CURRENT_SOURCE_DIR}/demo/logo.png
 		${CMAKE_CURRENT_SOURCE_DIR}/demo/spectre.min.css)
 	
+	#copy demo files to installer folder
 	file(COPY ${DEMO_FILES} DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/wsservice/demo/)
-
+	#copy qt platform files to installer folder
+	file(COPY ${qtlinkplatforms} DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/wsservice/platforms/)
+	
 	#copy files in build folder
 	foreach( file_to_copy ${PREBUILD_FILES})
 		add_custom_command(TARGET wssdeploy PRE_BUILD COMMAND ${CMAKE_COMMAND}

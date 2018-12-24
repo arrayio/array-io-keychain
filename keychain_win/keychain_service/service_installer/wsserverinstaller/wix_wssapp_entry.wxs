@@ -2,7 +2,7 @@
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
 	
 	<!-- Set product information -->
-   <Product Id="*" UpgradeCode="{703B3388-5BB5-4D23-84A5-4E882E7A1142}" 	 
+   <Product Id="*" UpgradeCode="{4AB37123-84EE-4C38-AB7E-37B9E726F3E8}" 	 
 			Name="KeyChain" Language="1033" Version="1.0.2" 
 			Manufacturer="Array.IO">
 	
@@ -27,61 +27,94 @@
     <Directory Id="TARGETDIR" Name="SourceDir">
 		<Directory Id="RootInstallDrive">
 			<Directory Id="INSTALLLOCATION" Name="KeyChain">
-				<Component Id="Component1" DiskId="1" Guid="{960E7827-BFEC-4549-AD01-281298454029}">
+				<Component Id="Component1" DiskId="1" Guid="{4410F5FD-8CD4-46C9-A170-7EA3B528FAC9}">
 					<File Id="File0" Name="websocketwrapper.exe" Source="websocketwrapper.exe" />
 				</Component>
-				<Component Id="Component2" DiskId="1" Guid="{7B20D317-3D09-45F1-BDE8-E191110F2246}">
+				<Component Id="Component2" DiskId="1" Guid="{212874D5-5A31-4B63-A611-AB67EEAA05CB}">
 					<File Id="File1" Name="servicewrapper.exe" Source="servicewrapper.exe" />
 				</Component>
-				<Component Id="Component3" DiskId="1" Guid="{D02371BB-0536-43E1-B260-5024DD7B1C23}">
+				<Component Id="Component3" DiskId="1" Guid="{E1BAE03B-0973-478B-89B2-022596AA230E}">
 					<File Id="File2" Name="servicewrapper.xml" Source="servicewrapper.xml" />
 				</Component>
-				<Component Id="Component4" DiskId="1" Guid="{04CE4E2D-8ACC-49F9-BFF1-427BD348EC11}">
+				<Component Id="Component4" DiskId="1" Guid="{41A62956-7D52-42D4-9ED9-48CF0523F770}">
 					<File Id="File3" Name="wsservicerunner.bat" Source="wsservicerunner.bat" />
 				</Component>
-				<Component Id="Component5" DiskId="1" Guid="{DC2E38B8-4562-433E-85BC-21A4CB286B58}">
+				<Component Id="Component5" DiskId="1" Guid="{9B2138F6-4124-4706-B934-32D69FC3B06A}">
 					<File Id="File4" Name="delete_wsservice.bat" Source="delete_wsservice.bat" />
 				</Component>
-				<Component Id="Component6" DiskId="1" Guid="{94C1CA57-4CD4-4013-83F7-F7EFADA19C87}">
+				<Component Id="Component6" DiskId="1" Guid="{F8D64769-56A5-41DF-8B3C-B3853E6B1279}">
 					<File Id="File5" Name="wsservice_manager.bat" Source="wsservice_manager.bat" />
 				</Component>
-				<Component Id="Component7" DiskId="1" Guid="{C784E9B4-833E-438C-8F22-C1DC2570DEFD}">
+				<Component Id="Component7" DiskId="1" Guid="{90D137C5-DE21-47F6-B73C-27F072142523}">
 					<File Id="File6" Name="keychain.exe" Source="keychain.exe" />
 				</Component>
-				<Component Id="Component8" DiskId="1" Guid="{B6305F1D-7458-4813-BB38-232909C9397B}">
+				<Component Id="Component8" DiskId="1" Guid="{E6BD187F-058B-4707-A702-5DB045847580}">
 					<File Id="File7" Name="keychain_win_gui.exe" Source="keychain_win_gui.exe" />
 				</Component>
-				<Component Id="Component9" DiskId="1" Guid="{AA4C9685-9A3C-4DB1-B3BA-E8E001D4E9B1}">
+				<Component Id="Component9" DiskId="1" Guid="{7BBB1468-EB32-4F7A-8708-F8FA9DC79FA7}">
 					<File Id="File8" Name="keychainrunner.bat" Source="keychainrunner.bat" />
 				</Component>
 				<Directory Id="DemoComponents" Name="Demo">
-					<Component Id="Component10" DiskId="1" Guid="{406EF78F-04A5-4C04-9523-020F7961B864}">
+					<Component Id="Component10" DiskId="1" Guid="{BFBF1B5A-39E6-4DCA-9865-518CDEBB60AE}">
 					<File Id="File9" Name="index.html" Source="demo\index.html" />
 					</Component>
-					<Component Id="Component11" DiskId="1" Guid="{F6330CE6-27F9-4A58-AD9D-7DE03EB81EFF}">
+					<Component Id="Component11" DiskId="1" Guid="{A4DA029E-B3A5-46CA-AAD9-1C91536F55B8}">
 					<File Id="File10" Name="logo.png" Source="demo\logo.png" />
 					<CreateFolder/>
 					</Component>
-					<Component Id="Component12" DiskId="1" Guid="{64873936-03EA-46D6-90D1-169EDCCE4B2D}">
+					<Component Id="Component12" DiskId="1" Guid="{3989F050-707C-4EDE-9AB4-B5F25A8289B2}">
 						<File Id="File11" Name="spectre.min.css" Source="demo\spectre.min.css" />
 					<CreateFolder/>
 					</Component>
 				</Directory>
-				<Component Id="Component13" DiskId="1" Guid="{FD17E591-D67E-41C6-A815-E7DC61E388BF}">
+				<Component Id="Component13" DiskId="1" Guid="{D0B54F2F-3459-47EE-9104-0FD651CF2453}">
 					<File Id="File12" Name="libcrypto-1_1-x64.dll" Source="libcrypto-1_1-x64.dll" />
 				</Component>
-				<Component Id="Component14" DiskId="1" Guid="{1BEA67A0-5446-431E-BF9F-6724ECC77299}">
+				<Component Id="Component14" DiskId="1" Guid="{A9967DF9-7E06-4829-B735-4EACAA79E892}">
 					<File Id="File13" Name="check_service.bat" Source="check_service.bat" />
 				</Component>
-				<Component Id="Component15" DiskId="1" Guid="{A38FD763-1614-4127-BF89-23D0A9369D86}">
+				<Component Id="Component15" DiskId="1" Guid="{F24AA9AF-7C90-40C0-B949-20A1822E9B6D}">
 					<File Id="File14" Name="Qt5Core.dll" Source="Qt5Core.dll" />
 				</Component>
-				<Component Id="Component16" DiskId="1" Guid="{586BD0CB-FE69-47FD-9475-4D042F7A65DA}">
+				<Component Id="Component16" DiskId="1" Guid="{31F5436A-564B-4614-B31D-40264B21FD34}">
 					<File Id="File15" Name="Qt5Widgets.dll" Source="Qt5Widgets.dll" />
 				</Component>
-				<Component Id="Component17" DiskId="1" Guid="{BE0A2A0C-55AC-4D92-9839-D98559B99F92}">
+				<Component Id="Component17" DiskId="1" Guid="{89574994-3C43-4D96-9FE8-AA04CEED0D80}">
 					<File Id="File16" Name="Qt5Gui.dll" Source="Qt5Gui.dll" />
 				</Component>
+				<Directory Id="QtPlatformComponents" Name="platforms">
+					<Component Id="Component18" DiskId="1" Guid="{044A84BD-9318-4383-BF0D-1E9436BEF2E7}">
+					<File Id="File17" Name="qdirect2d.dll" Source="platforms\qdirect2d.dll" />
+					</Component>
+					<Component Id="Component19" DiskId="1" Guid="{1E95EF6A-2793-472C-89AA-CFBB9B3D369D}">
+					<File Id="File18" Name="qdirect2dd.dll" Source="platforms\qdirect2dd.dll" />
+					<CreateFolder/>
+					</Component>
+					<Component Id="Component20" DiskId="1" Guid="{FBE78442-36D9-4657-AEC6-EA115BB2A6E9}">
+					<File Id="File19" Name="qminimal.dll" Source="platforms\qminimal.dll" />
+					<CreateFolder/>
+					</Component>
+					<Component Id="Component21" DiskId="1" Guid="{9199C79F-2A36-46B9-9D20-835163C25F4B}">
+					<File Id="File20" Name="qminimald.dll" Source="platforms\qminimald.dll" />
+					<CreateFolder/>
+					</Component>
+					<Component Id="Component22" DiskId="1" Guid="{A41A3FA8-5035-4D49-84A0-A89ECCE048F8}">
+					<File Id="File21" Name="qoffscreen.dll" Source="platforms\qoffscreen.dll" />
+					<CreateFolder/>
+					</Component>
+					<Component Id="Component23" DiskId="1" Guid="{2C862C94-6113-4A5C-818A-1C03545A1B16}">
+					<File Id="File22" Name="qoffscreend.dll" Source="platforms\qoffscreend.dll" />
+					<CreateFolder/>
+					</Component>
+					<Component Id="Component24" DiskId="1" Guid="{84A4EF19-345A-4AA6-8B97-F7F49EF96104}">
+					<File Id="File23" Name="qwindows.dll" Source="platforms\qwindows.dll" />
+					<CreateFolder/>
+					</Component>
+					<Component Id="Component25" DiskId="1" Guid="{7F331F91-9393-41D1-84AC-2D18013DFDD4}">
+					<File Id="File24" Name="qwindowsd.dll" Source="platforms\qwindowsd.dll" />
+					<CreateFolder/>
+					</Component>
+				</Directory>
 			</Directory>
 		</Directory>
     </Directory>
@@ -119,6 +152,14 @@
 		<ComponentRef Id="Component15" />
 		<ComponentRef Id="Component16" />
 		<ComponentRef Id="Component17" />
+		<ComponentRef Id="Component18" />
+		<ComponentRef Id="Component19" />
+		<ComponentRef Id="Component20" />
+		<ComponentRef Id="Component21" />
+		<ComponentRef Id="Component22" />
+		<ComponentRef Id="Component23" />
+		<ComponentRef Id="Component24" />
+		<ComponentRef Id="Component25" />
     </Feature>
 	
     <!-- Global Run Action -->

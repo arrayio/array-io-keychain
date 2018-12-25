@@ -110,11 +110,11 @@
             fromAddress = data;
             log(`"From" address calculated from public key: ${fromAddress}`);
             log('Building transaction with empty signature');
-            return buildTxSinature('', fromAddress, toAddress, valueTx);
-          }).then (rawHex => {
-            log(`Result: ${rawHex}`);
-            log(`Signing it with KeyChain: ${rawHex} , ${keyname}`);
-            return keychain.sign(rawHex, keyname);
+            return buildTx(fromAddress, toAddress, valueTx);
+          }).then (tx => {
+            log(`Result: ${JSON.stringify(tx)}`);
+            log(`Signing it with KeyChain`);
+            return keychain.signTransaction(tx, keyname);
           }).then( data => {
             const signature = data.result;
             log(`Signature: ${signature}`);
@@ -146,6 +146,16 @@
           }
         });
 
+        const buildTx = async (from, to, value) => {
+          const nonce = await web3.eth.getTransactionCount(from);
+          const chainId = 3;
+          const data = '';
+          const gasPrice = await web3.eth.getGasPrice().then(wei => Number(wei));
+          const gas = 21000;
+
+          return { nonce, chainId, to, value, data, gasPrice, gas }
+        };
+
         const buildTxSinature = async (signature, fromAddress, to, value, data = '') => {
           const nonce = await web3.eth.getTransactionCount(fromAddress);
           const gasPrice = await web3.eth.getGasPrice().then(wei => Number(wei));
@@ -165,7 +175,7 @@
             gasLimit,
             ...ret
           };
-          // console.log('tx KeyChain params', txParams);
+
           const tx = new EthJS.Tx(txParams);
           const buffer = tx.serialize();
           return buffer.toString('hex');

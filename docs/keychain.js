@@ -35,4 +35,15 @@
     return this.method({command: 'sign_hex',  params });
   };
 
+  WS.prototype.signTransaction = function(tx, privateKey) {
+    const rsv = { r: '0x00', s: '0x00', v: tx.chainId };
+    const txParams = {...tx, ...rsv};
+    const ethTx = new EthJS.Tx(txParams);
+    const buffer = ethTx.serialize();
+    const rawHex = buffer.toString('hex');
+
+    const params = { keyname: privateKey, transaction: rawHex, blockchain_type: "ethereum" };
+    return this.method({command: 'sign_hex',  params });
+  };
+
 }).call(this);

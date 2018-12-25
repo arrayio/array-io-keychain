@@ -1,12 +1,12 @@
 <p align="center">
   <br>
-  <img width="400" src="./img/ltl1%20(2).png" alt="">
+  <img width="200" src="./img/ltl1%20(2).png" alt="">
   <br>
   <br>
 </p>
 
-# KeyChain ![MIT License](https://img.shields.io/bower/l/:packageName.svg) [![Tweet](https://img.shields.io/twitter/url/http/shields.io.svg?style=social)](https://twitter.com/intent/tweet?text=A%20good,%20170%20solid%20app%20to%20keep%20your%20keys%20safe.&url=https://keychain.array.io/&via=KeyChain&hashtags=cybersecurity,private keys,cryptography,blockchain,app)
- [![GitHub version](https://badge.fury.io/gh/boennemann%2Fbadges.svg)](http://badge.fury.io/gh/boennemann%2Fbadges) ![Issues](https://img.shields.io/github/issues/detail/s/badges/shields/979.svg)
+# KeyChain [![MIT License](https://img.shields.io/bower/l/:packageName.svg)](https://github.com/arrayio/array-io-keychain/blob/master/LICENSE.md) [![Tweet](https://img.shields.io/twitter/url/http/shields.io.svg?style=social)](https://twitter.com/intent/tweet?text=A%20good,%20170%20solid%20app%20to%20keep%20your%20keys%20safe.&url=https://keychain.array.io/&via=KeyChain&hashtags=cybersecurity,private,cryptography,blockchain,app)
+
 
 ## Overview
 

@@ -115,7 +115,7 @@ console.log('signature:', signature, "\n")
 
 - [Swap Online](https://swap.online/)
 
-## Contributing
+## Contributing to the project
 
 The main purpose of this repository is to continue to evolve KeyChain core, making it faster and easier to use. Development of KeyChain happens in the open on GitHub, and we are grateful to the community for contributing bugfixes and improvements. 
 

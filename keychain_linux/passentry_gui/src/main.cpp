@@ -1,6 +1,6 @@
 #include "keychain_gui_win.h"
 
-#include "widget.hpp"
+//#include "widget.hpp"
 #include <QApplication>
 #include <QDesktopWidget>
 #include <stdlib.h>

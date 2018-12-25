@@ -25,19 +25,19 @@ logger_singletone::logger_singletone(std::string postfix)
 	if (getenv("USERPROFILE") != NULL) {
 		std::string user(getenv("USERPROFILE"));
 		if (!user.empty()) {
-			def_log_path = user.append("\\AppData\\Local\\Keychain").append(def_log_path);
+			def_log_path = user.append("\\AppData\\Local\\Keychain\\").append(def_log_path);
 		}
 	}
 	else {
 		if (getenv("SystemRoot") != NULL) {
 			std::string logFolder(getenv("SystemRoot"));
 			if (!logFolder.empty()) {
-				def_log_path = logFolder.append("\\Logs\\Keychain").append(def_log_path);
+				def_log_path = logFolder.append("\\Logs\\Keychain\\").append(def_log_path);
 			}
 		}
 		else
 		{
-			def_log_path = std::string(".").append(def_log_path);
+			def_log_path = std::string(".\\").append(def_log_path);
 		}
 	}
 #endif //_WIN32

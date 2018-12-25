@@ -13,7 +13,7 @@
 #include <boost/hana/range.hpp>
 #include <boost/hana/for_each.hpp>
 #include <boost/hana/size.hpp>
-#include "keychain_gui_win.h"
+#include "widget.hpp"
 
 namespace  slave {
     enum struct cmds {unknown = 0, rawtrx, close, modify, length, last }; // to gui
@@ -26,7 +26,7 @@ namespace  slave {
     struct cmd_base {
         cmd_base(cmds cmd_) : cmd(cmd_) {};
         cmds cmd;
-        virtual void operator()(keychain_gui_win* w, const fc_light::variant&) const = 0;
+        virtual void operator()(Widget* w, const fc_light::variant&) const = 0;
         virtual ~cmd_base() {};
     };
     struct cmd_list_singletone

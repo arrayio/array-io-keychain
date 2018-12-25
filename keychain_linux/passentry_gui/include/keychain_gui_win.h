@@ -25,8 +25,6 @@
 #include "KeychainWarningMessage.h"
 #include "RawHashWidget.h"
 
-#include <QThread>
-#include "polling.hpp"
 
 using namespace keychain_app;
 using secmod_commands::secmod_parser_f;
@@ -39,9 +37,8 @@ private:
 	Ui::keychain_gui_winClass ui;
 
 public:
-	QThread pollingThread;
+
 	keychain_gui_win(Transaction &transaction, QWidget *parent = Q_NULLPTR);
-	~keychain_gui_win();
 	PopupWindow * popupWindow;
 
 private:
@@ -61,11 +58,9 @@ private:
 	PasswordEnterElement * password;
 	KeychainServiceExchange * serviceExchange =NULL;
 
-	bool passClearOnExit;
 private:
 	void _roundCorners();
 	void _disableSignButton();
-	void parse(const std::string);
 
 protected:
 	void keyPressEvent(QKeyEvent *event) override;
@@ -79,10 +74,4 @@ public slots:
 	void transaction_sign();
 	void cancel_sign();
 	void set_sign_focus();
-
-	void found_pass();
-	void send(std::string);
-signals:
-	void poll();
-
 };

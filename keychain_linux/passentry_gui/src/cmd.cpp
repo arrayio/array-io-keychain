@@ -2,6 +2,9 @@
 // Created by user on 23.06.18.
 //
 #include "cmd.hpp"
+#include "Transaction.h"
+#include "keychain_gui_win.h"
+
 Q_DECLARE_METATYPE(std::string)
 
 namespace hana = boost::hana;
@@ -11,7 +14,7 @@ namespace slave
     struct cmd : cmd_base {
         cmd() : cmd_base(cmd_) {};
         virtual ~cmd() {};
-        virtual void operator()(keychain_gui_win* w, const fc_light::variant& v) const override {
+        virtual void operator()(Widget* w, const fc_light::variant& v) const override {
             throw std::runtime_error("operation is not implemented");
         };
         using params_t = void;
@@ -24,10 +27,13 @@ namespace slave
         virtual ~cmd() {};
         struct params {std::string rawtrx;};
         using params_t = params;
-        virtual void operator()(keychain_gui_win * w, const fc_light::variant& v) const override {
+        virtual void operator()(Widget * w, const fc_light::variant& v) const override {
             try {
                 auto a = v.as<params_t>();
                // w->pte->setText(QString(a.rawtrx.c_str()));
+                QString  value(a.rawtrx.c_str());
+                Transaction trans(value);
+                keychain_gui_win w(trans);
             }
             catch (const std::exception &e) {throw std::runtime_error(e.what());}
             catch (const fc_light::exception &e) {throw std::runtime_error(e.what());}
@@ -39,7 +45,7 @@ namespace slave
         cmd() : cmd_base(cmds::close) {};
         virtual ~cmd() {};
         using params_t = void;
-        virtual void operator()(keychain_gui_win* w, const fc_light::variant& v) const override {
+        virtual void operator()(Widget* w, const fc_light::variant& v) const override {
             try { w->close(); }
             catch (const std::exception &e) {throw std::runtime_error(e.what());}
             catch (const fc_light::exception &e) {throw std::runtime_error(e.what());}
@@ -52,7 +58,7 @@ namespace slave
         virtual ~cmd() {};
         struct params { bool caps, num, shift; };
         using params_t = params;
-        virtual void operator()(keychain_gui_win* w, const fc_light::variant& v) const override {
+        virtual void operator()(Widget* w, const fc_light::variant& v) const override {
             try {
                 auto a = v.as<params_t>();
                 //a.caps  ? w->caps->setText("caps: on")   : w->caps->setText("caps: off");
@@ -70,7 +76,7 @@ namespace slave
         virtual ~cmd() {};
         struct params {int len;};
         using params_t = params;
-        virtual void operator()(keychain_gui_win* w, const fc_light::variant& v) const override {
+        virtual void operator()(Widget* w, const fc_light::variant& v) const override {
             try {
                 auto a = v.as<params_t>();
                // w->ple->setText(QString (a.len, '*'));

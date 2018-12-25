@@ -15,11 +15,7 @@ class Widget : public QWidget
 public:
     Widget(QWidget *parent = 0);
     ~Widget();
-    QLineEdit *ple;
-    QTextEdit *pte;
-    QLabel *caps, *num, *shift;
 private:
-    void interior();
     void closeEvent(QCloseEvent *);
     void parse(const std::string);
     bool passClearOnExit;

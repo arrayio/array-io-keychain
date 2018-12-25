@@ -17,8 +17,6 @@ int id = qRegisterMetaType<std::string>();
 Widget::Widget(QWidget *parent)
     :QWidget(parent)
 {
-    setWindowTitle(tr("Promt for password"));
-    interior();
 
     Polling *polling = new Polling;
     polling->moveToThread(&pollingThread);
@@ -40,55 +38,14 @@ Widget::~Widget()
     pollingThread.wait();
 }
 
-void Widget::interior()
-{
-    QGridLayout * grid = new QGridLayout(this);
-    {
-        QLabel *plb = new QLabel(tr("password"), this);
-        grid->addWidget(plb, 0, 0);
-    }
-
-    ple = new QLineEdit(this);
-    ple->setEchoMode(QLineEdit::Password);
-
-    grid->addWidget(ple, 0, 1, 1, 3);
-    {
-        QLabel *plb = new QLabel(tr("Raw Tx"), this);
-        grid->addWidget(plb, 1, 0);
-    }
-
-    pte = new QTextEdit(this);
-    grid->addWidget(pte, 1, 1, 1, 3);
-    pte->setText("");
-    pte->setReadOnly(true);
-
-    caps = new QLabel(tr(""), this);
-    grid->addWidget(caps, 2, 0);
-
-    num = new QLabel(tr(""), this);
-    grid->addWidget(num, 2, 1);
-
-    shift = new QLabel(tr(""), this);
-    grid->addWidget(shift, 2, 2);
-
-    {
-        QPushButton *plb = new QPushButton("Ok", this);
-        grid->addWidget(plb, 3, 1);
-        connect(plb, SIGNAL(clicked()), this, SLOT(found_pass()));
-        connect(plb, SIGNAL(clicked()), this, SLOT(close()));
-    }
-    {
-        QPushButton * ppb = new QPushButton("Cancel", this);
-        grid->addWidget(ppb, 3, 2);
-        connect(ppb, SIGNAL(clicked()), this, SLOT(close()));
-    }
-}
 
 void Widget::send(std::string a)
 {
     if ( write(STDIN_FILENO, a.c_str(), a.length() ) != a.length() )
         close();
 }
+
+
 
 void Widget::found_pass()
 {

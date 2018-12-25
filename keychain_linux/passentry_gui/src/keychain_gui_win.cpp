@@ -1,14 +1,5 @@
 #include "keychain_gui_win.h"
 
-#include <fc_light/io/json.hpp>
-#include "cmd.hpp"
-
-#include <fc_light/reflect/reflect.hpp>
-#include <fc_light/variant.hpp>
-
-Q_DECLARE_METATYPE(std::string)
-int id1 = qRegisterMetaType<std::string>();
-
 keychain_gui_win::keychain_gui_win(Transaction &transaction, QWidget *parent)
 	: QDialog(parent)
 {
@@ -171,20 +162,6 @@ keychain_gui_win::keychain_gui_win(Transaction &transaction, QWidget *parent)
 	connect(password, &PasswordEnterElement::finishEnterPassword, this, &keychain_gui_win::transaction_sign);
 	if (transaction.isCreatePassword())
 		connect(password, &PasswordEnterElement::changePassword, this, &keychain_gui_win::_disableSignButton);
-
-	Polling *polling = new Polling;
-	polling->moveToThread(&pollingThread);
-	connect(&pollingThread, &QThread::finished, polling, &QObject::deleteLater);
-
-	connect(this,    &keychain_gui_win::poll,  polling, &Polling::Select, Qt::QueuedConnection);
-	connect(polling, &Polling::poll, polling, &Polling::Select, Qt::QueuedConnection);
-	connect(polling, &Polling::rx, this, &keychain_gui_win::parse);
-	connect(polling, &Polling::err, this, &keychain_gui_win::close);
-
-	pollingThread.start();
-	passClearOnExit = true;
-	emit keychain_gui_win::poll();
-
 }
 
 void keychain_gui_win::transaction_sign() {
@@ -268,45 +245,11 @@ void keychain_gui_win::keyPressEvent(QKeyEvent *event)
 	}
 }
 
-void keychain_gui_win::parse(const std::string s)
-{
-	auto a = fc_light::json::from_string(s);
-	using namespace slave;
-	try {
-		auto cmd = a.as<slave::cmd_common>();
-		auto cmd_map = slave::cmd_list_singletone::instance();
-		auto p_func = cmd_map[cmd.cmd];
-		(*p_func)(this, cmd.params);
-	}
-	catch (const std::exception &e) {throw std::runtime_error(e.what());}
-	catch (const fc_light::exception &e) {throw std::runtime_error(e.what());}
-}
-
 
 void keychain_gui_win::closeEvent(QCloseEvent * event)
 {
-//	passClearOnExit ?
-//	send(fc_light::json::to_string(fc_light::variant( master::cmd<( master::cmds::cancel)>().base))) :
-//	send(fc_light::json::to_string(fc_light::variant( master::cmd<( master::cmds::ok)>().base)));
-//	event->accept();
 	serviceExchange->EncodeCancel();
 	this->close();
 }
 
-void keychain_gui_win::found_pass()
-{
-	passClearOnExit = false;
-}
-
-void keychain_gui_win::send(std::string a)
-{
-	if ( write(STDIN_FILENO, a.c_str(), a.length() ) != a.length() )
-		close();
-}
-
-keychain_gui_win::~keychain_gui_win()
-{
-	pollingThread.quit();
-	pollingThread.wait();
-}
 

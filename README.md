@@ -1,14 +1,31 @@
-![alt text](https://github.com/arrayio/array-io-keychain/blob/master/img/ltl1%20(2).png) 
-# KeyChain
+<p align="center">
+  <br>
+  <img width="400" src="./img/ltl1%20(2).png" alt="">
+  <br>
+  <br>
+</p>
+
+# KeyChain ![MIT License](https://img.shields.io/bower/l/:packageName.svg) [![Tweet](https://img.shields.io/twitter/url/http/shields.io.svg?style=social)](https://twitter.com/intent/tweet?text=A%20good,%20170%20solid%20app%20to%20keep%20your%20keys%20safe.&url=https://keychain.array.io/&via=KeyChain&hashtags=cybersecurity,private keys,cryptography,blockchain,app)
+ [![GitHub version](https://badge.fury.io/gh/boennemann%2Fbadges.svg)](http://badge.fury.io/gh/boennemann%2Fbadges) ![Issues](https://img.shields.io/github/issues/detail/s/badges/shields/979.svg)
 
 ## Overview
 
 **KeyChain** is a standalone app for signing transactions and generating key pairs. It stores private keys in an isolated environment where no logger, debugger or spyware can intercept them because of the [three-layer security](https://github.com/arrayio/array-io-keychain/wiki/KeyChain-security#three-security-layers-of-keychain) protecting each action of the system.
-**KeyChain** supports transactions from and to various blockchains, including Ethereum and Ethereum classic, Litecoin, Bitcoin, Bitcoin Cash, and Bitshares. 
+**KeyChain** supports transactions from and to various blockchains, including Ethereum and Ethereum classic, Litecoin, Bitcoin, Bitcoin Cash, and Bitshares.
+
+## Table of contents
+
+- [Installation](#installation)
+- [Getting started] (#getting-started)
+- [How to use](#how-to-use)
+- [Companies using KeyChain](#companies-using-keychain)
+- [Contributing to the project](#contributing-to-the-project)
+- [Contact](#contact)
+- [License](#license)
 
 ## Installation
 
-Download and install KeyChain for [macOS](https://github.com/arrayio/array-io-keychain/releases/download/0.10/KeyChain.Installer.v0.10.zip). Windows and Linux installers are coming soon.
+Download and install KeyChain for [macOS](https://github.com/arrayio/array-io-keychain/releases/download/0.11/KeyChain.Installer.v0.11.zip). Windows and Linux installers are coming soon.
 
 *Try out KeyChain on the [demo page](https://arrayio.github.io/array-io-keychain/demo/).*
 
@@ -94,6 +111,19 @@ let { txData, signature } = unsign(resHex);
 console.log('txData:',    txData,    "\n")
 console.log('signature:', signature, "\n")
 ```
+## Companies using KeyChain
+
+- [Swap Online](https://swap.online/)
+
+## Contributing
+
+The main purpose of this repository is to continue to evolve KeyChain core, making it faster and easier to use. Development of KeyChain happens in the open on GitHub, and we are grateful to the community for contributing bugfixes and improvements. 
+
+### [Code of Conduct](https://github.com/arrayio/array-io-keychain/blob/master/CODE_OF_CONDUCT.md)
+
+Facebook has adopted a Code of Conduct that we expect project participants to adhere to. Please read [the full text](https://github.com/arrayio/array-io-keychain/blob/master/CODE_OF_CONDUCT.md) so that you can understand what actions will and will not be tolerated.
+
+To contribute or report a bug, you can [contact us](#contact) or create an [issue](https://github.com/arrayio/array-io-keychain/issues/new) with a label "bug".
 
 ## How to use 
 

@@ -14,7 +14,7 @@
 /key_data/*
 /keychain_cmd_app/.idea/*
 /keychain_lib/CMakeFiles/*
-/passentry_gui/cmake-build-debug/*
+/keychain_linux/passentry_gui/cmake-build-debug/*
 /passentry_gui/.idea/*
 /ws/cmake-build-debug/*
 /ws/.idea/*

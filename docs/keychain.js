@@ -6,7 +6,13 @@
       this.ws = new WebSocket(url);
       const _parent = this;
       this.ws.onmessage = function(response) {
-        _parent.queue.shift()(JSON.parse(response.data));
+        try {
+          const res = JSON.parse(response.data);
+          _parent.queue.shift()(res);
+        } catch (e) {
+          console.log('response.data: ', response.data);
+          console.log('Error: ', e);
+        }
       };
       this.queue = [];
     };

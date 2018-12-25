@@ -55,10 +55,9 @@
         <div class="column col-6 col-xs-12">
           <div class="input-group">
             <label class="form-switch">
-              <input type="checkbox" id="checkbox_UNLOCK"><i class="form-icon"></i>
             </label>
             <span class="input-group-addon">unlock_time: </span>
-            <input type="number" class="form-input" placeholder="45" id="unlock_time_UNLOCK" title="This parameter is experimental and optional!" disabled>
+            <input type="number" class="form-input" placeholder="45" id="unlock_time_UNLOCK" title="This parameter is experimental and optional!">
           </div>
         </div>
       </div>
@@ -178,9 +177,6 @@
     attachListener('LOCK');
     attachListener('ABOUT');
     attachListener('VERSION');
-    document.getElementById('checkbox_UNLOCK').addEventListener('click', function(e) {
-      document.getElementById('unlock_time_UNLOCK').disabled = !e.target.checked;
-    });
     document.getElementById('checkbox_SIGN_HEX').addEventListener('click', function(e) {
       document.getElementById('unlock_time_SIGN_HEX').disabled = !e.target.checked;
     })

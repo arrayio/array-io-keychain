@@ -62,7 +62,7 @@
 
 #ifdef _WIN32
 #  define KEY_DEFAULT_PATH  "./"
-#  define LOG_DEFAULT_PATH  "./logs"
+#  define LOG_DEFAULT_PATH  "/logs"
 #endif //_WIN32
 
 #endif //APPLE

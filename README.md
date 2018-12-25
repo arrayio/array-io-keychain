@@ -5,7 +5,7 @@
   <br>
 </p>
 
-# KeyChain [![MIT License](https://img.shields.io/bower/l/:packageName.svg)](https://github.com/arrayio/array-io-keychain/blob/master/LICENSE.md) [![Tweet](https://img.shields.io/twitter/url/http/shields.io.svg?style=social)](https://twitter.com/intent/tweet?text=A%20good,%20170%20solid%20app%20to%20keep%20your%20keys%20safe.&url=https://keychain.array.io/&via=KeyChain&hashtags=cybersecurity,private,cryptography,blockchain,app)
+# KeyChain [![Tweet](https://img.shields.io/twitter/url/http/shields.io.svg?style=social)](https://twitter.com/intent/tweet?text=A%20good,%20solid%20app%20to%20keep%20your%20keys%20safe.&url=https://keychain.array.io/&via=ProjectArray&hashtags=cybersecurity,private,cryptography,blockchain,app)
 
 
 ## Overview
@@ -16,7 +16,7 @@
 ## Table of contents
 
 - [Installation](#installation)
-- [Getting started] (#getting-started)
+- [Getting started](#getting-started)
 - [How to use](#how-to-use)
 - [Companies using KeyChain](#companies-using-keychain)
 - [Contributing to the project](#contributing-to-the-project)

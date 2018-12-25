@@ -113,9 +113,8 @@
             return buildTxSinature('', fromAddress, toAddress, valueTx);
           }).then (rawHex => {
             log(`Result: ${rawHex}`);
-            const params = { keyname, transaction: rawHex, blockchain_type: "ethereum" };
-            log(`Signing it with KeyChain: ${JSON.stringify(params)}}`);
-            return keychain.method({command: 'sign_hex',  params });
+            log(`Signing it with KeyChain: ${rawHex} , ${keyname}`);
+            return keychain.sign(rawHex, keyname);
           }).then( data => {
             const signature = data.result;
             log(`Signature: ${signature}`);
@@ -123,10 +122,9 @@
           }).then( rawHex => {
             log(`Transaction built, rawHex: ${rawHex}`);
             log(`Please, publish your transaction`);
-            saveRawHex(rawHex);
-          }).catch( (error) => {
-            log(error);
-          })
+            document.getElementById('rawHex').innerText = rawHex;
+            rawHexGlobal = rawHex;
+          }).catch(log)
         });
 
         document.getElementById('btn_PUBLISH').addEventListener('click', async function() {
@@ -150,7 +148,7 @@
 
         const buildTxSinature = async (signature, fromAddress, to, value, data = '') => {
           const nonce = await web3.eth.getTransactionCount(fromAddress);
-          const gasPrice = await web3.eth.getGasPrice().then(wei => Number(wei))
+          const gasPrice = await web3.eth.getGasPrice().then(wei => Number(wei));
           const chainId = 3;
           const gasLimit = 21000; // await web3.eth.estimateGas(draftTxParams) ||
 
@@ -192,11 +190,6 @@
         }
         return ret;
       };
-
-      function saveRawHex(rawHex) {
-        document.getElementById('rawHex').innerText = rawHex;
-        rawHexGlobal = rawHex;
-      }
 
       function log(message) {
         const loggerElement = document.getElementById('log');

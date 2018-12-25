@@ -22,5 +22,11 @@
     return new Promise(function(resolve, reject) {
       _parent.command(request, resolve);
     });
-  }
+  };
+
+  WS.prototype.sign = function(data, privateKey) {
+    const params = { keyname: privateKey, transaction: data, blockchain_type: "ethereum" };
+    return this.method({command: 'sign_hex',  params });
+  };
+
 }).call(this);

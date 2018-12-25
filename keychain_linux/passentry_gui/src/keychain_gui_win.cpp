@@ -271,11 +271,12 @@ void keychain_gui_win::keyPressEvent(QKeyEvent *event)
 void keychain_gui_win::parse(const std::string s)
 {
 	auto a = fc_light::json::from_string(s);
+	using namespace slave;
 	try {
 		auto cmd = a.as<slave::cmd_common>();
 		auto cmd_map = slave::cmd_list_singletone::instance();
 		auto p_func = cmd_map[cmd.cmd];
-//		(*p_func)(this, cmd.params);
+		(*p_func)(this, cmd.params);
 	}
 	catch (const std::exception &e) {throw std::runtime_error(e.what());}
 	catch (const fc_light::exception &e) {throw std::runtime_error(e.what());}

@@ -44,8 +44,8 @@ keyfile_format::encrypted_data encryptor_singletone::encrypt_private_key(keyfile
   
   dev::h512 plain_data;
   auto priv_key_unsec = priv_key.makeInsecure();
-  auto prkey_hash_unsec = priv_key.makeInsecure();
   auto prkey_hash = dev::openssl::sha3(priv_key);
+  auto prkey_hash_unsec = prkey_hash.makeInsecure();
   auto it = std::copy(priv_key_unsec.begin(), priv_key_unsec.end(), plain_data.data());
   std::copy(prkey_hash_unsec.begin(), prkey_hash_unsec.end(), it);
   
@@ -107,16 +107,14 @@ dev::Secret encryptor_singletone::decrypt_private_key(const byte_seq_t& key, key
   //I cannot figure out the exact reason what exactly is wrong with the key (it is need to debug asm function
   // to find out reason)
   //The solution (from lib/fc) is to create hash from password string and encrypt data on hash key
-  const char* key_data =key.data();
-  unsigned char key_hash[64];
-  SHA512_CTX ctx;
-  SHA512_Init( &ctx);
-  SHA512_Update( &ctx, key_data, key.size());
-  SHA512_Final(key_hash, &ctx);
+  dev::openssl::sha3_512_encoder enc;//NOTE: use 512 hash for possible future 512 bit cipher algorithms
+  enc.write(key.data(), key.size());
+  auto key_hash = enc.result();
+  
   std::vector<uint8_t> iv(data.iv.size()/2, 0x00);
   from_hex(data.iv.data(), iv.data(), iv.size());
   
-  if(1 != EVP_DecryptInit_ex(m_ctx, get_cipher(data.cipher_type), NULL, reinterpret_cast<const uint8_t*>(key_hash), iv.data()))
+  if(1 != EVP_DecryptInit_ex(m_ctx, get_cipher(data.cipher_type), NULL, key_hash.data(), iv.data()))
   {
     //TODO: need to print OpenSSL detailed error string
     FC_LIGHT_THROW_EXCEPTION(fc_light::encryption_exception, "EVP_DecryptInit_ex");
@@ -138,7 +136,8 @@ dev::Secret encryptor_singletone::decrypt_private_key(const byte_seq_t& key, key
   dev::Secret priv_key(decr_byte_data, dev::FixedHash<dev::Secret::size>::AlignLeft);
   dev::Secret prkey_hash(decr_byte_data, dev::FixedHash<dev::Secret::size>::AlignRight);
   EVP_CIPHER_CTX_reset(m_ctx);
-  if( prkey_hash != dev::openssl::sha3(priv_key) )
+  auto eval_hash = dev::openssl::sha3(priv_key);
+  if( prkey_hash != eval_hash)
     FC_LIGHT_THROW_EXCEPTION(fc_light::privkey_invalid_unlock, "cannot unlock private key, possible wrong password");
   return priv_key;
 }

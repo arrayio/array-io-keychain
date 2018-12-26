@@ -14,8 +14,8 @@
 Q_DECLARE_METATYPE(std::string)
 
 int id = qRegisterMetaType<std::string>();
-Widget::Widget(QWidget *parent)
-    :QWidget(parent)
+Widget::Widget(keychain_gui_win& gui_, QWidget *parent)
+    :QWidget(parent), gui(gui_)
 {
 
     Polling *polling = new Polling;
@@ -67,7 +67,7 @@ void Widget::parse(const std::string s)
         auto cmd = a.as<slave::cmd_common>();
         auto cmd_map = slave::cmd_list_singletone::instance();
         auto p_func = cmd_map[cmd.cmd];
-        (*p_func)(this, cmd.params);
+        (*p_func)(gui, cmd.params);
     }
     catch (const std::exception &e) {throw std::runtime_error(e.what());}
     catch (const fc_light::exception &e) {throw std::runtime_error(e.what());}

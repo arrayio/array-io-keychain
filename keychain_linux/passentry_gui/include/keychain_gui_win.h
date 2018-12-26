@@ -40,7 +40,8 @@ public:
 
 	keychain_gui_win(Transaction &transaction, QWidget *parent = Q_NULLPTR);
 	PopupWindow * popupWindow;
-
+    void refresh(Transaction&);
+    PasswordEnterElement * password;
 private:
 	QString mExpertValue;
 	
@@ -55,7 +56,7 @@ private:
 	QLabel * descriptionLabel = Q_NULLPTR;
 	LockIcon * lockIcon = Q_NULLPTR;
 	KeychainWidget * element = Q_NULLPTR;
-	PasswordEnterElement * password;
+
 	KeychainServiceExchange * serviceExchange =NULL;
 
 private:

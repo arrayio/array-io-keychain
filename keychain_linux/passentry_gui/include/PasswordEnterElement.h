@@ -26,15 +26,17 @@ public:
 	void checkFinishedEnterance();
 	void setFocusOnConfirm();
 	bool validConfirm();
+	PasswordLineEdit *value = Q_NULLPTR;
 
 signals:
 	void finishEnterPassword();
 	void changePassword();
 
+
 private:
 	//Ui::SecureWindowElement ui;
 	QLabel *label = Q_NULLPTR;
-	PasswordLineEdit *value = Q_NULLPTR;
+
 	QLabel *description;
 	QLabel *labelConfirm = Q_NULLPTR;
 	QLabel *confirmDescription;

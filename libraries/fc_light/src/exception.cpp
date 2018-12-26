@@ -9,6 +9,7 @@
 namespace fc_light
 {
    FC_LIGHT_REGISTER_EXCEPTIONS(
+     (rpc_command_parse_exception)
      (command_not_implemented_exception)
      (command_depreciated)
      (password_input_exception)

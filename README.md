@@ -1,11 +1,11 @@
 <p align="center">
   <br>
-  <img width="200" src="./img/ltl1%20(2).png" alt="">
+  <img width="200" src="![logo2](https://user-images.githubusercontent.com/34011337/50439301-996aab00-0902-11e9-94a1-a60c2fadaf66.png)" alt="">
   <br>
   <br>
 </p>
 
-# KeyChain [![Tweet](https://img.shields.io/twitter/url/http/shields.io.svg?style=social)](https://twitter.com/intent/tweet?text=A%20good,%20solid%20app%20to%20keep%20your%20keys%20safe.&url=https://keychain.array.io/&via=ProjectArray&hashtags=cybersecurity,private,cryptography,blockchain,app)
+[![Tweet](https://img.shields.io/twitter/url/http/shields.io.svg?style=social)](https://twitter.com/intent/tweet?text=A%20good,%20solid%20app%20to%20keep%20your%20keys%20safe.&url=https://keychain.array.io/&via=ProjectArray&hashtags=cybersecurity,private,cryptography,blockchain,app)
 
 
 ## Overview
@@ -121,7 +121,7 @@ The main purpose of this repository is to continue to evolve KeyChain core, maki
 
 ### [Code of Conduct](https://github.com/arrayio/array-io-keychain/blob/master/CODE_OF_CONDUCT.md)
 
-Facebook has adopted a Code of Conduct that we expect project participants to adhere to. Please read [the full text](https://github.com/arrayio/array-io-keychain/blob/master/CODE_OF_CONDUCT.md) so that you can understand what actions will and will not be tolerated.
+KeyChain has adopted a Code of Conduct that we expect project participants to adhere to. Please read [the full text](https://github.com/arrayio/array-io-keychain/blob/master/CODE_OF_CONDUCT.md) so that you can understand what actions will and will not be accepted.
 
 To contribute or report a bug, you can [contact us](#contact) or create an [issue](https://github.com/arrayio/array-io-keychain/issues/new) with a label "bug".
 

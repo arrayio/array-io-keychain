@@ -46,78 +46,37 @@ You can find comprehensive installation guides for [macOS](https://github.com/ar
 
 ## Getting started
 
-1. Require libraries setup 
+
+1. Install web3override library
 
 ```javascript
-const unsign = require('@warren-bank/ethereumjs-tx-unsign')
-const ethUtil = require('ethereumjs-util');
-const WebSocket = require('ws');
-```
-```javascript
-const ws = new WebSocket('ws://localhost:16384/');
-const keyname = 'test1@6de493f01bf590c0';
+npm install web3override
 ```
 
-2. Get public key
+2. Create a new key with KeyChain and use an overridden web3 function 
+
+**NB:** Do not forget to use your own key name instead of 'test1'.
 
 ```javascript
-let fromAdd;
-const send = (command) => {
-  ws.send(JSON.stringify(command));
-}
 
-const getPublicKey = (keyname) => {
-  return { 
-    command: "public_key",
-    params: {
-      keyname: keyname
-    }
-  }
-}
+const Web3 = require('web3');
+const Module = require('web3override');
+const API_KEY = 'https://ropsten.infura.io/v3/046804e3dd3240b09834531326f310cf';
+const web3 = new Web3(new Web3.providers.HttpProvider(API_KEY));
 
-ws.onopen = async () => {
-  send(getPublicKey(keyname));
-}
+main = async () => {
+  const keyInstance = await Module.Keychain.create();
+  const data = await keyInstance.createKey('test1');
+  const key = data.result;
+  await keyInstance.term();
 
-ws.on('message', async (response) => {
-  const data = JSON.parse(response);
-  console.log('Public key: ', `0x${data.result}`)
-  fromAdd = `0x${ethUtil.publicToAddress(`0x${data.result}`).toString('hex')}`;
-  console.log(fromAdd);
-});
+  Module.override(web3);
+  // now we use web3 with keychain
+  await web3.eth.accounts.signTransaction(transactionParams, key); // overriden web3 function usage
+};
+main();
 ```
 
-3. Unsign Ethereum transaction hex and pass the result to KeyChain
-
-```javascript
-const ethHex = 'e315843b9aca0082520894e8899ba12578d60e4d0683a596edacbc85ec18cc6480038080';
-
-const signHex = (keyname, hexraw) => {
-  return {
-    "command": "sign_hex",
-    "params": {
-      "transaction": hexraw,
-      "blockchain_type": "ethereum",
-      "keyname": keyname
-    }
-  }
-}
-
-ws.onopen = async () => {
-  send(signHex(keyname, ethHex));
-}
-
-ws.on('message', async (response) => {
-  const data = JSON.parse(response);
-  console.log('Signature: ', data.result);
-});
-
-
-const resHex = 'f86315843b9aca0082520894e8899ba12578d60e4d0683a596edacbc85ec18cc64802aa0c3b68e20527f8f304801986720de1aeb9ab126c55570942420361cedeec1199ca03002d853eb2089e4e63848fcdb7af0fbc46e8f5c856ef0eb849a2270fd621bdb';
-let { txData, signature } = unsign(resHex);
-console.log('txData:',    txData,    "\n")
-console.log('signature:', signature, "\n")
-```
 ## Companies using KeyChain
 
 - [Swap Online](https://swap.online/)

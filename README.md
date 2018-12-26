@@ -47,7 +47,7 @@ You can find comprehensive installation guides for [macOS](https://github.com/ar
 ## Getting started
 
 
-1. Install `web3override` library
+1. Install `web3override` library https://www.npmjs.com/package/web3override
 
 ```
 npm i --save web3override

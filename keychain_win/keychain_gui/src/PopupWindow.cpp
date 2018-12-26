@@ -9,7 +9,7 @@ PopupWindow::PopupWindow(const KeychainWarningMessage wMessage, QWidget *parent)
 	header = new QLabel(this);
 	body = new QLabel(this);
 	setStyleSheet("background-color:white;border-color:rgb(158,158,158);border-style:outset;border-width:1px;border-radius:5px;");
-	header->setFixedWidth(140);
+	header->setFixedWidth(150);
 	header->move(105, 2);
 	header->setAlignment(Qt::AlignCenter);
 	
@@ -43,7 +43,7 @@ PopupWindow::PopupWindow(const KeychainWarningMessage wMessage, QWidget *parent)
 	}
 	else
 	{
-		header->setText("Unsecure transaction");
+		header->setText("<b>Unsecure transaction</b>");
 		header->setStyleSheet("background:transparent;border-width:0;color:rgb(215,132,133);font:15px \"Segoe UI\";");
 	}
 }

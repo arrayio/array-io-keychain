@@ -24,7 +24,7 @@ keychain_gui_win::keychain_gui_win(Transaction &transaction, QWidget *parent)
 
 
 	descriptionLabel = new QLabel(this);
-	descriptionLabel->setStyleSheet("font:12px \"Segoe UI\";background:transparent;");
+	descriptionLabel->setStyleSheet("font:16px \"Segoe UI\";background:transparent;");
 	descriptionLabel->setWordWrap(true);
 	descriptionLabel->setAlignment(Qt::AlignVCenter | Qt::AlignLeft);
 	descriptionLabel->setFixedSize(343, 68);
@@ -44,7 +44,6 @@ keychain_gui_win::keychain_gui_win(Transaction &transaction, QWidget *parent)
 		descriptionLabel->setText("You are trying to unlock the key \"" + transaction.unlockKeyName() + "\" for \"" + QString::number(transaction.isUnlockKey()) +"\" seconds");
 	}
 	if (transaction.isCreatePassword()) {
-		descriptionLabel->setStyleSheet("font:16px \"Segoe UI\";background:transparent;");
 		warningMessage.SetWarning(KeychainWarningMessage::WarningType::CreateWarning);
 		descriptionLabel->setText("Enter the password for the new key");
 	}
@@ -52,18 +51,18 @@ keychain_gui_win::keychain_gui_win(Transaction &transaction, QWidget *parent)
 	{
 		secmod_parser_f cmd_parse;
 		auto cmd_type = cmd_parse(transaction.getTransactionText().toStdString());
-		QString descr("Some application requires a passphrase to sign transaction with keyname <b>''" + QString::fromStdString(cmd_parse.keyname()) + "''</b>. Are you sure you want to sign?");
+		QString descr("Are you sure you want to sign this transaction with key <b>''" + QString::fromStdString(cmd_parse.keyname()) + "''</b>?");
 		descriptionLabel->setText(descr);
 		if (!cmd_parse.is_json()) {
 			element = new UnparsedTransactionWidget(transaction, this);
 			warningMessage.SetWarning(KeychainWarningMessage::WarningType::FailedWarning);
 			if (cmd_parse.unlock_time() > 0) {
-				warningMessage.SetWarning(KeychainWarningMessage::WarningType::UnlockWarning);
+				warningMessage.SetWarning(KeychainWarningMessage::WarningType::UnlockUseWarning);
 			}
 		}
 		else {
 			if (cmd_parse.unlock_time() > 0) {
-				warningMessage.SetWarning(KeychainWarningMessage::WarningType::UnlockWarning);
+				warningMessage.SetWarning(KeychainWarningMessage::WarningType::UnlockUseWarning);
 			}
 			switch (cmd_type)
 			{
@@ -151,7 +150,7 @@ keychain_gui_win::keychain_gui_win(Transaction &transaction, QWidget *parent)
 	}
 	OKButton->move(width() - 109, endControlPosition);
 	CancelButton->move(OKButton->x() - 95, endControlPosition);
-	if (!transaction.isCreatePassword()) {
+	if (!transaction.isCreatePassword() && warningMessage.isWarn()) {
 		lockIcon = new LockIcon(warningMessage, this);
 		popupWindow = new PopupWindow(warningMessage, this);
 		popupWindow->setVisible(false);

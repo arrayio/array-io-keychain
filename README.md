@@ -73,7 +73,7 @@ await web3.eth.accounts.signTransaction(transactionParams, key); // overriden we
 ```
 `signTransaction` with Keychain in action
 
-![signTransaction with keychain in action](https://raw.githubusercontent.com/arrayio/array-io-keychain/master/img/video2.gif)
+![signTransaction with keychain in action](https://raw.githubusercontent.com/arrayio/array-io-keychain/master/img/video.gif)
 
 ## Companies using KeyChain
 

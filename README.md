@@ -71,6 +71,9 @@ Module.override(web3);
 await web3.eth.accounts.signTransaction(transactionParams, key); // overriden web3 function usage
 
 ```
+`signTransaction` with Keychain in action
+
+![signTransaction with keychain in action](https://raw.githubusercontent.com/arrayio/array-io-keychain/master/img/video2.gif)
 
 ## Companies using KeyChain
 

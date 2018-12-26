@@ -47,34 +47,30 @@ You can find comprehensive installation guides for [macOS](https://github.com/ar
 ## Getting started
 
 
-1. Install web3override library
+1. Install `web3override` library
 
-```javascript
-npm install web3override
+```
+npm i --save web3override
 ```
 
-2. Create a new key with KeyChain and use an overridden web3 function 
+Require it 
+```javascript
+const Module = require('web3override'); 
+```
 
-**NB:** Do not forget to use your own key name instead of 'test1'.
+2. Now create a new key with KeyChain and use an overridden web3 function 
 
 ```javascript
+// create new key in Keychain
+const keyInstance = await Module.Keychain.create();
+const data = await keyInstance.createKey('test1');
+const key = data.result;
+await keyInstance.term();
 
-const Web3 = require('web3');
-const Module = require('web3override');
-const API_KEY = 'https://ropsten.infura.io/v3/046804e3dd3240b09834531326f310cf';
-const web3 = new Web3(new Web3.providers.HttpProvider(API_KEY));
+Module.override(web3);
+// now we use web3 with keychain
+await web3.eth.accounts.signTransaction(transactionParams, key); // overriden web3 function usage
 
-main = async () => {
-  const keyInstance = await Module.Keychain.create();
-  const data = await keyInstance.createKey('test1');
-  const key = data.result;
-  await keyInstance.term();
-
-  Module.override(web3);
-  // now we use web3 with keychain
-  await web3.eth.accounts.signTransaction(transactionParams, key); // overriden web3 function usage
-};
-main();
 ```
 
 ## Companies using KeyChain

@@ -259,6 +259,3 @@ void keychain_gui_win::closeEvent(QCloseEvent * event)
 	serviceExchange->EncodeCancel();
 	this->close();
 }
-
-
-

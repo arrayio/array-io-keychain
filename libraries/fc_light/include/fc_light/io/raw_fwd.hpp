@@ -13,6 +13,20 @@
 
 #define MAX_ARRAY_ALLOC_SIZE (1024*1024*10) 
 
+namespace dev
+{
+template <unsigned N>
+class FixedHash;
+template <unsigned N>
+class SecureFixedHash;
+
+using Address = FixedHash<20>;
+using Signature = FixedHash<65>;
+using Public = FixedHash<64>;
+using Secret = SecureFixedHash<32>;
+
+}
+
 namespace fc_light {
    class time_point;
    class time_point_sec;
@@ -83,6 +97,16 @@ namespace fc_light {
     template<typename Stream, typename T> void pack( Stream& s, const fc_light::optional<T>& v );
     template<typename Stream, typename T> void pack( Stream& s, const safe<T>& v );
     template<typename Stream, typename T> void unpack( Stream& s, fc_light::safe<T>& v );
+
+    template<typename Stream> inline void pack( Stream& s, const dev::Address& v);
+    template<typename Stream> inline void pack( Stream& s, const dev::Public& v);
+    template<typename Stream> inline void pack( Stream& s, const dev::Signature& v);
+    template<typename Stream> inline void pack( Stream& s, const dev::Secret& v);
+
+   template<typename Stream> inline void unpack( Stream& s, dev::Address& v);
+   template<typename Stream> inline void unpack( Stream& s, dev::Public& v);
+   template<typename Stream> inline void unpack( Stream& s, dev::Signature& v);
+   template<typename Stream> inline void unpack( Stream& s, dev::Secret& v);
 
     template<typename Stream> void unpack( Stream& s, time_point& ); 
     template<typename Stream> void pack( Stream& s, const time_point& );

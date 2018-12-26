@@ -24,6 +24,7 @@ namespace fc_light
      invalid_arg_exception_code        , ///< invalid command arguments
      password_input_error_code         , ///< get password error
      privkey_not_found_code            , ///< private key not found
+     privkey_invalid_unlock_code       , ///< cannot unlock private key, possible wrong password
      timeout_exception_code            , ///< timeout exceptions
      parse_error_exception_code        , ///< cannot parse command
      internal_error_code               , ///< some internal error
@@ -282,6 +283,10 @@ namespace fc_light
    */
   FC_LIGHT_DECLARE_EXCEPTION( privkey_not_found_exception, privkey_not_found_code, "Private Key Not Found");
 
+/**
+ * @brief wrong private key password error
+ */
+  FC_LIGHT_DECLARE_EXCEPTION( privkey_invalid_unlock, privkey_invalid_unlock_code, "Cannot Unlock Private Key");
 
   FC_LIGHT_DECLARE_EXCEPTION( timeout_exception, timeout_exception_code, "Timeout" );
   FC_LIGHT_DECLARE_EXCEPTION( file_not_found_exception, file_not_found_exception_code, "File Not Found" );

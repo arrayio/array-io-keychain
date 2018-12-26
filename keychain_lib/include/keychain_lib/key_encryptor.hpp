@@ -9,6 +9,8 @@
 #include <functional>
 #include <openssl/ossl_typ.h>
 
+#include <eth-crypto/crypto/Common.h>
+
 #include "key_file_parser.hpp"
 
 namespace keychain_app
@@ -23,8 +25,8 @@ class encryptor_singletone
 public:
   static encryptor_singletone& instance();
   
-  keyfile_format::encrypted_data encrypt_keydata(keyfile_format::cipher_etype etype, const byte_seq_t& key,  const std::string& data);
-  std::string decrypt_keydata(const byte_seq_t& key, keyfile_format::encrypted_data& enc_data);
+  keyfile_format::encrypted_data encrypt_private_key(keyfile_format::cipher_etype etype, const byte_seq_t& key,  const dev::Secret& priv_key);
+  dev::Secret decrypt_private_key(const byte_seq_t& key, keyfile_format::encrypted_data& enc_data);
 
 private:
   EVP_CIPHER_CTX* m_ctx;

@@ -19,7 +19,7 @@ public:
 		_warnTypes = new QStack<int>();
 		_messages[0] = "This transaction is successfully parsed by the core module. No threats detected. You can now review the transaction details.";
 		_messages[1] = "Your private key is encrypted and secure.";
-		_messages[2] = "Experimental function 'unlock key' has been activated. During this time KeyChain will be able to sign transactions without the user confirmation.";
+		_messages[2] = "Experimental function 'unlock key' will be activated once you enter the passphrase. During this time operations with the unlocked key will be executed without user confirmation.";
 		_messages[3] = "Using transaction hash does not provide any information about the transaction. Use the transaction hash only if you trust the app requesting the signature.";
 		_messages[4] = "KeyChain can provide only hex view of the transaction without additional information, such as address, amount, and any other additional information. Confim the transaction only if you trust the app requesting the signature.";
 		

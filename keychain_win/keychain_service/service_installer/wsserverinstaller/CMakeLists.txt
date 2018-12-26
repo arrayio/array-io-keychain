@@ -8,6 +8,8 @@ if(WIN32)
 	if(NOT WIX_PATH)
 		message(FATAL_ERROR "Unable to find WiX in the PATH. The WiX installer will be disabled.")
 	else(WIX_PATH)
+	
+	add_dependencies(wssdeploy keychain keychain_win_gui)
 
 	set(outputdir "${CMAKE_CURRENT_BINARY_DIR}/wsservice")
 	file(MAKE_DIRECTORY "${outputdir}") 
@@ -21,7 +23,7 @@ if(WIN32)
 	else()
 		set(openssl_path "${OPENSSL_ROOT_DIR}")
 		message(STATUS "OPENSSL PATH: ${openssl_path}")
-		file(GLOB_RECURSE globalcrypto FOLLOW_SYMLINKS ${OPENSSL_ROOT_DIR}/libcrypto-1_1-x64.dll)
+		file(GLOB_RECURSE globalcrypto FOLLOW_SYMLINKS ${OPENSSL_ROOT_DIR}/bin/libcrypto-1_1-x64.dll)
 		list(GET globalcrypto 0 cryptolib)
 		if(globalcrypto)
 			message(STATUS "FOUND LIBCRYPTO: ${cryptolib}")
@@ -29,26 +31,36 @@ if(WIN32)
 			message(FATAL_ERROR "CANNOT FIND OPENSSL DYNAMIC LIBRARY")
 		endif()
 	endif()
-	
+
 	#find Qt 5 dll files to link and build finally with msi
-	message(STATUS "QT ROOT DIR: ${Qt5_DIR}")
-	if("$ENV{Qt5_DIR}" OR "${Qt5_DIR}" STREQUAL "")
+	set(CMAKE_AUTOMOC ON)
+	set(CMAKE_INCLUDE_CURRENT_DIR ON)
+	find_package(Qt5 COMPONENTS Core Gui Widgets Qml Xml Svg REQUIRED)
+    get_target_property(Qt5_CoreLocation Qt5::Core LOCATION)
+	
+	message(STATUS "QT5: ${Qt5_CoreLocation}")
+	
+	if("$ENV{Qt5_CoreLocation}" OR "${Qt5_CoreLocation}" STREQUAL "")
 		message(FATAL_ERROR "CANNOT FIND QT5 LIBRARY")
 	else()
-		file(GLOB_RECURSE qtlinklibs FOLLOW_SYMLINKS ${Qt5_DIR}/Qt5Widgets.dll 
-													 ${Qt5_DIR}/Qt5Core.dll
-													 ${Qt5_DIR}/Qt5Gui.dll
-													 ${Qt5_DIR}/Qt5Qml.dll
-													 ${Qt5_DIR}/Qt5Xml.dll
-													 ${Qt5_DIR}/Qt5Svg.dll)
-		message(STATUS "QT LIB FILES: ${qtlinklibs}")
-		file(GLOB_RECURSE qtlinkplatforms FOLLOW_SYMLINKS ${Qt5_DIR}/plugins/platforms/*.dll)
+		add_custom_command(TARGET wssdeploy POST_BUILD
+			COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_FILE:Qt5::Core>  ${CMAKE_CURRENT_BINARY_DIR}/wsservice
+			COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_FILE:Qt5::Gui> ${CMAKE_CURRENT_BINARY_DIR}/wsservice
+			COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_FILE:Qt5::Widgets>  ${CMAKE_CURRENT_BINARY_DIR}/wsservice
+			COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_FILE:Qt5::Qml>  ${CMAKE_CURRENT_BINARY_DIR}/wsservice
+			COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_FILE:Qt5::Xml>  ${CMAKE_CURRENT_BINARY_DIR}/wsservice
+			COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_FILE:Qt5::Svg>  ${CMAKE_CURRENT_BINARY_DIR}/wsservice
+			)
+		file(GLOB_RECURSE qtlinkplatforms FOLLOW_SYMLINKS ${Qt5_CoreLocation}/../../plugins/platforms/*.dll)
+		file(GLOB_RECURSE qtlinkimageformats FOLLOW_SYMLINKS ${Qt5_CoreLocation}/../../plugins/imageformats/*.dll)
+		file(GLOB_RECURSE qtlinkstyles FOLLOW_SYMLINKS ${Qt5_CoreLocation}/../../styles/*.dll)
 		message(STATUS "QT PLATFORM FILES: ${qtlinkplatforms}")
+		message(STATUS "QT IMAGE FORMATS FILES: ${qtlinkimageformats}")
+		message(STATUS "QT STYLES FILES: ${qtlinkstyles}")
 	endif()
 	
 	#set copy files to alias
 	set( PREBUILD_FILES
-	   "${wixsrcpath}/keychainrunner.bat"
 	   "${wixsrcpath}/check_service.bat"
 	   "${wixsrcpath}/websocketwrapper.exe"
 	   "${wixsrcpath}/servicewrapper.exe"
@@ -67,7 +79,6 @@ if(WIN32)
 	   "${wixsrcpath}/keychain_logo_minimal.ico"
 	   "${wixsrcpath}/keychain_dialog_banner.jpg"
 	   ${cryptolib}
-	   ${qtlinklibs}
 	)
 
 	message(STATUS "PREBUILD FILES: ${PREBUILD_FILES}")
@@ -82,6 +93,10 @@ if(WIN32)
 	file(COPY ${DEMO_FILES} DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/wsservice/demo/)
 	#copy qt platform files to installer folder
 	file(COPY ${qtlinkplatforms} DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/wsservice/platforms/)
+	#copy qt image formats files to installer folder
+	file(COPY ${qtlinkimageformats} DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/wsservice/imageformats/)
+	#copy qt styles files to installer folder
+	file(COPY ${qtlinkstyles} DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/wsservice/styles/)
 	
 	#copy files in build folder
 	foreach( file_to_copy ${PREBUILD_FILES})
@@ -116,7 +131,8 @@ if(WIN32)
 					   ${installerpath}/CustomLicenseAgreementDlg.wxs 
 					   ${installerpath}/CustomInstallDirDlg.wxs 
 					   ${installerpath}/CustomWixUI_Mondo.wxs 
-					   -dProcessorArchitecture=${TARGET_PLATFORM} 
+					   -dProcessorArchitecture=${TARGET_PLATFORM}
+					   -dvcrpath=${VCR_PATH}				   
 					   -bf -xo -out ${installerpath}/
 		               COMMAND ${WIX_PATH}/light.exe 
 					   -sice:ICE20
@@ -129,6 +145,5 @@ if(WIN32)
 					   -cultures:en-us -loc ${installerpath}/en-us.wxl 
 					   -out ${installerpath}/${PROJECT_NAME}.msi
 					   VERBATIM)
-
 	endif()
 endif()

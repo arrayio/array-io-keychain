@@ -10,8 +10,14 @@ keychain_gui_win::keychain_gui_win(Transaction &transaction, QWidget *parent)
 	KeychainWarningMessage warningMessage;
 
 	headerBlock = new QLabel(this);
+	logoLabel = new QLabel(this);
+	QPixmap logo(":/keychain_gui_win/kch_logo.png");
+	logo= logo.scaled(100, 50, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+	logoLabel->setStyleSheet("background:transparent;");
+	logoLabel->setPixmap(logo);
+	logoLabel->move(25, 8);
 	headerBlock->setFixedHeight(68);
-	headerBlock->setStyleSheet("background-color:rgb(255,255,255);background-image:url(:/keychain_gui_win/header.png);background-repeat:no-repeat;");
+	headerBlock->setStyleSheet("background-color:rgb(255,255,255);");
 	setStyleSheet("background-color:rgb(242,243,246)");
 
 	serviceExchange = new KeychainServiceExchange();

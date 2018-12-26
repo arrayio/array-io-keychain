@@ -6,6 +6,7 @@
 #include <QLineEdit>
 #include <QPushButton>
 #include <QMessageBox>
+#include <QPixmap>
 #include "PopupWindow.h"
 #include "LockIcon.h"
 #include "SecureWindowElement.h"
@@ -41,8 +42,7 @@ public:
 	
 private:
 	QString mExpertValue;
-	
-
+	QLabel * logoLabel;
 	QPushButton * OKButton = Q_NULLPTR;
 	QPushButton * CancelButton = Q_NULLPTR;
 	

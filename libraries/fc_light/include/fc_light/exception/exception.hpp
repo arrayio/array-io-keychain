@@ -17,7 +17,7 @@ namespace fc_light
    {
      /** for exceptions we threw that don't have an assigned code */
      unspecified_exception_code        = 0, ///< default type, practically unused
-     json_parse_error                  , ///< error in json format of rpc command
+     json_parse_error_code             , ///< error in json format of rpc command
      rpc_command_parse_code            , ///< error while parsing structure of rpc command (invalid set of fields or invalid value type)
      command_not_implemented_code      , ///< command is not implemented
      command_depreciated_code          , ///< command is depreciates
@@ -282,7 +282,7 @@ namespace fc_light
   /**
    * @brief cannot parse json format of rpc command
    */
-  FC_LIGHT_DECLARE_EXCEPTION(json_parse_exception, json_parse_error, "Ivalid json format in input data");
+  FC_LIGHT_DECLARE_EXCEPTION(json_parse_exception, json_parse_error_code, "Ivalid json format in input data");
 
   /**
    * @brief command not implemented

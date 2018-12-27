@@ -72,7 +72,11 @@
       if (chainId > 0) {
         tmpV += chainId * 2 + 8;
       }
-      ret.v = tmpV;
+      let hexString = tmpV.toString(16);
+      if (hexString.length % 2) {
+        hexString = '0' + hexString;
+      }
+      ret.v = `0x${hexString}`;
     } else {
       ret.r = '0x00';
       ret.s = '0x00';

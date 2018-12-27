@@ -53,7 +53,7 @@ if(WIN32)
 			)
 		file(GLOB_RECURSE qtlinkplatforms FOLLOW_SYMLINKS ${Qt5_CoreLocation}/../../plugins/platforms/*.dll)
 		file(GLOB_RECURSE qtlinkimageformats FOLLOW_SYMLINKS ${Qt5_CoreLocation}/../../plugins/imageformats/*.dll)
-		file(GLOB_RECURSE qtlinkstyles FOLLOW_SYMLINKS ${Qt5_CoreLocation}/../../styles/*.dll)
+		file(GLOB_RECURSE qtlinkstyles FOLLOW_SYMLINKS ${Qt5_CoreLocation}/../../plugins/styles/*.dll)
 		message(STATUS "QT PLATFORM FILES: ${qtlinkplatforms}")
 		message(STATUS "QT IMAGE FORMATS FILES: ${qtlinkimageformats}")
 		message(STATUS "QT STYLES FILES: ${qtlinkstyles}")
@@ -68,6 +68,7 @@ if(WIN32)
 	   "${wixsrcpath}/wix_wssapp_entry.wxs"
 	   "${wixsrcpath}/CustomWixUI_Mondo.wxs"
 	   "${wixsrcpath}/CustomInstallDirDlg.wxs"
+	   "${wixsrcpath}/CustomVerifyReadyDlg.wxs"
 	   "${wixsrcpath}/CustomLicenseAgreementDlg.wxs"
 	   "${wixsrcpath}/en-us.wxl"
 	   "${wixsrcpath}/wsservice_manager.bat"
@@ -131,6 +132,7 @@ if(WIN32)
 					   ${installerpath}/CustomLicenseAgreementDlg.wxs 
 					   ${installerpath}/CustomInstallDirDlg.wxs 
 					   ${installerpath}/CustomWixUI_Mondo.wxs 
+					   ${installerpath}/CustomVerifyReadyDlg.wxs
 					   -dProcessorArchitecture=${TARGET_PLATFORM}
 					   -dvcrpath=${VCR_PATH}				   
 					   -bf -xo -out ${installerpath}/
@@ -143,6 +145,7 @@ if(WIN32)
 					   ${installerpath}/CustomLicenseAgreementDlg.wixobj 
 					   ${installerpath}/CustomInstallDirDlg.wixobj 
 					   ${installerpath}/CustomWixUI_Mondo.wixobj 
+					   ${installerpath}/CustomVerifyReadyDlg.wixobj
 					   -cultures:en-us -loc ${installerpath}/en-us.wxl 
 					   -out ${installerpath}/${PROJECT_NAME}.msi
 					   VERBATIM)

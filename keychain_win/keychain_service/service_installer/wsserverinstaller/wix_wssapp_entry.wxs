@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi"
+	xmlns:util="http://schemas.microsoft.com/wix/UtilExtension">
 	
 	<!-- Set product information -->
-   <Product Id="*" UpgradeCode="{4AB37123-84EE-4C38-AB7E-37B9E726F3E8}" 	 
+    <Product Id="*" UpgradeCode="{22335258-7498-49E6-89C9-DB6862E6B52F}" 	 
 			Name="KeyChain" Language="1033" Version="1.0.2" 
 			Manufacturer="Array.IO">
 	
@@ -207,6 +209,19 @@
 		</Directory>
     </Directory>
 	
+	<!-- Set users group permissions for root installation folder -->
+    <DirectoryRef Id="INSTALLLOCATION">
+      <Component Id="SetFolderPermissions" DiskId="1" Guid="{5FACF168-4B25-4A1F-A20B-777FBDAA7AD5}">
+		<CreateFolder>
+			<Permission User="[SC_IUSR_USERNAME]" GenericAll="no" GenericRead="yes" GenericExecute="yes" Domain="[SC_IUSR_DOMAIN]"/>
+			<Permission User="Verified" GenericAll="no" GenericRead="yes" ReadAttributes="yes" GenericExecute="yes" GenericWrite="yes" Domain="[SC_IUSR_DOMAIN]"/>
+			<Permission User="Users" GenericAll="no" GenericRead="yes" ReadAttributes="yes" GenericExecute="yes" GenericWrite="no" Domain="[SC_IUSR_DOMAIN]"/>
+			<Permission User="System" GenericAll="yes"/>
+			<Permission User="Administrators" GenericAll="yes"/>
+	    </CreateFolder>
+	  </Component>
+	</DirectoryRef>
+	
 	<!-- Install directory source text override -->
 	<Property Id="WIXUI_INSTALLDIR" Value="INSTALLLOCATION" />
 
@@ -270,6 +285,7 @@
 		<ComponentRef Id="Component46" />
 		<ComponentRef Id="Component47" />
 		<ComponentRef Id="Component48" />
+		<ComponentRef Id="SetFolderPermissions" />
     </Feature>
 	
     <!-- Global Run Action -->

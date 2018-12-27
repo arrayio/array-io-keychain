@@ -136,6 +136,7 @@ if(WIN32)
 					   -bf -xo -out ${installerpath}/
 		               COMMAND ${WIX_PATH}/light.exe 
 					   -sice:ICE20
+					   -ext WixUtilExtension
 					   -ext WixUIExtension 
 					   -ext WixNetfxExtension 
 					   ${installerpath}/wix_wssapp_entry.wixobj 

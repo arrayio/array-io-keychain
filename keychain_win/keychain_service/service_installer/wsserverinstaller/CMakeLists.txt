@@ -9,7 +9,7 @@ if(WIN32)
 		message(FATAL_ERROR "Unable to find WiX in the PATH. The WiX installer will be disabled.")
 	else(WIX_PATH)
 	
-	#add_dependencies(wssdeploy keychain keychain_win_gui)
+	add_dependencies(wssdeploy keychain keychain_win_gui)
 
 	set(outputdir "${CMAKE_CURRENT_BINARY_DIR}/wsservice")
 	file(MAKE_DIRECTORY "${outputdir}") 

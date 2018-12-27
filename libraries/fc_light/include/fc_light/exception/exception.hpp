@@ -43,8 +43,8 @@ namespace fc_light
      eof_exception_code                ,
      
      //3d party exceptions
-     unhandled_exception_code          , ///< for unhandled 3rd party exceptions
-     std_exception_code                 ///< for std::exceptions (3rd party)
+     std_exception_code                , ///< for std::exceptions (3rd party)
+     unhandled_exception_code            ///< for unhandled 3rd party exceptions
    };
 
    /**

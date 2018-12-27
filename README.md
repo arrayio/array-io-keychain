@@ -1,14 +1,38 @@
-![alt text](https://github.com/arrayio/array-io-keychain/blob/master/img/ltl1%20(2).png) 
-# KeyChain
+<p align="center">
+  <br>
+  <img width="200" src="./img/logo2.png" alt="">
+  <br>
+  <br>
+</p>
+
+<link rel="stylesheet" type="text/css" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css">
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+[![Tweet](https://img.shields.io/twitter/url/http/shields.io.svg?style=social)](https://twitter.com/intent/tweet?text=A%20good,%20solid%20app%20to%20keep%20your%20keys%20safe.&url=https://keychain.array.io/&via=ProjectArray&hashtags=cybersecurity,private,cryptography,blockchain,app) [![Contributions welcome](https://img.shields.io/badge/contributions-welcome-orange.svg)](https://github.com/arrayio/array-io-keychain#contributing-to-the-project)
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/arrayio/array-io-keychain/blob/master/LICENSE.md)
+<a class="btn btn-info btn-sm" href="https://avvrik.github.io/KeyChain/" type="button">Documentation</a>
+<a class="btn btn-info btn-sm" href="https://github.com/arrayio/array-io-keychain/releases/download/0.11/KeyChain.Installer.v0.11.zip" type="button">Download</a>
+<a class="btn btn-info btn-sm" href="https://keychain.array.io/" type="button">Website</a>
+
 
 ## Overview
 
 **KeyChain** is a standalone app for signing transactions and generating key pairs. It stores private keys in an isolated environment where no logger, debugger or spyware can intercept them because of the [three-layer security](https://github.com/arrayio/array-io-keychain/wiki/KeyChain-security#three-security-layers-of-keychain) protecting each action of the system.
-**KeyChain** supports transactions from and to various blockchains, including Ethereum and Ethereum classic, Litecoin, Bitcoin, Bitcoin Cash, and Bitshares. 
+**KeyChain** supports transactions from and to various blockchains, including Ethereum and Ethereum classic, Litecoin, Bitcoin, Bitcoin Cash, and Bitshares.
+
+## Table of contents
+
+- [Installation](#installation)
+- [Getting started](#getting-started)
+- [How to use](#how-to-use)
+- [Companies using KeyChain](#companies-using-keychain)
+- [Contributing to the project](#contributing-to-the-project)
+- [Contact](#contact)
+- [License](#license)
 
 ## Installation
 
-Download and install KeyChain for [macOS](https://github.com/arrayio/array-io-keychain/releases/download/0.10/KeyChain.Installer.v0.10.zip). Windows and Linux installers are coming soon.
+Download and install KeyChain for [macOS](https://github.com/arrayio/array-io-keychain/releases/download/0.11/KeyChain.Installer.v0.11.zip). Windows and Linux installers are coming soon.
 
 *Try out KeyChain on the [demo page](https://arrayio.github.io/array-io-keychain/demo/).*
 
@@ -22,78 +46,49 @@ You can find comprehensive installation guides for [macOS](https://github.com/ar
 
 ## Getting started
 
-1. Require libraries setup 
 
-```javascript
-const unsign = require('@warren-bank/ethereumjs-tx-unsign')
-const ethUtil = require('ethereumjs-util');
-const WebSocket = require('ws');
+1. Install `web3override` library https://www.npmjs.com/package/web3override
+
 ```
-```javascript
-const ws = new WebSocket('ws://localhost:16384/');
-const keyname = 'test1@6de493f01bf590c0';
+npm i --save web3override
 ```
 
-2. Get public key
-
+Require it 
 ```javascript
-let fromAdd;
-const send = (command) => {
-  ws.send(JSON.stringify(command));
-}
-
-const getPublicKey = (keyname) => {
-  return { 
-    command: "public_key",
-    params: {
-      keyname: keyname
-    }
-  }
-}
-
-ws.onopen = async () => {
-  send(getPublicKey(keyname));
-}
-
-ws.on('message', async (response) => {
-  const data = JSON.parse(response);
-  console.log('Public key: ', `0x${data.result}`)
-  fromAdd = `0x${ethUtil.publicToAddress(`0x${data.result}`).toString('hex')}`;
-  console.log(fromAdd);
-});
+const Module = require('web3override'); 
 ```
 
-3. Unsign Ethereum transaction hex and pass the result to KeyChain
+2. Now create a new key with KeyChain and use an overridden web3 function 
 
 ```javascript
-const ethHex = 'e315843b9aca0082520894e8899ba12578d60e4d0683a596edacbc85ec18cc6480038080';
+// create new key in Keychain
+const keyInstance = await Module.Keychain.create();
+const data = await keyInstance.createKey('test1');
+const key = data.result;
+await keyInstance.term();
 
-const signHex = (keyname, hexraw) => {
-  return {
-    "command": "sign_hex",
-    "params": {
-      "transaction": hexraw,
-      "blockchain_type": "ethereum",
-      "keyname": keyname
-    }
-  }
-}
+Module.override(web3);
+// now we use web3 with keychain
+await web3.eth.accounts.signTransaction(transactionParams, key); // overriden web3 function usage
 
-ws.onopen = async () => {
-  send(signHex(keyname, ethHex));
-}
-
-ws.on('message', async (response) => {
-  const data = JSON.parse(response);
-  console.log('Signature: ', data.result);
-});
-
-
-const resHex = 'f86315843b9aca0082520894e8899ba12578d60e4d0683a596edacbc85ec18cc64802aa0c3b68e20527f8f304801986720de1aeb9ab126c55570942420361cedeec1199ca03002d853eb2089e4e63848fcdb7af0fbc46e8f5c856ef0eb849a2270fd621bdb';
-let { txData, signature } = unsign(resHex);
-console.log('txData:',    txData,    "\n")
-console.log('signature:', signature, "\n")
 ```
+`signTransaction` with Keychain in action
+
+![signTransaction with keychain in action](https://raw.githubusercontent.com/arrayio/array-io-keychain/master/img/video.gif)
+
+## Companies using KeyChain
+
+- [Swap Online](https://swap.online/)
+
+## Contributing to the project
+
+The main purpose of this repository is to continue to evolve KeyChain core, making it faster and easier to use. Development of KeyChain happens in the open on GitHub, and we are grateful to the community for contributing bugfixes and improvements. 
+
+### [Code of Conduct](https://github.com/arrayio/array-io-keychain/blob/master/CODE_OF_CONDUCT.md)
+
+KeyChain has adopted a Code of Conduct that we expect project participants to adhere to. Please read [the full text](https://github.com/arrayio/array-io-keychain/blob/master/CODE_OF_CONDUCT.md) so that you can understand what actions will and will not be accepted.
+
+To contribute or report a bug, you can [contact us](#contact) or create an [issue](https://github.com/arrayio/array-io-keychain/issues/new) with a label "bug".
 
 ## How to use 
 
@@ -116,12 +111,9 @@ There you will find:
 
 If you need help interacting with KeyChain, please do not hesitate to contact us:
 
-- [Twitter](https://twitter.com/ProjectArray)
-
 - [Telegram](https://t.me/arrayio)
-
 - [Stackoverflow](https://stackoverflow.com/users/10429540/array-io)
-
+- [Twitter](https://twitter.com/ProjectArray)
 - Or you can write us an email to support@array.io. 
 
 If you want to report a security issue, include the word "security" in the subject field.

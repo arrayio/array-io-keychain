@@ -86,7 +86,7 @@ std::string keychain::operator()(const fc_light::variant& command) {
   }
   catch( fc_light::bad_cast_exception& er)
   {
-    fc_light::parse_error_exception er_(er.get_log());
+    fc_light::rpc_command_parse_exception er_(er.get_log());
     er_.append_log( FC_LIGHT_LOG_MESSAGE( error, "cannot parse command" ) );
     return print_exception(cmd.id, er_);
   }

@@ -9,10 +9,12 @@
 namespace fc_light
 {
    FC_LIGHT_REGISTER_EXCEPTIONS(
+     (rpc_command_parse_exception)
      (command_not_implemented_exception)
      (command_depreciated)
      (password_input_exception)
      (privkey_not_found_exception)
+     (privkey_invalid_unlock)
      (internal_error_exception)
      (timeout_exception)
      (invalid_arg_exception)

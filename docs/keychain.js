@@ -38,27 +38,31 @@
   WS.prototype.signTransaction = function (tx, privateKey) {
     tx.gasLimit = tx.gas; // rename gas to gasLimit for using with new EthJS.Tx()
     const rsv = this.rsv('', tx.chainId);
-    const rawHex = this.getRawHex(rsv, tx);
+    const result = this.getResult(rsv, tx);
+    const rawHex = result.rawTransaction;
+    const messageHashInitial = result.messageHash;
 
     const params = { keyname: privateKey, transaction: rawHex, blockchain_type: "ethereum" };
     return this.method({ command: 'sign_hex', params })
       .then(data => {
         const signature = data.result;
         const rsv = this.rsv(signature, tx.chainId);
-        const rawTransaction = '0x' + this.getRawHex(rsv, tx);
+        const result = this.getResult(rsv, tx);
         return {
-          messageHash: '',
           ...rsv,
-          rawTransaction
+          rawTransaction: '0x' + result.rawTransaction,
+          messageHash: '0x' + messageHashInitial
         }
       });
   };
 
-  WS.prototype.getRawHex = function(rsv, tx) {
+  WS.prototype.getResult = function(rsv, tx) {
     const txParams = {...tx, ...rsv};
     const ethTx = new EthJS.Tx(txParams);
     const buffer = ethTx.serialize();
-    return buffer.toString('hex');
+    const rawTransaction = buffer.toString('hex');
+    const messageHash = ethTx.hash().toString('hex');
+    return { messageHash, rawTransaction }
   };
 
 
@@ -72,7 +76,11 @@
       if (chainId > 0) {
         tmpV += chainId * 2 + 8;
       }
-      ret.v = tmpV;
+      let hexString = tmpV.toString(16);
+      if (hexString.length % 2) {
+        hexString = '0' + hexString;
+      }
+      ret.v = `0x${hexString}`;
     } else {
       ret.r = '0x00';
       ret.s = '0x00';

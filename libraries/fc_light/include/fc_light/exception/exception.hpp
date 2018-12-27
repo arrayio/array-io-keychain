@@ -17,7 +17,8 @@ namespace fc_light
    {
      /** for exceptions we threw that don't have an assigned code */
      unspecified_exception_code        = 0, ///< default type, practically unused
-     rpc_command_parse_code            , ///< cannot parse json rpc command
+     json_parse_error_code             , ///< error in json format of rpc command
+     rpc_command_parse_code            , ///< error while parsing structure of rpc command (invalid set of fields or invalid value type)
      command_not_implemented_code      , ///< command is not implemented
      command_depreciated_code          , ///< command is depreciates
      invalid_arg_exception_code        , ///< invalid command arguments
@@ -42,8 +43,8 @@ namespace fc_light
      eof_exception_code                ,
      
      //3d party exceptions
-     unhandled_exception_code          , ///< for unhandled 3rd party exceptions
-     std_exception_code                 ///< for std::exceptions (3rd party)
+     std_exception_code                , ///< for std::exceptions (3rd party)
+     unhandled_exception_code            ///< for unhandled 3rd party exceptions
    };
 
    /**
@@ -273,10 +274,15 @@ namespace fc_light
    */
   FC_LIGHT_DECLARE_EXCEPTION( command_not_implemented_exception, command_not_implemented_code, "Command not implemented" );
 
-/**
- * @brief cannot parse rpc command
- */
+  /**
+   * @brief cannot parse rpc command
+   */
   FC_LIGHT_DECLARE_EXCEPTION( rpc_command_parse_exception, rpc_command_parse_code, "Command cannot be parsed" );
+
+  /**
+   * @brief cannot parse json format of rpc command
+   */
+  FC_LIGHT_DECLARE_EXCEPTION(json_parse_exception, json_parse_error_code, "Ivalid json format in input data");
 
   /**
    * @brief command not implemented

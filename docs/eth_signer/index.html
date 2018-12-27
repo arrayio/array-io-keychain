@@ -114,8 +114,12 @@
           }).then (tx => {
             log(`Result: ${JSON.stringify(tx)}`);
             log(`Signing it with KeyChain`);
+            // const privateKey = 'b3d3427eea7867c243baaf2f4c67a9551eea2ea96556acfb0051dffa18d182d4';
+            // return web3.eth.accounts.signTransaction(tx, privateKey);
             return keychain.signTransaction(tx, keyname);
-          }).then( rawHex => {
+          }).then( result => {
+            log(`Result: ${JSON.stringify(result)}`);
+            const rawHex = result.rawTransaction;
             log(`Transaction built, rawHex: ${rawHex}`);
             log(`Please, publish your transaction`);
             document.getElementById('rawHex').innerText = rawHex;
@@ -131,7 +135,7 @@
           log(`Sending signed transaction: ${rawHexGlobal}`);
           try {
             document.getElementById('progress').style.display = 'inline-block';
-            const result = await web3.eth.sendSignedTransaction(`0x${rawHexGlobal}`);
+            const result = await web3.eth.sendSignedTransaction(`${rawHexGlobal}`);
             document.getElementById('progress').style.display = 'none';
             log(`Transfer result: \n${JSON.stringify(result, undefined, 2)}`);
             document.getElementById('etherscanLink').innerHTML = `<a href='https://ropsten.etherscan.io/tx/${result.transactionHash}'>Etherscan Link</a>`;
@@ -146,7 +150,7 @@
           const nonce = await web3.eth.getTransactionCount(from);
           const chainId = 3;
           const data = '';
-          const gasPrice = await web3.eth.getGasPrice().then(wei => Number(wei));
+          const gasPrice = await web3.eth.getGasPrice().then(Number);
           const gas = 21000;
 
           return { nonce, chainId, to, value, data, gasPrice, gas }

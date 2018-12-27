@@ -45,7 +45,12 @@
       .then(data => {
         const signature = data.result;
         const rsv = this.rsv(signature, tx.chainId);
-        return this.getRawHex(rsv, tx);
+        const rawTransaction = '0x' + this.getRawHex(rsv, tx);
+        return {
+          messageHash: '',
+          ...rsv,
+          rawTransaction
+        }
       });
   };
 
@@ -54,7 +59,7 @@
     const ethTx = new EthJS.Tx(txParams);
     const buffer = ethTx.serialize();
     return buffer.toString('hex');
-  }
+  };
 
 
   WS.prototype.rsv = function(signature, chainId) {

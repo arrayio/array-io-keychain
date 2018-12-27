@@ -38,27 +38,34 @@
   WS.prototype.signTransaction = function (tx, privateKey) {
     tx.gasLimit = tx.gas; // rename gas to gasLimit for using with new EthJS.Tx()
     const rsv = this.rsv('', tx.chainId);
-    const rawHex = this.getRawHex(rsv, tx);
+    const result = this.getResult(rsv, tx);
+    const rawHex = result.rawTransaction;
+    const messageHashInitial = result.messageHash;
 
     const params = { keyname: privateKey, transaction: rawHex, blockchain_type: "ethereum" };
     return this.method({ command: 'sign_hex', params })
       .then(data => {
         const signature = data.result;
         const rsv = this.rsv(signature, tx.chainId);
-        const rawTransaction = '0x' + this.getRawHex(rsv, tx);
+        const result = this.getResult(rsv, tx);
         return {
-          messageHash: '',
-          ...rsv,
-          rawTransaction
+          ...result,
+          rawTransaction: '0x' + result.rawTransaction,
+          messageHash: '0x' + messageHashInitial
         }
       });
   };
 
-  WS.prototype.getRawHex = function(rsv, tx) {
+  WS.prototype.getResult = function(rsv, tx) {
     const txParams = {...tx, ...rsv};
     const ethTx = new EthJS.Tx(txParams);
     const buffer = ethTx.serialize();
-    return buffer.toString('hex');
+    const rawTransaction = buffer.toString('hex');
+    return {
+      messageHash: ethTx.hash().toString('hex'),
+      ...rsv,
+      rawTransaction
+    }
   };
 
 

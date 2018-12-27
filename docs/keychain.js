@@ -49,7 +49,7 @@
         const rsv = this.rsv(signature, tx.chainId);
         const result = this.getResult(rsv, tx);
         return {
-          ...result,
+          ...rsv,
           rawTransaction: '0x' + result.rawTransaction,
           messageHash: '0x' + messageHashInitial
         }
@@ -61,11 +61,8 @@
     const ethTx = new EthJS.Tx(txParams);
     const buffer = ethTx.serialize();
     const rawTransaction = buffer.toString('hex');
-    return {
-      messageHash: ethTx.hash().toString('hex'),
-      ...rsv,
-      rawTransaction
-    }
+    const messageHash = ethTx.hash().toString('hex');
+    return { messageHash, rawTransaction }
   };
 
 

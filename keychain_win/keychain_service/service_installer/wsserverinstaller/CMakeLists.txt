@@ -9,7 +9,7 @@ if(WIN32)
 		message(FATAL_ERROR "Unable to find WiX in the PATH. The WiX installer will be disabled.")
 	else(WIX_PATH)
 	
-	add_dependencies(wssdeploy keychain keychain_win_gui)
+	#add_dependencies(wssdeploy keychain keychain_win_gui)
 
 	set(outputdir "${CMAKE_CURRENT_BINARY_DIR}/wsservice")
 	file(MAKE_DIRECTORY "${outputdir}") 
@@ -122,6 +122,9 @@ if(WIN32)
 	set(TARGET_PLATFORM $ENV{PROCESSOR_ARCHITECTURE})
 	message(STATUS "TARGET PLATFORM: ${TARGET_PLATFORM}")
 	
+	#set installer version
+	set(installerversion "1.0.0")
+	
 	#-bf - flag causes all of the files to be bound int the resulting .wixout/.* file. 
 	#-out - flag tells the linker where to output the .wixout/.* file
 	#-xo - this flag tells the linker to output an XML representation of the MSI, instead of the actual MSI,  required to use the -bf switch
@@ -134,7 +137,8 @@ if(WIN32)
 					   ${installerpath}/CustomWixUI_Mondo.wxs 
 					   ${installerpath}/CustomVerifyReadyDlg.wxs
 					   -dProcessorArchitecture=${TARGET_PLATFORM}
-					   -dvcrpath=${VCR_PATH}				   
+					   -dvcrpath=${VCR_PATH}
+					   -dproductversion=${installerversion}				   
 					   -bf -xo -out ${installerpath}/
 		               COMMAND ${WIX_PATH}/light.exe 
 					   -sice:ICE20

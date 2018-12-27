@@ -216,7 +216,7 @@ std::wstring  pass_entry_term::input_password(const KeySym * map, int socket)
     char name[256] = "Unknown";
     bool first_key = true;
     auto gui = polling(socket);
-  //  ChangeKbProperty(dev_info, kbd_atom, device_enabled_prop, dev_cnt, 0);
+    //ChangeKbProperty(dev_info, kbd_atom, device_enabled_prop, dev_cnt, 0);
 
     capslock = keyState(XK_Caps_Lock);
     numlock = keyState(XK_Num_Lock);

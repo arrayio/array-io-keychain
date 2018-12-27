@@ -46,7 +46,7 @@ namespace slave
         virtual void operator()(keychain_gui_win& w, const fc_light::variant& v) const override {
             try
             {
-             //   w->close();
+                w.close();
             }
             catch (const std::exception &e) {throw std::runtime_error(e.what());}
             catch (const fc_light::exception &e) {throw std::runtime_error(e.what());}

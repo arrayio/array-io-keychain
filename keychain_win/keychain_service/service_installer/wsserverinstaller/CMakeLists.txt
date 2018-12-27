@@ -88,7 +88,8 @@ if(WIN32)
 	set( DEMO_FILES
 		${CMAKE_CURRENT_SOURCE_DIR}/demo/index.html
 		${CMAKE_CURRENT_SOURCE_DIR}/demo/logo.png
-		${CMAKE_CURRENT_SOURCE_DIR}/demo/spectre.min.css)
+		${CMAKE_CURRENT_SOURCE_DIR}/demo/spectre.min.css
+		${CMAKE_CURRENT_SOURCE_DIR}/demo/keychain.js)
 	
 	#copy demo files to installer folder
 	file(COPY ${DEMO_FILES} DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/wsservice/demo/)

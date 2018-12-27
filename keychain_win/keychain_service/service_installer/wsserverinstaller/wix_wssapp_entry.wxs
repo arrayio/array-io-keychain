@@ -70,7 +70,7 @@
 				<Component Id="Component8" DiskId="1" Guid="{E6BD187F-058B-4707-A702-5DB045847580}">
 					<File Id="File7" Name="keychain_win_gui.exe" Source="keychain_win_gui.exe" />
 				</Component>
-				<Directory Id="DemoComponents" Name="Demo">
+				<Directory Id="DemoComponents" Name="demo">
 					<Component Id="Component10" DiskId="1" Guid="{BFBF1B5A-39E6-4DCA-9865-518CDEBB60AE}">
 					<File Id="File9" Name="index.html" Source="demo\index.html" />
 					</Component>
@@ -80,6 +80,10 @@
 					</Component>
 					<Component Id="Component12" DiskId="1" Guid="{3989F050-707C-4EDE-9AB4-B5F25A8289B2}">
 						<File Id="File11" Name="spectre.min.css" Source="demo\spectre.min.css" />
+					<CreateFolder/>
+					</Component>
+					<Component Id="Component49" DiskId="1" Guid="{1ED4C80C-8EEF-458E-A5E9-E2E1D14BB334}">
+						<File Id="File48" Name="keychain.js" Source="demo\keychain.js" />
 					<CreateFolder/>
 					</Component>
 				</Directory>
@@ -301,6 +305,7 @@
 		<ComponentRef Id="Component46" />
 		<ComponentRef Id="Component47" />
 		<ComponentRef Id="Component48" />
+		<ComponentRef Id="Component49" />
 		<ComponentRef Id="RemoveAllFilesComponent"/> 
 		<ComponentRef Id="RegValInstallLocation"/> 
     </Feature>

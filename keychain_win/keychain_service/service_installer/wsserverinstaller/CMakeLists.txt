@@ -124,7 +124,13 @@ if(WIN32)
 	message(STATUS "TARGET PLATFORM: ${TARGET_PLATFORM}")
 	
 	#set installer version
-	set(installerversion "1.0.0")
+	list( APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/git_version_gen" )
+    include( GetGitRevisionDescription )
+	git_describe(KEYCHAIN_COMMON_GIT_REVISION_DESCRIPTION --tags)
+	SET(VERSION_REGEXP "^[0-9]+\\.[0-9]+\\-[0-9]+")
+	string(REGEX MATCH ${VERSION_REGEXP} VERSION_STRING_GIT ${KEYCHAIN_COMMON_GIT_REVISION_DESCRIPTION})
+	string(REGEX REPLACE "\\-" "." VERSION_STRING ${VERSION_STRING_GIT})
+	set(installerversion ${VERSION_STRING})
 	
 	#-bf - flag causes all of the files to be bound int the resulting .wixout/.* file. 
 	#-out - flag tells the linker where to output the .wixout/.* file

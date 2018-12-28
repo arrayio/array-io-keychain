@@ -19,7 +19,6 @@ PopupWindow::PopupWindow(const KeychainWarningMessage wMessage, QWidget *parent)
 	body->setWordWrap(true);
 	body->setStyleSheet("background:transparent;border-width:0;color:rgb(147,148,151);font:14px \"Segoe UI\";padding:10px;");
 	
-	
 	QFont myFont= body->font();
 	int mCount = wMessage.MessgeCount();
 	QString messageStr = wMessage.GetMessage();
@@ -30,12 +29,12 @@ PopupWindow::PopupWindow(const KeychainWarningMessage wMessage, QWidget *parent)
 
 	int strWidth = fm.width(messageStr);
 	int strHeight = k+k/2;
-	int numLines = std::ceil(strWidth / 350.0)+((mCount>1)?((mCount-1)*2):1);
+	int numLines = std::ceil(strWidth / 330.0)+((mCount>1)?((mCount-1)*2):0);
 
 	
 	body->setText(messageStr);
-	body->setFixedHeight(strHeight*numLines+20);
-	this->setFixedHeight(body->height()+10);
+	body->setFixedHeight(strHeight*numLines+15);
+	this->setFixedHeight(body->height());
 	
 	body->setAlignment(Qt::AlignJustify);
 	if (wMessage.isWarn()==false) {

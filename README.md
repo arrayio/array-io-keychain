@@ -8,11 +8,11 @@
 <link rel="stylesheet" type="text/css" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css">
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-[![Tweet](https://img.shields.io/twitter/url/http/shields.io.svg?style=social)](https://twitter.com/intent/tweet?text=A%20good,%20solid%20app%20to%20keep%20your%20keys%20safe.&url=https://keychain.array.io/&via=ProjectArray&hashtags=cybersecurity,private,cryptography,blockchain,app) [![Contributions welcome](https://img.shields.io/badge/contributions-welcome-orange.svg)](https://github.com/arrayio/array-io-keychain#contributing-to-the-project)
-[![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/arrayio/array-io-keychain/blob/master/LICENSE.md)
-<a class="btn btn-info btn-sm" href="https://avvrik.github.io/KeyChain/" type="button">Documentation</a>
+[![Tweet](https://img.shields.io/twitter/url/http/shields.io.svg?style=social)](https://twitter.com/intent/tweet?text=A%20good,%20solid%20app%20to%20keep%20your%20keys%20safe.&url=https://keychain.array.io/&via=ProjectArray&hashtags=cybersecurity,private,cryptography,blockchain,app) <a class="btn btn-info btn-sm" href="https://avvrik.github.io/KeyChain/" type="button">Documentation</a>
 <a class="btn btn-info btn-sm" href="https://github.com/arrayio/array-io-keychain/releases/download/0.11/KeyChain.Installer.v0.11.zip" type="button">Download</a>
-<a class="btn btn-info btn-sm" href="https://keychain.array.io/" type="button">Website</a>
+<a class="btn btn-info btn-sm" href="https://keychain.array.io/" type="button">Website</a> [![Contributions welcome](https://img.shields.io/badge/contributions-welcome-orange.svg)](https://github.com/arrayio/array-io-keychain#contributing-to-the-project)
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/arrayio/array-io-keychain/blob/master/LICENSE.md) [![npm version](https://badge.fury.io/js/web3override.svg)](https://badge.fury.io/js/web3override)
+
 
 
 ## Overview
@@ -38,7 +38,10 @@ Download and install KeyChain for [macOS](https://github.com/arrayio/array-io-ke
 
 After installation, connect to the demo-page: http://localhost:16384/ to check if the installation was successful and to test the KeyChain commands. In case everything went well, you will see the following page and you will be able to see responses to the commands in the "Response" box when you click on them.
 
-![screenshot from 2018-12-10 15-57-27](https://user-images.githubusercontent.com/34011337/49734247-be211a80-fc94-11e8-8d85-c70b738ecae3.png)
+
+<button class="show btn btn-info btn-sm" data-image='1'>show</button>
+
+<img id='1' alt="screenshot from 2018-12-10 15-57-27" src="https://user-images.githubusercontent.com/34011337/49734247-be211a80-fc94-11e8-8d85-c70b738ecae3.png">
 
 If you are having trouble connecting to the page, [contact us](#contact) and we will do our best to help you.
 
@@ -46,6 +49,7 @@ You can find comprehensive installation guides for [macOS](https://github.com/ar
 
 ## Getting started
 
+After you have installed [KeyChain](https://github.com/arrayio/array-io-keychain/releases/download/0.11/KeyChain.Installer.v0.11.zip), you can start using it with web3. Just follow these simple steps.
 
 1. Install `web3override` library https://www.npmjs.com/package/web3override
 
@@ -72,9 +76,10 @@ Module.override(web3);
 await web3.eth.accounts.signTransaction(transactionParams, key); // overriden web3 function usage
 
 ```
+
 `signTransaction` with Keychain in action
 
-![signTransaction with keychain in action](https://raw.githubusercontent.com/arrayio/array-io-keychain/master/img/video.gif)
+![alt image](https://raw.githubusercontent.com/cypherpunk99/web3override/master/screencast.gif))
 
 ## Companies using KeyChain
 

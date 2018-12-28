@@ -19,6 +19,8 @@ RawHashWidget::RawHashWidget(Transaction &transaction, QWidget * parent)
 	from->SetValueStyle(valueStyle);
 
 	QFont fromFont = from->font();
+	fromFont.setPixelSize(16);
+	fromFont.setFamily("Segoe UI");
 	QString fromStr = QString::fromStdString(raw_hash.from);
 
 	QFontMetrics fromFM(fromFont);

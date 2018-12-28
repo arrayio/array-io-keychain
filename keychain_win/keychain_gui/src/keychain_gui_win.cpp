@@ -6,7 +6,7 @@ keychain_gui_win::keychain_gui_win(Transaction &transaction, QWidget *parent)
 	ui.setupUi(this);
 	setWindowFlags(Qt::FramelessWindowHint);
 	setFixedSize(600, 347);
-
+	QInputMethod inputMethod();
 	KeychainWarningMessage warningMessage;
 
 	headerBlock = new QLabel(this);
@@ -74,6 +74,8 @@ keychain_gui_win::keychain_gui_win(Transaction &transaction, QWidget *parent)
 			case keychain_app::secmod_commands::blockchain_secmod_te::ethereum_swap: {
 				element = new EthereumSwapWidget(transaction, this);
 				warningMessage.SetWarning(KeychainWarningMessage::WarningType::NoWarnig);
+				languageLabel = new QLabel(this);
+				connect(QGuiApplication::inputMethod(), &QInputMethod::localeChanged, this, &keychain_gui_win::changeLocale);
 				break;
 			}
 			case keychain_app::secmod_commands::blockchain_secmod_te::bitcoin:
@@ -102,6 +104,7 @@ keychain_gui_win::keychain_gui_win(Transaction &transaction, QWidget *parent)
 		element->SetPosition(0, endControlPosition, FIELD_WIDTH);
 		endControlPosition += 10;
 		endControlPosition = endControlPosition + element->GetCurrentHeight();
+
 	}
 
 	password = new PasswordEnterElement(transaction.isCreatePassword(), this);
@@ -150,7 +153,14 @@ keychain_gui_win::keychain_gui_win(Transaction &transaction, QWidget *parent)
 	}
 	OKButton->move(width() - 109, endControlPosition);
 	CancelButton->move(OKButton->x() - 95, endControlPosition);
-	if (!transaction.isCreatePassword() && warningMessage.isWarn()) {
+	if (languageLabel != Q_NULLPTR) {
+		languageLabel->setFixedSize(30, 25);
+		languageLabel->setStyleSheet("background-color:rgb(70,134,255);color:white;border-style:outset;border-width:0px;padding:4px 2px 6px 2px;border-radius:2px;font:16px \"Segoe UI\"");
+		languageLabel->move(CancelButton->x() - 35, endControlPosition);
+		QString lang = QGuiApplication::inputMethod()->locale().languageToString(QGuiApplication::inputMethod()->locale().language());
+		languageLabel->setText(lang.mid(0, 2).toUpper());
+	}
+	//if (!transaction.isCreatePassword() && warningMessage.isWarn()) {
 		lockIcon = new LockIcon(warningMessage, this);
 		popupWindow = new PopupWindow(warningMessage, this);
 		popupWindow->setVisible(false);
@@ -161,7 +171,7 @@ keychain_gui_win::keychain_gui_win(Transaction &transaction, QWidget *parent)
 		else
 			lockIcon->move(width() - 55, 28);
 		lockIcon->setMouseTracking(true);
-	}
+	//}
 
 	this->connect(OKButton, &QPushButton::released, this, &keychain_gui_win::transaction_sign);
 	this->connect(CancelButton, &QPushButton::released, this, &keychain_gui_win::cancel_sign);
@@ -193,6 +203,14 @@ void keychain_gui_win::set_sign_focus()
 {
 	//OKButton->setStyleSheet("color:white;background-color:rgb(179,205,255);border-style:outset;border-width:0px;border-radius:5px;font:16px \"Segoe UI\"");
 	
+}
+
+void keychain_gui_win::changeLocale()
+{
+	if (languageLabel != Q_NULLPTR) {
+		QString lang = QGuiApplication::inputMethod()->locale().languageToString(QGuiApplication::inputMethod()->locale().language());
+		languageLabel->setText(lang.mid(0, 2).toUpper());
+	}
 }
 
 

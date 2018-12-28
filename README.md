@@ -38,20 +38,7 @@ Download and install KeyChain for [macOS](https://github.com/arrayio/array-io-ke
 
 After installation, connect to the demo-page: http://localhost:16384/ to check if the installation was successful and to test the KeyChain commands. In case everything went well, you will see the following page and you will be able to see responses to the commands in the "Response" box when you click on them.
 
-<button class="show btn btn-info btn-sm" data-image='1'>show</button>
-
-<img id='1' alt="screenshot from 2018-12-10 15-57-27" src="https://user-images.githubusercontent.com/34011337/49734247-be211a80-fc94-11e8-8d85-c70b738ecae3.png">
-
-<script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
-<script>
-  var button = $(".show");
-  var image = $("img");
-  image.hide();
-  button.on("click", function(){
-    var id = $(this).data('image')
-    $("#"+id).toggle();
-  })
-</script>
+![screenshot from 2018-12-10 15-57-27](https://user-images.githubusercontent.com/34011337/49734247-be211a80-fc94-11e8-8d85-c70b738ecae3.png)
 
 If you are having trouble connecting to the page, [contact us](#contact) and we will do our best to help you.
 
@@ -89,7 +76,7 @@ await web3.eth.accounts.signTransaction(transactionParams, key); // overriden we
 
 `signTransaction` with Keychain in action
 
-![alt image](https://raw.githubusercontent.com/cypherpunk99/web3override/master/screencast.gif))
+![alt image](https://raw.githubusercontent.com/cypherpunk99/web3override/master/screencast.gif)
 
 ## Companies using KeyChain
 

@@ -24,12 +24,13 @@ PopupWindow::PopupWindow(const KeychainWarningMessage wMessage, QWidget *parent)
 	int mCount = wMessage.MessgeCount();
 	QString messageStr = wMessage.GetMessage();
 	myFont.setPixelSize(14);
+	myFont.setFamily("Segoe UI");
 	QFontMetrics fm(myFont);
 	int k = myFont.pixelSize();
 
 	int strWidth = fm.width(messageStr);
 	int strHeight = k+k/2;
-	int numLines = std::ceil(strWidth / 350.0)+((mCount>1)?((mCount-1)*2):0);
+	int numLines = std::ceil(strWidth / 350.0)+((mCount>1)?((mCount-1)*2):1);
 
 	
 	body->setText(messageStr);

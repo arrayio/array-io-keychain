@@ -4,6 +4,7 @@
 #include <QLabel>
 #include <QLayout>
 #include <QLineEdit>
+#include <QInputMethod>
 #include <QPushButton>
 #include <QMessageBox>
 #include <QPixmap>
@@ -45,7 +46,9 @@ private:
 	QLabel * logoLabel;
 	QPushButton * OKButton = Q_NULLPTR;
 	QPushButton * CancelButton = Q_NULLPTR;
-	
+
+	QLabel * languageLabel = Q_NULLPTR;
+
 	QLabel * headerBlock = Q_NULLPTR;
 	/*QLabel * passPhrase = Q_NULLPTR;
 	QLineEdit * passPhraseValue = Q_NULLPTR;*/
@@ -72,4 +75,5 @@ public slots:
 	void transaction_sign();
 	void cancel_sign();
 	void set_sign_focus();
+	void changeLocale();
 };

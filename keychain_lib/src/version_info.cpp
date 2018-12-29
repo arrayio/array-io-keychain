@@ -40,14 +40,15 @@ about_info keychain_app::version_info::about()
 
 std::string keychain_app::version_info::version()
 {
-  static const std::regex VERSION_REGEXP("^\\d+\\.\\d+\\-\\d+");
+  static const std::regex VERSION_REGEXP("^\\d+\\.\\d+(\\-\\d)*");
   std::string description_string( git_revision_description );
   auto it = std::sregex_iterator(description_string.begin(), description_string.end(), VERSION_REGEXP);
   if(it == std::sregex_iterator())
     FC_LIGHT_THROW_EXCEPTION(fc_light::internal_error_exception, "Invalid version string has been returned by Git");
   auto version_string = it->str();
   auto replace_pos = version_string.find('-');
-  version_string[replace_pos] = '.';
+  if (replace_pos != std::string::npos)
+    version_string[replace_pos] = '.';
   return version_string;
 }
 

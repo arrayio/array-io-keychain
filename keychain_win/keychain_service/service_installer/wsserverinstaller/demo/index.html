@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>KeyChain test page</title>
+  <link rel="stylesheet" href="spectre.min.css">
+  <style>
+    button {
+      width: 100%;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <div class="columns" id="error" style="display: none">
+    <div class="column my-2">
+      <div class="toast toast-error">
+        WebSocket connection failed. Check if KeyChain is installed
+      </div>
+    </div>
+  </div>
+  <div class="columns">
+    <div class="column col-2 ">
+    </div>
+    <div class="column col-2">
+      <img src="logo.png" alt="KeyChain logo">
+    </div>
+    <div class="column col mx-2 my-2">
+      <h1>KeyChain demo</h1>
+      <h6>Test the WebSocket commands of KeyChain <span id="version"></span> - a highly secure key management app for generating keys and signing transactions.</h6>
+      <h6>Documentation: <a href="https://github.com/arrayio/array-io-keychain/wiki/KeyChain-Protocol">KeyChain Protocol</a></h6>
+    </div>
+  </div>
+  <div class="columns m-1">
+    <div class="column col-2 ">
+      <button class="btn btn-primary" id="btn_LIST">List</button>
+    </div>
+  </div>
+  <div class="columns m-1">
+    <div class="column col-2">
+      <button class="btn btn-primary" id="btn_LOCK">Lock</button>
+    </div>
+  </div>
+  <div class="columns m-1">
+    <div class="column col-2">
+      <button class="btn btn-primary" id="btn_UNLOCK">Unlock</button>
+    </div>
+    <div class="column col-8">
+      <div class="columns">
+        <div class="column col-6 col-xs-12">
+          <div class="input-group">
+            <span class="input-group-addon">keyname: </span>
+            <input type="text" class="form-input" placeholder="test1@be5f6e75878b84ba" id="keyname_UNLOCK">
+          </div>
+        </div>
+        <div class="column col-6 col-xs-12">
+          <div class="input-group">
+            <label class="form-switch">
+            </label>
+            <span class="input-group-addon">unlock_time: </span>
+            <input type="number" class="form-input" placeholder="45" id="unlock_time_UNLOCK" title="This parameter is experimental and optional!">
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="columns m-1">
+    <div class="column col-2">
+      <button class="btn btn-primary input-group-btn" id="btn_PUBLIC_KEY">Public key</button>
+    </div>
+    <div class="column col-8">
+      <div class="columns">
+        <div class="column col-6 col-xs-12">
+          <div class="input-group">
+            <span class="input-group-addon">keyname: </span>
+            <input type="text" class="form-input" placeholder="test1@be5f6e75878b84ba" id="keyname_PUBLIC_KEY">
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="columns m-1">
+    <div class="column col-2">
+      <button class="btn btn-primary input-group-btn" id="btn_SIGN_HEX">Sign hex</button>
+    </div>
+    <div class="column col-8">
+      <div class="columns">
+        <div class="column col-6 col-xs-12">
+          <div class="input-group">
+            <span class="input-group-addon">keyname: </span>
+            <input type="text" class="form-input" placeholder="test1@be5f6e75878b84ba" id="keyname_SIGN_HEX">
+          </div>
+        </div>
+        <div class="column col-6 col-xs-12">
+          <div class="input-group">
+            <label class="form-switch">
+              <input type="checkbox" id="checkbox_SIGN_HEX"><i class="form-icon"></i>
+            </label>
+            <span class="input-group-addon">unlock_time: </span>
+            <input type="number" class="form-input" placeholder="45" id="unlock_time_SIGN_HEX" title="This parameter is experimental and optional!" disabled>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="columns m-1">
+    <div class="column col-2">
+      <button class="btn btn-primary input-group-btn" id="btn_SIGN_HASH">Sign hash</button>
+    </div>
+    <div class="column col-8">
+      <div class="columns">
+        <div class="column col-6 col-xs-12">
+          <div class="input-group">
+            <span class="input-group-addon">keyname: </span>
+            <input type="text" class="form-input" placeholder="test1@be5f6e75878b84ba" id="keyname_SIGN_HASH">
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="columns m-1">
+    <div class="column col-2">
+      <button class="btn btn-primary input-group-btn" id="btn_CREATE">Create</button>
+    </div>
+  </div>
+  <div class="columns m-1">
+    <div class="column col-2">
+      <button class="btn btn-primary input-group-btn" id="btn_ABOUT">About</button>
+    </div>
+  </div>
+  <div class="columns m-1">
+    <div class="column col-2">
+      <button class="btn btn-primary input-group-btn" id="btn_VERSION">Version</button>
+    </div>
+  </div>
+</div>
+<div class="container">
+  <div class="columns">
+    <div class="column col-6">
+      <label class="form-label" for="request">Request</label>
+      <textarea class="form-input" id="request" placeholder="{}" rows="9"></textarea>
+    </div>
+    <div class="column col-6">
+      <label class="form-label" for="response">Response</label>
+      <textarea class="form-input" id="response" placeholder="{}" rows="9"></textarea>
+    </div>
+  </div>
+  <div class="column col-6 my-2">
+    <div class="toast toast-warning">
+      Warning! <code>unlock_time</code> parameter is experimental and optional
+    </div>
+  </div>
+</div>
+
+<script src="keychain.js"></script>
+<script>
+  const keychain = new WS('ws://localhost:16384/');
+
+  keychain.ws.onopen = function() {
+    document.body.style.backgroundColor = '#cfc';
+
+    keychain.command(COMMANDS.VERSION, function(data) {
+      document.getElementById('version').innerText = data.result ? data.result : '';
+    })
+  };
+  keychain.ws.onclose = function() {
+    document.body.style.backgroundColor = null;
+    document.getElementById('error').style.display = 'block';
+  };
+
+  window.onload = function () {
+    attachListener('UNLOCK', ['keyname', 'unlock_time']);
+    attachListener('PUBLIC_KEY', ['keyname']);
+    attachListener('SIGN_HEX', ['keyname', 'unlock_time']);
+    attachListener('SIGN_HASH', ['keyname']);
+    attachListener('CREATE');
+    attachListener('LIST');
+    attachListener('LOCK');
+    attachListener('ABOUT');
+    attachListener('VERSION');
+    document.getElementById('checkbox_SIGN_HEX').addEventListener('click', function(e) {
+      document.getElementById('unlock_time_SIGN_HEX').disabled = !e.target.checked;
+    })
+  };
+
+  function attachListener(commandName, paramNames) {
+    document.getElementById('btn_' + commandName).addEventListener('click', function() {
+      const request = JSON.parse(JSON.stringify(COMMANDS[commandName])); // copy object
+      if (paramNames) {
+        for (let i = 0; i < paramNames.length; i++) {
+          const paramName = paramNames[i];
+          const input = document.getElementById(paramName + '_'  + commandName);
+          if (!input.disabled) {
+            request.params[paramName] = input.value;
+          }
+        }
+      }
+
+      document.getElementById('request').value = JSON.stringify(request, undefined, 2);
+      keychain.command(request, function(data) {
+        document.getElementById('response').value = JSON.stringify(data, undefined, 2);
+      })
+    });
+  }
+
+  const COMMANDS = {
+    UNLOCK: {
+      command: "unlock",
+      params: {
+        // keyname: null,
+        // unlock_time: null
+      }
+    },
+    PUBLIC_KEY: {
+      command: "public_key",
+      params: {
+        // keyname: null
+      }
+    },
+    SIGN_HEX: {
+      command: "sign_hex",
+      params: {
+        transaction: "eb0885098bca5a00825208948ec6977b1255854169e5f9f8f163f371bcf1ffd287038d7ea4c6800080038080",
+        blockchain_type: "ethereum",
+        // keyname: null,
+        // unlock_time: null
+      }
+    },
+    SIGN_HASH: {
+      command: "sign_hash",
+      params: {
+        sign_type: "VRS_canonical",
+        hash: "fe5e4a8974715e20f47c8bb609547c9e66b0b9e31d521199b3d8d6af6da74cb1",
+        // keyname: null
+      }
+    },
+    CREATE: {
+      command: "create",
+      params: {
+        keyname: "test1",
+        encrypted: true,
+        curve: "secp256k1",
+        cipher: "aes256"
+      }
+    },
+    LIST: {
+      command: "list"
+    },
+    LOCK: {
+      command: "lock"
+    },
+    ABOUT: {
+      command: "about"
+    },
+    VERSION: {
+      command: "version"
+    }
+  }
+</script>
+
+</body>
+</html>

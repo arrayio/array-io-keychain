@@ -7,6 +7,7 @@ include( GetGitRevisionDescription )
 get_git_head_revision( GIT_REFSPEC KEYCHAIN_COMMON_GIT_REVISION )
 get_git_unix_timestamp(KEYCHAIN_COMMON_GIT_REVISION_UNIX_TIMESTAMP)
 git_describe(KEYCHAIN_COMMON_GIT_REVISION_DESCRIPTION --tags)
+
 configure_file("${CMAKE_SOURCE_DIR}/keychain_lib/src/git_revision.cpp.in" "${CMAKE_CURRENT_BINARY_DIR}/git_revision.cpp" @ONLY)
 
 set(CMAKE_CXX_FLAGS "-std=c++14")

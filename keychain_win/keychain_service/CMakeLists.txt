@@ -2,7 +2,6 @@ project( KeychainWinService  )
 
 
 add_subdirectory(./service_installer)
-add_subdirectory(./service_installer/wsserverinstaller)
 
 cmake_minimum_required( VERSION 3.0.2 )
 

@@ -1,4 +1,4 @@
-project( wsservice_installer  )
+project( ws_service_installer  )
 
 if(WIN32)
 

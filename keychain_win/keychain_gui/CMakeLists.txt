@@ -75,5 +75,5 @@ endif(CMAKE_BUILD_TYPE STREQUAL "Debug")
 add_custom_command(TARGET keychain_win_gui 
 				   POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy
 				   ${CMAKE_CURRENT_BINARY_DIR}/${BUILD_TYPE_PATH}/keychain_win_gui.exe
-				   ../keychain_service/service_installer/wsserverinstaller/wsservice/keychain_win_gui.exe)
+				   ../ws_service_installer/wsservice/keychain_win_gui.exe)
 

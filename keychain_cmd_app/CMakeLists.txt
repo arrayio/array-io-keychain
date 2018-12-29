@@ -110,7 +110,7 @@ else()
 		add_custom_command(TARGET keychain 
 						   POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy
 						   ${CMAKE_CURRENT_BINARY_DIR}/${BUILD_TYPE_PATH}/keychain.exe
-						   ../keychain_win/keychain_service/service_installer/wsserverinstaller/wsservice/keychain.exe)
+						   ../keychain_win/ws_service_installer/wsservice/keychain.exe)
 	else()
 		target_link_libraries(keychain keychain_common fc_light eth-crypto ${LIB_OPENSSL} ${Boost_LIBRARIES})
 		if(APPLE) 

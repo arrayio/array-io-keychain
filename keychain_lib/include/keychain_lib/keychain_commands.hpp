@@ -587,7 +587,7 @@ struct keychain_command<command_te::create>: keychain_command_base
           hash = dev::ethash::sha3_ethash(keys.pub());
           priv_key = keys.secret();
           filename    = hash.hex().substr(0,16);
-          keyname       = params.keyname + "@"+ filename;
+          keyname       = params.keyname ;
           filename += ".json";
         }
           break;

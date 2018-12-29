@@ -13,7 +13,7 @@ else()
 endif()
 
 SET(BOOST_COMPONENTS)
-LIST(APPEND BOOST_COMPONENTS date_time system filesystem program_options signals serialization chrono unit_test_framework locale iostreams)
+LIST(APPEND BOOST_COMPONENTS date_time system filesystem program_options serialization chrono unit_test_framework locale iostreams)
 SET( Boost_USE_STATIC_LIBS ON CACHE STRING "ON or OFF" )
 
 SET(BOOST_ROOT $ENV{BOOST_ROOT})

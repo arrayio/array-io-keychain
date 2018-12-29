@@ -17,13 +17,9 @@ public:
     Widget(keychain_gui_win&, QWidget *parent = 0);
     ~Widget();
 private:
-    void closeEvent(QCloseEvent *);
     void parse(const std::string);
-    bool passClearOnExit;
+
     keychain_gui_win& gui;
-public slots:
-    void found_pass();
-    void send(std::string);
 signals:
     void poll();
 };

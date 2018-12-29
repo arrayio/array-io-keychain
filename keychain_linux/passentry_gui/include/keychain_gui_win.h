@@ -42,6 +42,10 @@ public:
 	PopupWindow * popupWindow;
     void refresh(Transaction&);
     PasswordEnterElement * password;
+	void send(std::string);
+
+	bool send_msg;
+
 private:
 	QString mExpertValue;
 	
@@ -58,10 +62,12 @@ private:
 	KeychainWidget * element = Q_NULLPTR;
 
 	KeychainServiceExchange * serviceExchange =NULL;
+	bool passClearOnExit;
 
 private:
 	void _roundCorners();
 	void _disableSignButton();
+	//void closeEvent(QCloseEvent *);
 
 protected:
 	void keyPressEvent(QKeyEvent *event) override;
@@ -72,7 +78,8 @@ private:
 	const int START_POSITION = 96;
 
 public slots:
-	void transaction_sign();
+	void found_pass();
 	void cancel_sign();
 	void set_sign_focus();
+
 };

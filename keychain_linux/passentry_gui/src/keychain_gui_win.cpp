@@ -1,4 +1,5 @@
 #include "keychain_gui_win.h"
+#include "cmd.hpp"
 
 keychain_gui_win::keychain_gui_win(Transaction &transaction, QWidget *parent)
 	: QDialog(parent)
@@ -6,7 +7,8 @@ keychain_gui_win::keychain_gui_win(Transaction &transaction, QWidget *parent)
     ui.setupUi(this);
     setWindowFlags(Qt::FramelessWindowHint);
     setFixedSize(600, 347);
-
+    passClearOnExit = true;
+    send_msg  = true;
 }
 
 void keychain_gui_win::refresh(Transaction& transaction)
@@ -161,25 +163,16 @@ void keychain_gui_win::refresh(Transaction& transaction)
     else
         lockIcon->move(width() - 55, 28);
     lockIcon->setMouseTracking(true);
-    this->connect(OKButton, &QPushButton::released, this, &keychain_gui_win::transaction_sign);
-    this->connect(CancelButton, &QPushButton::released, this, &keychain_gui_win::cancel_sign);
+    this->connect(OKButton, &QPushButton::released, this, &keychain_gui_win::found_pass);
+    this->connect(OKButton, &QPushButton::released, this, &keychain_gui_win::close);
+    this->connect(CancelButton, &QPushButton::released, this, &keychain_gui_win::close);
     _roundCorners();
     password->setValueFocus();
-    connect(password, &PasswordEnterElement::finishEnterPassword, this, &keychain_gui_win::transaction_sign);
+    //connect(password, &PasswordEnterElement::finishEnterPassword, this, &keychain_gui_win::transaction_sign);
     //if (transaction.isCreatePassword())
       //  connect(password, &PasswordEnterElement::changePassword, this, &keychain_gui_win::_disableSignButton);
 }
 
-void keychain_gui_win::transaction_sign() {
-	QString passPhrase("");
-	passPhrase = password->GetValue();
-	if (passPhrase.isEmpty()) {
-		serviceExchange->EncodeError(L"empty_password", 14);
-		return;
-	}
-	serviceExchange->EncodeSuccess(passPhrase.toStdWString(), passPhrase.length());
-	this->close();
-}
 
 void keychain_gui_win::cancel_sign() {
 	serviceExchange->EncodeCancel();
@@ -251,11 +244,41 @@ void keychain_gui_win::keyPressEvent(QKeyEvent *event)
 	}
 }
 
-
+/*
 void keychain_gui_win::closeEvent(QCloseEvent * event)
 {
 	serviceExchange->EncodeCancel();
 	this->close();
 }
+*/
+
+void keychain_gui_win::closeEvent(QCloseEvent *event)
+{
+    if (send_msg)
+    {
+        passClearOnExit ?
+        send(fc_light::json::to_string(fc_light::variant( master::cmd<( master::cmds::cancel)>().base))) :
+        send(fc_light::json::to_string(fc_light::variant( master::cmd<( master::cmds::ok)>().base)));
+    }
+
+    event->accept();
+}
 
 
+void keychain_gui_win::found_pass() {
+    //QString passPhrase("");
+    //passPhrase = password->GetValue();
+    //if (passPhrase.isEmpty()) {
+    //	serviceExchange->EncodeError(L"empty_password", 14);
+    //	return;
+    //}
+    //serviceExchange->EncodeSuccess(passPhrase.toStdWString(), passPhrase.length());
+    passClearOnExit = false;
+    //this->close();
+}
+
+void keychain_gui_win::send(std::string a)
+{
+    if ( write(STDIN_FILENO, a.c_str(), a.length() ) != a.length() )
+        close();
+}

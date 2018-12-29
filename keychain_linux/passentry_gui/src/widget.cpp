@@ -28,8 +28,7 @@ Widget::Widget(keychain_gui_win& gui_, QWidget *parent)
     connect(polling, &Polling::err, this, &Widget::close);
 
     pollingThread.start();
-    passClearOnExit = true;
-    emit Widget::poll();
+        emit Widget::poll();
 }
 
 Widget::~Widget()
@@ -39,26 +38,6 @@ Widget::~Widget()
 }
 
 
-void Widget::send(std::string a)
-{
-    if ( write(STDIN_FILENO, a.c_str(), a.length() ) != a.length() )
-        close();
-}
-
-
-
-void Widget::found_pass()
-{
-  passClearOnExit = false;
-}
-
-void Widget::closeEvent(QCloseEvent *event)
-{
-    passClearOnExit ?
-    send(fc_light::json::to_string(fc_light::variant( master::cmd<( master::cmds::cancel)>().base))) :
-    send(fc_light::json::to_string(fc_light::variant( master::cmd<( master::cmds::ok)>().base)));
-    event->accept();
-}
 
 void Widget::parse(const std::string s)
 {

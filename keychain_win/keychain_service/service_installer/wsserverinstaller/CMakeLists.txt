@@ -164,7 +164,7 @@ if(WIN32)
 					   ${installerpath}/CustomWixUI_Mondo.wixobj 
 					   ${installerpath}/CustomVerifyReadyDlg.wixobj
 					   -cultures:en-us -loc ${installerpath}/en-us.wxl 
-					   -out ${installerpath}/${PROJECT_NAME}.msi
+					   -out ${installerpath}/keychain-${installerversion}.msi
 					   VERBATIM)
 	endif()
 endif()

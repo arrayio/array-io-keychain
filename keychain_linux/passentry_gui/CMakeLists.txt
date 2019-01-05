@@ -12,9 +12,6 @@ if (NOT MSVC)
     endif()
 endif()
 
-#set (CMAKE_PREFIX_PATH "${QT_ROOT}/gcc_64/lib/cmake/Qt5Widgets/")
-set (CMAKE_PREFIX_PATH "/home/user/Qt5.12.0/5.12.0/gcc_64/lib/cmake/Qt5Widgets")
-
 project(passentrygui)
 # Find includes in corresponding build directories
 
@@ -26,9 +23,6 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTOUIC ON)
 #set(CMAKE_AUTORCC ON)
-
-SET(Qt5_DIR /home/user/Qt5.12.0/5.12.0/gcc_64/lib/cmake/Qt5)
-SET(Qt5Core_DIR /home/user/Qt5.12.0/5.12.0/gcc_64/lib/cmake/Qt5Core)
 
 find_package(Qt5Widgets CONFIG REQUIRED)
 find_package(Qt5Core)

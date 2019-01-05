@@ -46,7 +46,7 @@ keychain_app::byte_seq_t SecureModuleWrapper::_startSecureDesktop(const std::str
 	
 	HANDLE transactionPipe;
 
-	auto log = logger_singletone::instance();
+	auto log = logger_singleton::instance();
 	BOOST_LOG_SEV(log.lg, info) << "Send to pipe:"+ str;
 	//initializing security attributes
 	SECURITY_ATTRIBUTES  sa;

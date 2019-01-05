@@ -336,13 +336,13 @@ void pass_entry_term::send_gui (std::string mes, int socket_gui )
         throw std::runtime_error("sending event to gui");
 }
 
-const map_translate_singletone& map_translate_singletone::instance(Display * d)
+const map_translate_singleton& map_translate_singleton::instance(Display * d)
 {
-    static const map_translate_singletone instance(d);
+    static const map_translate_singleton instance(d);
     return instance;
 }
 
-map_translate_singletone::map_translate_singletone(Display * _display) // translate map keycode(Xorg)->keysym(Xorg)
+map_translate_singleton::map_translate_singleton(Display * _display) // translate map keycode(Xorg)->keysym(Xorg)
 {
     int  min_Xcode = 0, max_Xcode=0, gc;
     XkbStateRec state[1];

@@ -39,12 +39,12 @@ namespace slave
         };
     };
 
-    const cmd_list_singletone& cmd_list_singletone::instance() {
-        static const cmd_list_singletone instance;
+    const cmd_list_singleton& cmd_list_singleton::instance() {
+        static const cmd_list_singleton instance;
         return instance;
     }
 
-    cmd_list_singletone::cmd_list_singletone()
+    cmd_list_singleton::cmd_list_singleton()
     {
         hana::for_each(  hana::make_range(hana::int_c<static_cast<int>(cmds::unknown)>,
                                           hana::int_c<static_cast<int>(cmds::last)>),
@@ -56,7 +56,7 @@ namespace slave
                          });
     };
 
-    const std::shared_ptr<cmd_base> cmd_list_singletone::operator[](cmds cmd_) const {
+    const std::shared_ptr<cmd_base> cmd_list_singleton::operator[](cmds cmd_) const {
         size_t a = static_cast<size_t>(cmd_);
         if (a >= cmd_list.size())
             return cmd_list[0];

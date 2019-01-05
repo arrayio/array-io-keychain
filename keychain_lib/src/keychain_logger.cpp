@@ -15,7 +15,7 @@
 #include <keychain.hpp>
 
 
-logger_singletone::logger_singletone(std::string postfix)
+logger_singleton::logger_singleton(std::string postfix)
 {
 
     typedef sinks::synchronous_sink< sinks::text_file_backend > file_sink;
@@ -63,9 +63,9 @@ logger_singletone::logger_singletone(std::string postfix)
 
 }
 
-const logger_singletone& logger_singletone::instance(std::string postfix)
+const logger_singleton& logger_singleton::instance(std::string postfix)
 {
-    static const logger_singletone instance(postfix);
+    static const logger_singleton instance(postfix);
     return instance;
 }
 

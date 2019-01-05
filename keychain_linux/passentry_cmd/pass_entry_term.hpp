@@ -47,11 +47,11 @@ private:
 };
 
 
-class map_translate_singletone
+class map_translate_singleton
 {
 public:
-    map_translate_singletone(Display* );
-    static const map_translate_singletone& instance(Display*);
+  map_translate_singleton(Display* );
+    static const map_translate_singleton& instance(Display*);
     const KeySym * map;
 private:
     KeySym  keysym[MAP_SIZE]; // max count of keycodes  for lowercase and uppercase

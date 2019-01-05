@@ -13,7 +13,6 @@ namespace keychain_app {
 namespace keyfile_format
 {
 
-
 enum file_type
 {
   TYPE_UNKNOWN = 0,

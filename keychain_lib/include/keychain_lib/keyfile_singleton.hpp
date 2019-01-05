@@ -2,8 +2,8 @@
 // Created by roman on 5/1/19.
 //
 
-#ifndef KEYCHAINAPP_KEYFILE_SINGLETONE_HPP
-#define KEYCHAINAPP_KEYFILE_SINGLETONE_HPP
+#ifndef KEYCHAINAPP_KEYFILE_SINGLETON_HPP
+#define KEYCHAINAPP_KEYFILE_SINGLETON_HPP
 
 #include <map>
 #include "key_file_parser.hpp"
@@ -12,11 +12,13 @@ namespace keychain_app {
 
 using keyfile_map_t = std::map<std::string, keyfile_format::keyfile_t>;
 
-class keyfile_singleton: private keyfile_map_t
+class keyfile_singleton
 {
-  using value_t = keyfile_map_t::value_type;
   keyfile_singleton();
   ~keyfile_singleton();
+  
+  using value_t = keyfile_map_t::value_type;
+  keyfile_map_t m_keydata_map;
 public:
   using iterator = keyfile_map_t::iterator;
   static const keyfile_singleton& instance();
@@ -32,5 +34,5 @@ public:
 
 
 
-#endif //KEYCHAINAPP_KEYFILE_SINGLETONE_HPP
+#endif //KEYCHAINAPP_KEYFILE_SINGLETON_HPP
 

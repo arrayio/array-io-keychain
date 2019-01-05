@@ -86,4 +86,4 @@ add_executable(passentry_gui ${GUI_SOURCES} ${GUI_INCLUDE} ${GUI_RESOURCES} ${GU
 
 # Use the Widgets module from Qt 5
 #target_link_libraries(passentry_gui Qt5::Widgets Qt5::Core Qt5::Qml Qt5::Svg keychain_common secmodlib kaitai_struct_cpp_stl_runtime fc_light ${LIB_PTHREAD} ${LIB_OPENSSL} ${Boost_LIBRARIES} )
-target_link_libraries(passentry_gui Qt5::Widgets Qt5::Core   keychain_common  kaitai_struct_cpp_stl_runtime fc_light ${LIB_PTHREAD} ${LIB_OPENSSL} ${Boost_LIBRARIES} )
+target_link_libraries(passentry_gui Qt5::Widgets Qt5::Core   keychain_common  kaitai_struct_cpp_stl_runtime fc_light ${LIB_PTHREAD} ${LIB_OPENSSL} ${Boost_LIBRARIES} -ldl )

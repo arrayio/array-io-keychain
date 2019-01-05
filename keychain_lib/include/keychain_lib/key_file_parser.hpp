@@ -36,6 +36,17 @@ struct encrypted_data
   std::string enc_data;
 };
 
+// for more information use "openssl ecparam -list_curves"
+enum struct curve_etype
+{
+  unknown,
+//      secp224k1,
+//      secp224r1,
+    secp256k1
+//      secp384r1,
+//      secp521r1
+};
+
 struct keyfile_t
 {
   file_type filetype;
@@ -45,16 +56,7 @@ struct keyfile_t
   struct keyinfo_t
   {
     bool encrypted;
-    // for more information use "openssl ecparam -list_curves"
-    enum struct curve_etype
-    {
-      unknown,
-//      secp224k1,
-//      secp224r1,
-      secp256k1
-//      secp384r1,
-//      secp521r1
-    } curve_type;
+    curve_etype curve_type;
     fc_light::variant priv_key_data;//either std::string or encrypted_data
     std::string public_key;
   } keyinfo;
@@ -65,7 +67,7 @@ struct keyfile_t
 }
 FC_LIGHT_REFLECT_ENUM(keychain_app::keyfile_format::cipher_etype, (unknown)(aes128)(aes192)(aes256))
 FC_LIGHT_REFLECT_ENUM(keychain_app::keyfile_format::file_type, (TYPE_UNKNOWN)(TYPE_KEY))
-FC_LIGHT_REFLECT_ENUM(keychain_app::keyfile_format::keyfile_t::keyinfo_t::curve_etype, (unknown)(secp256k1))
+FC_LIGHT_REFLECT_ENUM(keychain_app::keyfile_format::curve_etype, (unknown)(secp256k1))
 FC_LIGHT_REFLECT(keychain_app::keyfile_format::encrypted_data, (cipher_type)(iv)(enc_data))
 FC_LIGHT_REFLECT(keychain_app::keyfile_format::keyfile_t::keyinfo_t, (encrypted)(curve_type)(priv_key_data)(public_key))
 FC_LIGHT_REFLECT(keychain_app::keyfile_format::keyfile_t, (filetype)(keyname)(description)(keychain_version)(keyinfo))

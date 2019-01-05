@@ -580,7 +580,7 @@ struct keychain_command<command_te::create>: keychain_command_base
       std::string filename, keyname;
       switch (params.curve)
       {
-        case keyfile_format::keyfile_t::keyinfo_t::curve_etype::secp256k1:
+        case keyfile_format::curve_etype::secp256k1:
         {
           auto keys = dev::KeyPair::create();
           pb_hex = keys.pub().hex();

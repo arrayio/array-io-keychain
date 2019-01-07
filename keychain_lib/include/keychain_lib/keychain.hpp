@@ -49,14 +49,14 @@ private:
   keychain(const secure_dlg_mod_base* );
 };
 
-struct keychain_commands_singletone
+struct keychain_commands_singleton
 {
     using command_ptr = std::shared_ptr<keychain_command_base>;
-    static const keychain_commands_singletone& instance();
+    static const keychain_commands_singleton& instance();
     const command_ptr operator[](command_te cmd_type) const;
 private:
     std::vector<command_ptr> m_command_list;
-    keychain_commands_singletone();
+    keychain_commands_singleton();
 };
 
 }

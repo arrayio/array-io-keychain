@@ -31,13 +31,13 @@ namespace  slave {
         virtual void operator()(polling*, const fc_light::variant&) const = 0;
         virtual ~cmd_base() {};
     };
-    struct cmd_list_singletone
+    struct cmd_list_singleton
     {
     public:
-        static const cmd_list_singletone& instance();
+        static const cmd_list_singleton& instance();
         const std::shared_ptr<cmd_base> operator[](cmds) const;
     private:
-        cmd_list_singletone();
+        cmd_list_singleton();
         std::vector<std::shared_ptr<cmd_base>> cmd_list;
     };
 }

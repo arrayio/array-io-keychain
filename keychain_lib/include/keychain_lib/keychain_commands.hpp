@@ -492,7 +492,7 @@ struct keychain_command<command_te::sign_hash> : keychain_command_base
 
   virtual std::string operator()(keychain_base* keychain, const fc_light::variant& params_variant, int id) const override
   {
-    auto log = logger_singletone::instance();
+    auto log = logger_singleton::instance();
   
     params_t params;
     try
@@ -561,7 +561,7 @@ struct keychain_command<command_te::create>: keychain_command_base
       std::string description;
       bool encrypted;
       keyfile_format::cipher_etype cipher;
-      keyfile_format::keyfile_t::keyinfo_t::curve_etype curve;
+      keyfile_format::curve_etype curve;
     };
     using params_t = params;
     virtual std::string operator()(keychain_base* keychain, const fc_light::variant& params_variant, int id) const override
@@ -580,7 +580,7 @@ struct keychain_command<command_te::create>: keychain_command_base
       std::string filename, keyname;
       switch (params.curve)
       {
-        case keyfile_format::keyfile_t::keyinfo_t::curve_etype::secp256k1:
+        case keyfile_format::curve_etype::secp256k1:
         {
           auto keys = dev::KeyPair::create();
           pb_hex = keys.pub().hex();
@@ -603,7 +603,7 @@ struct keychain_command<command_te::create>: keychain_command_base
         auto passwd = *keychain->get_passwd_on_create();
         if (passwd.empty())
           FC_LIGHT_THROW_EXCEPTION(fc_light::password_input_exception, "");
-        auto& encryptor = encryptor_singletone::instance();
+        auto& encryptor = encryptor_singleton::instance();
         auto enc_data = encryptor.encrypt_private_key(params.cipher, passwd, priv_key);
         keyfile.keyinfo.priv_key_data = fc_light::variant(enc_data);
         keyfile.keyinfo.encrypted = true;

@@ -12,9 +12,6 @@ if (NOT MSVC)
     endif()
 endif()
 
-#set (CMAKE_PREFIX_PATH "${QT_ROOT}/gcc_64/lib/cmake/Qt5Widgets/")
-set (CMAKE_PREFIX_PATH "/home/user/Qt5.12.0/5.12.0/gcc_64/lib/cmake/Qt5Widgets")
-
 project(passentrygui)
 # Find includes in corresponding build directories
 
@@ -26,9 +23,6 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTOUIC ON)
 #set(CMAKE_AUTORCC ON)
-
-SET(Qt5_DIR /home/user/Qt5.12.0/5.12.0/gcc_64/lib/cmake/Qt5)
-SET(Qt5Core_DIR /home/user/Qt5.12.0/5.12.0/gcc_64/lib/cmake/Qt5Core)
 
 find_package(Qt5Widgets CONFIG REQUIRED)
 find_package(Qt5Core)
@@ -86,4 +80,4 @@ add_executable(passentry_gui ${GUI_SOURCES} ${GUI_INCLUDE} ${GUI_RESOURCES} ${GU
 
 # Use the Widgets module from Qt 5
 #target_link_libraries(passentry_gui Qt5::Widgets Qt5::Core Qt5::Qml Qt5::Svg keychain_common secmodlib kaitai_struct_cpp_stl_runtime fc_light ${LIB_PTHREAD} ${LIB_OPENSSL} ${Boost_LIBRARIES} )
-target_link_libraries(passentry_gui Qt5::Widgets Qt5::Core   keychain_common  kaitai_struct_cpp_stl_runtime fc_light ${LIB_PTHREAD} ${LIB_OPENSSL} ${Boost_LIBRARIES} )
+target_link_libraries(passentry_gui Qt5::Widgets Qt5::Core   keychain_common  kaitai_struct_cpp_stl_runtime fc_light ${LIB_PTHREAD} ${LIB_OPENSSL} ${Boost_LIBRARIES} -ldl )

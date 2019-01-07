@@ -18,12 +18,12 @@ namespace keychain_app
 
 using byte_seq_t = std::vector<char>;
 
-class encryptor_singletone
+class encryptor_singleton
 {
-  encryptor_singletone();
-  ~encryptor_singletone();
+  encryptor_singleton();
+  ~encryptor_singleton();
 public:
-  static encryptor_singletone& instance();
+  static encryptor_singleton& instance();
   
   keyfile_format::encrypted_data encrypt_private_key(keyfile_format::cipher_etype etype, const byte_seq_t& key,  const dev::Secret& priv_key);
   dev::Secret decrypt_private_key(const byte_seq_t& key, keyfile_format::encrypted_data& enc_data);

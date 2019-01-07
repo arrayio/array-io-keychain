@@ -44,7 +44,7 @@ void Widget::parse(const std::string s)
     auto a = fc_light::json::from_string(s);
     try {
         auto cmd = a.as<slave::cmd_common>();
-        auto cmd_map = slave::cmd_list_singletone::instance();
+        auto cmd_map = slave::cmd_list_singleton::instance();
         auto p_func = cmd_map[cmd.cmd];
         (*p_func)(gui, cmd.params);
     }

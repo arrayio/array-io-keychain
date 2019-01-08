@@ -7,7 +7,6 @@
         <UI>
             <Dialog Id="CustomVerifyReadyDlg" Width="370" Height="270" Title="!(loc.VerifyReadyDlg_Title)" TrackDiskSpace="yes">
                 <Control Id="Install" Type="PushButton" ElevationShield="yes" X="212" Y="243" Width="80" Height="17" Default="yes" Hidden="yes" Disabled="yes" Text="!(loc.VerifyReadyDlgInstall)">
-					<Condition Action="disable">REMOVEKEYS</Condition>
 					<Condition Action="show">NOT Installed AND ALLUSERS</Condition>
                     <Condition Action="enable">NOT Installed</Condition>
                     <Condition Action="default">NOT Installed</Condition>
@@ -18,7 +17,6 @@
                     <Publish Event="SpawnDialog" Value="OutOfDiskDlg">(OutOfDiskSpace = 1 AND OutOfNoRbDiskSpace = 1) OR (OutOfDiskSpace = 1 AND PROMPTROLLBACKCOST="F")</Publish>
                 </Control>
                 <Control Id="InstallNoShield" Type="PushButton" ElevationShield="no" X="212" Y="243" Width="80" Height="17" Default="yes" Hidden="yes" Disabled="yes" Text="!(loc.VerifyReadyDlgInstall)">
-                    <Condition Action="disable">REMOVEKEYS</Condition>
 					<Condition Action="show">NOT Installed AND NOT ALLUSERS</Condition>
                     <Condition Action="enable">NOT Installed</Condition>
                     <Condition Action="default">NOT Installed</Condition>
@@ -29,7 +27,6 @@
                     <Publish Event="SpawnDialog" Value="OutOfDiskDlg">(OutOfDiskSpace = 1 AND OutOfNoRbDiskSpace = 1) OR (OutOfDiskSpace = 1 AND PROMPTROLLBACKCOST="F")</Publish>
                 </Control>
                 <Control Id="Change" Type="PushButton" ElevationShield="yes" X="212" Y="243" Width="80" Height="17" Default="yes" Hidden="yes" Disabled="yes" Text="!(loc.VerifyReadyDlgChange)">
-                    <Condition Action="disable">REMOVEKEYS</Condition>
 					<Condition Action="show">WixUI_InstallMode = "Change" AND ALLUSERS AND (ADDLOCAL OR REMOVE)</Condition>
                     <Condition Action="enable">WixUI_InstallMode = "Change"</Condition>
                     <Condition Action="default">WixUI_InstallMode = "Change"</Condition>
@@ -40,7 +37,6 @@
                     <Publish Event="SpawnDialog" Value="OutOfDiskDlg">(OutOfDiskSpace = 1 AND OutOfNoRbDiskSpace = 1) OR (OutOfDiskSpace = 1 AND PROMPTROLLBACKCOST="F")</Publish>
                 </Control>
                 <Control Id="ChangeNoShield" Type="PushButton" ElevationShield="no" X="212" Y="243" Width="80" Height="17" Default="yes" Hidden="yes" Disabled="yes" Text="!(loc.VerifyReadyDlgChange)">
-                    <Condition Action="disable">REMOVEKEYS</Condition>
 					<Condition Action="show">WixUI_InstallMode = "Change" AND (NOT ALLUSERS OR (NOT ADDLOCAL AND NOT REMOVE))</Condition>
                     <Condition Action="enable">WixUI_InstallMode = "Change"</Condition>
                     <Condition Action="default">WixUI_InstallMode = "Change"</Condition>
@@ -51,7 +47,6 @@
                     <Publish Event="SpawnDialog" Value="OutOfDiskDlg">(OutOfDiskSpace = 1 AND OutOfNoRbDiskSpace = 1) OR (OutOfDiskSpace = 1 AND PROMPTROLLBACKCOST="F")</Publish>
                 </Control>
                 <Control Id="Repair" Type="PushButton" X="212" Y="243" Width="80" Height="17" Default="yes" Hidden="yes" Disabled="yes" Text="!(loc.VerifyReadyDlgRepair)">
-                    <Condition Action="disable">REMOVEKEYS</Condition>
 					<Condition Action="show">WixUI_InstallMode = "Repair"</Condition>
                     <Condition Action="enable">WixUI_InstallMode = "Repair"</Condition>
                     <Condition Action="default">WixUI_InstallMode = "Repair"</Condition>
@@ -64,7 +59,6 @@
                     <Publish Event="SpawnDialog" Value="OutOfDiskDlg">(OutOfDiskSpace = 1 AND OutOfNoRbDiskSpace = 1) OR (OutOfDiskSpace = 1 AND PROMPTROLLBACKCOST="F")</Publish>
                 </Control>
                 <Control Id="Remove" Type="PushButton" ElevationShield="yes" X="212" Y="243" Width="80" Height="17" Hidden="yes" Disabled="yes" Text="!(loc.VerifyReadyDlgRemove)">
-					<Condition Action="enable">REMOVEKEYS</Condition>
 					<Condition Action="show">WixUI_InstallMode = "Remove" AND ALLUSERS</Condition>
                     <Condition Action="enable">WixUI_InstallMode = "Remove"</Condition>
                     <Publish Event="Remove" Value="All"><![CDATA[OutOfDiskSpace <> 1]]></Publish>
@@ -74,9 +68,10 @@
                     <Publish Event="EnableRollback" Value="False">OutOfDiskSpace = 1 AND OutOfNoRbDiskSpace = 0 AND PROMPTROLLBACKCOST="D"</Publish>
                     <Publish Event="SpawnDialog" Value="OutOfDiskDlg">(OutOfDiskSpace = 1 AND OutOfNoRbDiskSpace = 1) OR (OutOfDiskSpace = 1 AND PROMPTROLLBACKCOST="F")</Publish>
                 </Control>
-				<Control Id="RemoveKeysCheckBox" Type="CheckBox" X="25" Y="120" Width="150" Height="17" Disabled="yes" Property="REMOVEKEYS" CheckBoxValue="1" Text="Not remove stored keys" >
-					<Condition Action="show">WixUI_InstallMode = "Remove" AND ALLUSERS</Condition>
-                    <Condition Action="enable">WixUI_InstallMode = "Remove"</Condition>
+				<Control Id="RemoveKeysCheckBox" Type="CheckBox" X="25" Y="200" Width="100" Height="17" Disabled="yes" Property="REMOVEKEYS" CheckBoxValue="1" Text="Not remove stored keys" >
+					<Condition Action="enable"><![CDATA[WixUI_InstallMode = "Remove"]]></Condition>
+					<Condition Action="disable"><![CDATA[WixUI_InstallMode <> "Remove"]]></Condition>
+					<Condition Action="hide"><![CDATA[WixUI_InstallMode <> "Remove"]]></Condition>
 				</Control>
                 <Control Id="RemoveNoShield" Type="PushButton" ElevationShield="no" X="212" Y="243" Width="80" Height="17" Hidden="yes" Disabled="yes" Text="!(loc.VerifyReadyDlgRemove)">
 					<Condition Action="show">WixUI_InstallMode = "Remove" AND NOT ALLUSERS</Condition>
@@ -89,7 +84,6 @@
                     <Publish Event="SpawnDialog" Value="OutOfDiskDlg">(OutOfDiskSpace = 1 AND OutOfNoRbDiskSpace = 1) OR (OutOfDiskSpace = 1 AND PROMPTROLLBACKCOST="F")</Publish>
                 </Control>
                 <Control Id="Update" Type="PushButton" ElevationShield="yes" X="212" Y="243" Width="80" Height="17" Hidden="yes" Disabled="yes" Text="!(loc.VerifyReadyDlgUpdate)">
-                    <Condition Action="disable">REMOVEKEYS</Condition>
 					<Condition Action="show">WixUI_InstallMode = "Update" AND ALLUSERS</Condition>
                     <Condition Action="enable">WixUI_InstallMode = "Update"</Condition>
                     <Publish Event="EndDialog" Value="Return"><![CDATA[OutOfDiskSpace <> 1]]></Publish>
@@ -99,7 +93,6 @@
                     <Publish Event="SpawnDialog" Value="OutOfDiskDlg">(OutOfDiskSpace = 1 AND OutOfNoRbDiskSpace = 1) OR (OutOfDiskSpace = 1 AND PROMPTROLLBACKCOST="F")</Publish>
                 </Control>
                 <Control Id="UpdateNoShield" Type="PushButton" ElevationShield="no" X="212" Y="243" Width="80" Height="17" Hidden="yes" Disabled="yes" Text="!(loc.VerifyReadyDlgUpdate)">
-                    <Condition Action="disable">REMOVEKEYS</Condition>
 					<Condition Action="show">WixUI_InstallMode = "Update" AND NOT ALLUSERS</Condition>
                     <Condition Action="enable">WixUI_InstallMode = "Update"</Condition>
                     <Publish Event="EndDialog" Value="Return"><![CDATA[OutOfDiskSpace <> 1]]></Publish>

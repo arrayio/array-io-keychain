@@ -43,7 +43,7 @@ namespace  slave {
 }
 
 namespace  master {
-    enum struct cmds {unknown = 0, rawtrx, close, modify, length, last};
+    enum struct cmds {unknown = 0, rawtrx, close, modify, length, create, last};
 
     struct cmd_base {
         cmd_base(): cmd(cmds::unknown){};
@@ -93,6 +93,17 @@ namespace  master {
         };
         length_t length;
     };
+
+    template<>
+    struct cmd<cmds::create> : cmd_base{
+        cmd(std::string name_): cmd_base(), keyname(name_){
+            cmd_base::cmd = cmds::create;
+            params = fc_light::variant(keyname);
+        };
+        struct keyname_t { keyname_t(std::string s):name(s){}
+            std::string name;
+        } keyname;
+    };
 }
 
 FC_LIGHT_REFLECT_ENUM(master::cmds, (unknown)(rawtrx)(close)(modify)(length)(last))
@@ -101,6 +112,7 @@ FC_LIGHT_REFLECT(master::cmd<master::cmds::rawtrx>::rawtrx_t, (rawtrx))
 FC_LIGHT_REFLECT(master::cmd<master::cmds::close>::base_t, (cmd))
 FC_LIGHT_REFLECT(master::cmd<master::cmds::modify>::modify_t, (caps)(num)(shift))
 FC_LIGHT_REFLECT(master::cmd<master::cmds::length>::length_t, (len))
+FC_LIGHT_REFLECT(master::cmd<master::cmds::create>::keyname_t, (name))
 
 FC_LIGHT_REFLECT_ENUM(slave::cmds, (unknown)(ok)(cancel)(last))
 FC_LIGHT_REFLECT(slave::cmd_common, (cmd)(params))

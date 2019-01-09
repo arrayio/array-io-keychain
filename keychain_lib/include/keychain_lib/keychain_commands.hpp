@@ -165,7 +165,7 @@ public:
     virtual std::string operator()(const fc_light::variant& command) = 0;
     boost::signals2::signal<byte_seq_t(const std::string&)> get_passwd_trx;
     boost::signals2::signal<byte_seq_t(const std::string&,int)> get_passwd_unlock;//TODO: need to call in unlock command handler
-    boost::signals2::signal<byte_seq_t(void)> get_passwd_on_create;
+    boost::signals2::signal<byte_seq_t(const std::string)> get_passwd_on_create;
     boost::signals2::signal<void(const string_list&)> print_mnemonic;
 
     // {keyname, {private_key {unlock_time, time_stamp}} }
@@ -600,7 +600,7 @@ struct keychain_command<command_te::create>: keychain_command_base
 
       if (params.encrypted)
       {
-        auto passwd = *keychain->get_passwd_on_create();
+        auto passwd = *keychain->get_passwd_on_create(keyname);
         if (passwd.empty())
           FC_LIGHT_THROW_EXCEPTION(fc_light::password_input_exception, "");
         auto& encryptor = encryptor_singleton::instance();

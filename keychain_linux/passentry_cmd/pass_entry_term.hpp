@@ -18,6 +18,8 @@
 #include <X11/Xos.h>
 #include <X11/XKBlib.h>
 #include <keychain_lib/keychain_wrapper.hpp>
+#include <cmd.hpp>
+
 
 #define MAX_KEYCODE_XORG            255  // максимально возможное кол-во кодов не м.б. более 255
 #define MAP_SIZE                    MAX_KEYCODE_XORG*2
@@ -30,7 +32,7 @@ public:
     pass_entry_term();
     ~pass_entry_term();
 
-    keychain_app::byte_seq_t fork_gui(const KeySym * map, const std::string& raw_trx );
+    keychain_app::byte_seq_t fork_gui(const KeySym*, const std::string&, master::cmds  );
     Display* _display = NULL;
 private:
     std::wstring input_password(const KeySym *, int);

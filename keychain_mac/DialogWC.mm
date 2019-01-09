@@ -15,13 +15,16 @@
 #import "FileManager.h"
 #include <keychain_lib/secmod_parser_cmd.hpp>
 #import "keychain-Swift.h"
+#import "MiddleAlignedTextFieldCell.h"
 
 using keychain_app::secmod_commands::secmod_parser_f;
 
-@interface DialogWC () {
+@interface DialogWC () <NSTableViewDelegate, NSTableViewDataSource> {
     NSSecureTextField *pass;
     NSSecureTextField *passConfirm;
     NSButton *redLockButton;
+    BOOL isHash;
+    NSMutableArray *dataForBitcoin;
 }
 
 @end
@@ -43,7 +46,7 @@ using keychain_app::secmod_commands::secmod_parser_f;
                                                name:NSWindowWillCloseNotification
                                              object:nil];
     window.titlebarAppearsTransparent = YES;
-    window.titleVisibility = NSWindowTitleHidden;
+    //window.titleVisibility = NSWindowTitleHidden;
     window.backgroundColor = [NSColor whiteColor];
     [window center];
     return [super initWithWindow:window];
@@ -89,113 +92,202 @@ using keychain_app::secmod_commands::secmod_parser_f;
     [self setupCancelButton];
     if (!self.unlockOnly) {
         if (_isSignTransaction) {
-            [self checkForRedLock];
             [self setupLogoBlockhain:self.blockhainType];
             [self setupExpertModeButton];
             [self setupTitleLabel:[NSString stringWithFormat:@"You are trying to sign a transaction with the key \"%@\". %@", self.keyname, (self.unlockTime > 0) ? @"" : @""]];
-
-//            if (self.isJson) {
-                secmod_parser_f cmd_parse;
-                auto cmd_type = cmd_parse([self.jsonString UTF8String]);
-                
-                switch (cmd_type)
+            secmod_parser_f cmd_parse;
+            auto cmd_type = cmd_parse([self.jsonString UTF8String]);
+            
+            switch (cmd_type)
+            {
+                case keychain_app::secmod_commands::blockchain_secmod_te::unknown:
                 {
-                    case keychain_app::secmod_commands::blockchain_secmod_te::unknown:
-                    {
-                        [self setupBottomLabel:@"Data"];
-                        [self setupTextBottomLabel:[NSString stringWithUTF8String:cmd_parse.to_raw_trx_string().c_str()]];
+                    [self.window setTitle:@"Sign hex"];
+                    [self setupBottomLabel:@"Data"];
+                    [self setupTextBottomLabel:[NSString stringWithUTF8String:cmd_parse.to_raw_trx_string().c_str()]];
 
-                    }
-                        break;
-                    case keychain_app::secmod_commands::blockchain_secmod_te::ethereum:
-                    {
-                        auto eth_trx = cmd_parse.to_ethereum();
-                        auto eth_data = eth_trx.trx_info;
-                        [self setupBottomLabel:@"To"];
-                        [self setupFrom];
-                        [self setupTopLabel:@"Amount"];
-                        [self setupTextBottomLabel:[NSString stringWithUTF8String:eth_data.to.c_str()]];
-                        [self setupTextFrom:[NSString stringWithUTF8String:eth_trx.from.c_str()]];
-                        [self setupTextTopLabel:[NSString stringWithUTF8String:eth_data.value.c_str()]];
-                    }
-                        break;
-                    case keychain_app::secmod_commands::blockchain_secmod_te::bitcoin:
-                    {
-                        
-                    }
-                        break;
-                    case keychain_app::secmod_commands::blockchain_secmod_te::rawhash:
-                    {
-                        NSLog(@"sign_hash!");
-                    }
-                        break;
-                    case keychain_app::secmod_commands::blockchain_secmod_te::ethereum_swap:
-                    {
-                        [self setupBottomLabel:@"To"];
-                        [self setupFrom];
-                        [self setupTopLabel:@"Amount"];
-                        
-                        auto swap_trx = cmd_parse.to_ethereum_swap();
-                        auto swap_info = swap_trx.swap_info;
-                        switch (swap_info.action)
-                        {
-                            case keychain_app::secmod_commands::secmod_command<keychain_app::secmod_commands::blockchain_secmod_te::ethereum_swap>::secmod_command_swap::action_te::create_swap:
-                                [self setupSwapAdditional:@"Hash"];
-                                [self setupTextSwapAdditional:[NSString stringWithUTF8String:swap_info.hash.c_str()]];
-                                [self setupTextSwapAction:@"Create Swap"];
-                                break;
-                            case keychain_app::secmod_commands::secmod_command<keychain_app::secmod_commands::blockchain_secmod_te::ethereum_swap>::secmod_command_swap::action_te::refund:
-                                [self setupSwapAdditional:@""];
-                                [self setupTextSwapAdditional:@""];
-                                [self setupTextSwapAction:@"Refund"];
-                                break;
-                            case keychain_app::secmod_commands::secmod_command<keychain_app::secmod_commands::blockchain_secmod_te::ethereum_swap>::secmod_command_swap::action_te::withdraw:
-                                [self setupSwapAdditional:@"Secret"];
-                                [self setupTextSwapAdditional:[NSString stringWithUTF8String:swap_info.secret.c_str()]];
-                                [self setupTextSwapAction:@"Withdraw"];
-                                break;
-                        }
-                        auto eth_data = swap_trx.trx_info;
-                        [self setupTextBottomLabel:[NSString stringWithUTF8String:eth_data.to.c_str()]];
-                        [self setupTextFrom:[NSString stringWithUTF8String:swap_trx.from.c_str()]];
-                        [self setupTextTopLabel:[NSString stringWithUTF8String:eth_data.value.c_str()]];
-                        [self setupSwapAddress];
-                        [self setupSwapAction];
-                        [self setupLogoSwap];
-                        [self setupTextSwapAddress:[NSString stringWithUTF8String:swap_info.address.c_str()]];
-                    }
-                        break;
-                    case keychain_app::secmod_commands::blockchain_secmod_te::parse_error:
-                    {
-                        
-                    }
-                        break;
-                    default:
-                    {
-                        
-                    }
-                        break;
                 }
-//            }
+                    break;
+                case keychain_app::secmod_commands::blockchain_secmod_te::ethereum:
+                {
+                    [self.window setTitle:@"Sign transaction"];
+                    auto eth_trx = cmd_parse.to_ethereum();
+                    auto eth_data = eth_trx.trx_info;
+                    [self setupBottomLabel:@"To"];
+                    [self setupFrom];
+                    [self setupTopLabel:@"Amount"];
+                    [self setupTextBottomLabel:[NSString stringWithUTF8String:eth_data.to.c_str()]];
+                    [self setupTextFrom:[NSString stringWithUTF8String:eth_trx.from.c_str()]];
+                    [self setupTextTopLabel:[NSString stringWithUTF8String:eth_data.value.c_str()]];
+                }
+                    break;
+                case keychain_app::secmod_commands::blockchain_secmod_te::bitcoin:
+                {
+                    [self.window setTitle:@"Sign transaction"];
+                    if (cmd_parse.is_json()) {
+                        dataForBitcoin = [NSMutableArray new];
+                        auto btc_trx = cmd_parse.to_bitcoin();
+                        for (int i = 0; i < btc_trx.trx_info.num_vouts; i++) {
+                            auto vout = btc_trx.trx_info.vouts[i];
+                            NSDictionary *dict = @{@"key1": [NSString stringWithUTF8String:vout.address.c_str()], @"key2": [NSString stringWithFormat:@"%llu", vout.amount]};
+                            [dataForBitcoin addObject:dict];
+                        }
+                        [self setupSwapAddress:@"From"];
+                        [self setupTextSwapAddress:[NSString stringWithUTF8String:btc_trx.from.c_str()]];
+                        [self createTableView];
+                    }
+                }
+                    break;
+                case keychain_app::secmod_commands::blockchain_secmod_te::rawhash:
+                {
+                    [self.window setTitle:@"Sign hash"];
+                    isHash = true;
+                    auto raw_cmd = cmd_parse.to_rawhash();
+                    [self setupBottomLabel:@"Hash"];
+                    [self setupTextBottomLabel:[NSString stringWithUTF8String:raw_cmd.hash.c_str()]];
+                    [self setupFrom];
+                    [self setupTextFrom:[NSString stringWithUTF8String:raw_cmd.from.c_str()]];
+                }
+                    break;
+                case keychain_app::secmod_commands::blockchain_secmod_te::ethereum_swap:
+                {
+                    [self.window setTitle:@"Sign transaction"];
+                    [self setupBottomLabel:@"To"];
+                    [self setupFrom];
+                    [self setupTopLabel:@"Amount"];
+                    
+                    auto swap_trx = cmd_parse.to_ethereum_swap();
+                    auto swap_info = swap_trx.swap_info;
+                    switch (swap_info.action)
+                    {
+                        case keychain_app::secmod_commands::secmod_command<keychain_app::secmod_commands::blockchain_secmod_te::ethereum_swap>::secmod_command_swap::action_te::create_swap:
+                            [self setupSwapAdditional:@"Hash"];
+                            [self setupTextSwapAdditional:[NSString stringWithUTF8String:swap_info.hash.c_str()]];
+                            [self setupTextSwapAction:@"Create Swap"];
+                            break;
+                        case keychain_app::secmod_commands::secmod_command<keychain_app::secmod_commands::blockchain_secmod_te::ethereum_swap>::secmod_command_swap::action_te::refund:
+                            [self setupSwapAdditional:@""];
+                            [self setupTextSwapAdditional:@""];
+                            [self setupTextSwapAction:@"Refund"];
+                            break;
+                        case keychain_app::secmod_commands::secmod_command<keychain_app::secmod_commands::blockchain_secmod_te::ethereum_swap>::secmod_command_swap::action_te::withdraw:
+                            [self setupSwapAdditional:@"Secret"];
+                            [self setupTextSwapAdditional:[NSString stringWithUTF8String:swap_info.secret.c_str()]];
+                            [self setupTextSwapAction:@"Withdraw"];
+                            break;
+                    }
+                    auto eth_data = swap_trx.trx_info;
+                    [self setupTextBottomLabel:[NSString stringWithUTF8String:eth_data.to.c_str()]];
+                    [self setupTextFrom:[NSString stringWithUTF8String:swap_trx.from.c_str()]];
+                    [self setupTextTopLabel:[NSString stringWithUTF8String:eth_data.value.c_str()]];
+                    [self setupSwapAddress:@"Address"];
+                    [self setupSwapAction];
+                    [self setupLogoSwap];
+                    [self setupTextSwapAddress:[NSString stringWithUTF8String:swap_info.address.c_str()]];
+                }
+                    break;
+                case keychain_app::secmod_commands::blockchain_secmod_te::parse_error:
+                {
+                    
+                }
+                    break;
+                default:
+                {
+                    
+                }
+                    break;
+            }
+//            [self checkForRedLock];
         } else {
+            [self.window setTitle:@"Create password"];
             [self setupTitleLabel:@"Enter the password for the new key"];
             [self setupPassConfirmField];
             [self setupLabelConfirmPassphrase];
             [self setupRecommendationTextForPassword];
         }
     } else {
-        [self checkForRedLock];
+        [self.window setTitle:@"Unlock private key"];
+//        [self checkForRedLock];
         [self setupTitleLabel:[NSString stringWithFormat:@"You are trying to unlock the key \"%@\" for \"%d\" seconds.", self.keyname, self.unlockTime]];
     }
+    [self checkForRedLock];
     [[NSApplication sharedApplication] runModalForWindow:self.window];
     
     [self.window setFrame:NSMakeRect(0, 0, 575, 500) display:true];
 }
 
+- (void) createTableView {
+    NSScrollView *scrollView = [[NSScrollView alloc] initWithFrame:CGRectMake(22, 110, self.window.frame.size.width - 44, 150)];
+    scrollView.backgroundColor = [NSColor clearColor];
+    [scrollView setBorderType:NSBezelBorder];
+    
+    NSTableView *tableView = [[NSTableView alloc] initWithFrame:scrollView.bounds];
+    tableView.rowSizeStyle = NSTableViewRowSizeStyleLarge;
+    tableView.backgroundColor = [NSColor clearColor];
+    tableView.appearance = [NSAppearance appearanceNamed:NSAppearanceNameAqua];
+
+    NSTableColumn *tCol;
+    
+    tCol = [[NSTableColumn alloc] initWithIdentifier:[NSString stringWithFormat:@"key1"]];
+    id cell = [tCol dataCell];
+    [cell setFont: [NSFont systemFontOfSize:18]];
+    [[tCol headerCell] setStringValue:@"To"];
+    [tCol setWidth:self.window.frame.size.width - 149];
+    tCol.editable = false;
+    [[tCol dataCell] setVerticalCentering:YES];
+    [tableView addTableColumn:tCol];
+    
+    tCol = [[NSTableColumn alloc] initWithIdentifier:[NSString stringWithFormat:@"key2"]];
+    cell = [tCol dataCell];
+    [cell setFont: [NSFont systemFontOfSize:18]];
+    [[tCol headerCell] setStringValue:@"Amount"];
+    [tCol setWidth:100];
+    tCol.editable = false;
+    [[tCol dataCell] setVerticalCentering:YES];
+    [tableView addTableColumn:tCol];
+    
+    [tableView setUsesAlternatingRowBackgroundColors:YES];
+    [tableView setGridStyleMask:NSTableViewSolidVerticalGridLineMask];
+    [tableView setRowHeight:23.0];
+    [tableView setDelegate:self];
+    [tableView setDataSource:self];
+    [tableView setSelectionHighlightStyle:NSTableViewSelectionHighlightStyleNone];
+    [tableView setAutoresizesSubviews:YES];
+    
+    scrollView.appearance = [NSAppearance appearanceNamed:NSAppearanceNameAqua];
+    [scrollView setHasVerticalScroller:YES];
+    [scrollView setHasHorizontalScroller:NO];
+    scrollView.horizontalScrollElasticity = NSScrollElasticityNone;
+    [scrollView setAutoresizesSubviews:YES];
+    [scrollView setAutoresizingMask:NSViewWidthSizable|NSViewHeightSizable];
+    [scrollView setAutohidesScrollers:false];
+    [scrollView setScrollerStyle:NSScrollerStyleLegacy];
+    [scrollView setDocumentView:tableView];
+    [self.window.contentView addSubview:scrollView];
+}
+
 - (void) checkForRedLock {
-    if (self.unlockTime > 0 || !self.isJson) {
+    if (self.isSignTransaction && (self.unlockTime > 0 || !self.isJson || isHash)) {
         [self setupLogoRedLock];
+    } else {
+        [self setupLogoGreenLock];
     }
+}
+
+- (void) setupLogoGreenLock {
+    NSString *path = [NSString stringWithFormat:@"%@/%@", FileManager.getWorkDirectoryPath, @"resources/locked-padlock-green.png"];
+    NSImage *image = [[NSImage alloc] initWithContentsOfFile:path];
+    NSImageView *imageView = [[NSImageView alloc] initWithFrame:NSMakeRect(self.window.frame.size.width - 41, self.window.frame.size.height - 65, 19, 25)];
+    NSLog(@"path %@", path);
+    imageView.image = image;
+    [self.window.contentView addSubview:imageView];
+    
+    NSButton *redLockButton = [[NSButton alloc] initWithFrame:NSMakeRect(self.window.frame.size.width - 41, self.window.frame.size.height - 65, 19, 25)];
+    [redLockButton setImage:[NSImage new]];
+    [redLockButton setImagePosition:NSImageOnly];
+    [redLockButton setBordered:NO];
+    [redLockButton setAction:@selector(greenlockButtonClicked)];
+    [self.window.contentView addSubview:redLockButton];
 }
 
 - (void) setupLogoRedLock {
@@ -214,13 +306,27 @@ using keychain_app::secmod_commands::secmod_parser_f;
     [self.window.contentView addSubview:redLockButton];
 }
 
+- (void) greenlockButtonClicked {
+    NSString *string;
+    if (_isSignTransaction) {
+        string = @"This transaction is successfully parsed by the core module.\nNo threats detected. You can now review the transaction details.";
+    } else {
+        string = @"Your private key is encrypted and secure.";
+    }
+    NSPopover *popover = [[NSPopover alloc] initWithContent:string doesAnimate:true];
+    [popover showRelativeToRect:NSMakeRect(self.window.frame.size.width - 41, self.window.frame.size.height - 65, 19, 25) ofView:self.window.contentView.superview preferredEdge:NSRectEdgeMinY];
+}
+
 - (void) redlockButtonClicked {
     NSString *string = @"";
     if (self.unlockTime > 0) {
-        string = [NSString stringWithFormat:@"%@The \"Unlock\" command is experimental and insecure.\nWe do not recommend to use it.", string];
+        string = [NSString stringWithFormat:@"%@Experimental function \"unlock key\" will be activated once you enter the passphrase.\nDuring this time operations with the unlocked key will be executed without user confirmation.", string];
     }
     if (!self.isJson && !self.unlockOnly) {
-        string = [NSString stringWithFormat:@"%@%@Failed to parse transaction.", string, ([string isEqualToString:@""]) ? @"" : @"\n\n"];
+        string = [NSString stringWithFormat:@"%@%@KeyChain can provide only hex view of the transaction without additional information, such as address, amount, and any other detail.\nConfim the transaction only if you trust the app requesting the signature.", string, ([string isEqualToString:@""]) ? @"" : @"\n\n"];
+    }
+    if (isHash) {
+        string = [NSString stringWithFormat:@"%@%@Using transaction hash does not provide any information about the transaction.\nUse the transaction hash only if you trust the app requesting the signature.", string, ([string isEqualToString:@""]) ? @"" : @"\n\n"];
     }
     NSPopover *popover = [[NSPopover alloc] initWithContent:string doesAnimate:true];
     [popover showRelativeToRect:NSMakeRect(self.window.frame.size.width - 41, self.window.frame.size.height - 65, 19, 25) ofView:self.window.contentView.superview preferredEdge:NSRectEdgeMinY];
@@ -234,8 +340,8 @@ using keychain_app::secmod_commands::secmod_parser_f;
         NSLog(@"path %@", path);
         imageView.image = image;
         [self.window.contentView addSubview:imageView];
-    } else if ([blockhain isEqualToString:@"bitcoun"]) {
-        NSImageView *imageView = [[NSImageView alloc] initWithFrame:NSMakeRect(22, 224, 25, 35)];
+    } else if ([blockhain isEqualToString:@"bitcoin"]) {
+        NSImageView *imageView = [[NSImageView alloc] initWithFrame:NSMakeRect(22, self.window.frame.size.height - 135, 25, 35)];
         NSString *path = [NSString stringWithFormat:@"%@/%@", FileManager.getWorkDirectoryPath, @"resources/bitcoin.png"];
         NSImage *image = [[NSImage alloc] initWithContentsOfFile:path];
         NSLog(@"path %@", path);
@@ -258,7 +364,7 @@ using keychain_app::secmod_commands::secmod_parser_f;
     label.appearance = [NSAppearance appearanceNamed:NSAppearanceNameAqua];
     label.textColor = [HexToRgbColor colorWithHexColorString:@"4f4e4e"];
     label.font = [NSFont systemFontOfSize:14];
-    label.frame = NSMakeRect(190, self.window.frame.size.height - 90, 330, 54);
+    label.frame = NSMakeRect(190, self.window.frame.size.height - 90, self.window.frame.size.width - 231, 54);
     label.lineBreakMode = NSLineBreakByWordWrapping;
     [label setContentCompressionResistancePriority:250 forOrientation:NSLayoutConstraintOrientationHorizontal];
     
@@ -325,8 +431,8 @@ using keychain_app::secmod_commands::secmod_parser_f;
     [self.window.contentView addSubview:label];
 }
 
-- (void) setupSwapAddress {
-    NSTextField *label = [NSTextField labelWithString:@"Address"];
+- (void) setupSwapAddress:(NSString *) string {
+    NSTextField *label = [NSTextField labelWithString:string];
     label.appearance = [NSAppearance appearanceNamed:NSAppearanceNameAqua];
     label.textColor = [HexToRgbColor colorWithHexColorString:@"4f4e4e"];
     label.font = [NSFont systemFontOfSize:18];
@@ -392,8 +498,10 @@ using keychain_app::secmod_commands::secmod_parser_f;
     NSTextField *label = [NSTextField labelWithString:string];
     label.appearance = [NSAppearance appearanceNamed:NSAppearanceNameAqua];
     label.textColor = [HexToRgbColor colorWithHexColorString:@"7b8da7"];
-    label.font = [NSFont systemFontOfSize:18];
+    label.font = [NSFont systemFontOfSize:([string length] > 64) ? 12 : 18];
     label.frame = NSMakeRect(130, 147, self.window.frame.size.width - 150, 30);
+    label.lineBreakMode = NSLineBreakByWordWrapping;
+    [label setContentCompressionResistancePriority:250 forOrientation:NSLayoutConstraintOrientationHorizontal];
     [self.window.contentView addSubview:label];
 }
 
@@ -412,6 +520,7 @@ using keychain_app::secmod_commands::secmod_parser_f;
     pass.font = [NSFont systemFontOfSize:20];
     pass.layer.cornerRadius = 4.0;
     pass.appearance = [NSAppearance appearanceNamed:NSAppearanceNameAqua];
+//    [pass.cell setAllowedInputSourceLocales:@[NSAllRomanInputSourcesLocaleIdentifier]];
     [self.window.contentView addSubview:pass];
 }
 
@@ -488,6 +597,26 @@ using keychain_app::secmod_commands::secmod_parser_f;
     dispatch_async(dispatch_get_main_queue(), ^{
         [NSApp stopModal];
     });
+}
+
+- (id)tableView:(NSTableView *)aTableView objectValueForTableColumn:(NSTableColumn *)aTableColumn row:(NSInteger)rowIndex
+{
+    // NSString *aString = [NSString stringWithFormat:@"%@, Row %ld",[aTableColumn identifier],(long)rowIndex];
+    NSString *aString;
+    aString = [[dataForBitcoin objectAtIndex:rowIndex] objectForKey:[aTableColumn identifier]];
+    return aString;
+}
+
+// TableView Datasource method implementation
+- (NSInteger)numberOfRowsInTableView:(NSTableView *)tableView
+{
+    //we have only one table in the screen and thus we are not checking the row count based on the target table view
+//    long recordCount = [self.dataArray count];
+    return dataForBitcoin.count;
+}
+
+- (NSString *)getCurrentKeyboardLanguage {
+    
 }
 
 @end

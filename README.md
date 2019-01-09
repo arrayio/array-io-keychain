@@ -8,12 +8,10 @@
 <link rel="stylesheet" type="text/css" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css">
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-[![Tweet](https://img.shields.io/twitter/url/http/shields.io.svg?style=social)](https://twitter.com/intent/tweet?text=A%20good,%20solid%20app%20to%20keep%20your%20keys%20safe.&url=https://keychain.array.io/&via=ProjectArray&hashtags=cybersecurity,private,cryptography,blockchain,app) <a class="btn btn-info btn-sm" href="https://avvrik.github.io/KeyChain/" type="button">Documentation</a>
+[![Tweet](https://img.shields.io/twitter/url/http/shields.io.svg?style=social)](https://twitter.com/intent/tweet?text=A%20good,%20solid%20app%20to%20keep%20your%20keys%20safe.&url=https://keychain.array.io/&via=ProjectArray&hashtags=cybersecurity,private,cryptography,blockchain,app) [![Contributions welcome](https://img.shields.io/badge/contributions-welcome-orange.svg)](https://github.com/arrayio/array-io-keychain#contributing-to-the-project)
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/arrayio/array-io-keychain/blob/master/LICENSE.md) [![npm version](https://badge.fury.io/js/web3override.svg)](https://badge.fury.io/js/web3override) <a class="btn btn-info btn-sm" href="https://avvrik.github.io/KeyChain/" type="button">Documentation</a>
 <a class="btn btn-info btn-sm" href="https://github.com/arrayio/array-io-keychain/releases/download/0.11/KeyChain.Installer.v0.11.zip" type="button">Download for macOS</a>
-<a class="btn btn-info btn-sm" href="https://github.com/arrayio/array-io-keychain/releases/tag/0.13" type="button">Download for Windows</a>
-<a class="btn btn-info btn-sm" href="https://keychain.array.io/" type="button">Website</a> [![Contributions welcome](https://img.shields.io/badge/contributions-welcome-orange.svg)](https://github.com/arrayio/array-io-keychain#contributing-to-the-project)
-[![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/arrayio/array-io-keychain/blob/master/LICENSE.md) [![npm version](https://badge.fury.io/js/web3override.svg)](https://badge.fury.io/js/web3override)
-
+<a class="btn btn-info btn-sm" href="https://github.com/arrayio/array-io-keychain/releases/tag/0.13" type="button">Download for Windows</a> <a class="btn btn-info btn-sm" href="https://keychain.array.io/" type="button">Website</a>
 
 
 ## Overview

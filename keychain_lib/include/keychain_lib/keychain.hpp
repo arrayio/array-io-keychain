@@ -18,7 +18,6 @@
 
 #include "keychain_commands.hpp"
 
-
 namespace keychain_app
 {
 

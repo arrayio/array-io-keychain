@@ -9,6 +9,7 @@
 #include <regex>
 #include <iostream>
 #include <fstream>
+#include <keychain_lib/keychain_wrapper.hpp>
 #include <X11/Xatom.h>
 #include <linux/input.h>
 #include <X11/extensions/XInput.h>
@@ -17,7 +18,6 @@
 #include <X11/Xutil.h>
 #include <X11/Xos.h>
 #include <X11/XKBlib.h>
-#include <keychain_lib/keychain_wrapper.hpp>
 #include <cmd.hpp>
 
 

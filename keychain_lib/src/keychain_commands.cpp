@@ -53,15 +53,14 @@ bool swap_action(std::string data, swap_cmd_t::swap_t &swap_info) {
   return true;
 }
 
-std::string create_secmod_cmd(std::vector<unsigned char> raw, blockchain_te blockchain, std::string from, int unlock_time, std::string keyname)
+fc_light::variant create_secmod_cmd(std::vector<unsigned char> raw, blockchain_te blockchain, std::string from, int unlock_time, std::string keyname)
 {
   std::string json;
   auto log = logger_singleton::instance();
   secmod_commands::secmod_command_common cmd;
   cmd.json = true;
   cmd.keyname = keyname;
-
-
+  
   switch (blockchain)
   {
     case (keychain_app::blockchain_te::bitcoin):
@@ -138,7 +137,53 @@ std::string create_secmod_cmd(std::vector<unsigned char> raw, blockchain_te bloc
   cmd.unlock_time = unlock_time;
   auto variant = fc_light::variant(cmd);
   BOOST_LOG_SEV(log.lg, info) << "\n" + fc_light::json::to_pretty_string(variant);
-  return fc_light::json::to_string(variant);
+  return variant;
+}
+
+void keychain_base::lock_all_priv_keys()
+{
+  key_map.clear();
+}
+
+dev::Secret keychain_base::get_private_key(const std::string& keyname, int unlock_time, create_secmod_cmd_f&& create_cmd_func)
+{
+  dev::Secret result;
+  do
+  {
+    if(unlock_time == 0)
+    {
+      auto it = key_map.find(keyname);
+      if(it == key_map.end())
+        break;
+      auto now = std::chrono::system_clock::now();
+      int unlock_duration = std::chrono::duration_cast<std::chrono::seconds>(now - it->unlock_time_point).count();
+      if (unlock_duration > it->unlock_duration)
+      {
+        key_map.erase(it);
+        break;
+      }
+      return it->secret;
+    }
+  } while (false);
+  
+  
+  if (!result)
+  {
+    auto& keyfiles = keyfile_singleton::instance();
+    auto keyfile = keyfiles[keyname];
+    if(keyfile.keyinfo.encrypted)
+    {
+      auto passwd = *(get_passwd_trx(create_cmd_func()));
+      if (passwd.empty())
+        FC_LIGHT_THROW_EXCEPTION(fc_light::password_input_exception, "");
+      auto encrypted_data = keyfile.keyinfo.priv_key_data.as<keyfile_format::encrypted_data>();
+      auto& encryptor = encryptor_singleton::instance();
+      result = encryptor.decrypt_private_key(passwd, encrypted_data);
+      if(unlock_time > 0)
+        key_map.insert(private_key_item(keyname, result, unlock_time));
+    }
+  }
+  return result;
 }
 
 }
@@ -191,7 +236,7 @@ std::pair<std::string, std::string> keychain_app::read_public_key_file(keychain_
 
   return  std::make_pair(keyfile.keyinfo.public_key, keyfile.keyname);
 }
-
+/*
 //TODO: it is more preferable to use move semantic instead copy for text argument
 dev::Secret keychain_app::read_private_key(keychain_base * keychain, std::string keyname, std::string text, int seconds,
                                            const keychain_command_base* cmd)
@@ -229,7 +274,7 @@ dev::Secret keychain_app::read_private_key(keychain_base * keychain, std::string
 
   return key;
 }
-
+*/
 std::string keychain_app::to_hex(const uint8_t* data, size_t length)
 {
   std::string r;

@@ -21,8 +21,7 @@ class keyfile_singleton
   keyfile_map_t m_keydata_map;
 public:
   using iterator = keyfile_map_t::iterator;
-  static const keyfile_singleton& instance();
-  const keyfile_format::keyfile_t& operator[](const std::string& key) const;
+  static keyfile_singleton& instance();
   keyfile_format::keyfile_t& operator[](const std::string& key);
   void insert(keyfile_format::keyfile_t&& keyfile_data); //NOTE: keyfile_t (fc_light::variant) is not support move semantic
   bool is_exist(const std::string& key) const;

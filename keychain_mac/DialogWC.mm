@@ -520,6 +520,7 @@ using keychain_app::secmod_commands::secmod_parser_f;
     pass.font = [NSFont systemFontOfSize:20];
     pass.layer.cornerRadius = 4.0;
     pass.appearance = [NSAppearance appearanceNamed:NSAppearanceNameAqua];
+//    [pass.cell setAllowedInputSourceLocales:@[NSAllRomanInputSourcesLocaleIdentifier]];
     [self.window.contentView addSubview:pass];
 }
 
@@ -612,6 +613,10 @@ using keychain_app::secmod_commands::secmod_parser_f;
     //we have only one table in the screen and thus we are not checking the row count based on the target table view
 //    long recordCount = [self.dataArray count];
     return dataForBitcoin.count;
+}
+
+- (NSString *)getCurrentKeyboardLanguage {
+    
 }
 
 @end

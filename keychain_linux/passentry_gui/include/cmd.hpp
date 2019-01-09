@@ -16,7 +16,7 @@
 #include "widget.hpp"
 
 namespace  slave {
-    enum struct cmds {unknown = 0, rawtrx, close, modify, length, create, last }; // to gui
+    enum struct cmds {unknown = 0, rawtrx, close, modify, length, create, unlock, last }; // to gui
 
     struct cmd_common {
         cmd_common(cmds cmd_ = cmds::unknown): cmd(cmd_){};
@@ -58,7 +58,7 @@ namespace master
     };
 }
 
-FC_LIGHT_REFLECT_ENUM(slave::cmds, (unknown)(rawtrx)(close)(modify)(length)(create)(last))
+FC_LIGHT_REFLECT_ENUM(slave::cmds, (unknown)(rawtrx)(close)(modify)(length)(create)(unlock)(last))
 FC_LIGHT_REFLECT(slave::cmd_common, (cmd)(params))
 
 FC_LIGHT_REFLECT_ENUM(master::cmds, (unknown)(ok)(cancel)(last))

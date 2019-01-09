@@ -8,6 +8,7 @@
 #include <openssl/err.h>
 #include <chrono>
 #include <random>
+#include <type_traits>
 #include "key_encryptor.hpp"
 #include "keychain_commands.hpp"
 #include <openssl/sha.h>
@@ -35,11 +36,19 @@ encryptor_singletone& encryptor_singletone::instance()
   return encryptor_instance;
 }
 
-keyfile_format::encrypted_data encryptor_singletone::encrypt_keydata(keyfile_format::cipher_etype etype, const byte_seq_t& key, const std::string& data)
+keyfile_format::encrypted_data encryptor_singletone::encrypt_private_key(keyfile_format::cipher_etype etype, const byte_seq_t& key, const dev::Secret& priv_key)
 {
   keyfile_format::encrypted_data enc_data;
   int enc_length = 0;
   int length = 0;
+  
+  dev::h512 plain_data;
+  auto priv_key_unsec = priv_key.makeInsecure();
+  auto prkey_hash = dev::openssl::sha3(priv_key);
+  auto prkey_hash_unsec = prkey_hash.makeInsecure();
+  auto it = std::copy(priv_key_unsec.begin(), priv_key_unsec.end(), plain_data.data());
+  std::copy(prkey_hash_unsec.begin(), prkey_hash_unsec.end(), it);
+  
   std::vector<uint8_t > enc_byte_data(2048,0x00);//TODO: memory has been allocated with a stock
   //TODO: need to figure out how much memory need to allocate for encrypted data in dependence of cipher algo type
   
@@ -49,22 +58,19 @@ keyfile_format::encrypted_data encryptor_singletone::encrypt_keydata(keyfile_for
   //I cannot figure out the exact reason what exactly is wrong with the key (it is need to debug asm function
   // to find out reason)
   //The solution (from lib/fc) is to create hash from password string and encrypt data on hash key
-  const char* key_data = key.data();
-  unsigned char key_hash[64];
-  SHA512_CTX ctx;
   auto iv = std::move(random_string());
-  SHA512_Init( &ctx);
-  SHA512_Update( &ctx, key_data, key.size());
-  SHA512_Final(key_hash, &ctx);
+  dev::openssl::sha3_512_encoder enc;//NOTE: use 512 hash for possible future 512 bit cipher algorithms
+  enc.write(key.data(), key.size());
+  auto key_hash = enc.result();
 
-  if(1 != EVP_EncryptInit_ex(m_ctx, get_cipher(etype), NULL, reinterpret_cast<const uint8_t*>(key_hash), iv.data()))
+  if(1 != EVP_EncryptInit_ex(m_ctx, get_cipher(etype), NULL, key_hash.data(), iv.data()))
   {
     //TODO: need to print OpenSSL detailed error string
     FC_LIGHT_THROW_EXCEPTION(fc_light::encryption_exception, "Error: EVP_EncryptInit_ex");
   }
   iv.resize(EVP_CIPHER_CTX_iv_length(m_ctx));
   enc_data.iv = to_hex(iv.data(), iv.size());
-  if(1 != EVP_EncryptUpdate(m_ctx, enc_byte_data.data(), &length, reinterpret_cast<const uint8_t*>(data.c_str()), data.size()))
+  if(1 != EVP_EncryptUpdate(m_ctx, enc_byte_data.data(), &length, plain_data.data(), plain_data.size))
   {
     //TODO: need to print OpenSSL detailed error string
     FC_LIGHT_THROW_EXCEPTION(fc_light::encryption_exception, "Error: EVP_EncryptUpdate");
@@ -84,7 +90,7 @@ keyfile_format::encrypted_data encryptor_singletone::encrypt_keydata(keyfile_for
   return enc_data;
 }
 
-std::string encryptor_singletone::decrypt_keydata(const byte_seq_t& key, keyfile_format::encrypted_data& data)
+dev::Secret encryptor_singletone::decrypt_private_key(const byte_seq_t& key, keyfile_format::encrypted_data& data)
 {
   int decr_length = 0;
   int length = 0;
@@ -93,7 +99,7 @@ std::string encryptor_singletone::decrypt_keydata(const byte_seq_t& key, keyfile
   auto len = from_hex(data.enc_data, enc_byte_data.data(), enc_byte_data.size());
   assert(len == enc_byte_data.size());
   //TODO: need to figure out how much memory need to allocate for encrypted data in dependence of cipher algo type
-  std::vector<uint8_t > decr_byte_data(2048,0x00);//TODO: memory has been allocated with a stock
+  std::vector<uint8_t> decr_byte_data(2048,0x00);//TODO: memory has been allocated with a stock
   
   //NOTE: in certain cases, an error with EVP_DecryptInit_ex func may occur
   //In different cases, the function handles raw C key strings differently
@@ -101,36 +107,39 @@ std::string encryptor_singletone::decrypt_keydata(const byte_seq_t& key, keyfile
   //I cannot figure out the exact reason what exactly is wrong with the key (it is need to debug asm function
   // to find out reason)
   //The solution (from lib/fc) is to create hash from password string and encrypt data on hash key
-  const char* key_data =key.data();
-  unsigned char key_hash[64];
-  SHA512_CTX ctx;
-  SHA512_Init( &ctx);
-  SHA512_Update( &ctx, key_data, key.size());
-  SHA512_Final(key_hash, &ctx);
+  dev::openssl::sha3_512_encoder enc;//NOTE: use 512 hash for possible future 512 bit cipher algorithms
+  enc.write(key.data(), key.size());
+  auto key_hash = enc.result();
+  
   std::vector<uint8_t> iv(data.iv.size()/2, 0x00);
   from_hex(data.iv.data(), iv.data(), iv.size());
   
-  if(1 != EVP_DecryptInit_ex(m_ctx, get_cipher(data.cipher_type), NULL, reinterpret_cast<const uint8_t*>(key_hash), iv.data()))
+  if(1 != EVP_DecryptInit_ex(m_ctx, get_cipher(data.cipher_type), NULL, key_hash.data(), iv.data()))
   {
     //TODO: need to print OpenSSL detailed error string
-    FC_LIGHT_THROW_EXCEPTION(fc_light::encryption_exception, "Error: EVP_DecryptInit_ex");
+    FC_LIGHT_THROW_EXCEPTION(fc_light::encryption_exception, "EVP_DecryptInit_ex");
   }
   if(1 != EVP_DecryptUpdate(m_ctx, decr_byte_data.data(), &length, enc_byte_data.data(), enc_byte_data.size()))
   {
     //TODO: need to print OpenSSL detailed error string
-    FC_LIGHT_THROW_EXCEPTION(fc_light::encryption_exception, "Error: EVP_DecryptUpdate");
+    FC_LIGHT_THROW_EXCEPTION(fc_light::encryption_exception, "EVP_DecryptUpdate");
   }
   decr_length = length;
   if(1 != EVP_DecryptFinal_ex(m_ctx, decr_byte_data.data() + decr_length, &length))
   {
     //TODO: need to print OpenSSL detailed error string
-    FC_LIGHT_THROW_EXCEPTION(fc_light::encryption_exception, "Error: EVP_DecryptFinal_ex");
+    FC_LIGHT_THROW_EXCEPTION(fc_light::privkey_invalid_unlock, "EVP_DecryptFinal_ex, cannot unlock private key, possible wrong password");
   }
   decr_length += length;
   decr_byte_data.resize(decr_length);
-  std::string res(reinterpret_cast<const char*>(decr_byte_data.data()), decr_byte_data.size());
+  FC_LIGHT_ASSERT(decr_byte_data.size() == dev::h512::size);
+  dev::Secret priv_key(decr_byte_data, dev::FixedHash<dev::Secret::size>::AlignLeft);
+  dev::Secret prkey_hash(decr_byte_data, dev::FixedHash<dev::Secret::size>::AlignRight);
   EVP_CIPHER_CTX_reset(m_ctx);
-  return res;
+  auto eval_hash = dev::openssl::sha3(priv_key);
+  if( prkey_hash != eval_hash)
+    FC_LIGHT_THROW_EXCEPTION(fc_light::privkey_invalid_unlock, "cannot unlock private key, possible wrong password");
+  return priv_key;
 }
 
 std::vector<uint8_t> encryptor_singletone::random_string(size_t length)

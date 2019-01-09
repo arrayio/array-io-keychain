@@ -16,6 +16,9 @@ public:
 	~ExpertModeDialog();
 	void SetExpertModeText(QString string);
 
+private:
+	void _roundCorners();
+
 protected: 
 	void keyPressEvent(QKeyEvent *event) override; 
 private: 

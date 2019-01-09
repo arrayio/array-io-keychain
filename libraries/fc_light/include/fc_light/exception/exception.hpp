@@ -16,17 +16,20 @@ namespace fc_light
    enum exception_code
    {
      /** for exceptions we threw that don't have an assigned code */
-     unspecified_exception_code        = 0,
-     unhandled_exception_code          , ///< for unhandled 3rd party exceptions
-     std_exception_code                , ///< for std::exceptions (3rd party)
+     unspecified_exception_code        = 0, ///< default type, practically unused
+     json_parse_error_code             , ///< error in json format of rpc command
+     rpc_command_parse_code            , ///< error while parsing structure of rpc command (invalid set of fields or invalid value type)
      command_not_implemented_code      , ///< command is not implemented
      command_depreciated_code          , ///< command is depreciates
      invalid_arg_exception_code        , ///< invalid command arguments
-     password_input_error_code         , ///< get password error
-     privkey_not_found_code            , ///< private key not found
-     timeout_exception_code            , ///< timeout exceptions
-     parse_error_exception_code        , ///< cannot parse command
-     internal_error_code               , ///< some internal error
+     privkey_not_found_code            , ///< private key not found by keyname
+     privkey_invalid_unlock_code       , ///< cannot unlock private key, possible wrong password
+     password_input_error_code         , ///< error while getting password
+     internal_error_code               , ///< some unspecified internal error
+     
+     //internal errors
+     parse_error_exception_code        ,
+     timeout_exception_code            ,
      file_not_found_exception_code     ,
      key_not_found_exception_code      ,
      bad_cast_exception_code           ,
@@ -37,7 +40,11 @@ namespace fc_light
      underflow_code                    ,
      divide_by_zero_code               ,
      out_of_range_exception_code       ,
-     eof_exception_code
+     eof_exception_code                ,
+     
+     //3d party exceptions
+     std_exception_code                , ///< for std::exceptions (3rd party)
+     unhandled_exception_code            ///< for unhandled 3rd party exceptions
    };
 
    /**
@@ -265,49 +272,63 @@ namespace fc_light
   /**
    * @brief command not implemented
    */
-  FC_LIGHT_DECLARE_EXCEPTION( command_not_implemented_exception, command_not_implemented_code, "Command Not Implemented" );
+  FC_LIGHT_DECLARE_EXCEPTION( command_not_implemented_exception, command_not_implemented_code, "Command not implemented" );
+
+  /**
+   * @brief cannot parse rpc command
+   */
+  FC_LIGHT_DECLARE_EXCEPTION( rpc_command_parse_exception, rpc_command_parse_code, "Command cannot be parsed" );
+
+  /**
+   * @brief cannot parse json format of rpc command
+   */
+  FC_LIGHT_DECLARE_EXCEPTION(json_parse_exception, json_parse_error_code, "Ivalid json format in input data");
 
   /**
    * @brief command not implemented
    */
-  FC_LIGHT_DECLARE_EXCEPTION( command_depreciated, command_depreciated_code, "Command Depretiated" );
+  FC_LIGHT_DECLARE_EXCEPTION( command_depreciated, command_depreciated_code, "Command depretiated" );
   
   /**
    * @brief get password error
    */
-  FC_LIGHT_DECLARE_EXCEPTION( password_input_exception, password_input_error_code, "Password Input Error");
+  FC_LIGHT_DECLARE_EXCEPTION( password_input_exception, password_input_error_code, "Password input error");
 
   /**
    * @brief get password error
    */
-  FC_LIGHT_DECLARE_EXCEPTION( privkey_not_found_exception, privkey_not_found_code, "Private Key Not Found");
+  FC_LIGHT_DECLARE_EXCEPTION( privkey_not_found_exception, privkey_not_found_code, "Private key not found");
 
+/**
+ * @brief wrong private key password error
+ */
+  FC_LIGHT_DECLARE_EXCEPTION( privkey_invalid_unlock, privkey_invalid_unlock_code, "Cannot unlock private key");
 
   FC_LIGHT_DECLARE_EXCEPTION( timeout_exception, timeout_exception_code, "Timeout" );
-  FC_LIGHT_DECLARE_EXCEPTION( file_not_found_exception, file_not_found_exception_code, "File Not Found" );
+  FC_LIGHT_DECLARE_EXCEPTION( file_not_found_exception, file_not_found_exception_code, "File not found" );
   /**
    * @brief report's parse errors
    */
-  FC_LIGHT_DECLARE_EXCEPTION( parse_error_exception, parse_error_exception_code, "Parse Error" );
-  FC_LIGHT_DECLARE_EXCEPTION( invalid_arg_exception, invalid_arg_exception_code, "Invalid Argument" );
+  FC_LIGHT_DECLARE_EXCEPTION( parse_error_exception, parse_error_exception_code, "Parse error" );
+  FC_LIGHT_DECLARE_EXCEPTION( invalid_arg_exception, invalid_arg_exception_code, "Invalid argument" );
   /**
    * @brief reports when a key, guid, or other item is not found.
    */
-  FC_LIGHT_DECLARE_EXCEPTION( key_not_found_exception, key_not_found_exception_code, "Key Not Found" );
-  FC_LIGHT_DECLARE_EXCEPTION( bad_cast_exception, bad_cast_exception_code, "Bad Cast" );
-  FC_LIGHT_DECLARE_EXCEPTION( out_of_range_exception, out_of_range_exception_code, "Out of Range" );
+  FC_LIGHT_DECLARE_EXCEPTION( key_not_found_exception, key_not_found_exception_code, "Key not found" );
+  FC_LIGHT_DECLARE_EXCEPTION( bad_cast_exception, bad_cast_exception_code, "Bad cast" );
+  FC_LIGHT_DECLARE_EXCEPTION( out_of_range_exception, out_of_range_exception_code, "Out of range" );
   
   /**
    *  @brief used inplace of assert() to report violations of pre conditions.
    */
-  FC_LIGHT_DECLARE_EXCEPTION( assert_exception, assert_exception_code, "Assert Exception" );
-  FC_LIGHT_DECLARE_EXCEPTION( eof_exception, eof_exception_code, "End Of File" );
+  FC_LIGHT_DECLARE_EXCEPTION( assert_exception, assert_exception_code, "Assert exception" );
+  FC_LIGHT_DECLARE_EXCEPTION( eof_exception, eof_exception_code, "End of file" );
   FC_LIGHT_DECLARE_EXCEPTION( null_optional, null_optional_code, "Null optional" );
   FC_LIGHT_DECLARE_EXCEPTION( encryption_exception, encryption_error_code, "Encryption error" );
   FC_LIGHT_DECLARE_EXCEPTION( internal_error_exception, internal_error_code, "Internal error" );
-  FC_LIGHT_DECLARE_EXCEPTION( overflow_exception, overflow_code, "Integer Overflow" );
-  FC_LIGHT_DECLARE_EXCEPTION( underflow_exception, underflow_code, "Integer Underflow" );
-  FC_LIGHT_DECLARE_EXCEPTION( divide_by_zero_exception, divide_by_zero_code, "Integer Divide By Zero" );
+  FC_LIGHT_DECLARE_EXCEPTION( overflow_exception, overflow_code, "Integer overflow" );
+  FC_LIGHT_DECLARE_EXCEPTION( underflow_exception, underflow_code, "Integer underflow" );
+  FC_LIGHT_DECLARE_EXCEPTION( divide_by_zero_exception, divide_by_zero_code, "Integer divide by zero" );
   //  /* defined near assert_evaluator */ FC_LIGHT_DECLARE_EXCEPTION( transaction_dependency_exception, transaction_dependency_code, "Missing Transaction Dependency" );
 
   std::string except_str();

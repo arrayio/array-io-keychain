@@ -19,10 +19,31 @@ logger_singletone::logger_singletone(std::string postfix)
 {
 
     typedef sinks::synchronous_sink< sinks::text_file_backend > file_sink;
-
+	std::string def_log_path = std::string(LOG_DEFAULT_PATH);
     // Create a text file sink
+#ifdef _WIN32
+	if (getenv("USERPROFILE") != NULL) {
+		std::string user(getenv("USERPROFILE"));
+		if (!user.empty()) {
+			def_log_path = user.append("\\AppData\\Local\\Keychain\\").append(def_log_path);
+		}
+	}
+	else {
+		if (getenv("SystemRoot") != NULL) {
+			std::string logFolder(getenv("SystemRoot"));
+			if (!logFolder.empty()) {
+				def_log_path = logFolder.append("\\Logs\\Keychain\\").append(def_log_path);
+			}
+		}
+		else
+		{
+			def_log_path = std::string(".\\").append(def_log_path);
+		}
+	}
+#endif //_WIN32
+
     boost::shared_ptr< file_sink > sink(new file_sink(
-            keywords::file_name = std::string(LOG_DEFAULT_PATH)+  "/%Y%m%d_%H%M%S"+postfix+".log",
+            keywords::file_name = def_log_path +  "/%Y%m%d_%H%M%S_"+postfix+".log",
             keywords::rotation_size = 16384,
             keywords::auto_flush = true
     ));

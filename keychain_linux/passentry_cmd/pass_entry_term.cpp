@@ -166,7 +166,7 @@ std::list<std::string> pass_entry_term::parse_device_file()
     return std::move( devices);
 }
 
-keychain_app::byte_seq_t pass_entry_term::fork_gui(const KeySym * map, const std::string& raw_trx ){
+keychain_app::byte_seq_t pass_entry_term::fork_gui(const KeySym * map, const std::string& value, master::cmds cmd ){
     int sockets[2];
     if (socketpair(AF_UNIX, SOCK_STREAM, 0, sockets) < 0)   throw std::runtime_error("opening stream socket pair");
     switch (fork())
@@ -186,8 +186,23 @@ keychain_app::byte_seq_t pass_entry_term::fork_gui(const KeySym * map, const std
         default: break;
     }
     close(sockets[0]);
-    auto a = master::cmd<master::cmds::rawtrx>(raw_trx);
-    auto mes = fc_light::json::to_string(fc_light::variant(static_cast<const master::cmd_base&>(a)));
+
+    fc_light::string mes;
+    switch (cmd)
+    {
+        case master::cmds::create :
+        {
+            auto a = master::cmd<master::cmds::create>(value);
+            mes = fc_light::json::to_string(fc_light::variant(static_cast<const master::cmd_base&>(a)));
+            break;
+        }
+        case master::cmds::rawtrx:
+        {
+            auto a = master::cmd<master::cmds::rawtrx>(value);
+            mes = fc_light::json::to_string(fc_light::variant(static_cast<const master::cmd_base&>(a)));
+            break;
+        }
+    }
     send_gui(mes , sockets[1]);
 
     std::wstring pass = input_password(map, sockets[1]);

@@ -32,7 +32,7 @@ public:
     virtual ~secure_dlg_mod_base(){}
     virtual byte_seq_t get_passwd_trx(const std::string& json_cmd) const = 0;
     virtual byte_seq_t get_passwd_unlock(const std::string& keyname, int unlock_time) const = 0;
-    virtual byte_seq_t get_passwd_on_create(const std::string keyname = std::string("") ) const = 0;
+    virtual byte_seq_t get_passwd_on_create(const std::string& keyname = std::string("") ) const = 0;
     virtual void print_mnemonic(const string_list& mnemonic) const = 0;
 };
 

@@ -25,8 +25,6 @@
 #include <fc_light/exception/exception.hpp>
 #include <fc_light/crypto/hex.hpp>
 
-#include <fc_light/exception/exception.hpp>
-
 #include <boost/signals2.hpp>
 
 #include "eth_types_conversion.hpp"
@@ -226,19 +224,20 @@ struct json_response
     fc_light::variant result;
 };
 
+
 struct json_error
 {
-  json_error(int id_, fc_light::exception_code err_code, const std::string& msg_ = "",  const fc_light::variant& trace_ = fc_light::variant())
+  json_error(int id_, fc_light::exception_code_te err_code, const std::string& msg_ = "",  const fc_light::variant& trace_ = fc_light::variant())
     : id(id_), error(err_code, msg_, trace_){}
     
   int id;
   struct error_t
   {
-    error_t(fc_light::exception_code code_, const std::string& message_, const fc_light::variant& trace_)
+    error_t(fc_light::exception_code_te code_, const std::string& message_, const fc_light::variant& trace_)
       : code(static_cast<int>(code_)), name(code_), message(message_), trace(trace_){}
     error_t(): code(0) {}
     int code;
-    fc_light::exception_code name;
+    fc_light::exception_code_te name;
     std::string message;
     fc_light::variant trace;
   } error;

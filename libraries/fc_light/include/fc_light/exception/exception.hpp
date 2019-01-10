@@ -13,7 +13,7 @@ namespace fc_light
 {
    namespace detail { class exception_impl; }
 
-   enum exception_code
+   enum exception_code_te
    {
      /** for exceptions we threw that don't have an assigned code */
      unspecified_exception_code        = 0, ///< default type, practically unused
@@ -525,7 +525,7 @@ namespace fc_light
 #include <fc_light/reflect/reflect.hpp>
 
 FC_LIGHT_REFLECT_ENUM(
-  fc_light::exception_code,
+  fc_light::exception_code_te,
 (unspecified_exception_code)
 (unhandled_exception_code)
 (std_exception_code)

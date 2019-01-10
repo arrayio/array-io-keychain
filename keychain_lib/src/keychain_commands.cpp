@@ -53,7 +53,7 @@ bool swap_action(std::string data, swap_cmd_t::swap_t &swap_info) {
   return true;
 }
 
-fc_light::variant create_secmod_cmd(std::vector<unsigned char> raw, blockchain_te blockchain, std::string from, int unlock_time, std::string keyname)
+fc_light::variant create_secmod_signhex_cmd(std::vector<unsigned char> raw, blockchain_te blockchain, std::string from, int unlock_time, std::string keyname)
 {
   std::string json;
   auto log = logger_singleton::instance();
@@ -135,9 +135,24 @@ fc_light::variant create_secmod_cmd(std::vector<unsigned char> raw, blockchain_t
     }
   }
   cmd.unlock_time = unlock_time;
-  auto variant = fc_light::variant(cmd);
-  BOOST_LOG_SEV(log.lg, info) << "\n" + fc_light::json::to_pretty_string(variant);
-  return variant;
+  return fc_light::variant(cmd);
+//  BOOST_LOG_SEV(log.lg, info) << "\n" + fc_light::json::to_pretty_string(variant);//TODO: it is more preferable to log this into security module
+}
+
+
+fc_light::variant create_secmod_signhash_cmd(const std::string& raw, std::string from, std::string keyname)
+{
+  using cmd_t = secmod_commands::secmod_command<secmod_commands::blockchain_secmod_te::rawhash>::type;
+  cmd_t data(std::move(from), raw);
+  
+  secmod_commands::secmod_command_common cmd;
+  cmd.json = true;
+  cmd.keyname = keyname;
+  cmd.blockchain = secmod_commands::blockchain_secmod_te::rawhash;
+  cmd.unlock_time = 0;
+  cmd.data = fc_light::variant(data);
+  
+  return fc_light::variant(cmd);
 }
 
 void keychain_base::lock_all_priv_keys()
@@ -173,7 +188,11 @@ dev::Secret keychain_base::get_private_key(const std::string& keyname, int unloc
     auto keyfile = keyfiles[keyname];
     if(keyfile.keyinfo.encrypted)
     {
-      auto passwd = *(get_passwd_trx(create_cmd_func()));
+      byte_seq_t passwd;
+      if(create_cmd_func)
+        passwd = std::move(*(get_passwd_trx(create_cmd_func())));
+      else
+        passwd = std::move(*(get_passwd_unlock(keyname, unlock_time)));
       if (passwd.empty())
         FC_LIGHT_THROW_EXCEPTION(fc_light::password_input_exception, "");
       auto encrypted_data = keyfile.keyinfo.priv_key_data.as<keyfile_format::encrypted_data>();
@@ -190,91 +209,6 @@ dev::Secret keychain_base::get_private_key(const std::string& keyname, int unloc
 
 using namespace keychain_app;
 
-std::pair<dev::Secret, std::string> keychain_app::read_private_key_file(keychain_base* keychain,
-        std::string keyname, std::string text, int unlock_time, const keychain_command_base * cmd)
-{
-  keyfile_format::keyfile_t keyfile;
-  auto curdir = bfs::current_path();
-  auto first = bfs::directory_iterator(bfs::path(KEY_DEFAULT_PATH_));
-  auto it = std::find_if(first, bfs::directory_iterator(),find_keyfile_by_username(keyname.c_str(), &keyfile));
-  if (it == bfs::directory_iterator())
-    FC_LIGHT_THROW_EXCEPTION( fc_light::key_not_found_exception, "Keyfile could not found by keyname ${keyname}", ("keyname", keyname.c_str()));
-
-  if(keyfile.keyinfo.encrypted)
-  {
-    auto encrypted_data = keyfile.keyinfo.priv_key_data.as<keyfile_format::encrypted_data>();
-    auto& encryptor = encryptor_singleton::instance();
-//TODO: need to try to parse transaction.
-// If we can parse transaction we need to use get_passwd_trx function
-// else use get_passwd_trx_raw()
-// At this moment parsing of transaction is not implemented
-
-    byte_seq_t passwd;
-    if (cmd->e_type == command_te::unlock)
-      passwd = *(keychain->get_passwd_unlock(keyfile.keyname, unlock_time));
-    else
-      passwd = *(keychain->get_passwd_trx(text.empty() ? keyfile.keyname: text));
-    if (passwd.empty())
-      FC_LIGHT_THROW_EXCEPTION(fc_light::password_input_exception, "");
-    return  std::make_pair(encryptor.decrypt_private_key(passwd, encrypted_data), keyfile.keyname);
-  }
-  else
-  {
-    auto res = std::make_pair(keyfile.keyinfo.priv_key_data.as<dev::Secret>(), keyfile.keyname);
-    return res;
-  }
-}
-
-std::pair<std::string, std::string> keychain_app::read_public_key_file(keychain_base* keychain, std::string keyname)
-{
-  keyfile_format::keyfile_t keyfile;
-  auto curdir = bfs::current_path();
-  auto first = bfs::directory_iterator(bfs::path(KEY_DEFAULT_PATH_));
-  auto it = std::find_if(first, bfs::directory_iterator(),find_keyfile_by_username(keyname.c_str(), &keyfile));
-  if (it == bfs::directory_iterator())
-    FC_LIGHT_THROW_EXCEPTION( fc_light::key_not_found_exception, "Keyfile could not found by keyname ${keyname}", ("keyname", keyname.c_str()));
-
-  return  std::make_pair(keyfile.keyinfo.public_key, keyfile.keyname);
-}
-/*
-//TODO: it is more preferable to use move semantic instead copy for text argument
-dev::Secret keychain_app::read_private_key(keychain_base * keychain, std::string keyname, std::string text, int seconds,
-                                           const keychain_command_base* cmd)
-{
-  bool locked = true;
-  dev::Secret key;
-
-  auto map = keychain->key_map.find(keyname);
-  if (map != keychain->key_map.end())
-  {
-    auto time_stamp = map->second.second.second;
-    auto unlock_time = map->second.second.first;
-    if ((std::time(nullptr) -  time_stamp) > unlock_time )
-      keychain->key_map.erase(map);
-    else
-      locked = false;
-  }
-
-  if (locked)
-  {//TODO: it is more preferable to use move semantic instead copy for json argument
-    key = read_private_key_file(keychain, keyname, text, seconds, cmd).first;
-    if (seconds) // unlock key
-      keychain->key_map[keyname] = std::make_pair(key, std::make_pair(seconds, std::time(nullptr) ) );
-  }
-  else
-  {
-    if (seconds) // unlock key
-    {//TODO: it is more preferable to use move semantic instead copy for json argument
-      key = read_private_key_file(keychain, keyname, text, seconds, cmd).first;
-      keychain->key_map[keyname] = std::make_pair(key, std::make_pair(seconds, std::time(nullptr) ) );
-    }
-    else
-      key = keychain->key_map[keyname].first;
-  }
-
-  return key;
-}
-*/
 std::string keychain_app::to_hex(const uint8_t* data, size_t length)
 {
   std::string r;
@@ -314,18 +248,6 @@ size_t keychain_app::from_hex( const std::string& hex_str, unsigned char* out_da
 
 
 namespace bfs = keychain_app::bfs;
-
-void keychain_app::create_keyfile(const char* filename, const fc_light::variant& keyfile_var)
-{
-  bfs::path filepath(std::string(KEY_DEFAULT_PATH_"/") +std::string(filename));
-  if(bfs::exists(filepath))
-    FC_LIGHT_THROW_EXCEPTION(fc_light::internal_error_exception, "Can not create keyfile (${filename}), file is currently exist", ("filename", filename));
-
-  auto fout = std::ofstream(filepath.c_str());
-  if(!fout.is_open())
-    FC_LIGHT_THROW_EXCEPTION(fc_light::internal_error_exception, "Cannot open keyfile (${filename})", ("filename", filename));
-  fout << fc_light::json::to_pretty_string(keyfile_var) << std::endl;
-}
 
 sha2_256_encoder::sha2_256_encoder()
 {

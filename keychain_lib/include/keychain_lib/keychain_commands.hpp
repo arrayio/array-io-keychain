@@ -624,6 +624,7 @@ struct keychain_command<command_te::create>: keychain_command_base
         FC_LIGHT_THROW_EXCEPTION(fc_light::internal_error_exception, "Keyname (filename) is empty");
 
       keyfiles.insert(std::move(keyfile));
+      keyfiles.flush_keyfile(params.keyname);
       json_response response(keyname, id);
       return fc_light::json::to_string(fc_light::variant(response));
     }

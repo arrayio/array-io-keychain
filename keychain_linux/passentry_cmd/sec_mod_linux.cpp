@@ -42,7 +42,7 @@ byte_seq_t sec_mod_linux::get_passwd_unlock(const std::string& keyname, int unlo
     return pass;
 }
 
-byte_seq_t sec_mod_linux::get_passwd_on_create(const std::string keyname) const
+byte_seq_t sec_mod_linux::get_passwd_on_create(const std::string& keyname) const
 {
     auto a = master::cmd<master::cmds::create>(keyname);
     auto mes = fc_light::json::to_string(fc_light::variant(static_cast<const master::cmd_base&>(a)));

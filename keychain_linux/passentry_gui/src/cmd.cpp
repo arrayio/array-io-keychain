@@ -76,12 +76,18 @@ namespace slave
     struct cmd<cmds::length> : cmd_base {
         cmd() : cmd_base(cmds::length) {};
         virtual ~cmd() {};
-        struct params {int len;};
+        struct params {
+            int len;
+            int confirm;
+        };
         using params_t = params;
         virtual void operator()(keychain_gui_win& w, const fc_light::variant& v) const override {
             try {
                 auto a = v.as<params_t>();
-                w.password->value->setText(QString (a.len, '*'));
+                if (a.confirm)
+                    w.password->valueConfirm->setText(QString (a.len, '*'));
+                else
+                    w.password->value->setText(QString (a.len, '*'));
             }
             catch (const std::exception &e) {throw std::runtime_error(e.what());}
             catch (const fc_light::exception &e) {throw std::runtime_error(e.what());}
@@ -110,7 +116,7 @@ namespace slave
 
     template<>
     struct cmd<cmds::unlock> : cmd_base {
-        cmd() : cmd_base(cmds::create) {};
+        cmd() : cmd_base(cmds::unlock) {};
         virtual ~cmd() {};
         struct params {
             std::string keyname;
@@ -125,6 +131,24 @@ namespace slave
                 trans.setUnlockKey(key, a.unlock_time);
                 w.refresh(trans);
                 w.show();
+            }
+            catch (const std::exception &e) {throw std::runtime_error(e.what());}
+            catch (const fc_light::exception &e) {throw std::runtime_error(e.what());}
+        };
+    };
+
+    template<>
+    struct cmd<cmds::confirm> : cmd_base {
+        cmd() : cmd_base(cmds::confirm) {};
+        virtual ~cmd() {};
+        struct params {
+            bool equal;
+        };
+        using params_t = params;
+        virtual void operator()(keychain_gui_win& w, const fc_light::variant& v) const override {
+            try {
+                auto a = v.as<params_t>();
+                w.password->checkConfirm(a.equal);
             }
             catch (const std::exception &e) {throw std::runtime_error(e.what());}
             catch (const fc_light::exception &e) {throw std::runtime_error(e.what());}
@@ -158,9 +182,10 @@ namespace slave
 
 FC_LIGHT_REFLECT(slave::cmd<slave::cmds::rawtrx>::params_t, (rawtrx))
 FC_LIGHT_REFLECT(slave::cmd<slave::cmds::modify>::params_t, (caps)(num)(shift))
-FC_LIGHT_REFLECT(slave::cmd<slave::cmds::length>::params_t, (len))
+FC_LIGHT_REFLECT(slave::cmd<slave::cmds::length>::params_t, (len)(confirm))
 FC_LIGHT_REFLECT(slave::cmd<slave::cmds::create>::params_t, (keyname))
 FC_LIGHT_REFLECT(slave::cmd<slave::cmds::unlock>::params_t, (keyname)(unlock_time))
+FC_LIGHT_REFLECT(slave::cmd<slave::cmds::confirm>::params_t, (equal))
 
 
 

@@ -1,7 +1,7 @@
 #include "PasswordLineEdit.h"
 
-PasswordLineEdit::PasswordLineEdit(QWidget * parent)
-	: QLineEdit(parent)
+PasswordLineEdit::PasswordLineEdit(e_line_edit win, QWidget * parent)
+	: window(win), QLineEdit(parent)
 {
 	QMetaObject::connectSlotsByName(this);
 }
@@ -19,4 +19,10 @@ void PasswordLineEdit::keyPressEvent(QKeyEvent * event)
 	{
 		QLineEdit::keyPressEvent(event);
 	}
+}
+
+
+void PasswordLineEdit::focusInEvent(QFocusEvent *event)
+{
+	emit focus(window);
 }

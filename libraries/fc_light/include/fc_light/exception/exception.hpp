@@ -287,7 +287,7 @@ namespace fc_light
   /**
    * @brief command not implemented
    */
-  FC_LIGHT_DECLARE_EXCEPTION( command_depreciated, command_depreciated_code, "Command depretiated" );
+  FC_LIGHT_DECLARE_EXCEPTION( command_depreciated, command_depreciated_code, "Command depreciated" );
   
   /**
    * @brief get password error

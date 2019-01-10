@@ -43,6 +43,7 @@ public:
     void refresh(Transaction&);
     PasswordEnterElement * password;
 	void send(std::string);
+	void focus(int);
 
 	bool send_msg;
 

@@ -70,6 +70,7 @@ if(WIN32)
 	   "${wixsrcpath}/CustomInstallDirDlg.wxs"
 	   "${wixsrcpath}/CustomVerifyReadyDlg.wxs"
 	   "${wixsrcpath}/CustomLicenseAgreementDlg.wxs"
+	   "${wixsrcpath}/CustomVersionDlg.wxs"
 	   "${wixsrcpath}/en-us.wxl"
 	   "${wixsrcpath}/wsservice_manager.bat"
 	   "${wixsrcpath}/delete_wsservice.bat"
@@ -112,7 +113,7 @@ if(WIN32)
 	message(STATUS "WSSDeploy installer Path: ${wixoutputpath}")
 	message(STATUS "WIX Path: ${WIX_PATH}")
 
-	# check if you already have a correctly defined PROCESSOR_ARCHITECTURE enviroment variable_requires
+	#check if you already have a correctly defined PROCESSOR_ARCHITECTURE enviroment variable
 	#like: 
 	#Intel   - 32-bit x86 
 	#Intel64 - Itanium family 
@@ -138,6 +139,29 @@ if(WIN32)
 	endif()
 	set(installerversion ${VERSION_STRING})
 	
+	#generate new UUID for upgrade code
+	set(UUID_NAMESPACE 3238AF6E-1884-4D6B-A32D-14526EF0A389)
+	string(
+    UUID upgradecode 
+    NAMESPACE ${UUID_NAMESPACE} 
+    NAME "www.array.io" 
+    TYPE SHA1 UPPER
+	)
+
+	#use harvester to parse all components 
+	#and assign new UUID value for each component
+	#INSTALLLOCATION becomes overridable
+	#components will be with new UUID values for each build event
+	#http://wixtoolset.org/documentation/manual/v3/overview/heat.html
+	add_custom_command(TARGET wssdeploy
+				   POST_BUILD
+				   COMMAND ${WIX_PATH}/heat.exe 
+				   dir ${installerpath}/
+				   -gg -sfrag -sreg
+				   -dr INSTALLLOCATION
+				   -out ${installerpath}/basic_components.wxs
+				   VERBATIM)
+	
 	#-bf - flag causes all of the files to be bound int the resulting .wixout/.* file. 
 	#-out - flag tells the linker where to output the .wixout/.* file
 	#-xo - this flag tells the linker to output an XML representation of the MSI, instead of the actual MSI,  required to use the -bf switch
@@ -149,7 +173,10 @@ if(WIN32)
 					   ${installerpath}/CustomInstallDirDlg.wxs 
 					   ${installerpath}/CustomWixUI_Mondo.wxs 
 					   ${installerpath}/CustomVerifyReadyDlg.wxs
+					   ${installerpath}/basic_components.wxs
+					   ${installerpath}/CustomVersionDlg.wxs
 					   -dProcessorArchitecture=${TARGET_PLATFORM}
+					   -dUpgradecode=${upgradecode}
 					   -dvcrpath=${VCR_PATH}
 					   -dproductversion=${installerversion}				   
 					   -bf -xo -out ${installerpath}/
@@ -163,6 +190,8 @@ if(WIN32)
 					   ${installerpath}/CustomInstallDirDlg.wixobj 
 					   ${installerpath}/CustomWixUI_Mondo.wixobj 
 					   ${installerpath}/CustomVerifyReadyDlg.wixobj
+					   ${installerpath}/basic_components.wixobj
+					   ${installerpath}/CustomVersionDlg.wixobj
 					   -cultures:en-us -loc ${installerpath}/en-us.wxl 
 					   -out ${installerpath}/keychain-${installerversion}.msi
 					   VERBATIM)

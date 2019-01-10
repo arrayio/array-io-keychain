@@ -43,7 +43,7 @@ namespace  slave {
 }
 
 namespace  master {
-    enum struct cmds {unknown = 0, rawtrx, close, modify, length, create, last};
+    enum struct cmds {unknown = 0, rawtrx, close, modify, length, create, unlock, last};
 
     struct cmd_base {
         cmd_base(): cmd(cmds::unknown){};
@@ -59,16 +59,15 @@ namespace  master {
             cmd_base::cmd = cmds::rawtrx;
             params = fc_light::variant(rawtrx);
         };
-        struct rawtrx_t { rawtrx_t(std::string s):rawtrx(s){}
+        struct params_t { params_t(std::string s):rawtrx(s){}
             fc_light::variant rawtrx;
-        };
-        rawtrx_t rawtrx;
+        } rawtrx;
     };
 
     template<>
     struct cmd<cmds::close> {
         cmd():base(){}
-        struct base_t {base_t(){base_t::cmd=cmds::close;} cmds cmd;} base;
+        struct params_t {params_t():cmd(cmds::close){} cmds cmd;} base;
     };
 
     template<>
@@ -77,7 +76,7 @@ namespace  master {
             cmd_base::cmd = cmds::modify;
             params = fc_light::variant(modify);
         };
-        struct modify_t { modify_t(bool caps_, bool num_, bool shift_):caps(caps_), num(num_), shift(shift_){}
+        struct params_t { params_t(bool caps_, bool num_, bool shift_):caps(caps_), num(num_), shift(shift_){}
             fc_light::variant caps, num, shift;
         }  modify;
     };
@@ -88,31 +87,44 @@ namespace  master {
             cmd_base::cmd = cmds::length;
             params = fc_light::variant(length);
         };
-        struct length_t { length_t(int l):len(l){}
+        struct params_t { params_t(int l):len(l){}
             fc_light::variant len;
-        };
-        length_t length;
+        } length;
     };
 
     template<>
     struct cmd<cmds::create> : cmd_base{
-        cmd(std::string name_): cmd_base(), keyname(name_){
+        cmd(std::string name): cmd_base(), key_name(name){
             cmd_base::cmd = cmds::create;
-            params = fc_light::variant(keyname);
+            params = fc_light::variant(key_name);
         };
-        struct keyname_t { keyname_t(std::string s):name(s){}
-            std::string name;
-        } keyname;
+        struct params_t { params_t(std::string s):keyname(s){}
+            std::string keyname;
+        } key_name;
+    };
+
+    template<>
+    struct cmd<cmds::unlock> : cmd_base{
+        cmd(std::string name, int time): cmd_base(), unlock_param(name, time){
+            cmd_base::cmd = cmds::create;
+            params = fc_light::variant(unlock_param);
+        };
+        struct params_t {
+            params_t(std::string s, int t):keyname(s), unlock_time(t) {}
+            std::string keyname;
+            int unlock_time;
+        } unlock_param;
     };
 }
 
-FC_LIGHT_REFLECT_ENUM(master::cmds, (unknown)(rawtrx)(close)(modify)(length)(last))
+FC_LIGHT_REFLECT_ENUM(master::cmds, (unknown)(rawtrx)(close)(modify)(length)(unlock)(last))
 FC_LIGHT_REFLECT(master::cmd_base, (cmd)(params))
-FC_LIGHT_REFLECT(master::cmd<master::cmds::rawtrx>::rawtrx_t, (rawtrx))
-FC_LIGHT_REFLECT(master::cmd<master::cmds::close>::base_t, (cmd))
-FC_LIGHT_REFLECT(master::cmd<master::cmds::modify>::modify_t, (caps)(num)(shift))
-FC_LIGHT_REFLECT(master::cmd<master::cmds::length>::length_t, (len))
-FC_LIGHT_REFLECT(master::cmd<master::cmds::create>::keyname_t, (name))
+FC_LIGHT_REFLECT(master::cmd<master::cmds::rawtrx>::params_t, (rawtrx))
+FC_LIGHT_REFLECT(master::cmd<master::cmds::close>::params_t, (cmd))
+FC_LIGHT_REFLECT(master::cmd<master::cmds::modify>::params_t, (caps)(num)(shift))
+FC_LIGHT_REFLECT(master::cmd<master::cmds::length>::params_t, (len))
+FC_LIGHT_REFLECT(master::cmd<master::cmds::create>::params_t, (keyname))
+FC_LIGHT_REFLECT(master::cmd<master::cmds::unlock>::params_t, (keyname)(unlock_time))
 
 FC_LIGHT_REFLECT_ENUM(slave::cmds, (unknown)(ok)(cancel)(last))
 FC_LIGHT_REFLECT(slave::cmd_common, (cmd)(params))

@@ -145,7 +145,7 @@ void keychain_base::lock_all_priv_keys()
   key_map.clear();
 }
 
-dev::Secret keychain_base::get_private_key(const std::string& keyname, int unlock_time, create_secmod_cmd_f&& create_cmd_func)
+dev::Secret keychain_base::get_private_key(const std::string& keyname, int unlock_time, keychain_base::create_secmod_cmd_f&& create_cmd_func)
 {
   dev::Secret result;
   do

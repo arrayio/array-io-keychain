@@ -8,7 +8,7 @@
 
 #include <keychain_lib/pipeline_parser.hpp>
 #include <keychain_lib/keychain_wrapper.hpp>
-#include <keychain_lib/secure_module_singletone.hpp>
+#include <keychain_lib/secure_module_singleton.hpp>
 
 #include "cmd_parser.hpp"
 #include "sec_mod.hpp"
@@ -43,7 +43,7 @@ int cmd_parser::run(int argc, const char* const argv [])
 {
 
   const secure_dlg_mod_base* sec_mod;
-  auto log = logger_singletone::instance();
+  auto log = logger_singleton::instance();
 
   std::string task_type;
   po::options_description desc("Options");

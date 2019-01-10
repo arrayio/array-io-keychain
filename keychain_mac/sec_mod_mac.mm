@@ -55,7 +55,7 @@ keychain_app::byte_seq_t keychain_app::sec_mod_mac::get_passwd_unlock(const std:
 
 byte_seq_t sec_mod_mac::get_passwd_trx(const std::string& raw_trx) const
 {
-    auto log = logger_singletone::instance();
+    auto log = logger_singleton::instance();
     NSLog(@"get_passwd_trx");
     [ApplicationShared sharedInstance];
     NSRect frame;

@@ -9,6 +9,7 @@
 #include <regex>
 #include <iostream>
 #include <fstream>
+#include <keychain_lib/keychain_wrapper.hpp>
 #include <X11/Xatom.h>
 #include <linux/input.h>
 #include <X11/extensions/XInput.h>
@@ -17,7 +18,6 @@
 #include <X11/Xutil.h>
 #include <X11/Xos.h>
 #include <X11/XKBlib.h>
-#include <keychain_lib/keychain_wrapper.hpp>
 #include <cmd.hpp>
 
 
@@ -49,11 +49,11 @@ private:
 };
 
 
-class map_translate_singletone
+class map_translate_singleton
 {
 public:
-    map_translate_singletone(Display* );
-    static const map_translate_singletone& instance(Display*);
+  map_translate_singleton(Display* );
+    static const map_translate_singleton& instance(Display*);
     const KeySym * map;
 private:
     KeySym  keysym[MAP_SIZE]; // max count of keycodes  for lowercase and uppercase

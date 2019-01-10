@@ -23,7 +23,7 @@ byte_seq_t sec_mod_dummy::get_passwd_trx(const std::string& raw_trx) const
   return pass;
 }
 
-byte_seq_t sec_mod_dummy::get_passwd_on_create(const std::string keyname) const
+byte_seq_t sec_mod_dummy::get_passwd_on_create(const std::string& keyname) const
 {
   std::string str = "blank";
   keychain_app::byte_seq_t pass(str.begin(), str.end());

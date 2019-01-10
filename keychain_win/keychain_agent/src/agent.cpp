@@ -39,7 +39,7 @@ BOOL StartInteractiveClientProcess(
 	goto Cleanup;
 	}*/
 
-	auto log = logger_singletone::instance();
+	auto log = logger_singleton::instance();
 	do
 	{
 

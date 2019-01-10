@@ -1,6 +1,5 @@
+#include <cmath>
 #include "PopupWindow.h"
-
-
 
 PopupWindow::PopupWindow(const KeychainWarningMessage wMessage, QWidget *parent)
 	: QFrame(parent)

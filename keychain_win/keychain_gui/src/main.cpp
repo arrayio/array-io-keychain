@@ -29,7 +29,7 @@ using secmod_commands::secmod_parser_f;
 
 int main(int argc, char *argv[])
 {
-	auto log = logger_singletone::instance("keychain_gui");
+	auto log = logger_singleton::instance("keychain_gui");
 	BOOST_LOG_SEV(log.lg, info) << "KeyChain gui application started, version = " << keychain_app::version_info::version();
 #ifdef FROMPROCCESS
 	DWORD dwWritten;

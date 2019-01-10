@@ -26,7 +26,7 @@ keychain_app::byte_seq_t SecureModuleWrapper::get_passwd_unlock(const std::strin
 	return _startSecureDesktop(keyname, unlock_time);
 }
 
-keychain_app::byte_seq_t SecureModuleWrapper::get_passwd_on_create() const
+keychain_app::byte_seq_t SecureModuleWrapper::get_passwd_on_create(const std::string& keyname) const
 {
 	return _startSecureDesktop("create_password");
 }
@@ -46,7 +46,7 @@ keychain_app::byte_seq_t SecureModuleWrapper::_startSecureDesktop(const std::str
 	
 	HANDLE transactionPipe;
 
-	auto log = logger_singletone::instance();
+	auto log = logger_singleton::instance();
 	BOOST_LOG_SEV(log.lg, info) << "Send to pipe:"+ str;
 	//initializing security attributes
 	SECURITY_ATTRIBUTES  sa;

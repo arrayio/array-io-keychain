@@ -18,7 +18,6 @@
 
 #include "keychain_commands.hpp"
 
-
 namespace keychain_app
 {
 
@@ -33,7 +32,7 @@ public:
     virtual ~secure_dlg_mod_base(){}
     virtual byte_seq_t get_passwd_trx(const std::string& json_cmd) const = 0;
     virtual byte_seq_t get_passwd_unlock(const std::string& keyname, int unlock_time) const = 0;
-    virtual byte_seq_t get_passwd_on_create(const std::string keyname = std::string("") ) const = 0;
+    virtual byte_seq_t get_passwd_on_create(const std::string& keyname = std::string("") ) const = 0;
     virtual void print_mnemonic(const string_list& mnemonic) const = 0;
 };
 
@@ -49,14 +48,14 @@ private:
   keychain(const secure_dlg_mod_base* );
 };
 
-struct keychain_commands_singletone
+struct keychain_commands_singleton
 {
     using command_ptr = std::shared_ptr<keychain_command_base>;
-    static const keychain_commands_singletone& instance();
+    static const keychain_commands_singleton& instance();
     const command_ptr operator[](command_te cmd_type) const;
 private:
     std::vector<command_ptr> m_command_list;
-    keychain_commands_singletone();
+    keychain_commands_singleton();
 };
 
 }

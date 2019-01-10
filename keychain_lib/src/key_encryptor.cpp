@@ -15,7 +15,7 @@
 
 using namespace keychain_app;
 
-encryptor_singletone::encryptor_singletone()
+encryptor_singleton::encryptor_singleton()
   : m_ctx(EVP_CIPHER_CTX_new())
 {
   if (!m_ctx)
@@ -25,18 +25,18 @@ encryptor_singletone::encryptor_singletone()
   }
 }
 
-encryptor_singletone::~encryptor_singletone()
+encryptor_singleton::~encryptor_singleton()
 {
   EVP_CIPHER_CTX_free(m_ctx);
 }
 
-encryptor_singletone& encryptor_singletone::instance()
+encryptor_singleton& encryptor_singleton::instance()
 {
-  static encryptor_singletone encryptor_instance;
+  static encryptor_singleton encryptor_instance;
   return encryptor_instance;
 }
 
-keyfile_format::encrypted_data encryptor_singletone::encrypt_private_key(keyfile_format::cipher_etype etype, const byte_seq_t& key, const dev::Secret& priv_key)
+keyfile_format::encrypted_data encryptor_singleton::encrypt_private_key(keyfile_format::cipher_etype etype, const byte_seq_t& key, const dev::Secret& priv_key)
 {
   keyfile_format::encrypted_data enc_data;
   int enc_length = 0;
@@ -90,7 +90,7 @@ keyfile_format::encrypted_data encryptor_singletone::encrypt_private_key(keyfile
   return enc_data;
 }
 
-dev::Secret encryptor_singletone::decrypt_private_key(const byte_seq_t& key, keyfile_format::encrypted_data& data)
+dev::Secret encryptor_singleton::decrypt_private_key(const byte_seq_t& key, keyfile_format::encrypted_data& data)
 {
   int decr_length = 0;
   int length = 0;
@@ -142,7 +142,7 @@ dev::Secret encryptor_singletone::decrypt_private_key(const byte_seq_t& key, key
   return priv_key;
 }
 
-std::vector<uint8_t> encryptor_singletone::random_string(size_t length)
+std::vector<uint8_t> encryptor_singleton::random_string(size_t length)
 {
   static std::uniform_int_distribution<int> dist(0, 255);
   static std::mt19937 rand_dev(
@@ -157,7 +157,7 @@ std::vector<uint8_t> encryptor_singletone::random_string(size_t length)
 
 using namespace keyfile_format;
 
-const EVP_CIPHER * encryptor_singletone::get_cipher(cipher_etype etype)
+const EVP_CIPHER * encryptor_singleton::get_cipher(cipher_etype etype)
 {
   switch (etype)
   {

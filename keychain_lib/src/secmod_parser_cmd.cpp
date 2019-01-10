@@ -16,7 +16,7 @@ namespace secmod_commands
 
 blockchain_secmod_te secmod_parser_f::operator()(const std::string& json)
 {
-  auto log = logger_singletone::instance();
+  auto log = logger_singleton::instance();
   try
   {
     auto variant = fc_light::json::from_string(json);
@@ -61,7 +61,7 @@ secmod_parser_f::ethereum_cmd secmod_parser_f::to_ethereum() const
   }
   catch (const fc_light::exception& exc)
   {
-    auto log = logger_singletone::instance();
+    auto log = logger_singleton::instance();
     BOOST_LOG_SEV(log.lg, error) << "secmod_parser_f::to_ethereum(): " << exc.what();
     throw std::runtime_error("secmod_parser_f::to_ethereum() error: parse error");//TODO: need to use FC_LIGHT exception instead
   }
@@ -79,7 +79,7 @@ secmod_parser_f::bitcoin_cmd secmod_parser_f::to_bitcoin() const
   }
   catch (const fc_light::exception& exc)
   {
-    auto log = logger_singletone::instance();
+    auto log = logger_singleton::instance();
     BOOST_LOG_SEV(log.lg, error) << "ssecmod_parser_f::to_bitcoin(): " << exc.what();
     throw std::runtime_error("secmod_parser_f::to_bitcoin() error: pasrse error");//TODO: need to use FC_LIGHT exception instead
   }
@@ -97,7 +97,7 @@ secmod_parser_f::ethereum_swap_cmd secmod_parser_f::to_ethereum_swap() const
   }
   catch (const fc_light::exception& exc)
   {
-    auto log = logger_singletone::instance();
+    auto log = logger_singleton::instance();
     BOOST_LOG_SEV(log.lg, error) << "secmod_parser_f::to_ethereum_swap(): " << exc.what();
     throw std::runtime_error("secmod_parser_f::to_ethereum_swap() error: parse error");//TODO: need to use FC_LIGHT exception instead
   }
@@ -115,7 +115,7 @@ secmod_parser_f::rawhash_cmd secmod_parser_f::to_rawhash() const
   }
   catch (const fc_light::exception& exc)
   {
-    auto log = logger_singletone::instance();
+    auto log = logger_singleton::instance();
     BOOST_LOG_SEV(log.lg, error) << "secmod_parser secmod_parser_f::to_rawhash(): " << exc.what();
     throw std::runtime_error("secmod_parser_f::to_rawhash(): parse error");//TODO: need to use FC_LIGHT exception instead
   }
@@ -157,7 +157,7 @@ std::string secmod_parser_f::to_expert_mode_string() const
   }
   catch (const fc_light::exception& exc)
   {
-    auto log = logger_singletone::instance();
+    auto log = logger_singleton::instance();
     BOOST_LOG_SEV(log.lg, error) << "secmod nested command error: " << exc.what();
     return std::string();
   }

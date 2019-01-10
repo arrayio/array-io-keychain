@@ -24,7 +24,7 @@ keychain_base::keychain_base(){}
 keychain_base::~keychain_base(){}
 
 
-keychain_commands_singletone::keychain_commands_singletone()
+keychain_commands_singleton::keychain_commands_singleton()
 {
   m_command_list.reserve(32);//TODO: it is may be possible to get size info from boost::hana::tuple
   hana::for_each(cmd_static_list, [&](auto val) {
@@ -76,7 +76,7 @@ std::string keychain::operator()(const fc_light::variant& command) {
       return val.get_context();
     });
     return fc_light::json::to_string(
-      fc_light::variant(keychain_app::json_error(id, static_cast<fc_light::exception_code >(er.code()), er.to_string().c_str(), fc_light::variant(log_contexts))));
+      fc_light::variant(keychain_app::json_error(id, static_cast<fc_light::exception_code_te>(er.code()), er.to_string().c_str(), fc_light::variant(log_contexts))));
   };
   
   keychain_command_common cmd;
@@ -92,7 +92,7 @@ std::string keychain::operator()(const fc_light::variant& command) {
   }
   try
   {
-    auto cmd_map = keychain_commands_singletone::instance();
+    auto cmd_map = keychain_commands_singleton::instance();
     auto p_func = cmd_map[cmd.command];
     return (*p_func)(this, cmd.params, cmd.id);
   }
@@ -109,13 +109,13 @@ std::string keychain::operator()(const fc_light::variant& command) {
    }
 }
 
-const keychain_commands_singletone& keychain_commands_singletone::instance()
+const keychain_commands_singleton& keychain_commands_singleton::instance()
 {
-  static const keychain_commands_singletone instance;
+  static const keychain_commands_singleton instance;
   return instance;
 }
 
-const keychain_commands_singletone::command_ptr keychain_commands_singletone::operator[](command_te cmd_type) const
+const keychain_commands_singleton::command_ptr keychain_commands_singleton::operator[](command_te cmd_type) const
 {
   size_t ind = static_cast<size_t>(cmd_type);
   if (ind >= m_command_list.size())

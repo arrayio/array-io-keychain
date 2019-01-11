@@ -2,10 +2,9 @@
   <br>
   <img width="200" src="./img/logo2.png" alt="">
   <br>
-  <br>
 </p>
 
-<<link rel="stylesheet" type="text/css" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css">
+<link rel="stylesheet" type="text/css" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css">
 
 <p align="center"><strong><a href="https://github.com/arrayio/array-io-keychain/releases/download/0.11/KeyChain.Installer.v0.11.zip">» Download for macOS «</a></strong></p>
 
@@ -18,10 +17,6 @@
 <p align="center"><strong><a href="https://avvrik.github.io/KeyChain/">» Documentation «</a></strong></p>
 
 <p align="center"><strong><a href="https://keychain.array.io/">» Website «</a></strong></p>
-
-<script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
-
-
 
 ## Overview
 

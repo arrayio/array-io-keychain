@@ -1,4 +1,3 @@
-#pragma once
 #include "NamedPipeServer.h"
 
 #include <keychain_lib/keychain_wrapper.hpp>

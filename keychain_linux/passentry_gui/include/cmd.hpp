@@ -16,7 +16,7 @@
 #include "widget.hpp"
 
 namespace  slave {
-    enum struct cmds {unknown = 0, rawtrx, close, modify, length, last }; // to gui
+    enum struct cmds {unknown = 0, rawtrx, close, modify, length, create, unlock, check, last }; // to gui
 
     struct cmd_common {
         cmd_common(cmds cmd_ = cmds::unknown): cmd(cmd_){};
@@ -42,7 +42,7 @@ namespace  slave {
 
 namespace master
 {
-    enum struct cmds {unknown = 0, ok, cancel, last};
+    enum struct cmds {unknown = 0, ok, cancel, focus, last};
 
     template<cmds cmd_>
     struct cmd {};
@@ -56,12 +56,18 @@ namespace master
         cmd():base(){}
         struct base_t {base_t(){base_t::cmd=cmds::ok;} cmds cmd;} base;
     };
+    template<>
+    struct cmd<cmds::focus> {
+        cmd(int line_):base(line_){}
+        struct base_t {base_t(int l): line_edit(l){base_t::cmd=cmds::focus;} cmds cmd; int line_edit;} base;
+    };
 }
 
-FC_LIGHT_REFLECT_ENUM(slave::cmds, (unknown)(rawtrx)(close)(modify)(length)(last))
+FC_LIGHT_REFLECT_ENUM(slave::cmds, (unknown)(rawtrx)(close)(modify)(length)(create)(unlock)(check)(last))
 FC_LIGHT_REFLECT(slave::cmd_common, (cmd)(params))
 
-FC_LIGHT_REFLECT_ENUM(master::cmds, (unknown)(ok)(cancel)(last))
+FC_LIGHT_REFLECT_ENUM(master::cmds, (unknown)(ok)(cancel)(focus)(last))
 FC_LIGHT_REFLECT(master::cmd<master::cmds::ok>::base_t, (cmd))
 FC_LIGHT_REFLECT(master::cmd<master::cmds::cancel>::base_t, (cmd))
+FC_LIGHT_REFLECT(master::cmd<master::cmds::focus>::base_t, (cmd)(line_edit))
 #endif //KEYCHAINAPP_CMD_H

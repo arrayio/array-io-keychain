@@ -26,7 +26,7 @@ keychain_app::byte_seq_t SecureModuleWrapper::get_passwd_unlock(const std::strin
 	return _startSecureDesktop(keyname, unlock_time);
 }
 
-keychain_app::byte_seq_t SecureModuleWrapper::get_passwd_on_create() const
+keychain_app::byte_seq_t SecureModuleWrapper::get_passwd_on_create(const std::string& keyname) const
 {
 	return _startSecureDesktop("create_password");
 }

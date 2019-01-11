@@ -7,7 +7,7 @@
 
 using namespace keychain_app;
 
-const keyfile_singleton& keyfile_singleton::instance()
+keyfile_singleton& keyfile_singleton::instance()
 {
   static keyfile_singleton keyfile_map;
   return keyfile_map;
@@ -27,14 +27,6 @@ keyfile_singleton::keyfile_singleton()
 keyfile_singleton::~keyfile_singleton()
 {
   flush_all();
-}
-
-const keyfile_format::keyfile_t& keyfile_singleton::operator[](const std::string& key) const
-{
-  auto it = m_keydata_map.find(key);
-  if( it == m_keydata_map.end() )
-    FC_LIGHT_THROW_EXCEPTION(fc_light::key_not_found_exception, "Keyname is not exist (${key_})", ("key_", key));
-  return it->second;
 }
 
 keyfile_format::keyfile_t& keyfile_singleton::operator[](const std::string& key)

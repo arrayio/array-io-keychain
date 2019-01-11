@@ -166,6 +166,8 @@ void keychain_gui_win::refresh(Transaction& transaction)
     this->connect(OKButton, &QPushButton::released, this, &keychain_gui_win::found_pass);
     this->connect(OKButton, &QPushButton::released, this, &keychain_gui_win::close);
     this->connect(CancelButton, &QPushButton::released, this, &keychain_gui_win::close);
+    this->connect(password, &PasswordEnterElement::focus, this, &keychain_gui_win::focus);
+
     _roundCorners();
     password->setValueFocus();
     //connect(password, &PasswordEnterElement::finishEnterPassword, this, &keychain_gui_win::transaction_sign);
@@ -281,4 +283,9 @@ void keychain_gui_win::send(std::string a)
 {
     if ( write(STDIN_FILENO, a.c_str(), a.length() ) != a.length() )
         close();
+}
+
+void keychain_gui_win::focus(int line)
+{
+    send(fc_light::json::to_string(fc_light::variant( master::cmd<(master::cmds::focus)>(line).base)));
 }

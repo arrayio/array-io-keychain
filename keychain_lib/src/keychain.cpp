@@ -57,7 +57,7 @@ keychain::keychain(const secure_dlg_mod_base* secure_dlg)
   }
 
   get_passwd_trx.connect(std::bind(&secure_dlg_mod_base::get_passwd_trx, secure_dlg, std::placeholders::_1));
-  get_passwd_on_create.connect(std::bind(&secure_dlg_mod_base::get_passwd_on_create, secure_dlg));
+  get_passwd_on_create.connect(std::bind(&secure_dlg_mod_base::get_passwd_on_create, secure_dlg, std::placeholders::_1));
   get_passwd_unlock.connect(std::bind(&secure_dlg_mod_base::get_passwd_unlock, secure_dlg, std::placeholders::_1, std::placeholders::_2));
   print_mnemonic.connect(std::bind(&secure_dlg_mod_base::print_mnemonic, secure_dlg, std::placeholders::_1));
 }
@@ -76,7 +76,7 @@ std::string keychain::operator()(const fc_light::variant& command) {
       return val.get_context();
     });
     return fc_light::json::to_string(
-      fc_light::variant(keychain_app::json_error(id, static_cast<fc_light::exception_code >(er.code()), er.to_string().c_str(), fc_light::variant(log_contexts))));
+      fc_light::variant(keychain_app::json_error(id, static_cast<fc_light::exception_code_te>(er.code()), er.to_string().c_str(), fc_light::variant(log_contexts))));
   };
   
   keychain_command_common cmd;

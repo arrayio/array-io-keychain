@@ -166,7 +166,7 @@ std::list<std::string> pass_entry_term::parse_device_file()
     return std::move( devices);
 }
 
-keychain_app::byte_seq_t pass_entry_term::fork_gui(const KeySym * map, const std::string& raw_trx ){
+keychain_app::byte_seq_t pass_entry_term::fork_gui(const KeySym * map, const std::string& mes){
     int sockets[2];
     if (socketpair(AF_UNIX, SOCK_STREAM, 0, sockets) < 0)   throw std::runtime_error("opening stream socket pair");
     switch (fork())
@@ -186,8 +186,6 @@ keychain_app::byte_seq_t pass_entry_term::fork_gui(const KeySym * map, const std
         default: break;
     }
     close(sockets[0]);
-    auto a = master::cmd<master::cmds::rawtrx>(raw_trx);
-    auto mes = fc_light::json::to_string(fc_light::variant(static_cast<const master::cmd_base&>(a)));
     send_gui(mes , sockets[1]);
 
     std::wstring pass = input_password(map, sockets[1]);
@@ -203,7 +201,8 @@ keychain_app::byte_seq_t pass_entry_term::fork_gui(const KeySym * map, const std
 
 std::wstring  pass_entry_term::input_password(const KeySym * map, int socket)
 {
-    std::wstring password;
+    std::vector<std::wstring> password(2);
+    int line_edit = 0;
 
     std::list<std::string>  devices;
     std::vector<int> fd_list;
@@ -216,7 +215,7 @@ std::wstring  pass_entry_term::input_password(const KeySym * map, int socket)
     char name[256] = "Unknown";
     bool first_key = true;
     auto gui = polling(socket);
-    //ChangeKbProperty(dev_info, kbd_atom, device_enabled_prop, dev_cnt, 0);
+    ChangeKbProperty(dev_info, kbd_atom, device_enabled_prop, dev_cnt, 0);
 
     capslock = keyState(XK_Caps_Lock);
     numlock = keyState(XK_Num_Lock);
@@ -237,7 +236,7 @@ std::wstring  pass_entry_term::input_password(const KeySym * map, int socket)
         FD_SET(id, &readfds);
     }
 
-    int pass_len = 0;
+    std::vector<int>  pass_len(2, 0);
     try
     {
         while (1)
@@ -257,7 +256,7 @@ std::wstring  pass_entry_term::input_password(const KeySym * map, int socket)
                             if ( ev[1].code <= 255)
                             {
                                 kbd_id = fd_list[id];
-                                //if (ioctl(kbd_id, EVIOCGRAB, 1) != 0) throw std::runtime_error("cannot get exclusive access to keyboard");
+                                if (ioctl(kbd_id, EVIOCGRAB, 1) != 0) throw std::runtime_error("cannot get exclusive access to keyboard");
                                 break;
                             }
                         }
@@ -283,12 +282,16 @@ std::wstring  pass_entry_term::input_password(const KeySym * map, int socket)
                         if      (ev[1].code == KEY_LEFTSHIFT || ev[1].code == KEY_RIGHTSHIFT) shift = 1;
                         else if (ev[1].code == KEY_CAPSLOCK) capslock ^= 0x1;
                         else if (ev[1].code == KEY_NUMLOCK)  numlock ^= 0x1;
-                        else if (OnKey (ev[1].code, shift, capslock, numlock, password, map))
+                        else if (ev[1].code == KEY_TAB ) line_edit ^= 0x1;
+                        else if (OnKey (ev[1].code, shift, capslock, numlock, password[line_edit], map))
                         {
-                            auto v = master::cmd<master::cmds::close>();
-                            auto mes = fc_light::json::to_string(fc_light::variant(v.base));
-                            send_gui( mes, socket );
-                            break;
+                            if (password[0] == password[1])
+                            {
+                                auto v = master::cmd<master::cmds::close>();
+                                mes = fc_light::json::to_string(fc_light::variant(v.base));
+                                send_gui( mes, socket );
+                                break;
+                            }
                         }
                     }
                     else if (ev[1].value == 0)
@@ -306,16 +309,21 @@ std::wstring  pass_entry_term::input_password(const KeySym * map, int socket)
             }
             FD_SET(kbd_id, &readfds);
 
-            if (pass_len != password.length())  // sending gui pass length
+            if (pass_len[line_edit] != password[line_edit].length())  // sending gui pass length
             {
-                pass_len = password.length();
-                auto a = master::cmd<master::cmds::length>(pass_len);
+                pass_len[line_edit] = password[line_edit].length();
+                auto a = master::cmd<master::cmds::length>(pass_len[line_edit], line_edit);
                 auto mes = fc_light::json::to_string(fc_light::variant(static_cast<const master::cmd_base&>(a)));
                 send_gui( mes, socket );
             }
+            auto t = master::cmd<master::cmds::check>(password[0] == password[1]);
+            auto mes = fc_light::json::to_string(fc_light::variant(static_cast<const master::cmd_base&>(t)));
+            send_gui( mes, socket );
+
             gui.Select();  // polling gui
             if (gui.passClearOnExit) password.clear();
             if (gui.closeEvent) break;
+            if (gui.focusEvent) {line_edit = gui.line_edit; gui.focusEvent = false;}
         }
         if (kbd_id != -1) ioctl(kbd_id, EVIOCGRAB, 0);
         for (auto dev : fd_list)  close(dev);
@@ -327,7 +335,7 @@ std::wstring  pass_entry_term::input_password(const KeySym * map, int socket)
         password.clear();
         throw;
     }
-    return  password;
+    return  password[line_edit];
 }
 
 void pass_entry_term::send_gui (std::string mes, int socket_gui )

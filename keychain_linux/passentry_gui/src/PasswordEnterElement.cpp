@@ -11,7 +11,7 @@ PasswordEnterElement::PasswordEnterElement(bool passwordCreate, QWidget * parent
 	label->setStyleSheet(labelStyle);
 	label->setAlignment(Qt::AlignBottom | Qt::AlignRight);
 
-	value = new PasswordLineEdit(this);
+	value = new PasswordLineEdit(main_line, this);
 	value->setText("");
 	value->setStyleSheet(passPhraseStyle);
 	value->setEchoMode(QLineEdit::Password);
@@ -31,7 +31,7 @@ PasswordEnterElement::PasswordEnterElement(bool passwordCreate, QWidget * parent
 		labelConfirm->setStyleSheet(labelStyle);
 		labelConfirm->setAlignment(Qt::AlignBottom | Qt::AlignRight);
 
-		valueConfirm = new PasswordLineEdit(this);
+		valueConfirm = new PasswordLineEdit(confirm_line, this);
 		valueConfirm->setText("");
 		valueConfirm->setStyleSheet(passPhraseStyle);
 		valueConfirm->setEchoMode(QLineEdit::Password);
@@ -46,13 +46,22 @@ PasswordEnterElement::PasswordEnterElement(bool passwordCreate, QWidget * parent
 		labelConfirm->setText("Confirm");
 		connect(value, &QLineEdit::textEdited, this, &PasswordEnterElement::checkStrength);
 		connect(value, &PasswordLineEdit::finishEnter, this, &PasswordEnterElement::setFocusOnConfirm);
-		connect(valueConfirm, &QLineEdit::textEdited, this, &PasswordEnterElement::checkConfirm);
+		//connect(valueConfirm, &QLineEdit::textEdited, this, &PasswordEnterElement::checkConfirm);
 		connect(valueConfirm, &PasswordLineEdit::finishEnter, this, &PasswordEnterElement::checkFinishedEnterance);
+		connect(value, &PasswordLineEdit::focus, this, &PasswordEnterElement::focus);
+        connect(valueConfirm, &PasswordLineEdit::focus, this, &PasswordEnterElement::focusProcess);
 	}
 	else {
 		connect(value, &PasswordLineEdit::finishEnter, this, &PasswordEnterElement::checkFinishedEnterance);
 	}
 }
+
+
+void PasswordEnterElement::focusProcess(int line)
+{
+    emit focus(line);
+}
+
 
 PasswordEnterElement::~PasswordEnterElement()
 {
@@ -142,11 +151,9 @@ int PasswordEnterElement::GetElementHeigth()
 	return _height;
 }
 
-void PasswordEnterElement::checkConfirm(const QString & text)
+void PasswordEnterElement::checkConfirm(const bool confirm)
 {
-	if (value == Q_NULLPTR)
-		return;
-	if (value->text() == text) {
+	if (confirm) {
 		valueConfirm->setStyleSheet("font:16px \"Segoe UI\";background-color:rgb(120,255,113);border-style:solid;border-width:1px;border-radius:4px;border-color:rgb(0,113,0);");
 		confirmDescription->setStyleSheet("font:10px \"Segoe UI\";background:transparent;color:rgb(0,113,0);");
 		isSame = true;

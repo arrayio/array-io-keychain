@@ -2,18 +2,19 @@
   <br>
   <img width="200" src="./img/logo2.png" alt="">
   <br>
-  <br>
 </p>
 
 <link rel="stylesheet" type="text/css" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css">
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-[![Tweet](https://img.shields.io/twitter/url/http/shields.io.svg?style=social)](https://twitter.com/intent/tweet?text=A%20good,%20solid%20app%20to%20keep%20your%20keys%20safe.&url=https://keychain.array.io/&via=ProjectArray&hashtags=cybersecurity,private,cryptography,blockchain,app) <a class="btn btn-info btn-sm" href="https://avvrik.github.io/KeyChain/" type="button">Documentation</a>
-<a class="btn btn-info btn-sm" href="https://github.com/arrayio/array-io-keychain/releases/download/0.11/KeyChain.Installer.v0.11.zip" type="button">Download</a>
-<a class="btn btn-info btn-sm" href="https://keychain.array.io/" type="button">Website</a> [![Contributions welcome](https://img.shields.io/badge/contributions-welcome-orange.svg)](https://github.com/arrayio/array-io-keychain#contributing-to-the-project)
-[![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/arrayio/array-io-keychain/blob/master/LICENSE.md) [![npm version](https://badge.fury.io/js/web3override.svg)](https://badge.fury.io/js/web3override)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[![Tweet](https://img.shields.io/twitter/url/http/shields.io.svg?style=social)](https://twitter.com/intent/tweet?text=A%20good,%20solid%20app%20to%20keep%20your%20keys%20safe.&url=https://keychain.array.io/&via=ProjectArray&hashtags=cybersecurity,private,cryptography,blockchain,app) [![Contributions welcome](https://img.shields.io/badge/contributions-welcome-orange.svg)](https://github.com/arrayio/array-io-keychain#contributing-to-the-project)
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/arrayio/array-io-keychain/blob/master/LICENSE.md) [![npm version](https://badge.fury.io/js/web3override.svg)](https://badge.fury.io/js/web3override) 
 
+<p align="center"><strong><a href="https://github.com/arrayio/array-io-keychain/releases/download/0.11/KeyChain.Installer.v0.11.zip">» Download for macOS</a> <a href="https://github.com/arrayio/array-io-keychain/releases/download/0.13/keychain.msi">|  Download for Windows «</a></strong></p>
 
+<p align="center"><strong><a href="https://avvrik.github.io/KeyChain/">» Documentation «</a></strong></p>
+
+<p align="center"><strong><a href="https://keychain.array.io/">» Website «</a></strong></p>
 
 ## Overview
 
@@ -32,7 +33,7 @@
 
 ## Installation
 
-Download and install KeyChain for [macOS](https://github.com/arrayio/array-io-keychain/releases/download/0.11/KeyChain.Installer.v0.11.zip). Windows and Linux installers are coming soon.
+Download and install KeyChain for [macOS](https://github.com/arrayio/array-io-keychain/releases/download/0.11/KeyChain.Installer.v0.11.zip) and [Windows](https://github.com/arrayio/array-io-keychain/releases/download/0.13/keychain.msi). Linux installer is coming soon.
 
 *Try out KeyChain on the [demo page](https://arrayio.github.io/array-io-keychain/demo/).*
 
@@ -48,7 +49,7 @@ You can find comprehensive installation guides for [macOS](https://github.com/ar
 
 After you have installed [KeyChain](https://github.com/arrayio/array-io-keychain/releases/download/0.11/KeyChain.Installer.v0.11.zip), you can start using it with web3. Just follow these simple steps.
 
-1. Install `web3override` library https://www.npmjs.com/package/web3override
+1. Install `web3override` library from this [source](https://www.npmjs.com/package/web3override).
 
 ```
 npm i --save web3override

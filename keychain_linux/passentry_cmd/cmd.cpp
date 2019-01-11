@@ -2,43 +2,9 @@
 // Created by user on 23.06.18.
 //
 #include "cmd.hpp"
-#include <fc_light/exception/exception.hpp>
-#include <fc_light/exception/exception.hpp>
 namespace hana = boost::hana;
 namespace slave
 {
-    template<cmds cmd_>
-    struct cmd : cmd_base {
-        cmd() : cmd_base(cmd_) {};
-        virtual ~cmd() {};
-        virtual void operator()(polling* p, const fc_light::variant& v) const override {
-            throw std::runtime_error("operation is not implemented");
-        };
-        using params_t = void;
-    };
-    template<>
-    struct cmd<cmds::ok> : cmd_base {
-        cmd() : cmd_base(cmds::ok) {};
-        virtual ~cmd() {};
-        using params_t = void;
-        virtual void operator()(polling* p, const fc_light::variant& v) const override {
-            try { p->closeEvent=true;}
-            catch (const std::exception &e) {throw std::runtime_error(e.what());}
-            catch (const fc_light::exception &e) {throw std::runtime_error(e.what());}
-        };
-    };
-    template<>
-    struct cmd<cmds::cancel> : cmd_base {
-        cmd() : cmd_base(cmds::cancel) {};
-        virtual ~cmd() {};
-        using params_t = void;
-        virtual void operator()(polling* p, const fc_light::variant& v) const override {
-            try { p->closeEvent=true; p->passClearOnExit=true;}
-            catch (const std::exception &e) {throw std::runtime_error(e.what());}
-            catch (const fc_light::exception &e) {throw std::runtime_error(e.what());}
-        };
-    };
-
     const cmd_list_singleton& cmd_list_singleton::instance() {
         static const cmd_list_singleton instance;
         return instance;

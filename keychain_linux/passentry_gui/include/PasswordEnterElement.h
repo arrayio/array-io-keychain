@@ -27,11 +27,13 @@ public:
 	void setFocusOnConfirm();
 	bool validConfirm();
 	PasswordLineEdit *value = Q_NULLPTR;
+	PasswordLineEdit *valueConfirm = Q_NULLPTR;
+	void focusProcess (int line);
 
 signals:
 	void finishEnterPassword();
 	void changePassword();
-
+    void focus (int line);
 
 private:
 	//Ui::SecureWindowElement ui;
@@ -40,7 +42,7 @@ private:
 	QLabel *description;
 	QLabel *labelConfirm = Q_NULLPTR;
 	QLabel *confirmDescription;
-	PasswordLineEdit *valueConfirm = Q_NULLPTR;
+
 	bool pCreatePassword;
 	int _height = 0;
 	int pValidChecks = 0;
@@ -49,7 +51,7 @@ private:
 
 public slots:
 	void checkStrength(const QString &text);
-	void checkConfirm(const QString &text);
+	void checkConfirm(const bool confirm);
 };
 
 #endif

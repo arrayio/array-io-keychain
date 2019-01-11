@@ -2,14 +2,18 @@ project( keychain_keymanager )
 
 cmake_minimum_required( VERSION 3.0.2 )
 
-set(CMAKE_CXX_FLAGS "-std=c++14 /EHsc")
-set(CMAKE_EXE_LINKER_FLAGS "/SUBSYSTEM:WINDOWS")
+if (MSVC)
+	set(CMAKE_CXX_FLAGS "-std=c++14 /EHsc")
+	set(CMAKE_EXE_LINKER_FLAGS "/SUBSYSTEM:WINDOWS")
+	set(CMAKE_WIN32_EXECUTABLE ON)
+else()
+	set(CMAKE_CXX_FLAGS "-std=c++14")
+endif()
 
-set(CMAKE_WIN32_EXECUTABLE ON)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-set(CMAKE_AUTOUIC_SEARCH_PATHS "${CMAKE_SOURCE_DIR}/keychain_win/keychain_keymanager/src")
-set(AUTOGEN_BUILD_DIR "${CMAKE_SOURCE_DIR}/keychain_win/keychain_keymanager/GeneratedFiles")
+set(CMAKE_AUTOUIC_SEARCH_PATHS "${CMAKE_SOURCE_DIR}/keychain_keymanager/src")
+set(AUTOGEN_BUILD_DIR "${CMAKE_SOURCE_DIR}/keychain_keymanager/GeneratedFiles")
 
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTOUIC ON)
@@ -23,8 +27,8 @@ get_target_property(QtCore_location Qt5::Core LOCATION)
 
 add_definitions(-DUNICODE -D_UNICODE)
 
-QT5_ADD_RESOURCES(RESOURCES "${CMAKE_SOURCE_DIR}/keychain_win/keychain_keymanager/Resources/*.qrc")
-QT5_WRAP_UI(MOC_FILES "${CMAKE_SOURCE_DIR}/keychain_win/keychain_keymanager/src/*.ui")
+QT5_ADD_RESOURCES(RESOURCES "${CMAKE_SOURCE_DIR}/keychain_keymanager/Resources/*.qrc")
+QT5_WRAP_UI(MOC_FILES "${CMAKE_SOURCE_DIR}/keychain_keymanager/src/*.ui")
 include_directories(${Qt5Widgets_INCLUDES})
 include_directories(${Qt5Core_INCLUDES})
 include_directories(${Qt5Qml_INCLUDES})
@@ -50,23 +54,29 @@ else()
   find_library(LIB_OPENSSL NAME libcrypto.lib HINTS "${OPENSSL_ROOT_DIR}/lib")
 endif( NOT MSVC )
 
-include_directories("${CMAKE_SOURCE_DIR}/keychain_win/keychain_keymanager/include" 
+include_directories("${CMAKE_SOURCE_DIR}/keychain_keymanager/include"
 			"${AUTOGEN_BUILD_DIR}"
             "${CMAKE_SOURCE_DIR}/libraries/fc_light/include"
 			"${CMAKE_SOURCE_DIR}/keychain_lib/include"
 			"${CMAKE_SOURCE_DIR}/libraries/kaitai_struct_cpp_stl_runtime"
 			${Boost_INCLUDE_DIR})
-file(GLOB KEYCHAIN_KEYMANAGER_SOURCES "${CMAKE_SOURCE_DIR}/keychain_win/keychain_keymanager/src/*.cpp")
-file(GLOB KEYCHAIN_KEYMANAGER_INCLUDES "${CMAKE_SOURCE_DIR}/keychain_win/keychain_keymanager/include/*.hpp")
-file(GLOB KEYCHAIN_KEYMANAGER_RESOURCES "${CMAKE_SOURCE_DIR}/keychain_win/keychain_keymanager/Resources/*.qrc")
+file(GLOB KEYCHAIN_KEYMANAGER_SOURCES "${CMAKE_SOURCE_DIR}/keychain_keymanager/src/*.cpp")
+file(GLOB KEYCHAIN_KEYMANAGER_INCLUDES "${CMAKE_SOURCE_DIR}/keychain_keymanager/include/*.hpp")
+file(GLOB KEYCHAIN_KEYMANAGER_RESOURCES "${CMAKE_SOURCE_DIR}/keychain_keymanager/Resources/*.qrc")
 
 add_executable(keychain_keymanager ${KEYCHAIN_KEYMANAGER_SOURCES} ${KEYCHAIN_KEYMANAGER_INCLUDES} ${KEYCHAIN_KEYMANAGER_RESOURCES})
-        
-target_link_libraries(keychain_keymanager Crypt32.lib Qt5::Widgets Qt5::Core Qt5::Qml Qt5::Svg keychain_common secmodlib kaitai_struct_cpp_stl_runtime fc_light ${Boost_LIBRARIES} ${LIB_OPENSSL})
 
-if(CMAKE_BUILD_TYPE STREQUAL "Debug")
-	set(BUILD_TYPE_PATH Debug )
-	set(CMAKE_CXX_FLAGS "/EHsc")
-else(CMAKE_BUILD_TYPE STREQUAL "Debug")
-	set(BUILD_TYPE_PATH Release )
-endif(CMAKE_BUILD_TYPE STREQUAL "Debug")
+if(MSVC)
+	target_link_libraries(keychain_keymanager Crypt32.lib Qt5::Widgets Qt5::Core Qt5::Qml Qt5::Svg keychain_common secmodlib kaitai_struct_cpp_stl_runtime fc_light ${Boost_LIBRARIES} ${LIB_OPENSSL})
+else()
+	target_link_libraries(keychain_keymanager Qt5::Widgets Qt5::Core Qt5::Qml Qt5::Svg keychain_common secmodlib kaitai_struct_cpp_stl_runtime fc_light ${Boost_LIBRARIES} ${LIB_OPENSSL})
+endif()
+
+if(MSVC)
+	if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+		set(BUILD_TYPE_PATH Debug )
+		set(CMAKE_CXX_FLAGS "/EHsc")
+	else(CMAKE_BUILD_TYPE STREQUAL "Debug")
+		set(BUILD_TYPE_PATH Release )
+	endif(CMAKE_BUILD_TYPE STREQUAL "Debug")
+endif()

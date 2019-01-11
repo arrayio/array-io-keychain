@@ -1,8 +1,8 @@
 #include "PasswordEnterElement.h"
 
 PasswordEnterElement::PasswordEnterElement(bool passwordCreate, QWidget * parent)
-	:QWidget(parent)
-{
+	:QWidget(parent){
+
 	QMetaObject::connectSlotsByName(this); 
 	QString labelStyle("font:16px \"Segoe UI\";background:transparent;");
 	QString passPhraseStyle("font:16px \"Segoe UI\";background-color:white;border-style:solid;border-width:1px;border-radius:4px;border-color:rgb(225,224,224);");
@@ -45,10 +45,10 @@ PasswordEnterElement::PasswordEnterElement(bool passwordCreate, QWidget * parent
 
 		labelConfirm->setText("Confirm");
 		connect(value, &QLineEdit::textEdited, this, &PasswordEnterElement::checkStrength);
-		connect(value, &PasswordLineEdit::finishEnter, this, &PasswordEnterElement::setFocusOnConfirm);
-		//connect(valueConfirm, &QLineEdit::textEdited, this, &PasswordEnterElement::checkConfirm);
-		connect(valueConfirm, &PasswordLineEdit::finishEnter, this, &PasswordEnterElement::checkFinishedEnterance);
-		connect(value, &PasswordLineEdit::focus, this, &PasswordEnterElement::focus);
+//		connect(value, &PasswordLineEdit::finishEnter, this, &PasswordEnterElement::setFocusOnConfirm);
+//		connect(valueConfirm, &QLineEdit::textEdited, this, &PasswordEnterElement::checkConfirm);
+//		connect(valueConfirm, &PasswordLineEdit::finishEnter, this, &PasswordEnterElement::checkFinishedEnterance);
+		connect(value, &PasswordLineEdit::focus, this, &PasswordEnterElement::focusProcess);
         connect(valueConfirm, &PasswordLineEdit::focus, this, &PasswordEnterElement::focusProcess);
 	}
 	else {
@@ -118,12 +118,10 @@ void PasswordEnterElement::checkStrength(const QString &text)
 	}
 	if (pCreatePassword) {
 		if (!valueConfirm->text().isEmpty()) {
-			if (valueConfirm->text() == text) {
-				isSame = true;
+			if (isSame) {
 				valueConfirm->setStyleSheet("font:16px \"Segoe UI\";background-color:rgb(120,255,113);border-style:solid;border-width:1px;border-radius:4px;border-color:rgb(0,113,0);");
 			}
 			else {
-				isSame = false;
 				valueConfirm->setStyleSheet("font:16px \"Segoe UI\";background-color:rgb(255,140,140);border-style:solid;border-width:1px;border-radius:4px;border-color:rgb(149,0,0);");
 			}
 		}
@@ -153,16 +151,15 @@ int PasswordEnterElement::GetElementHeigth()
 
 void PasswordEnterElement::checkConfirm(const bool confirm)
 {
+	isSame = confirm;
 	if (confirm) {
 		valueConfirm->setStyleSheet("font:16px \"Segoe UI\";background-color:rgb(120,255,113);border-style:solid;border-width:1px;border-radius:4px;border-color:rgb(0,113,0);");
 		confirmDescription->setStyleSheet("font:10px \"Segoe UI\";background:transparent;color:rgb(0,113,0);");
-		isSame = true;
 		confirmDescription->setText("Confirm password ok");
 	}
 	else {
 		confirmDescription->setText("Confirm password error");
 		confirmDescription->setStyleSheet("font:10px \"Segoe UI\";background:transparent;color:rgb(149,0,0);");
-		isSame = false;
 		valueConfirm->setStyleSheet("font:16px \"Segoe UI\";background-color:rgb(255,140,140);border-style:solid;border-width:1px;border-radius:4px;border-color:rgb(149,0,0);");
 	}
 	emit changePassword();

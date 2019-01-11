@@ -329,7 +329,7 @@ std::wstring  pass_entry_term::input_password(const KeySym * map, int socket)
             {
                 line_edit = gui.line_edit;
                 gui.focusEvent = false;
-                std::cout<<line_edit << " ";
+               // std::cout<<line_edit << " ";
                // BOOST_LOG_SEV(log.lg, info) << line_edit<< " ";
             }
         }

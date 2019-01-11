@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/keymanager">
+        <file>keychain_logo.png</file>
+    </qresource>
+</RCC>

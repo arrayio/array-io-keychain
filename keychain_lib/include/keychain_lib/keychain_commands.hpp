@@ -469,6 +469,9 @@ struct keychain_command<command_te::sign_hex> : keychain_command_base
                                  "Unknown blockchain_type, blockchain = ${type}", ("type", params.blockchain_type));
     }
   
+    auto& keyfile = keyfiles[params.keyname];
+    keyfile.usage_time = fc_light::time_point::now();
+    keyfiles.update(std::move(keyfile));
     json_response response(to_hex(signature.data(), signature.size()).c_str(), id);
     fc_light::variant res(response);
     return fc_light::json::to_string(res);
@@ -539,7 +542,10 @@ struct keychain_command<command_te::sign_hash> : keychain_command_base
         break;
       }
     }
-
+  
+    auto& keyfile = keyfiles[params.keyname];
+    keyfile.usage_time = fc_light::time_point::now();
+    keyfiles.update(std::move(keyfile));
     json_response response(to_hex(signature.data(), signature.size()).c_str(), id);
     fc_light::variant res(response);
     return fc_light::json::to_string(res);
@@ -616,6 +622,7 @@ struct keychain_command<command_te::create>: keychain_command_base
       keyfile.keyinfo.public_key = pb_hex;
       keyfile.keyname = keyname;
       keyfile.description = params.description;
+      keyfile.creation_time = fc_light::time_point::now();
       keyfile.keychain_version = version_info::short_version();
       keyfile.filetype = keyfile_format::TYPE_KEY;
       keyfile.keyinfo.curve_type = params.curve;
@@ -624,7 +631,6 @@ struct keychain_command<command_te::create>: keychain_command_base
         FC_LIGHT_THROW_EXCEPTION(fc_light::internal_error_exception, "Keyname (filename) is empty");
 
       keyfiles.insert(std::move(keyfile));
-      keyfiles.flush_keyfile(params.keyname);
       json_response response(keyname, id);
       return fc_light::json::to_string(fc_light::variant(response));
     }

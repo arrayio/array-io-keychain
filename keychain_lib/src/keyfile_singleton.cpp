@@ -45,6 +45,15 @@ void keyfile_singleton::insert(keyfile_format::keyfile_t&& keyfile_data)
   flush_keyfile(keyfile_data.keyname);
 }
 
+void keyfile_singleton::update(keyfile_format::keyfile_t&& keyfile_data)
+{
+  auto it = m_keydata_map.find(keyfile_data.keyname);
+  if(it == m_keydata_map.end())
+    FC_LIGHT_THROW_EXCEPTION(fc_light::key_not_found_exception, "Keyfile with name \"${key_}\" not found", ("key_", keyfile_data.keyname));
+  it->second = keyfile_data;
+  flush_keyfile(keyfile_data.keyname);
+}
+
 bool keyfile_singleton::is_exist(const std::string& key) const
 {
   auto it = m_keydata_map.find(key);

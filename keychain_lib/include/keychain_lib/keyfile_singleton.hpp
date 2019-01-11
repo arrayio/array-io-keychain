@@ -24,6 +24,7 @@ public:
   static keyfile_singleton& instance();
   keyfile_format::keyfile_t& operator[](const std::string& key);
   void insert(keyfile_format::keyfile_t&& keyfile_data); //NOTE: keyfile_t (fc_light::variant) is not support move semantic
+  void update(keyfile_format::keyfile_t&& keyfile_data);
   bool is_exist(const std::string& key) const;
   void flush_keyfile(const std::string& key) const;
   void flush_all() const;

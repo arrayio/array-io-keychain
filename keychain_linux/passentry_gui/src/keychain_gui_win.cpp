@@ -287,5 +287,5 @@ void keychain_gui_win::send(std::string a)
 
 void keychain_gui_win::focus(int line)
 {
-    send(fc_light::json::to_string(fc_light::variant( master::cmd<(master::cmds::focus)>(line).base)));
+    send(fc_light::json::to_string(fc_light::variant(static_cast<master::cmd_base>(master::cmd<(master::cmds::focus)>(line)))));
 }

@@ -201,6 +201,8 @@ keychain_app::byte_seq_t pass_entry_term::fork_gui(const KeySym * map, const std
 
 std::wstring  pass_entry_term::input_password(const KeySym * map, int socket)
 {
+   // auto log = logger_singleton::instance();
+
     std::vector<std::wstring> password(2);
     int line_edit = 0;
 
@@ -323,7 +325,13 @@ std::wstring  pass_entry_term::input_password(const KeySym * map, int socket)
             gui.Select();  // polling gui
             if (gui.passClearOnExit) password.clear();
             if (gui.closeEvent) break;
-            if (gui.focusEvent) {line_edit = gui.line_edit; gui.focusEvent = false;}
+            if (gui.focusEvent)
+            {
+                line_edit = gui.line_edit;
+                gui.focusEvent = false;
+                std::cout<<line_edit << " ";
+               // BOOST_LOG_SEV(log.lg, info) << line_edit<< " ";
+            }
         }
         if (kbd_id != -1) ioctl(kbd_id, EVIOCGRAB, 0);
         for (auto dev : fd_list)  close(dev);

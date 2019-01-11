@@ -8,6 +8,8 @@
 #include <fc_light/reflect/reflect.hpp>
 #include <fc_light/variant.hpp>
 
+#include <fc_light/time.hpp>
+
 namespace keychain_app {
 
 namespace keyfile_format
@@ -52,6 +54,8 @@ struct keyfile_t
   std::string keyname;
   std::string description;
   std::string keychain_version;
+  fc_light::time_point creation_time;
+  fc_light::time_point usage_time;
   struct keyinfo_t
   {
     bool encrypted;
@@ -69,7 +73,7 @@ FC_LIGHT_REFLECT_ENUM(keychain_app::keyfile_format::file_type, (TYPE_UNKNOWN)(TY
 FC_LIGHT_REFLECT_ENUM(keychain_app::keyfile_format::curve_etype, (unknown)(secp256k1))
 FC_LIGHT_REFLECT(keychain_app::keyfile_format::encrypted_data, (cipher_type)(iv)(enc_data))
 FC_LIGHT_REFLECT(keychain_app::keyfile_format::keyfile_t::keyinfo_t, (encrypted)(curve_type)(priv_key_data)(public_key))
-FC_LIGHT_REFLECT(keychain_app::keyfile_format::keyfile_t, (filetype)(keyname)(description)(keychain_version)(keyinfo))
+FC_LIGHT_REFLECT(keychain_app::keyfile_format::keyfile_t, (filetype)(keyname)(description)(keychain_version)(creation_time)(usage_time)(keyinfo))
 
 
 #endif //KEYCHAINAPP_KEY_FILE_PARSER_HPP

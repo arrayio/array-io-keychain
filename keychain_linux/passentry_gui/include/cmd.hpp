@@ -44,6 +44,12 @@ namespace master
 {
     enum struct cmds {unknown = 0, ok, cancel, focus, last};
 
+    struct cmd_base{
+        cmd_base(cmds c): cmd(c){}
+        cmds cmd;
+        fc_light::variant params;
+    };
+
     template<cmds cmd_>
     struct cmd {};
     template<>
@@ -57,9 +63,12 @@ namespace master
         struct base_t {base_t(){base_t::cmd=cmds::ok;} cmds cmd;} base;
     };
     template<>
-    struct cmd<cmds::focus> {
-        cmd(int line_):base(line_){}
-        struct base_t {base_t(int l): line_edit(l){base_t::cmd=cmds::focus;} cmds cmd; int line_edit;} base;
+    struct cmd<cmds::focus> : cmd_base {
+        cmd(int line_): cmd_base(cmds::focus), focus(line_){params = fc_light::variant(focus);}
+        struct params_t {
+            params_t(int l): line_edit(l){}
+            int line_edit;
+        } focus;
     };
 }
 
@@ -69,5 +78,6 @@ FC_LIGHT_REFLECT(slave::cmd_common, (cmd)(params))
 FC_LIGHT_REFLECT_ENUM(master::cmds, (unknown)(ok)(cancel)(focus)(last))
 FC_LIGHT_REFLECT(master::cmd<master::cmds::ok>::base_t, (cmd))
 FC_LIGHT_REFLECT(master::cmd<master::cmds::cancel>::base_t, (cmd))
-FC_LIGHT_REFLECT(master::cmd<master::cmds::focus>::base_t, (cmd)(line_edit))
+FC_LIGHT_REFLECT(master::cmd<master::cmds::focus>::params_t, (line_edit))
+FC_LIGHT_REFLECT(master::cmd_base, (cmd)(params))
 #endif //KEYCHAINAPP_CMD_H

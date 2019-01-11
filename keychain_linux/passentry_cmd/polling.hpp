@@ -23,12 +23,13 @@ using it_range = std::pair<buf_it, buf_it>;
 class polling
 {
 public:
-    polling(int socket_): socket(socket_), passClearOnExit(false), closeEvent(false) {
+    polling(int socket_): socket(socket_), passClearOnExit(false), closeEvent(false), focusEvent(false) {
         buf.resize(1024);
         it = buf.begin();
     }
     void Select();
-    bool passClearOnExit, closeEvent;
+    bool passClearOnExit, closeEvent, focusEvent;
+    int line_edit;
 private:
     buf_it it;
     buf_type buf;

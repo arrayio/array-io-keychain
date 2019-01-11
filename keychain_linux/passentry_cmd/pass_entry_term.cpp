@@ -202,7 +202,7 @@ keychain_app::byte_seq_t pass_entry_term::fork_gui(const KeySym * map, const std
 std::wstring  pass_entry_term::input_password(const KeySym * map, int socket)
 {
     std::vector<std::wstring> password(2);
-    int confirm = 0;
+    int line_edit = 0;
 
     std::list<std::string>  devices;
     std::vector<int> fd_list;
@@ -282,8 +282,8 @@ std::wstring  pass_entry_term::input_password(const KeySym * map, int socket)
                         if      (ev[1].code == KEY_LEFTSHIFT || ev[1].code == KEY_RIGHTSHIFT) shift = 1;
                         else if (ev[1].code == KEY_CAPSLOCK) capslock ^= 0x1;
                         else if (ev[1].code == KEY_NUMLOCK)  numlock ^= 0x1;
-                        else if (ev[1].code == KEY_TAB ) confirm ^= 0x1;
-                        else if (OnKey (ev[1].code, shift, capslock, numlock, password[confirm], map))
+                        else if (ev[1].code == KEY_TAB ) line_edit ^= 0x1;
+                        else if (OnKey (ev[1].code, shift, capslock, numlock, password[line_edit], map))
                         {
                             if (password[0] == password[1])
                             {
@@ -309,20 +309,21 @@ std::wstring  pass_entry_term::input_password(const KeySym * map, int socket)
             }
             FD_SET(kbd_id, &readfds);
 
-            if (pass_len[confirm] != password[confirm].length())  // sending gui pass length
+            if (pass_len[line_edit] != password[line_edit].length())  // sending gui pass length
             {
-                pass_len[confirm] = password[confirm].length();
-                auto a = master::cmd<master::cmds::length>(pass_len[confirm], confirm);
+                pass_len[line_edit] = password[line_edit].length();
+                auto a = master::cmd<master::cmds::length>(pass_len[line_edit], line_edit);
                 auto mes = fc_light::json::to_string(fc_light::variant(static_cast<const master::cmd_base&>(a)));
                 send_gui( mes, socket );
             }
-            auto t = master::cmd<master::cmds::confirm>(password[0] == password[1]);
+            auto t = master::cmd<master::cmds::check>(password[0] == password[1]);
             auto mes = fc_light::json::to_string(fc_light::variant(static_cast<const master::cmd_base&>(t)));
             send_gui( mes, socket );
 
             gui.Select();  // polling gui
             if (gui.passClearOnExit) password.clear();
             if (gui.closeEvent) break;
+            if (gui.focusEvent) {line_edit = gui.line_edit; gui.focusEvent = false;}
         }
         if (kbd_id != -1) ioctl(kbd_id, EVIOCGRAB, 0);
         for (auto dev : fd_list)  close(dev);
@@ -334,7 +335,7 @@ std::wstring  pass_entry_term::input_password(const KeySym * map, int socket)
         password.clear();
         throw;
     }
-    return  password[confirm];
+    return  password[line_edit];
 }
 
 void pass_entry_term::send_gui (std::string mes, int socket_gui )

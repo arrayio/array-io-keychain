@@ -78,13 +78,13 @@ namespace slave
         virtual ~cmd() {};
         struct params {
             int len;
-            int confirm;
+            int line_edit;
         };
         using params_t = params;
         virtual void operator()(keychain_gui_win& w, const fc_light::variant& v) const override {
             try {
                 auto a = v.as<params_t>();
-                if (a.confirm)
+                if (a.line_edit)
                     w.password->valueConfirm->setText(QString (a.len, '*'));
                 else
                     w.password->value->setText(QString (a.len, '*'));
@@ -138,17 +138,17 @@ namespace slave
     };
 
     template<>
-    struct cmd<cmds::confirm> : cmd_base {
-        cmd() : cmd_base(cmds::confirm) {};
+    struct cmd<cmds::check> : cmd_base {
+        cmd() : cmd_base(cmds::check) {};
         virtual ~cmd() {};
         struct params {
-            bool equal;
+            bool res;
         };
         using params_t = params;
         virtual void operator()(keychain_gui_win& w, const fc_light::variant& v) const override {
             try {
                 auto a = v.as<params_t>();
-                w.password->checkConfirm(a.equal);
+                w.password->checkConfirm(a.res);
             }
             catch (const std::exception &e) {throw std::runtime_error(e.what());}
             catch (const fc_light::exception &e) {throw std::runtime_error(e.what());}
@@ -182,10 +182,10 @@ namespace slave
 
 FC_LIGHT_REFLECT(slave::cmd<slave::cmds::rawtrx>::params_t, (rawtrx))
 FC_LIGHT_REFLECT(slave::cmd<slave::cmds::modify>::params_t, (caps)(num)(shift))
-FC_LIGHT_REFLECT(slave::cmd<slave::cmds::length>::params_t, (len)(confirm))
+FC_LIGHT_REFLECT(slave::cmd<slave::cmds::length>::params_t, (len)(line_edit))
 FC_LIGHT_REFLECT(slave::cmd<slave::cmds::create>::params_t, (keyname))
 FC_LIGHT_REFLECT(slave::cmd<slave::cmds::unlock>::params_t, (keyname)(unlock_time))
-FC_LIGHT_REFLECT(slave::cmd<slave::cmds::confirm>::params_t, (equal))
+FC_LIGHT_REFLECT(slave::cmd<slave::cmds::check>::params_t, (res))
 
 
 

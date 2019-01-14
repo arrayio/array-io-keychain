@@ -8,7 +8,8 @@ menu_toolbar::menu_toolbar(QWidget *parent)
     QAction *actionExit = new QAction("&Exit", this);
 
     QMenu *menuFile = new QMenu("&File");
-    menuFile->setStyleSheet("QMenu::item:selected {background-color: #9faec5;}");
+    menuFile->setStyleSheet("QMenu {background-color: #fafafc;}");
+    menuFile->setStyleSheet(menuFile->styleSheet() + "QMenu::item:selected {background-color: #9faec5;}");
     menuFile->addAction(actionExport);
     menuFile->addAction(actionImport);
     menuFile->addAction(actionExit);
@@ -17,7 +18,8 @@ menu_toolbar::menu_toolbar(QWidget *parent)
     QAction *actionStatus = new QAction("&Status", this);
 
     QMenu *menuAbout = new QMenu("&About");
-    menuAbout->setStyleSheet("QMenu::item:selected {background-color: #9faec5;}");
+    menuAbout->setStyleSheet("QMenu {background-color: #fafafc;}");
+    menuAbout->setStyleSheet(menuAbout->styleSheet() + "QMenu::item:selected {background-color: #9faec5;}");
     menuAbout->addAction(actionAbout);
     menuAbout->addAction(actionStatus);
 
@@ -25,20 +27,22 @@ menu_toolbar::menu_toolbar(QWidget *parent)
     QPushButton *AboutButton = new QPushButton("About");
     FileButton->setFlat(true);
     AboutButton->setFlat(true);
-    FileButton->setStyleSheet("background-color: #fafafc; \
+    FileButton->setStyleSheet("QPushButton {background-color: #fafafc; \
                                font: bold; \
                                min-width: 4em; \
                                padding: 2px; \
                                border-style: outset; \
-                               border-radius: 1em;");
-    AboutButton->setStyleSheet("background-color: #fafafc; \
+                               border-radius: 1em;}");
+    FileButton->setStyleSheet(FileButton->styleSheet() + "QPushButton::menu-indicator{image: none;}");
+
+    AboutButton->setStyleSheet("QPushButton {background-color: #fafafc; \
                                 font: bold; \
                                 min-width: 4em; \
                                 margin-left: 7px; \
                                 padding: 2px; \
                                 border-style: outset; \
-                                border-radius: 1em;");
-    AboutButton->move(32, 30);
+                                border-radius: 1em;}");
+    AboutButton->setStyleSheet(AboutButton->styleSheet() + "QPushButton::menu-indicator{image: none;}");
 
     FileButton->setMenu(menuFile);
     AboutButton->setMenu(menuAbout);

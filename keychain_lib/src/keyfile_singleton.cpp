@@ -14,16 +14,27 @@ keyfile_singleton& keyfile_singleton::instance()
 }
 
 keyfile_singleton::keyfile_singleton()
-{
+{  
+  auto print_exception = [](const auto& filename, fc_light::exception &er) -> std::string
+  {
+    auto log = logger_singleton::instance();
+    BOOST_LOG_SEV(log.lg, warning) << "Cannot read key file \"" << filename.c_str() << "\"" << er.to_detail_string();
+  };
   try
   {
     auto curdir = bfs::current_path();
     auto first = bfs::directory_iterator(bfs::path(KEY_DEFAULT_PATH_));
-    std::for_each(first, bfs::directory_iterator(), [this](const auto& unit) {
+    std::for_each(first, bfs::directory_iterator(), [this, &print_exception](const auto& unit) {
       try {
         fc_light::variant j_keyfile = open_keyfile(unit.path().c_str());
         auto file_data = j_keyfile.as<keyfile_format::keyfile_t>();
         m_keydata_map.insert(value_t(file_data.keyname, file_data));
+      }
+      catch (fc_light::parse_error_exception& er) {
+        return print_exception(unit.path(), er);
+      }
+      catch (fc_light::bad_cast_exception& er) {
+        return print_exception(unit.path(), er);
       }
       FC_LIGHT_RETHROW_EXCEPTIONS(log_level::error, "Cannot parse key file \"${KEYFILE}\"", ("KEYFILE", unit.path().c_str()))
     });

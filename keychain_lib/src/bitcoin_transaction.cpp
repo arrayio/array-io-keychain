@@ -111,7 +111,11 @@ void bitcoin_transaction_t::vin_t::_read() {
     output_id = m__io->read_u4le();
     script_len = m__io->read_u1();
     script_sig = bintohex(m__io->read_bytes(script_len), false);
-    end_of_vin = bintohex(m__io->ensure_fixed_contents(std::string("\xFE\xFF\xFF\xFF", 4)), false);
+  
+    uint32_t eov = static_cast<bitcoin_transaction_t::end_of_vin_seq_t>(m__io->read_u4le());
+    std::string eov_str((const char *)&eov, 4);
+    
+    end_of_vin = bintohex(eov_str, false);
 }
 
 bitcoin_transaction_t::vin_t::~vin_t() {

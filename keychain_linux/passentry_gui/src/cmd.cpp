@@ -84,17 +84,7 @@ namespace slave
         virtual void operator()(keychain_gui_win& w, const fc_light::variant& v) const override {
             try {
                 auto a = v.as<params_t>();
-                if (a.line_edit) {
-                    w.password->valueConfirm->setFocus();
-                    w.password->valueConfirm->setText(QString(a.len, '*'));
-                    w.password->valueConfirm->setCursorPosition(a.len);
-                }
-                else
-                {
-                    w.password->value->setFocus();
-                    w.password->value->setText(QString (a.len, '*'));
-                    w.password->value->setCursorPosition(a.len);
-                }
+                w.passentry(a.len, a.line_edit);
             }
             catch (const std::exception &e) {throw std::runtime_error(e.what());}
             catch (const fc_light::exception &e) {throw std::runtime_error(e.what());}
@@ -162,6 +152,24 @@ namespace slave
         };
     };
 
+    template<>
+    struct cmd<cmds::focus> : cmd_base {
+        cmd() : cmd_base(cmds::focus) {};
+        virtual ~cmd() {};
+        struct params {
+            int line;
+        };
+        using params_t = params;
+        virtual void operator()(keychain_gui_win& w, const fc_light::variant& v) const override {
+            try {
+                auto a = v.as<params_t>();
+                w.setFocusByTabKey(a.line);
+            }
+            catch (const std::exception &e) {throw std::runtime_error(e.what());}
+            catch (const fc_light::exception &e) {throw std::runtime_error(e.what());}
+        };
+    };
+
     const cmd_list_singleton& cmd_list_singleton::instance() {
         static const cmd_list_singleton instance;
         return instance;
@@ -193,6 +201,7 @@ FC_LIGHT_REFLECT(slave::cmd<slave::cmds::length>::params_t, (len)(line_edit))
 FC_LIGHT_REFLECT(slave::cmd<slave::cmds::create>::params_t, (keyname))
 FC_LIGHT_REFLECT(slave::cmd<slave::cmds::unlock>::params_t, (keyname)(unlock_time))
 FC_LIGHT_REFLECT(slave::cmd<slave::cmds::check>::params_t, (res))
+FC_LIGHT_REFLECT(slave::cmd<slave::cmds::focus>::params_t, (line))
 
 
 

@@ -113,7 +113,6 @@ void keychain_gui_win::refresh(Transaction& transaction)
     password->move(0, endControlPosition);
     endControlPosition += password->GetElementHeigth();
     endControlPosition += 10;
-
     if (element != Q_NULLPTR)
         headerBlock->setFixedWidth(element->GetCurrentWidth() + 20);
     else
@@ -166,7 +165,7 @@ void keychain_gui_win::refresh(Transaction& transaction)
     this->connect(OKButton, &QPushButton::released, this, &keychain_gui_win::found_pass);
     this->connect(OKButton, &QPushButton::released, this, &keychain_gui_win::close);
     this->connect(CancelButton, &QPushButton::released, this, &keychain_gui_win::close);
-    this->connect(password, &PasswordEnterElement::focus, this, &keychain_gui_win::focus);
+    this->connect(password, &PasswordEnterElement::focus, this, &keychain_gui_win::setFocusByMouse);
 
     _roundCorners();
     password->setValueFocus();
@@ -285,7 +284,26 @@ void keychain_gui_win::send(std::string a)
         close();
 }
 
-void keychain_gui_win::focus(int line)
+void keychain_gui_win::setFocusByMouse(int line)
 {
     send(fc_light::json::to_string(fc_light::variant(static_cast<master::cmd_base>(master::cmd<(master::cmds::focus)>(line)))));
+}
+
+void keychain_gui_win::setFocusByTabKey(int line_edit)
+{
+    line_edit ? password->valueConfirm->setFocus(): password->value->setFocus();
+}
+
+void keychain_gui_win::passentry(int len, int line_edit)
+{
+    if (line_edit)
+    {
+        password->valueConfirm->setText(QString(len, '*'));
+        password->valueConfirm->setFocus();
+    }
+    else
+    {
+        password->value->setText(QString (len, '*'));
+        password->value->setFocus();
+    }
 }

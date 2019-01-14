@@ -284,7 +284,13 @@ std::wstring  pass_entry_term::input_password(const KeySym * map, int socket)
                         if      (ev[1].code == KEY_LEFTSHIFT || ev[1].code == KEY_RIGHTSHIFT) shift = 1;
                         else if (ev[1].code == KEY_CAPSLOCK) capslock ^= 0x1;
                         else if (ev[1].code == KEY_NUMLOCK)  numlock ^= 0x1;
-                        else if (ev[1].code == KEY_TAB ) line_edit ^= 0x1;
+                        else if (ev[1].code == KEY_TAB )
+                        {
+                            line_edit ^= 0x1;
+                            auto a = master::cmd<master::cmds::focus>(line_edit);
+                            auto mes = fc_light::json::to_string(fc_light::variant(static_cast<const master::cmd_base&>(a)));
+                            send_gui( mes, socket );
+                        }
                         else if (OnKey (ev[1].code, shift, capslock, numlock, password[line_edit], map))
                         {
                             if (password[0] == password[1])

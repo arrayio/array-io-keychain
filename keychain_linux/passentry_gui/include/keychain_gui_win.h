@@ -43,8 +43,9 @@ public:
     void refresh(Transaction&);
     PasswordEnterElement * password;
 	void send(std::string);
-	void focus(int);
-
+	void setFocusByMouse(int);
+    void setFocusByTabKey(int);
+    void passentry (int, int);
 	bool send_msg;
 
 private:

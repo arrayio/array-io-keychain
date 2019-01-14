@@ -44,20 +44,20 @@ PasswordEnterElement::PasswordEnterElement(bool passwordCreate, QWidget * parent
 		confirmDescription->setText("");
 
 		labelConfirm->setText("Confirm");
-		connect(value, &QLineEdit::textEdited, this, &PasswordEnterElement::checkStrength);
+		//connect(value, &QLineEdit::textEdited, this, &PasswordEnterElement::checkStrength);
 //		connect(value, &PasswordLineEdit::finishEnter, this, &PasswordEnterElement::setFocusOnConfirm);
 //		connect(valueConfirm, &QLineEdit::textEdited, this, &PasswordEnterElement::checkConfirm);
 //		connect(valueConfirm, &PasswordLineEdit::finishEnter, this, &PasswordEnterElement::checkFinishedEnterance);
-		connect(value, &PasswordLineEdit::focus, this, &PasswordEnterElement::focusProcess);
-        connect(valueConfirm, &PasswordLineEdit::focus, this, &PasswordEnterElement::focusProcess);
+		connect(value, &PasswordLineEdit::focus, this, &PasswordEnterElement::tabFocusByMouse);
+        connect(valueConfirm, &PasswordLineEdit::focus, this, &PasswordEnterElement::tabFocusByMouse);
 	}
 	else {
-		connect(value, &PasswordLineEdit::finishEnter, this, &PasswordEnterElement::checkFinishedEnterance);
+		//connect(value, &PasswordLineEdit::finishEnter, this, &PasswordEnterElement::checkFinishedEnterance);
 	}
 }
 
 
-void PasswordEnterElement::focusProcess(int line)
+void PasswordEnterElement::tabFocusByMouse(int line)
 {
     emit focus(line);
 }

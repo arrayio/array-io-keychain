@@ -7,6 +7,7 @@
 #include <QTreeView>
 #include <QTreeWidget>
 #include <QPushButton>
+#include <QApplication>
 
 class menu_toolbar : public QToolBar
 {

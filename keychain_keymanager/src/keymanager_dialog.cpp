@@ -27,10 +27,12 @@ keymanager_dialog::keymanager_dialog(QWidget * parent)
     logoTitle->setStyleSheet("font:15px \"Segoe UI\";background:transparent;");
     //end dialog initialization
 
+    //create keys data table
     keys_table = new keys_table_view(this);
     keys_table->setFixedSize(1040, 650);
     keys_table->move(32, 90);
 
+    //create menu toolbar 
     toolbar = new menu_toolbar(this);
     toolbar->setFixedSize(300, 35);
     toolbar->setStyleSheet("font:15px \"Segoe UI\";background:transparent;");

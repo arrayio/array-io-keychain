@@ -56,26 +56,31 @@ menu_toolbar::menu_toolbar(QWidget *parent)
     connect(actionExit, SIGNAL(triggered()), this, SLOT(Exit()));
 }
 
+//call export dialog
 void menu_toolbar::Export()
 {
 
 }
 
+//call import dialog
 void menu_toolbar::Import()
 {
 
 }
 
+//handle exit event
 void menu_toolbar::Exit()
 {
-
+    QApplication::quit();
 }
 
+//print version info and other information 
 void menu_toolbar::About()
 {
 
 }
 
+//print current keychain status ok / failed
 void menu_toolbar::Status()
 {
 

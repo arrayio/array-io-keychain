@@ -5,9 +5,7 @@
 #include <QMenu>
 #include <QAction>
 #include <QTreeView>
-#include <QWidget>
 #include <QTreeWidget>
-#include <QAbstractItemView>
 #include <QPushButton>
 
 class menu_toolbar : public QToolBar

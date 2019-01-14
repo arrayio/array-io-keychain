@@ -90,6 +90,11 @@ std::string keychain::operator()(const fc_light::variant& command) {
     er_.append_log( FC_LIGHT_LOG_MESSAGE( error, "cannot parse command" ) );
     return print_exception(cmd.id, er_);
   }
+  catch (fc_light::exception& er)
+  {
+    er.append_log(FC_LIGHT_LOG_MESSAGE(error, "unknown error"));
+    return print_exception(cmd.id, er);
+  }
   try
   {
     auto cmd_map = keychain_commands_singleton::instance();

@@ -29,19 +29,17 @@ menu_toolbar::menu_toolbar(QWidget *parent)
     AboutButton->setFlat(true);
     FileButton->setStyleSheet("QPushButton {background-color: #fafafc; \
                                font: bold; \
-                               min-width: 4em; \
-                               padding: 2px; \
-                               border-style: outset; \
-                               border-radius: 1em;}");
+                               min-width: 3em; \
+                               border: 3px solid #fafafc; \
+                               border-radius: 4px;}");
     FileButton->setStyleSheet(FileButton->styleSheet() + "QPushButton::menu-indicator{image: none;}");
 
     AboutButton->setStyleSheet("QPushButton {background-color: #fafafc; \
                                 font: bold; \
-                                min-width: 4em; \
-                                margin-left: 7px; \
-                                padding: 2px; \
-                                border-style: outset; \
-                                border-radius: 1em;}");
+                                min-width: 3em; \
+                                margin-left: 8px; \
+                                border: 3px solid #fafafc; \
+                                border-radius: 4px;}");
     AboutButton->setStyleSheet(AboutButton->styleSheet() + "QPushButton::menu-indicator{image: none;}");
 
     FileButton->setMenu(menuFile);

@@ -9,11 +9,16 @@
 #include <QPushButton>
 #include <QApplication>
 
+#include <QTextEdit> //temporary for debug output
+
 class menu_toolbar : public QToolBar
 {
     Q_OBJECT
 public:
     menu_toolbar(QWidget *parent = Q_NULLPTR);
+
+private:
+    QTextEdit *text_edit_form;
 
 private slots:
     void Export();

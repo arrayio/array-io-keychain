@@ -50,38 +50,49 @@ menu_toolbar::menu_toolbar(QWidget *parent)
     QToolBar *toolBarFile = new QToolBar();
     toolBarFile->addWidget(FileButton);
     toolBarFile->addWidget(AboutButton);
-
+    
     this->addWidget(toolBarFile);
 
+    //temporary use textedit for debug output
+    text_edit_form = new QTextEdit();
+    text_edit_form->setFixedSize(100, 30);
+    text_edit_form->setStyleSheet("font:10px \"Segoe UI\";background:transparent;");
+    this->addWidget(text_edit_form);
+
     connect(actionExit, SIGNAL(triggered()), this, SLOT(Exit()));
+    connect(actionExport, SIGNAL(triggered()), this, SLOT(Export()));
+    connect(actionImport, SIGNAL(triggered()), this, SLOT(Import()));
+    connect(actionAbout, SIGNAL(triggered()), this, SLOT(About()));
+    connect(actionStatus, SIGNAL(triggered()), this, SLOT(Status()));
 }
 
 //call export dialog
 void menu_toolbar::Export()
 {
-
+    text_edit_form->setText("Export was clicked!");
 }
 
 //call import dialog
 void menu_toolbar::Import()
 {
-
+    text_edit_form->setText("Import was clicked!");
 }
 
 //handle exit event
 void menu_toolbar::Exit()
 {
+    text_edit_form->setText("Exit was clicked!");
     QApplication::quit();
 }
 
 //print version info and other information 
 void menu_toolbar::About()
 {
-
+    text_edit_form->setText("About was clicked!");
 }
 
 //print current keychain status ok / failed
 void menu_toolbar::Status()
 {
-
+    text_edit_form->setText("Status was clicked!");
 }

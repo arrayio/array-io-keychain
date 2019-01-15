@@ -3,6 +3,7 @@
 
 #include <QTreeView>
 #include <QWidget>
+#include <QLabel>
 #include <QTreeWidget>
 #include <QFrame>
 #include <QAbstractItemView>

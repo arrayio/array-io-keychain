@@ -10,7 +10,7 @@
 
 namespace keychain_app {
 
-using keyfile_map_t = std::map<std::string, keyfile_format::keyfile_t>;
+using keyfile_map_t = std::map<dev::Public, keyfile_format::keyfile_t>;
 
 class keyfile_singleton
 {
@@ -19,14 +19,15 @@ class keyfile_singleton
   
   using value_t = keyfile_map_t::value_type;
   keyfile_map_t m_keydata_map;
+  using key_type = keyfile_map_t::key_type;
 public:
   using iterator = keyfile_map_t::iterator;
   static keyfile_singleton& instance();
-  keyfile_format::keyfile_t& operator[](const std::string& key);
+  keyfile_format::keyfile_t& operator[](const key_type& key);
   void insert(keyfile_format::keyfile_t&& keyfile_data); //NOTE: keyfile_t (fc_light::variant) is not support move semantic
   void update(keyfile_format::keyfile_t&& keyfile_data);
-  bool is_exist(const std::string& key) const;
-  void flush_keyfile(const std::string& key) const;
+  bool is_exist(const key_type& key) const;
+  void flush_keyfile(const key_type& key) const;
   void flush_all() const;
 };
 

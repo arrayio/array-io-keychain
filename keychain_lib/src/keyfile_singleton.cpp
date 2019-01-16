@@ -27,7 +27,7 @@ keyfile_singleton::keyfile_singleton()
       try {
         fc_light::variant j_keyfile = open_keyfile(unit.path().c_str());
         auto file_data = j_keyfile.as<keyfile_format::keyfile_t>();
-        m_keydata_map.insert(value_t(file_data.keyname, file_data));
+        m_keydata_map.insert(value_t(file_data.keyinfo.public_key, file_data));
       }
       catch (fc_light::parse_error_exception& er) {
         return print_exception(unit.path(), er);
@@ -46,7 +46,7 @@ keyfile_singleton::~keyfile_singleton()
   flush_all();
 }
 
-keyfile_format::keyfile_t& keyfile_singleton::operator[](const std::string& key)
+keyfile_format::keyfile_t& keyfile_singleton::operator[](const keyfile_singleton::key_type& key)
 {
   auto it = m_keydata_map.find(key);
   if (it == m_keydata_map.end())
@@ -56,28 +56,28 @@ keyfile_format::keyfile_t& keyfile_singleton::operator[](const std::string& key)
 
 void keyfile_singleton::insert(keyfile_format::keyfile_t&& keyfile_data)
 {
-  auto res = m_keydata_map.insert(value_t(keyfile_data.keyname, keyfile_data));
+  auto res = m_keydata_map.insert(value_t(keyfile_data.keyinfo.public_key, keyfile_data));
   if (res.second == false)
     FC_LIGHT_THROW_EXCEPTION(fc_light::internal_error_exception, "Keyfile with name \"${key_}\" is already exist", ("key_", keyfile_data.keyname));
-  flush_keyfile(keyfile_data.keyname);
+  flush_keyfile(keyfile_data.keyinfo.public_key);
 }
 
 void keyfile_singleton::update(keyfile_format::keyfile_t&& keyfile_data)
 {
-  auto it = m_keydata_map.find(keyfile_data.keyname);
+  auto it = m_keydata_map.find(keyfile_data.keyinfo.public_key);
   if (it == m_keydata_map.end())
     FC_LIGHT_THROW_EXCEPTION(fc_light::key_not_found_exception, "Keyfile with name \"${key_}\" not found", ("key_", keyfile_data.keyname));
   it->second = keyfile_data;
-  flush_keyfile(keyfile_data.keyname);
+  flush_keyfile(keyfile_data.keyinfo.public_key);
 }
 
-bool keyfile_singleton::is_exist(const std::string& key) const
+bool keyfile_singleton::is_exist(const keyfile_singleton::key_type& key) const
 {
   auto it = m_keydata_map.find(key);
   return it != m_keydata_map.end();
 }
 
-void keyfile_singleton::flush_keyfile(const std::string& key) const
+void keyfile_singleton::flush_keyfile(const keyfile_singleton::key_type& key) const
 {
   auto it = m_keydata_map.find(key);
   if (it == m_keydata_map.end())

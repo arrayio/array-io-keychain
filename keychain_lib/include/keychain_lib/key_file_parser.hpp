@@ -61,7 +61,7 @@ struct keyfile_t
     bool encrypted;
     curve_etype curve_type;
     fc_light::variant priv_key_data;//either std::string or encrypted_data
-    std::string public_key;
+    dev::Public public_key;
   } keyinfo;
 };
 

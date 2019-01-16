@@ -160,21 +160,22 @@ typename encoder_t::result_t get_hash( const unit_list_t &list, encoder_t encode
 class keychain_base
 {
 public:
-    using string_list = std::list<std::wstring>;
-    using create_secmod_cmd_f = std::function<std::string(const std::string& keyname)>;
-    keychain_base();
-    virtual ~keychain_base();
-    virtual std::string operator()(const fc_light::variant& command) = 0;
-    boost::signals2::signal<byte_seq_t(const std::string&)> get_passwd_trx;
-    boost::signals2::signal<byte_seq_t(const std::string&,int)> get_passwd_unlock;
-    boost::signals2::signal<byte_seq_t(const std::string)> get_passwd_on_create;
-    boost::signals2::signal<dev::Public(void)> select_key;
-    boost::signals2::signal<void(const string_list&)> print_mnemonic;
-    
-    dev::Secret get_private_key(const dev::Public& public_key, int unlock_time, create_secmod_cmd_f&& f = create_secmod_cmd_f());
-    void lock_all_priv_keys();
+  using string_list = std::list<std::wstring>;
+  using create_secmod_cmd_f = std::function<std::string(const std::string& keyname)>;
+  virtual std::string operator()(const fc_light::variant& command) = 0;
+  boost::signals2::signal<byte_seq_t(const std::string&)> get_passwd_trx;
+  boost::signals2::signal<byte_seq_t(const std::string&,int)> get_passwd_unlock;
+  boost::signals2::signal<byte_seq_t(const std::string)> get_passwd_on_create;
+  boost::signals2::signal<dev::Public(void)> select_key;
+  boost::signals2::signal<void(const string_list&)> print_mnemonic;
+  
+  dev::Secret get_private_key(const dev::Public& public_key, int unlock_time, create_secmod_cmd_f&& f = create_secmod_cmd_f());
+  void lock_all_priv_keys();
+protected:
+  keychain_base();
+  virtual ~keychain_base();
 private:
-    private_key_map_t key_map;
+  private_key_map_t key_map;
 };
 
 template <typename char_t>

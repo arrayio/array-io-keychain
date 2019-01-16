@@ -9,7 +9,7 @@
 #include <regex>
 #include <iostream>
 #include <fstream>
-#include <keychain_lib/keychain_wrapper.hpp>
+#include <keychain_lib/keychain.hpp>
 #include <X11/Xatom.h>
 #include <linux/input.h>
 #include <X11/extensions/XInput.h>

@@ -56,7 +56,7 @@ keyfile_singleton::~keyfile_singleton()
   flush_all();
 }
 
-keyfile_format::keyfile_t& keyfile_singleton::operator[](const keyfile_singleton::key_type& key)
+keyfile_format::keyfile_t& keyfile_singleton::operator[](const keyfile_singleton::prim_key_type& key)
 {
   auto it = m_keydata_map.find(key);
   if (it == m_keydata_map.end())
@@ -81,13 +81,13 @@ void keyfile_singleton::update(keyfile_format::keyfile_t&& keyfile_data)
   flush_keyfile(keyfile_data.keyinfo.public_key);
 }
 
-bool keyfile_singleton::is_exist(const keyfile_singleton::key_type& key) const
+bool keyfile_singleton::is_exist(const keyfile_singleton::prim_key_type& key) const
 {
   auto it = m_keydata_map.find(key);
   return it != m_keydata_map.end();
 }
 
-void keyfile_singleton::flush_keyfile(const keyfile_singleton::key_type& key) const
+void keyfile_singleton::flush_keyfile(const keyfile_singleton::prim_key_type& key) const
 {
   auto it = m_keydata_map.find(key);
   if (it == m_keydata_map.end())

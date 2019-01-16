@@ -14,5 +14,9 @@ gui_mod_dummy::~gui_mod_dummy()
 
 dev::Public gui_mod_dummy::select_key() const
 {
-  return dev::Public();
+  auto& keyfiles = keyfile_singleton::instance();
+  auto it = keyfiles.begin();
+  if ( it==keyfiles.end() )
+    return dev::Public();
+  return it->second.keyinfo.public_key;
 }

@@ -22,7 +22,7 @@ namespace fc_light
      command_not_implemented_code      , ///< command is not implemented
      command_depreciated_code          , ///< command is depreciates
      invalid_arg_exception_code        , ///< invalid command arguments
-     privkey_not_found_code            , ///< private key not found by keyname
+     privkey_not_found_code            , ///< private key not found by public key
      privkey_invalid_unlock_code       , ///< cannot unlock private key, possible wrong password
      password_input_error_code         , ///< error while getting password
      internal_error_code               , ///< some unspecified internal error

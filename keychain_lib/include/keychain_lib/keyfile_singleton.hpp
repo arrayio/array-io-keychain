@@ -22,7 +22,10 @@ class keyfile_singleton
   using key_type = keyfile_map_t::key_type;
 public:
   using iterator = keyfile_map_t::iterator;
+  using const_iterator = keyfile_map_t::const_iterator;
   static keyfile_singleton& instance();
+  const_iterator begin() const;
+  const_iterator end() const;
   keyfile_format::keyfile_t& operator[](const key_type& key);
   void insert(keyfile_format::keyfile_t&& keyfile_data); //NOTE: keyfile_t (fc_light::variant) is not support move semantic
   void update(keyfile_format::keyfile_t&& keyfile_data);

@@ -13,6 +13,16 @@ keyfile_singleton& keyfile_singleton::instance()
   return keyfile_map;
 }
 
+keyfile_singleton::const_iterator keyfile_singleton::begin() const
+{
+  return m_keydata_map.begin();
+}
+
+keyfile_singleton::const_iterator keyfile_singleton::end() const
+{
+  return m_keydata_map.end();
+}
+
 keyfile_singleton::keyfile_singleton()
 {
   auto print_exception = [](const auto& filename, fc_light::exception &er) {
@@ -50,7 +60,7 @@ keyfile_format::keyfile_t& keyfile_singleton::operator[](const keyfile_singleton
 {
   auto it = m_keydata_map.find(key);
   if (it == m_keydata_map.end())
-    FC_LIGHT_THROW_EXCEPTION(fc_light::key_not_found_exception, "Keyname is not exist (${key_})", ("key_", key));
+    FC_LIGHT_THROW_EXCEPTION(fc_light::key_not_found_exception, "Private key is not exist public = ${key_}", ("key_", key));
   return it->second;
 }
 
@@ -81,7 +91,7 @@ void keyfile_singleton::flush_keyfile(const keyfile_singleton::key_type& key) co
 {
   auto it = m_keydata_map.find(key);
   if (it == m_keydata_map.end())
-    FC_LIGHT_THROW_EXCEPTION(fc_light::key_not_found_exception, "Keyname is not exist (${key_})", ("key_", key));
+    FC_LIGHT_THROW_EXCEPTION(fc_light::key_not_found_exception, "Private key is not exist public = ${key_}", ("key_", key));
   auto& keyfile_data = it->second;
   auto hash = dev::openssl::sha3(keyfile_data.keyinfo.public_key);
   auto filename = hash.hex().substr(0, 16);

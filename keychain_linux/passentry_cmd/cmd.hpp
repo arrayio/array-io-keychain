@@ -20,7 +20,7 @@
 #include "polling.hpp"
 
 namespace  slave {
-    enum struct cmds {unknown = 0, ok, cancel, focus, last}; //from gui
+    enum struct cmds {unknown = 0, ok, cancel, focus, expert_mode, last}; //from gui
 
     struct cmd_common {
         cmd_common(cmds cmd_ = cmds::unknown): cmd(cmd_){};
@@ -83,6 +83,22 @@ namespace  slave {
         };
     };
 
+    template<>
+    struct cmd<cmds::expert_mode> : cmd_base {
+        cmd() : cmd_base(cmds::expert_mode) {};
+        virtual ~cmd() {};
+        struct params {bool enable;};
+        using params_t = params;
+        virtual void operator()(polling* p, const fc_light::variant& v) const override {
+            try {
+                auto a = v.as<params>();
+                p->expert_mode = a.enable;
+            }
+            catch (const std::exception &e) {throw std::runtime_error(e.what());}
+            catch (const fc_light::exception &e) {throw std::runtime_error(e.what());}
+        };
+    };
+
     struct cmd_list_singleton
     {
     public:
@@ -96,7 +112,7 @@ namespace  slave {
 }
 
 namespace  master {
-    enum struct cmds {unknown = 0, rawtrx, close, modify, length, create, unlock, check, focus, last};
+    enum struct cmds {unknown = 0, rawtrx, close, modify, length, create, unlock, check, focus, close_expert_mode, last};
 
     struct cmd_base {
         cmd_base(): cmd(cmds::unknown){};
@@ -194,9 +210,14 @@ namespace  master {
         } focus_param;
     };
 
+    template<>
+    struct cmd<cmds::close_expert_mode> {
+        cmd():base(){}
+        struct params_t {params_t():cmd(cmds::close_expert_mode){} cmds cmd;} base;
+    };
 }
 
-FC_LIGHT_REFLECT_ENUM(master::cmds, (unknown)(rawtrx)(close)(modify)(length)(unlock)(check)(focus)(last))
+FC_LIGHT_REFLECT_ENUM(master::cmds, (unknown)(rawtrx)(close)(modify)(length)(unlock)(check)(focus)(close_expert_mode)(last))
 FC_LIGHT_REFLECT(master::cmd_base, (cmd)(params))
 FC_LIGHT_REFLECT(master::cmd<master::cmds::rawtrx>::params_t, (rawtrx))
 FC_LIGHT_REFLECT(master::cmd<master::cmds::close>::params_t, (cmd))
@@ -206,9 +227,11 @@ FC_LIGHT_REFLECT(master::cmd<master::cmds::create>::params_t, (keyname))
 FC_LIGHT_REFLECT(master::cmd<master::cmds::unlock>::params_t, (keyname)(unlock_time))
 FC_LIGHT_REFLECT(master::cmd<master::cmds::check>::params_t, (res))
 FC_LIGHT_REFLECT(master::cmd<master::cmds::focus>::params_t, (line))
+FC_LIGHT_REFLECT(master::cmd<master::cmds::close_expert_mode>::params_t, (cmd))
 
-FC_LIGHT_REFLECT_ENUM(slave::cmds, (unknown)(ok)(cancel)(focus)(last))
+FC_LIGHT_REFLECT_ENUM(slave::cmds, (unknown)(ok)(cancel)(focus)(expert_mode)(last))
 FC_LIGHT_REFLECT(slave::cmd_common, (cmd)(params))
 FC_LIGHT_REFLECT(slave::cmd<slave::cmds::focus>::params_t, (line_edit))
+FC_LIGHT_REFLECT(slave::cmd<slave::cmds::expert_mode>::params_t, (enable))
 
 #endif //KEYCHAINAPP_CMD_H

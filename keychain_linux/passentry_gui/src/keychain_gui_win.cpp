@@ -244,10 +244,10 @@ void keychain_gui_win::keyPressEvent(QKeyEvent *event)
 		this->close();
 	}
 }
-
 /*
 void keychain_gui_win::closeEvent(QCloseEvent * event)
 {
+
 	serviceExchange->EncodeCancel();
 	this->close();
 }
@@ -278,11 +278,13 @@ void keychain_gui_win::found_pass() {
     //this->close();
 }
 
+/*
 void keychain_gui_win::send(std::string a)
 {
     if ( write(STDIN_FILENO, a.c_str(), a.length() ) != a.length() )
         close();
 }
+*/
 
 void keychain_gui_win::setFocusByMouse(int line)
 {
@@ -306,4 +308,9 @@ void keychain_gui_win::passentry(int len, int line_edit)
         password->value->setText(QString (len, '*'));
         password->value->setFocus();
     }
+}
+
+void keychain_gui_win::closeExpertMode()
+{
+    emit element->closeExpertMode();
 }

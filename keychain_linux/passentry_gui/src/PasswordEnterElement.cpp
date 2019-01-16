@@ -151,18 +151,21 @@ int PasswordEnterElement::GetElementHeigth()
 
 void PasswordEnterElement::checkConfirm(const bool confirm)
 {
-	isSame = confirm;
-	if (confirm) {
-		valueConfirm->setStyleSheet("font:16px \"Segoe UI\";background-color:rgb(120,255,113);border-style:solid;border-width:1px;border-radius:4px;border-color:rgb(0,113,0);");
-		confirmDescription->setStyleSheet("font:10px \"Segoe UI\";background:transparent;color:rgb(0,113,0);");
-		confirmDescription->setText("Confirm password ok");
+	if(pCreatePassword)
+	{
+		isSame = confirm;
+		if (confirm) {
+			valueConfirm->setStyleSheet("font:16px \"Segoe UI\";background-color:rgb(120,255,113);border-style:solid;border-width:1px;border-radius:4px;border-color:rgb(0,113,0);");
+			confirmDescription->setStyleSheet("font:10px \"Segoe UI\";background:transparent;color:rgb(0,113,0);");
+			confirmDescription->setText("Confirm password ok");
+		}
+		else {
+			confirmDescription->setText("Confirm password error");
+			confirmDescription->setStyleSheet("font:10px \"Segoe UI\";background:transparent;color:rgb(149,0,0);");
+			valueConfirm->setStyleSheet("font:16px \"Segoe UI\";background-color:rgb(255,140,140);border-style:solid;border-width:1px;border-radius:4px;border-color:rgb(149,0,0);");
+		}
+		emit changePassword();
 	}
-	else {
-		confirmDescription->setText("Confirm password error");
-		confirmDescription->setStyleSheet("font:10px \"Segoe UI\";background:transparent;color:rgb(149,0,0);");
-		valueConfirm->setStyleSheet("font:16px \"Segoe UI\";background-color:rgb(255,140,140);border-style:solid;border-width:1px;border-radius:4px;border-color:rgb(149,0,0);");
-	}
-	emit changePassword();
 }
 
 

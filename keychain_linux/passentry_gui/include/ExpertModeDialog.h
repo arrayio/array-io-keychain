@@ -6,17 +6,18 @@
 #include <QString>
 #include <QPushButton>
 #include <QPlainTextEdit>
+#include <KeychainWidget.h>
 
 class ExpertModeDialog : public QDialog
 {
 	Q_OBJECT
 
 public:
-	ExpertModeDialog(QWidget * parent = Q_NULLPTR);
+	ExpertModeDialog(KeychainWidget * widget,  QWidget * parent = Q_NULLPTR);
 	~ExpertModeDialog();
 	void SetExpertModeText(QString string);
 
-protected: 
+protected:
 	void keyPressEvent(QKeyEvent *event) override; 
 private: 
 	QPlainTextEdit * transactionDescription;

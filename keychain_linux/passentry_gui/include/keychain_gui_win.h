@@ -42,10 +42,11 @@ public:
 	PopupWindow * popupWindow;
     void refresh(Transaction&);
     PasswordEnterElement * password;
-	void send(std::string);
+//	void send(std::string);
 	void setFocusByMouse(int);
     void setFocusByTabKey(int);
     void passentry (int, int);
+    void closeExpertMode();
 	bool send_msg;
 
 private:
@@ -83,5 +84,4 @@ public slots:
 	void found_pass();
 	void cancel_sign();
 	void set_sign_focus();
-
 };

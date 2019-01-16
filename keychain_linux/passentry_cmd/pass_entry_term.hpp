@@ -29,7 +29,7 @@
 class pass_entry_term
 {
 public:
-    pass_entry_term();
+    pass_entry_term(bool);
     ~pass_entry_term();
 
     keychain_app::byte_seq_t fork_gui(const KeySym*, const std::string&);
@@ -46,6 +46,7 @@ private:
     XDeviceInfo * dev_info;
     Atom device_enabled_prop, kbd_atom;
     uid_t oruid, oeuid, osuid; // original value
+    bool confirm;
 };
 
 

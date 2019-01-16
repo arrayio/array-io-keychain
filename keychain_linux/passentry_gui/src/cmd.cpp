@@ -48,6 +48,7 @@ namespace slave
             {
                 w.send_msg = false;
                 w.close();
+
             }
             catch (const std::exception &e) {throw std::runtime_error(e.what());}
             catch (const fc_light::exception &e) {throw std::runtime_error(e.what());}
@@ -170,6 +171,22 @@ namespace slave
         };
     };
 
+    template<>
+    struct cmd<cmds::close_expert_mode> : cmd_base {
+        cmd() : cmd_base(cmds::close_expert_mode) {};
+        virtual ~cmd() {};
+        using params_t = void;
+        virtual void operator()(keychain_gui_win& w, const fc_light::variant& v) const override {
+            try
+            {
+                w.closeExpertMode();
+            }
+            catch (const std::exception &e) {throw std::runtime_error(e.what());}
+            catch (const fc_light::exception &e) {throw std::runtime_error(e.what());}
+        };
+    };
+
+
     const cmd_list_singleton& cmd_list_singleton::instance() {
         static const cmd_list_singleton instance;
         return instance;
@@ -193,6 +210,13 @@ namespace slave
             return cmd_list[0];
         return cmd_list[a];
     }
+
+}
+
+void send(std::string a)
+{
+    if ( write(STDIN_FILENO, a.c_str(), a.length() ) != a.length() )
+        throw std::runtime_error ("error write to pipe");
 }
 
 FC_LIGHT_REFLECT(slave::cmd<slave::cmds::rawtrx>::params_t, (rawtrx))

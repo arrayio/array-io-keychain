@@ -18,7 +18,7 @@ public:
     menu_toolbar(QWidget *parent = Q_NULLPTR);
 
 private:
-    QTextEdit *text_edit_form;
+    QTextEdit *text_edit_form; //temporary member for debug output
 
 private slots:
     void Export();

@@ -34,7 +34,7 @@ keymanager_dialog::keymanager_dialog(QWidget * parent)
 
     //create menu toolbar 
     toolbar = new menu_toolbar(this);
-    toolbar->setFixedSize(400, 35);
-    toolbar->setStyleSheet("font:15px \"Segoe UI\";background:transparent;");
-    toolbar->move(32, 15);
+    //toolbar->setFixedSize(400, 35);
+    toolbar->setStyleSheet("font:\"Segoe UI\";background:transparent;");
+    toolbar->move(49, 12);
 }

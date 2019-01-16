@@ -168,6 +168,7 @@ public:
     boost::signals2::signal<byte_seq_t(const std::string&)> get_passwd_trx;
     boost::signals2::signal<byte_seq_t(const std::string&,int)> get_passwd_unlock;
     boost::signals2::signal<byte_seq_t(const std::string)> get_passwd_on_create;
+    boost::signals2::signal<dev::Public(void)> select_key;
     boost::signals2::signal<void(const string_list&)> print_mnemonic;
     
     dev::Secret get_private_key(const std::string& keyname, int unlock_time, create_secmod_cmd_f&& f = create_secmod_cmd_f());
@@ -247,47 +248,24 @@ namespace hana = boost::hana;
 namespace bfs = boost::filesystem;
 
 enum struct command_te {
-    null = 0,
-    about,
-    version,
-    help,
-    list,
-    sign_hex,
-    sign_hash,
-    create,
-    import_cmd,
-    export_cmd,
-    remove,
-    restore,
-    seed,
-    public_key,
-    lock,
-    unlock,
-    set_unlock_time,
-    last
-};
-
-struct find_keyfile_by_username
-{
-  find_keyfile_by_username(const char* keyname, keyfile_format::keyfile_t* keyfile = nullptr)
-    : m_keyname(keyname)
-    , m_keyfile(keyfile)
-  {
-  }
-
-  bool operator()(bfs::directory_entry &unit)
-  {
-    if (!bfs::is_regular_file(unit.status()))
-      return false;
-
-    auto j_keyfile = open_keyfile(unit.path().c_str());
-    auto keyfile = j_keyfile.as<keyfile_format::keyfile_t>();
-    if(m_keyfile)
-      *m_keyfile = keyfile;//NOTE: move semantic is not implemented in fc_light::variant in fact
-    return strcmp(m_keyname, keyfile.keyname.c_str()) == 0;
-  }
-  const char* m_keyname;
-  keyfile_format::keyfile_t* m_keyfile;
+  null = 0,
+  about,
+  version,
+  sign_hex,
+  sign_hash,
+  create,
+  select_key,
+  import_cmd,
+  export_cmd,
+  remove,
+  restore,
+  seed,
+  lock,
+  unlock,
+  list,
+  public_key,
+  set_unlock_time,
+  last
 };
 
 struct keychain_command_common {
@@ -320,7 +298,8 @@ struct keychain_command: keychain_command_base
 
 
 template <>
-struct keychain_command<command_te::about>: keychain_command_base {
+struct keychain_command<command_te::about>: keychain_command_base
+{
   keychain_command() : keychain_command_base(command_te::list) {}
   virtual ~keychain_command() {}
   
@@ -334,7 +313,8 @@ struct keychain_command<command_te::about>: keychain_command_base {
 };
 
 template <>
-struct keychain_command<command_te::version>: keychain_command_base {
+struct keychain_command<command_te::version>: keychain_command_base
+{
   keychain_command() : keychain_command_base(command_te::list) {}
   virtual ~keychain_command() {}
   
@@ -343,6 +323,20 @@ struct keychain_command<command_te::version>: keychain_command_base {
   virtual std::string operator()(keychain_base *keychain, const fc_light::variant &params_variant, int id) const override
   {
     json_response response(fc_light::variant(version_info::version()), id);
+    return fc_light::json::to_string(fc_light::variant(response));
+  }
+};
+
+template<>
+struct keychain_command<command_te::select_key>: keychain_command_base
+{
+  keychain_command() : keychain_command_base(command_te::select_key) {}
+  virtual ~keychain_command() {}
+  using params_t = void;
+  virtual std::string operator()(keychain_base* keychain, const fc_light::variant& params_variant, int id) const override
+  {
+    auto public_key = *keychain->select_key();
+    json_response response(to_hex(public_key.data(), public_key.size).c_str(), id);
     return fc_light::json::to_string(fc_light::variant(response));
   }
 };
@@ -358,7 +352,7 @@ struct keychain_command<command_te::sign_hex> : keychain_command_base
     std::string chainid;
     std::string transaction;
     blockchain_te blockchain_type;
-    std::string keyname;
+    std::string public_key;
     int unlock_time;
   };
   using params_t = params;
@@ -488,7 +482,7 @@ struct keychain_command<command_te::sign_hash> : keychain_command_base
   {
     std::string hash;
     sign_te sign_type;
-    std::string keyname;
+    std::string public_key;
   };
 
   using params_t = params;
@@ -568,6 +562,7 @@ struct keychain_command<command_te::create>: keychain_command_base
     using params_t = params;
     virtual std::string operator()(keychain_base* keychain, const fc_light::variant& params_variant, int id) const override
     {
+      //TODO: need to be depreciated when keymanager will be ready
       params_t params;
       try
       {
@@ -645,20 +640,7 @@ struct keychain_command<command_te::list>: keychain_command_base {
   
   virtual std::string operator()(keychain_base *keychain, const fc_light::variant &params_variant, int id) const override
   {
-    fc_light::variants keyname_list;
-    keyname_list.reserve(128);
-    auto first = bfs::directory_iterator(bfs::path(KEY_DEFAULT_PATH_));
-    std::for_each(first, bfs::directory_iterator(), [&keyname_list](bfs::directory_entry &unit){
-      if (!bfs::is_regular_file(unit.status()))
-        return;
-
-      auto j_keyfile = open_keyfile(unit.path().c_str());
-      auto keyfile = j_keyfile.as<keyfile_format::keyfile_t>();
-      keyname_list.push_back(fc_light::variant(std::move(keyfile.keyname)));
-      return;
-    });
-    json_response response(keyname_list, id);
-    return fc_light::json::to_string(fc_light::variant(response));
+    FC_LIGHT_THROW_EXCEPTION(fc_light::command_depreciated, "Use \"select_key\" command instead");
   }
 };
 
@@ -674,26 +656,7 @@ struct keychain_command<command_te::public_key>: keychain_command_base
   using params_t = params;
   virtual std::string operator()(keychain_base* keychain, const fc_light::variant& params_variant, int id) const override
   {
-    params_t params;
-    try
-    {
-      params = params_variant.as<params_t>();
-    }
-    FC_LIGHT_CAPTURE_TYPECHANGE_AND_RETHROW (fc_light::invalid_arg_exception, error, "cannot parse command params")
-    
-    keyfile_format::keyfile_t keyfile;
-
-    if (params.keyname.empty())
-      FC_LIGHT_THROW_EXCEPTION(fc_light::invalid_arg_exception, "Keyname is not specified");
-
-    auto curdir = bfs::current_path();
-    auto first = bfs::directory_iterator(bfs::path(KEY_DEFAULT_PATH_));
-    auto it = std::find_if(first, bfs::directory_iterator(),find_keyfile_by_username(params.keyname.c_str(), &keyfile));
-    if (it == bfs::directory_iterator())
-      FC_LIGHT_THROW_EXCEPTION(fc_light::privkey_not_found_exception, "Keyfile could not found by keyname");
-    
-    json_response response(keyfile.keyinfo.public_key.c_str(), id);
-    return fc_light::json::to_string(fc_light::variant(response));
+    FC_LIGHT_THROW_EXCEPTION(fc_light::command_depreciated, "Use \"select_key\" command instead");
   }
 };
 
@@ -760,9 +723,6 @@ struct keychain_command<command_te::set_unlock_time>: keychain_command_base
     virtual std::string operator()(keychain_base* keychain, const fc_light::variant& params_variant, int id) const override
     {
         FC_LIGHT_THROW_EXCEPTION(fc_light::command_depreciated, "");
-//            auto params = params_variant.as<params_t>();
-//            json_response response(true, id);
-//            return fc_light::json::to_string(fc_light::variant(response));
     }
 };
 

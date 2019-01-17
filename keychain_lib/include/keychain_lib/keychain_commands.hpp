@@ -97,8 +97,6 @@ enum struct sign_te {
 fc_light::variant create_secmod_signhex_cmd(std::vector<unsigned char> raw, blockchain_te blockchain, std::string from, int unlock_time, std::string keyname);
 fc_light::variant create_secmod_signhash_cmd(const std::string& raw, std::string from, std::string keyname);
 
-
-
 class streambuf_derived : public std::basic_streambuf<char>
 {
 public:
@@ -242,7 +240,6 @@ namespace bfs = boost::filesystem;
 
 enum struct command_te {
   null = 0,
-  create,
   about,
   version,
   sign_hex,
@@ -542,7 +539,7 @@ struct keychain_command<command_te::sign_hash> : keychain_command_base
   }
 };
 
-/* TODO: move this function to common code for key manager*/
+/* TODO: move this function to common code for key manager
 template <>
 struct keychain_command<command_te::create>: keychain_command_base
 {
@@ -624,7 +621,7 @@ struct keychain_command<command_te::create>: keychain_command_base
       return fc_light::json::to_string(fc_light::variant(response));
     }
 };
-
+*/
 
 template <>
 struct keychain_command<command_te::list>: keychain_command_base {
@@ -732,7 +729,6 @@ constexpr auto cmd_static_list =
 FC_LIGHT_REFLECT_ENUM(
   keychain_app::command_te,
   (null)
-    (create)
   (about)
   (version)
   (sign_hex)
@@ -749,8 +745,6 @@ FC_LIGHT_REFLECT_ENUM(
   (set_unlock_time)
   (last)
 )
-
-FC_LIGHT_REFLECT(keychain_app::keychain_command<keychain_app::command_te::create>::params_t, (keyname)(description)(encrypted)(curve)(cipher))
 
 FC_LIGHT_REFLECT(keychain_app::keychain_command<keychain_app::command_te::sign_hex>::params_t, (chainid)(transaction)(blockchain_type)(public_key)(unlock_time))
 FC_LIGHT_REFLECT(keychain_app::keychain_command<keychain_app::command_te::sign_hash>::params_t, (hash)(sign_type)(public_key))

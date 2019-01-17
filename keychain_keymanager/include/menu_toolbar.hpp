@@ -8,6 +8,7 @@
 #include <QTreeWidget>
 #include <QPushButton>
 #include <QApplication>
+#include <QLabel>
 
 #include <QTextEdit> //temporary for debug output
 

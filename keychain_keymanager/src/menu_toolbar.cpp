@@ -26,35 +26,51 @@ menu_toolbar::menu_toolbar(QWidget *parent)
     menuAbout->addAction(actionAbout);
     menuAbout->addAction(actionStatus);
 
-    //create buttons and make them flat
-    QPushButton *FileButton = new QPushButton("File");
-    QPushButton *AboutButton = new QPushButton("About");
-    FileButton->setFlat(true);
-    AboutButton->setFlat(true);
-
-    //set styles for menu buttons
+    //create file button
+    QPushButton *FileButton = new QPushButton;
     FileButton->setStyleSheet("QWidget > QPushButton {background-color: #fafafc; \
-                               left: 0; \
-                               right: 0; \
-                               text-align: center; \
                                min-width: 4em; \
-                               padding: 2px; \
+                               padding: 4px; \
                                border: 4px solid #fafafc; \
                                border-radius: 5px;}");
     FileButton->setStyleSheet(FileButton->styleSheet() + "QPushButton::menu-indicator{image: none;}");
-    FileButton->setFont(QFont("Segoe UI Semibold", 10, QFont::Normal, false));
 
+    //create file button text label
+    QLabel *FileButtonLabel = new QLabel(FileButton);
+    FileButtonLabel->setText("File");
+    FileButtonLabel->setAlignment(Qt::AlignCenter);
+    FileButtonLabel->setStyleSheet("QWidget > QLabel {background-color: #fafafc; \
+                                    text-align: center; \
+                                    min-width: 4em; \
+                                    border: 4px solid #fafafc; \
+                                    border-radius: 5px;}");
+    FileButtonLabel->setFont(QFont("Segoe UI Semibold", 10, QFont::Normal, false));
+    
+    //create about button text label
+    QPushButton *AboutButton = new QPushButton("About");
     AboutButton->setStyleSheet("QWidget > QPushButton {background-color: #fafafc; \
-                                left: 0; \
-                                right: 0; \
-                                text-align: center; \
                                 min-width: 4em; \
-                                padding: 2px; \
+                                padding: 4px; \
                                 margin-left: 4px; \
                                 border: 4px solid #fafafc; \
                                 border-radius: 5px;}");
     AboutButton->setStyleSheet(AboutButton->styleSheet() + "QPushButton::menu-indicator{image: none;}");
-    AboutButton->setFont(QFont("Segoe UI Semibold", 10, QFont::Normal, false));
+
+    //create about button text label
+    QLabel *AboutButtonLabel = new QLabel(AboutButton);
+    AboutButtonLabel->setText("About");
+    AboutButtonLabel->setAlignment(Qt::AlignCenter);
+    AboutButtonLabel->setStyleSheet("QWidget > QLabel {background-color: #fafafc; \
+                                    text-align: center; \
+                                    min-width: 4em; \
+                                    margin-left: 4px; \
+                                    border: 4px solid #fafafc; \
+                                    border-radius: 5px;}");
+    AboutButtonLabel->setFont(QFont("Segoe UI Semibold", 10, QFont::Normal, false));
+    
+    //change buttons to flat style
+    FileButton->setFlat(true);
+    AboutButton->setFlat(true);
 
     //add menu to buttons
     FileButton->setMenu(menuFile);

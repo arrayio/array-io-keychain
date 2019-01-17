@@ -2,7 +2,7 @@
 #ifndef KEYCHAINAPP_SEC_MOD_LINUX_HPP
 #define KEYCHAINAPP_SEC_MOD_LINUX_HPP
 
-#include <keychain_lib/keychain_wrapper.hpp>
+#include <keychain_lib/keychain.hpp>
 
 namespace keychain_app
 {

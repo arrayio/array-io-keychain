@@ -18,5 +18,5 @@ dev::Public gui_mod_dummy::select_key() const
   auto it = keyfiles.begin();
   if ( it==keyfiles.end() )
     return dev::Public();
-  return it->second.keyinfo.public_key;
+  return it->keyinfo.public_key;
 }

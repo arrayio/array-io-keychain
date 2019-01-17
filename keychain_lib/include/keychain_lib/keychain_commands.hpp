@@ -208,14 +208,6 @@ fc_light::variant open_keyfile(const char_t* filename)
 size_t from_hex(const std::string& hex_str, unsigned char* out_data, size_t out_data_len );
 std::string to_hex(const uint8_t* data, size_t length);
 
-/*{
-  using out_map = std::map<std::string, nlohmann::json>;
-  using out_map_val = out_map::value_type;
-  out_map result;
-  result.insert(out_map_val(json_parser::json_keys::RESULT,to_hex(signature.begin(),signature.size())));
-  return result;
-}*/
-
 struct json_response
 {
     json_response(){}
@@ -250,11 +242,11 @@ namespace bfs = boost::filesystem;
 
 enum struct command_te {
   null = 0,
+  create,
   about,
   version,
   sign_hex,
   sign_hash,
-  create,
   select_key,
   import_cmd,
   export_cmd,
@@ -391,9 +383,13 @@ struct keychain_command<command_te::sign_hex> : keychain_command_base
           return dev::toAddress(params.public_key).hex();
         case blockchain_te::bitcoin:
         {
-          dev::Public public_key = params.public_key;
-          public_key[0] = 0x04;
-          auto sha256 = fc_light::sha256::hash( (const char*)public_key.data(), public_key.size );
+          std::vector<char> pub_bin_key;
+          pub_bin_key.reserve(64);
+          auto pub_len = std::transform(params.public_key.begin(), params.public_key.end(), std::back_inserter(pub_bin_key), [](auto val){
+            return static_cast<char>(val);
+          });
+          pub_bin_key.insert(pub_bin_key.begin(), 4);
+          auto sha256 = fc_light::sha256::hash( (const char*)pub_bin_key.data(), pub_bin_key.size() );
           auto ripemd160 = fc_light::ripemd160::hash( sha256 );
       
           std::vector<char> keyhash(ripemd160.data(), ripemd160.data()+ripemd160.data_size());
@@ -460,10 +456,11 @@ struct keychain_command<command_te::sign_hex> : keychain_command_base
         FC_LIGHT_THROW_EXCEPTION(fc_light::invalid_arg_exception,
                                  "Unknown blockchain_type, blockchain = ${type}", ("type", params.blockchain_type));
     }
-  
-    auto& keyfile = keyfiles[params.public_key];
-    keyfile.usage_time = fc_light::time_point::now();
-    keyfiles.update(std::move(keyfile));
+    
+    keyfiles.update(params.public_key, [](auto& keyfile)
+    {
+      keyfile.usage_time = fc_light::time_point::now();
+    });
     json_response response(to_hex(signature.data(), signature.size()).c_str(), id);
     fc_light::variant res(response);
     return fc_light::json::to_string(res);
@@ -535,16 +532,17 @@ struct keychain_command<command_te::sign_hash> : keychain_command_base
       }
     }
   
-    auto& keyfile = keyfiles[params.public_key];
-    keyfile.usage_time = fc_light::time_point::now();
-    keyfiles.update(std::move(keyfile));
+    keyfiles.update(params.public_key, [](auto& keyfile)
+    {
+      keyfile.usage_time = fc_light::time_point::now();
+    });
     json_response response(to_hex(signature.data(), signature.size()).c_str(), id);
     fc_light::variant res(response);
     return fc_light::json::to_string(res);
   }
 };
 
-/* TODO: move this function to common code for key manager
+/* TODO: move this function to common code for key manager*/
 template <>
 struct keychain_command<command_te::create>: keychain_command_base
 {
@@ -570,12 +568,9 @@ struct keychain_command<command_te::create>: keychain_command_base
       FC_LIGHT_CAPTURE_TYPECHANGE_AND_RETHROW (fc_light::invalid_arg_exception, error, "cannot parse command params")
   
       auto& keyfiles = keyfile_singleton::instance();
-      if(keyfiles.is_exist(params.keyname))
-        FC_LIGHT_THROW_EXCEPTION(fc_light::internal_error_exception, "Keyfile for this user is already exist");
-        
       keyfile_format::keyfile_t keyfile;
       dev::Secret priv_key;
-      std::string pb_hex;
+      dev::Public pb_hex;
       dev::h256 hash;
       std::string filename, keyname;
       switch (params.curve)
@@ -583,7 +578,7 @@ struct keychain_command<command_te::create>: keychain_command_base
         case keyfile_format::curve_etype::secp256k1:
         {
           auto keys = dev::KeyPair::create();
-          pb_hex = keys.pub().hex();
+          pb_hex = keys.pub();
           hash = dev::ethash::sha3_ethash(keys.pub());
           priv_key = keys.secret();
           filename    = hash.hex().substr(0,16);
@@ -629,7 +624,7 @@ struct keychain_command<command_te::create>: keychain_command_base
       return fc_light::json::to_string(fc_light::variant(response));
     }
 };
-*/
+
 
 template <>
 struct keychain_command<command_te::list>: keychain_command_base {
@@ -737,11 +732,11 @@ constexpr auto cmd_static_list =
 FC_LIGHT_REFLECT_ENUM(
   keychain_app::command_te,
   (null)
+    (create)
   (about)
   (version)
   (sign_hex)
   (sign_hash)
-  (create)
   (select_key)
   (import_cmd)
   (export_cmd)
@@ -754,6 +749,8 @@ FC_LIGHT_REFLECT_ENUM(
   (set_unlock_time)
   (last)
 )
+
+FC_LIGHT_REFLECT(keychain_app::keychain_command<keychain_app::command_te::create>::params_t, (keyname)(description)(encrypted)(curve)(cipher))
 
 FC_LIGHT_REFLECT(keychain_app::keychain_command<keychain_app::command_te::sign_hex>::params_t, (chainid)(transaction)(blockchain_type)(public_key)(unlock_time))
 FC_LIGHT_REFLECT(keychain_app::keychain_command<keychain_app::command_te::sign_hash>::params_t, (hash)(sign_type)(public_key))

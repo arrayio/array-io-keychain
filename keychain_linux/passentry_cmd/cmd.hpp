@@ -50,7 +50,7 @@ namespace  slave {
         virtual ~cmd() {};
         using params_t = void;
         virtual void operator()(polling* p, const fc_light::variant& v) const override {
-            try { p->closeEvent=true;}
+            try { p->OkButtonPressEvent=true;}  
             catch (const std::exception &e) {throw std::runtime_error(e.what());}
             catch (const fc_light::exception &e) {throw std::runtime_error(e.what());}
         };
@@ -61,7 +61,7 @@ namespace  slave {
         virtual ~cmd() {};
         using params_t = void;
         virtual void operator()(polling* p, const fc_light::variant& v) const override {
-            try { p->closeEvent=true; p->passClearOnExit=true;}
+            try { p->CancelButtonPressEvent=true; }
             catch (const std::exception &e) {throw std::runtime_error(e.what());}
             catch (const fc_light::exception &e) {throw std::runtime_error(e.what());}
         };

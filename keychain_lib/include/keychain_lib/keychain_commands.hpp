@@ -72,6 +72,7 @@
 #endif //LINUX
 
 #define KEY_DEFAULT_PATH_ KEY_DEFAULT_PATH "/key_data"
+
 #define SWAP_F1 "a543bae7"    // "createSwap(bytes20,address)"
 #define SWAP_F2 "fa89401a"      // "refund(address)"
 #define SWAP_F3 "1b258d50"      // "withdraw(bytes32,address)"

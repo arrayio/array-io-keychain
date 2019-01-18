@@ -42,13 +42,11 @@ public:
 	PopupWindow * popupWindow;
     void refresh(Transaction&);
     PasswordEnterElement * password;
-//	void send(std::string);
 	void setFocusByMouse(int);
     void setFocusByTabKey(int);
     void passentry (int, int);
     void closeExpertMode();
-	bool send_msg;
-
+	bool close_event;
 private:
 	QString mExpertValue;
 	
@@ -65,7 +63,6 @@ private:
 	KeychainWidget * element = Q_NULLPTR;
 
 	KeychainServiceExchange * serviceExchange =NULL;
-	bool passClearOnExit;
 
 private:
 	void _roundCorners();
@@ -81,7 +78,8 @@ private:
 	const int START_POSITION = 96;
 
 public slots:
-	void found_pass();
+	void OkButtonPress();
+	void CancelButtonPress();
 	void cancel_sign();
 	void set_sign_focus();
 };

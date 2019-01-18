@@ -357,16 +357,35 @@ std::wstring  pass_entry_term::input_password(const KeySym * map, int socket)
 
 
             gui.Select();  // polling gui
-            if (gui.passClearOnExit)
+
+            if (gui.CancelButtonPressEvent)
             {
+                gui.CancelButtonPressEvent = false;
                 password[0].clear();
                 password[1].clear();
+
+                auto v = master::cmd<master::cmds::close>();
+                mes = fc_light::json::to_string(fc_light::variant(v.base));
+                send_gui( mes, socket );
+                break;
             }
-            if (gui.closeEvent) break;
+
+            if (gui.OkButtonPressEvent)
+            {
+                gui.OkButtonPressEvent = false;
+                if (!confirm || (password[0] == password[1]))
+                {
+                    auto v = master::cmd<master::cmds::close>();
+                    mes = fc_light::json::to_string(fc_light::variant(v.base));
+                    send_gui( mes, socket );
+                    break;
+                }
+            }
+
             if (gui.focusEvent)
             {
-                line_edit = gui.line_edit;
                 gui.focusEvent = false;
+                line_edit = gui.line_edit;
             }
         }
         if (kbd_id != -1) ioctl(kbd_id, EVIOCGRAB, 0);

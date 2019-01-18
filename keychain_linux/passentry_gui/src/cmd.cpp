@@ -46,7 +46,7 @@ namespace slave
         virtual void operator()(keychain_gui_win& w, const fc_light::variant& v) const override {
             try
             {
-                w.send_msg = false;
+                w.close_event = true;
                 w.close();
 
             }

@@ -2,4 +2,38 @@
     <qresource prefix="/keymanager">
         <file>keychain_logo.png</file>
     </qresource>
+    <qresource prefix="/fonts">
+        <file>Cartograph Mono CF/Cartograph Mono CF Bold Italic.ttf</file>
+        <file>Cartograph Mono CF/Cartograph Mono CF Bold.ttf</file>
+        <file>Cartograph Mono CF/Cartograph Mono CF DemiBold Italic.ttf</file>
+        <file>Cartograph Mono CF/Cartograph Mono CF DemiBold.ttf</file>
+        <file>Cartograph Mono CF/Cartograph Mono CF ExtraBold Italic.ttf</file>
+        <file>Cartograph Mono CF/Cartograph Mono CF ExtraBold.ttf</file>
+        <file>Cartograph Mono CF/Cartograph Mono CF Heavy Italic.ttf</file>
+        <file>Cartograph Mono CF/Cartograph Mono CF Heavy.ttf</file>
+        <file>Cartograph Mono CF/Cartograph Mono CF Light Italic.ttf</file>
+        <file>Cartograph Mono CF/Cartograph Mono CF Light.ttf</file>
+        <file>Cartograph Mono CF/Cartograph Mono CF Medium Italic.ttf</file>
+        <file>Cartograph Mono CF/Cartograph Mono CF Medium.ttf</file>
+        <file>Cartograph Mono CF/Cartograph Mono CF Regular Italic.ttf</file>
+        <file>Cartograph Mono CF/Cartograph Mono CF Regular.ttf</file>
+        <file>Cartograph Mono CF/Cartograph Mono CF Thin Italic.ttf</file>
+        <file>Cartograph Mono CF/Cartograph Mono CF Thin.ttf</file>
+        <file>Cartograph Sans CF/Cartograph Sans CF Bold Italic.ttf</file>
+        <file>Cartograph Sans CF/Cartograph Sans CF Bold.ttf</file>
+        <file>Cartograph Sans CF/Cartograph Sans CF DemiBold Italic.ttf</file>
+        <file>Cartograph Sans CF/Cartograph Sans CF DemiBold.ttf</file>
+        <file>Cartograph Sans CF/Cartograph Sans CF ExtraBold Italic.ttf</file>
+        <file>Cartograph Sans CF/Cartograph Sans CF ExtraBold.ttf</file>
+        <file>Cartograph Sans CF/Cartograph Sans CF Heavy Italic.ttf</file>
+        <file>Cartograph Sans CF/Cartograph Sans CF Heavy.ttf</file>
+        <file>Cartograph Sans CF/Cartograph Sans CF Light Italic.ttf</file>
+        <file>Cartograph Sans CF/Cartograph Sans CF Light.ttf</file>
+        <file>Cartograph Sans CF/Cartograph Sans CF Medium Italic.ttf</file>
+        <file>Cartograph Sans CF/Cartograph Sans CF Medium.ttf</file>
+        <file>Cartograph Sans CF/Cartograph Sans CF Regular Italic.ttf</file>
+        <file>Cartograph Sans CF/Cartograph Sans CF Regular.ttf</file>
+        <file>Cartograph Sans CF/Cartograph Sans CF Thin Italic.ttf</file>
+        <file>Cartograph Sans CF/Cartograph Sans CF Thin.ttf</file>
+    </qresource>
 </RCC>

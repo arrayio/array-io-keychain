@@ -79,16 +79,19 @@ int cmd_parser::run(int argc, const char* const argv [])
       BOOST_LOG_SEV(log.lg, info) << "secure_module: <sec_mod_linux>";
       sec_mod = module_singleton<secure_dlg_mod_base>::instance<sec_mod_linux>();
       //TODO: need to implement gui module
+      gui_mod = module_singleton<gui_mod_base>::instance<gui_mod_dummy>();
 #else
 #	if defined(macintosh) || defined(__APPLE__) || defined(__APPLE_CC__)
       BOOST_LOG_SEV(log.lg, info) << "secure_module: <sec_mod_mac>";
       sec_mod = secure_module<secure_dlg_mod_base>::instance<sec_mod_mac>();
       //TODO: need to implement gui module
+     gui_mod = module_singleton<gui_mod_base>::instance<gui_mod_dummy>();
 #	else
 #		ifdef _WIN32
 	  BOOST_LOG_SEV(log.lg, info) << "secure_module: <SecureModuleWrapper>";
 	  sec_mod = secure_module<secure_dlg_mod_base>::instance<SecureModuleWrapper>();
 	  //TODO: need to implement gui module
+    gui_mod = module_singleton<gui_mod_base>::instance<gui_mod_dummy>();
 #		endif //_WIN32
 #	endif //APPLE
 #endif //LINUX

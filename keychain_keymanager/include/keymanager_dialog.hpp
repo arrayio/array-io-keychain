@@ -7,8 +7,12 @@
 #include <QApplication>
 #include <QLabel>
 #include <QTreeWidget>
+#include <QFontDatabase>
+#include <QFont>
 #include "keys_table_view.hpp"
 #include "menu_toolbar.hpp"
+#include "key_scroll_area.hpp"
+#include "keylist.hpp"
 
 class keymanager_dialog : public QDialog
 {
@@ -20,7 +24,9 @@ private:
 	QLabel *header;
 	QLabel *logoLabel;
 	QLabel *logoTitle;
+	key_scrooll_area *keys_list;
 	keys_table_view *keys_table;
+	QLabel *wList;
     menu_toolbar *toolbar;
 };
 

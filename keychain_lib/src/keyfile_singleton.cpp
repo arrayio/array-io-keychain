@@ -23,9 +23,19 @@ keyfile_singleton::const_iterator keyfile_singleton::end() const
   return m_keydata_map.end();
 }
 
+const keyfile_singleton::prim_index_type& keyfile_singleton::prim_index() const
+{
+  return m_keydata_map.get<keyfiles_map::prim_pubkey_tag>();
+}
+
 const keyfile_singleton::second_index_type& keyfile_singleton::second_index() const
 {
-  return m_keydata_map.get<keyfiles_map::second_index_tag>();
+  return m_keydata_map.get<keyfiles_map::second_keyname_tag>();
+}
+
+const keyfile_singleton::third_index_type& keyfile_singleton::third_index() const
+{
+  return m_keydata_map.get<keyfiles_map::third_date_tag>();
 }
 
 keyfile_singleton::keyfile_singleton()

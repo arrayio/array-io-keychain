@@ -59,6 +59,7 @@ struct keyfile_t
   fc_light::time_point creation_time;
   fc_light::time_point usage_time;
   const dev::Public& public_key() const;
+  const fc_light::time_point& last_date() const;
   struct keyinfo_t
   {
     bool encrypted;

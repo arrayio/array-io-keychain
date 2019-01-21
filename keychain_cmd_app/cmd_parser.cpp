@@ -21,15 +21,15 @@
 //#include <boost/program_options/option.hpp>
 
 #ifdef LINUX
-    #include "sec_mod_linux.hpp"
+#include "sec_mod_linux.hpp"
 #endif
 
 #ifdef APPLE
-    #include "../keychain_mac/sec_mod_mac.hpp"
+#include "../keychain_mac/sec_mod_mac.hpp"
 #endif
 
 #ifdef _WIN32
-    #include <SecureModuleWrapper.h>
+#include <SecureModuleWrapper.h>
 #endif
 
 using namespace keychain_app;
@@ -40,7 +40,7 @@ cmd_parser::cmd_parser()
   //TODO: define program options
 }
 
-int cmd_parser::run(int argc, const char* const argv [])
+int cmd_parser::run(int argc, const char* const argv[])
 {
 
   const secure_dlg_mod_base* sec_mod;
@@ -50,8 +50,8 @@ int cmd_parser::run(int argc, const char* const argv [])
   std::string task_type;
   po::options_description desc("Options");
   desc.add_options()
-          ("help,h", "Show help")
-          ("mode", po::value<std::string>(&task_type), "Select mode=test_run for test program with \"blank\" password");
+    ("help,h", "Show help")
+    ("mode", po::value<std::string>(&task_type), "Select mode=test_run for test program with \"blank\" password");
 
   po::variables_map options;
   try
@@ -61,7 +61,7 @@ int cmd_parser::run(int argc, const char* const argv [])
     po::store(parsed, options);
     po::notify(options);
 
-    if( options.count("help") )
+    if (options.count("help"))
     {
       std::cout << desc << std::endl;
       return 0;
@@ -83,32 +83,32 @@ int cmd_parser::run(int argc, const char* const argv [])
 #else
 #	if defined(macintosh) || defined(__APPLE__) || defined(__APPLE_CC__)
       BOOST_LOG_SEV(log.lg, info) << "secure_module: <sec_mod_mac>";
-      sec_mod = secure_module<secure_dlg_mod_base>::instance<sec_mod_mac>();
+      sec_mod = module_singleton<secure_dlg_mod_base>::instance<sec_mod_mac>();
       //TODO: need to implement gui module
-     gui_mod = module_singleton<gui_mod_base>::instance<gui_mod_dummy>();
+      gui_mod = module_singleton<gui_mod_base>::instance<gui_mod_dummy>();
 #	else
 #		ifdef _WIN32
-	  BOOST_LOG_SEV(log.lg, info) << "secure_module: <SecureModuleWrapper>";
-	  sec_mod = secure_module<secure_dlg_mod_base>::instance<SecureModuleWrapper>();
-	  //TODO: need to implement gui module
-    gui_mod = module_singleton<gui_mod_base>::instance<gui_mod_dummy>();
+      BOOST_LOG_SEV(log.lg, info) << "secure_module: <SecureModuleWrapper>";
+      sec_mod = module_singleton<secure_dlg_mod_base>::instance<SecureModuleWrapper>();
+      //TODO: need to implement gui module
+      gui_mod = module_singleton<gui_mod_base>::instance<gui_mod_dummy>();
 #		endif //_WIN32
 #	endif //APPLE
 #endif //LINUX
     }
     else
     {
-      std::cout<< desc << std::endl;
+      std::cout << desc << std::endl;
       return 0;
     }
 
   }
   catch (std::exception& ex)
   {
-      std::cout<< desc << std::endl;
-      return 0;
+    std::cout << desc << std::endl;
+    return 0;
   }
-  
+
   auto& keychain_ref = keychain::instance();
   sec_mod->connect(keychain_ref);
   gui_mod->connect(keychain_ref);

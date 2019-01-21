@@ -42,7 +42,6 @@ keymanager_dialog::keymanager_dialog(QWidget * parent)
 	keys_list->setFixedSize(1040, 650);
 	keys_list->move(32, 90);
 	
-
 	//initilialise keys_list
 	keylist *list_of_keys = new keylist(this);
 	keys_list->setWidget(list_of_keys);
@@ -51,5 +50,5 @@ keymanager_dialog::keymanager_dialog(QWidget * parent)
     toolbar = new menu_toolbar(this);
     //toolbar->setFixedSize(400, 35);
     toolbar->setStyleSheet("font:\"Segoe UI\";background:transparent;");
-    toolbar->move(49, 12);
+    toolbar->move(27, 10);
 }

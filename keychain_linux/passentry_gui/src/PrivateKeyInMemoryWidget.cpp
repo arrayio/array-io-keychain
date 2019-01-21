@@ -32,7 +32,7 @@ void PrivateKeyInMemory::SetPosition(int x, int y, int labelWidth, int valueWidt
 
 void PrivateKeyInMemory::SetTime(QString timeValueStr)
 {
-	timeValue->setText(timeValueStr + " ms");
+	timeValue->setText(timeValueStr + " sec");
 }
 
 PrivateKeyInMemory::~PrivateKeyInMemory()

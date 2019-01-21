@@ -13,5 +13,6 @@
         <file>swap_logo.png</file>
         <file>btc_logo.png</file>
         <file>unsecure_lock.png</file>
+        <file>kch_logo.png</file>
     </qresource>
 </RCC>

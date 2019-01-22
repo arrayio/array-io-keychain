@@ -69,7 +69,6 @@ void ExpertModeElement::SetExpertModeText(QString expertMode, bool cut)
 void ExpertModeElement::showMoreForExpert()
 {
 	ExpertModeDialog dialog(widget);
-
 	dialog.SetExpertModeText(expertModeText);
 	dialog.exec();
 }

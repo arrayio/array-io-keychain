@@ -14,10 +14,16 @@ void keychain_gui_win::refresh(Transaction& transaction)
 
     KeychainWarningMessage warningMessage;
 
-    headerBlock = new QLabel(this);
-    headerBlock->setFixedHeight(68);
-    headerBlock->setStyleSheet("background-color:rgb(255,255,255);background-image:url(:/keychain_gui_win/header.png);background-repeat:no-repeat;");
-    setStyleSheet("background-color:rgb(242,243,246)");
+	headerBlock = new QLabel(this);
+	logoLabel = new QLabel(this);
+	QPixmap logo(":/keychain_gui_win/kch_logo.png");
+	logo= logo.scaled(100, 50, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+	logoLabel->setStyleSheet("background:transparent;");
+	logoLabel->setPixmap(logo);
+	logoLabel->move(25, 8);
+	headerBlock->setFixedHeight(68);
+	headerBlock->setStyleSheet("background-color:rgb(255,255,255);");
+	setStyleSheet("background-color:rgb(242,243,246)");
 
     serviceExchange = new KeychainServiceExchange();
 
@@ -33,142 +39,154 @@ void keychain_gui_win::refresh(Transaction& transaction)
 
     int endControlPosition = START_POSITION;
 
-    if (transaction.isUnlockKey() != -1) {
-        warningMessage.SetWarning(KeychainWarningMessage::WarningType::UnlockWarning);
-        element = new UnlockKeyWidget(transaction, this);
-        element->move(0, endControlPosition);
-        element->SetPosition(0, endControlPosition, FIELD_WIDTH);
-        endControlPosition += 10;
-        endControlPosition = endControlPosition + element->GetCurrentHeight();
-        descriptionLabel->setText("Unlock key with name <b>''" + transaction.unlockKeyName() + "''</b>. Are you sure you want to unlock?");
-    }
-    if (transaction.isCreatePassword()) {
-        descriptionLabel->setStyleSheet("font:14px \"Segoe UI\";background:transparent;");
-        warningMessage.SetWarning(KeychainWarningMessage::WarningType::CreateWarning);
-        descriptionLabel->setText("Please enter new password");
-    }
+	if (transaction.isUnlockKey() != -1) {
+		warningMessage.SetWarning(KeychainWarningMessage::WarningType::UnlockWarning);
+		/*element = new UnlockKeyWidget(transaction, this);
+		element->move(0, endControlPosition);
+		element->SetPosition(0, endControlPosition, FIELD_WIDTH);
+		endControlPosition += 10;
+		endControlPosition = endControlPosition + element->GetCurrentHeight();*/
+		descriptionLabel->setText("You are trying to unlock the key \"" + transaction.unlockKeyName() + "\" for \"" + QString::number(transaction.isUnlockKey()) +"\" seconds");
+	}
+	if (transaction.isCreatePassword()) {
+		warningMessage.SetWarning(KeychainWarningMessage::WarningType::CreateWarning);
+		descriptionLabel->setText("Enter the password for the new key");
+	}
+	if (!transaction.isCreatePassword() && transaction.isUnlockKey() == -1)
+	{
+		secmod_parser_f cmd_parse;
+		auto cmd_type = cmd_parse(transaction.getTransactionText().toStdString());
+		QString descr("Are you sure you want to sign this transaction with key <b>''" + QString::fromStdString(cmd_parse.keyname()) + "''</b>?");
+		descriptionLabel->setText(descr);
+		if (!cmd_parse.is_json()) {
+			element = new UnparsedTransactionWidget(transaction, this);
+			warningMessage.SetWarning(KeychainWarningMessage::WarningType::FailedWarning);
+			if (cmd_parse.unlock_time() > 0) {
+				warningMessage.SetWarning(KeychainWarningMessage::WarningType::UnlockUseWarning);
+			}
+		}
+		else {
+			if (cmd_parse.unlock_time() > 0) {
+				warningMessage.SetWarning(KeychainWarningMessage::WarningType::UnlockUseWarning);
+			}
+			switch (cmd_type)
+			{
+			case keychain_app::secmod_commands::blockchain_secmod_te::ethereum: {
+				element = new EthereumWidget(transaction, this);
+				warningMessage.SetWarning(KeychainWarningMessage::WarningType::NoWarnig);
+				break;
+			}
+			case keychain_app::secmod_commands::blockchain_secmod_te::ethereum_swap: {
+				element = new EthereumSwapWidget(transaction, this);
+				warningMessage.SetWarning(KeychainWarningMessage::WarningType::NoWarnig);
+				languageLabel = new QLabel(this);
+				//connect(QGuiApplication::inputMethod(), &QInputMethod::localeChanged, this, &keychain_gui_win::changeLocale);
+				break;
+			}
+			case keychain_app::secmod_commands::blockchain_secmod_te::bitcoin:
+			{
+				element = new BitcoinWidget(transaction, this);
+				warningMessage.SetWarning(KeychainWarningMessage::WarningType::NoWarnig);
+				break;
+			}
+			case keychain_app::secmod_commands::blockchain_secmod_te::rawhash:
+			{
+				warningMessage.SetWarning(KeychainWarningMessage::WarningType::HashWarnig);
+				element = new RawHashWidget(transaction, this);
+				break;
+			}
+			case keychain_app::secmod_commands::blockchain_secmod_te::unknown:
+			case keychain_app::secmod_commands::blockchain_secmod_te::parse_error:
+			{
+				warningMessage.SetWarning(KeychainWarningMessage::WarningType::FailedWarning);
+				element = new UnparsedTransactionWidget(transaction, this);
+				break;
+			}
+			break;
+			}
+		}
+		element->move(0, endControlPosition);
+		element->SetPosition(0, endControlPosition, FIELD_WIDTH);
+		endControlPosition += 10;
+		endControlPosition = endControlPosition + element->GetCurrentHeight();
 
-    if (!transaction.isCreatePassword() && transaction.isUnlockKey() == -1)
-    {
-        secmod_parser_f cmd_parse;
-        auto cmd_type = cmd_parse(transaction.getTransactionText().toStdString());
-        QString descr("Some application requires a passphrase to sign transaction with keyname <b>''" + QString::fromStdString(cmd_parse.keyname()) + "''</b>. Are you sure you want to sign?");
-        descriptionLabel->setText(descr);
-        if (!cmd_parse.is_json()) {
-            element = new UnparsedTransactionWidget(transaction, this);
-            warningMessage.SetWarning(KeychainWarningMessage::WarningType::FailedWarning);
-            if (cmd_parse.unlock_time() > 0) {
-                warningMessage.SetWarning(KeychainWarningMessage::WarningType::UnlockWarning);
-            }
-        }
-        else {
-            if (cmd_parse.unlock_time() > 0) {
-                warningMessage.SetWarning(KeychainWarningMessage::WarningType::UnlockWarning);
-            }
-            switch (cmd_type)
-            {
-                case keychain_app::secmod_commands::blockchain_secmod_te::ethereum: {
-                    element = new EthereumWidget(transaction, this);
-                    warningMessage.SetWarning(KeychainWarningMessage::WarningType::NoWarnig);
-                    break;
-                }
-                case keychain_app::secmod_commands::blockchain_secmod_te::ethereum_swap: {
-                    element = new EthereumSwapWidget(transaction, this);
-                    warningMessage.SetWarning(KeychainWarningMessage::WarningType::NoWarnig);
-                    break;
-                }
-                case keychain_app::secmod_commands::blockchain_secmod_te::bitcoin:
-                {
-                    element = new BitcoinWidget(transaction, this);
-                    warningMessage.SetWarning(KeychainWarningMessage::WarningType::NoWarnig);
-                    break;
-                }
-                case keychain_app::secmod_commands::blockchain_secmod_te::rawhash:
-                {
-                    warningMessage.SetWarning(KeychainWarningMessage::WarningType::HashWarnig);
-                    element = new RawHashWidget(transaction, this);
-                    break;
-                }
-                case keychain_app::secmod_commands::blockchain_secmod_te::unknown:
-                case keychain_app::secmod_commands::blockchain_secmod_te::parse_error:
-                {
-                    warningMessage.SetWarning(KeychainWarningMessage::WarningType::FailedWarning);
-                    element = new UnparsedTransactionWidget(transaction, this);
-                    break;
-                }
-                    break;
-            }
-        }
-        element->move(0, endControlPosition);
-        element->SetPosition(0, endControlPosition, FIELD_WIDTH);
-        endControlPosition += 10;
-        endControlPosition = endControlPosition + element->GetCurrentHeight();
-    }
+	}
 
-    password = new PasswordEnterElement(transaction.isCreatePassword(), this);
-    password->SetLabel("Passphrase");
-    password->SetPosition(0, endControlPosition, FIELD_WIDTH);
-    password->move(0, endControlPosition);
-    endControlPosition += password->GetElementHeigth();
-    endControlPosition += 10;
-    if (element != Q_NULLPTR)
-        headerBlock->setFixedWidth(element->GetCurrentWidth() + 20);
-    else
-        headerBlock->setFixedWidth(width());
-    if (transaction.isCreatePassword()) {
-        OKButton = new QPushButton("CREATE", this);
-    }
-    if (transaction.isUnlockKey() != -1) {
-        OKButton = new QPushButton("UNLOCK", this);
-    }
-    if (transaction.isCreatePassword() == false && transaction.isUnlockKey() == -1)
-    {
-        OKButton = new QPushButton("SIGN", this);
-    }
-    CancelButton = new QPushButton("CANCEL", this);
+	password = new PasswordEnterElement(transaction.isCreatePassword(), this);
+	password->SetLabel("Passphrase");
+	password->SetPosition(0, endControlPosition, FIELD_WIDTH);
+	password->move(0, endControlPosition);
+	endControlPosition += password->GetElementHeigth();
+	endControlPosition += 10;
 
-    OKButton->setFixedSize(89, 25);
-    OKButton->setFlat(true);
-    OKButton->setCursor(Qt::PointingHandCursor);
-    OKButton->setStyleSheet("color:white;background-color:rgb(70,134,255);border-style:outset;border-width:0px;border-radius:5px;font:16px \"Segoe UI\"");
-    OKButton->setWindowFlags(Qt::FramelessWindowHint);
+	if (element != Q_NULLPTR)
+		headerBlock->setFixedWidth(element->GetCurrentWidth() + 20);
+	else
+		headerBlock->setFixedWidth(width());
+	if (transaction.isCreatePassword()) {
+		OKButton = new QPushButton("CREATE", this);
+	}
+	if (transaction.isUnlockKey() != -1) {
+		OKButton = new QPushButton("UNLOCK", this);
+	}
+	if (transaction.isCreatePassword() == false && transaction.isUnlockKey() == -1)
+	{
+		OKButton = new QPushButton("SIGN", this);
+	}
+	CancelButton = new QPushButton("CANCEL", this);
+
+	OKButton->setFixedSize(89, 25);
+	OKButton->setFlat(true);
+	OKButton->setCursor(Qt::PointingHandCursor);
+	OKButton->setStyleSheet("color:white;background-color:rgb(70,134,255);border-style:outset;border-width:0px;border-radius:5px;font:16px \"Segoe UI\"");
+	OKButton->setWindowFlags(Qt::FramelessWindowHint);
 
 
-    CancelButton->setFixedSize(89, 25);
-    CancelButton->setFlat(true);
-    CancelButton->setCursor(Qt::PointingHandCursor);
-    CancelButton->setWindowFlags(Qt::FramelessWindowHint);
-    CancelButton->setStyleSheet("color:rgb(147,148,151);background-image: url(:/keychain_gui_win/but_cancel.png);border-style:outset;border-width:0px;border-radius:5px;font:16px \"Segoe UI\"");
+	CancelButton->setFixedSize(89, 25);
+	CancelButton->setFlat(true);
+	CancelButton->setCursor(Qt::PointingHandCursor);
+	CancelButton->setWindowFlags(Qt::FramelessWindowHint);
+	CancelButton->setStyleSheet("color:rgb(147,148,151);background-image: url(:/keychain_gui_win/but_cancel.png);border-style:outset;border-width:0px;border-radius:5px;font:16px \"Segoe UI\"");
 
-    setFixedHeight(endControlPosition + OKButton->height() + 15);
-    if (element != Q_NULLPTR) {
-        setFixedWidth(element->GetCurrentWidth() + 20);
-        descriptionLabel->move(element->GetCurrentWidth() - 420, 0);
-    }
-    else {
-        descriptionLabel->move(width() - 420, 0);
-    }
-    OKButton->move(width() - 109, endControlPosition);
-    CancelButton->move(OKButton->x() - 95, endControlPosition);
-    lockIcon = new LockIcon(warningMessage, this);
-    popupWindow = new PopupWindow(warningMessage, this);
-    popupWindow->setVisible(false);
-    lockIcon->setFixedSize(22, 22);
-    lockIcon->setSourceDialog(popupWindow);
-    if (element != Q_NULLPTR)
-        lockIcon->move(element->GetCurrentWidth() - 25, 28);
-    else
-        lockIcon->move(width() - 55, 28);
-    lockIcon->setMouseTracking(true);
+	setFixedHeight(endControlPosition + OKButton->height() + 15);
+	if (element != Q_NULLPTR) {
+		setFixedWidth(element->GetCurrentWidth() + 20);
+		descriptionLabel->move(element->GetCurrentWidth() - 420, 0);
+	}
+	else {
+		descriptionLabel->move(width() - 420, 0);
+	}
+	OKButton->move(width() - 109, endControlPosition);
+	CancelButton->move(OKButton->x() - 95, endControlPosition);
+	if (languageLabel != Q_NULLPTR) {
+		languageLabel->setFixedSize(30, 25);
+		languageLabel->setStyleSheet("background-color:rgb(70,134,255);color:white;border-style:outset;border-width:0px;padding:4px 2px 6px 2px;border-radius:2px;font:16px \"Segoe UI\"");
+		languageLabel->move(CancelButton->x() - 35, endControlPosition);
+		QString lang = QGuiApplication::inputMethod()->locale().languageToString(QGuiApplication::inputMethod()->locale().language());
+		languageLabel->setText(lang.mid(0, 2).toUpper());
+	}
+	//if (!transaction.isCreatePassword() && warningMessage.isWarn()) {
+		lockIcon = new LockIcon(warningMessage, this);
+		popupWindow = new PopupWindow(warningMessage, this);
+		popupWindow->setVisible(false);
+		lockIcon->setFixedSize(22, 22);
+		lockIcon->setSourceDialog(popupWindow);
+		if (element != Q_NULLPTR)
+			lockIcon->move(element->GetCurrentWidth() - 25, 28);
+		else
+			lockIcon->move(width() - 55, 28);
+		lockIcon->setMouseTracking(true);
+	//}
+
     this->connect(OKButton, &QPushButton::released, this, &keychain_gui_win::OkButtonPress);
     this->connect(CancelButton, &QPushButton::released, this, &keychain_gui_win::CancelButtonPress);
     this->connect(password, &PasswordEnterElement::focus, this, &keychain_gui_win::setFocusByMouse);
-
-    _roundCorners();
-    password->setValueFocus();
-    //connect(password, &PasswordEnterElement::finishEnterPassword, this, &keychain_gui_win::transaction_sign);
-    //if (transaction.isCreatePassword())
-      //  connect(password, &PasswordEnterElement::changePassword, this, &keychain_gui_win::_disableSignButton);
+	_roundCorners();
+	password->setValueFocus();
+//	connect(password, &PasswordEnterElement::finishEnterPassword, this, &keychain_gui_win::transaction_sign);
+//	if (transaction.isCreatePassword()) {
+//		connect(password, &PasswordEnterElement::changePassword, this, &keychain_gui_win::_disableSignButton);
+//	}
 }
 
 
@@ -181,6 +199,14 @@ void keychain_gui_win::set_sign_focus()
 {
 	//OKButton->setStyleSheet("color:white;background-color:rgb(179,205,255);border-style:outset;border-width:0px;border-radius:5px;font:16px \"Segoe UI\"");
 	
+}
+
+void keychain_gui_win::changeLocale()
+{
+	if (languageLabel != Q_NULLPTR) {
+		QString lang = QGuiApplication::inputMethod()->locale().languageToString(QGuiApplication::inputMethod()->locale().language());
+		languageLabel->setText(lang.mid(0, 2).toUpper());
+	}
 }
 
 

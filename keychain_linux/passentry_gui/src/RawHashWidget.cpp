@@ -19,6 +19,8 @@ RawHashWidget::RawHashWidget(Transaction &transaction, QWidget * parent)
 	from->SetValueStyle(valueStyle);
 
 	QFont fromFont = from->font();
+	fromFont.setPixelSize(16);
+	fromFont.setFamily("Segoe UI");
 	QString fromStr = QString::fromStdString(raw_hash.from);
 
 	QFontMetrics fromFM(fromFont);
@@ -51,7 +53,7 @@ void RawHashWidget::SetPosition(int x, int y, int width)
 {
 	if (max_width > width)
 		width = max_width;
-	from->SetPosition(0, 0, 116, width);
+	from->SetPosition(0, 0, 116, width+50);
 	from->move(0, currentHeight);
 	currentHeight += 26;
 	hash->SetPosition(0, currentHeight, 116, width);
@@ -65,7 +67,6 @@ void RawHashWidget::SetPosition(int x, int y, int width)
 	//expertModeElement->SetPosition(0, currentHeight, 116, width);
 	//expertModeElement->move(0, currentHeight);
 	//currentHeight += 60;
-	currentWidth = from->width();
 	currentWidth = from->width();
 	setFixedWidth(currentWidth);
 	setFixedHeight(currentHeight);

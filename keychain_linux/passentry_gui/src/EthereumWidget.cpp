@@ -9,7 +9,7 @@ EthereumWidget::EthereumWidget(Transaction &transaction, QWidget * parent)
 
 	QString valueStyle("font:16px \"Segoe UI\";background:transparent;color:rgb(123,141,167);");
 	QString labelStyle("font:16px \"Segoe UI\";background:transparent;");
-	cryptoType->SetLabelStyle("background-image:url(:/keychain_gui_win/bg_ephir.png) no-repeat;");
+	cryptoType->SetLabelStyle("background-image:url(:/keychain_gui_win/bg_ephir.png) no-repeat;background-size:contain;");
 	cryptoType->SetValueStyle(valueStyle);
 	cryptoType->SetLabelAndValue("empty=ethereum");
 
@@ -43,6 +43,7 @@ EthereumWidget::EthereumWidget(Transaction &transaction, QWidget * parent)
 
 	expertModeElement = new ExpertModeElement(this);
 	expertModeElement->SetExpertModeText(QString::fromStdString(cmd_parse.to_expert_mode_string()));
+	
 }
 
 void EthereumWidget::SetPosition(int x, int y, int width)

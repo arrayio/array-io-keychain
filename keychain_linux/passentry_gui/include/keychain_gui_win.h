@@ -4,8 +4,10 @@
 #include <QLabel>
 #include <QLayout>
 #include <QLineEdit>
+#include <QInputMethod>
 #include <QPushButton>
 #include <QMessageBox>
+#include <QPixmap>
 #include "PopupWindow.h"
 #include "LockIcon.h"
 #include "SecureWindowElement.h"
@@ -24,7 +26,6 @@
 #include "UnlockKeyWidget.h"
 #include "KeychainWarningMessage.h"
 #include "RawHashWidget.h"
-
 
 using namespace keychain_app;
 using secmod_commands::secmod_parser_f;
@@ -49,11 +50,12 @@ public:
 	bool close_event;
 private:
 	QString mExpertValue;
-	
-
+	QLabel * logoLabel;
 	QPushButton * OKButton = Q_NULLPTR;
 	QPushButton * CancelButton = Q_NULLPTR;
-	
+
+	QLabel * languageLabel = Q_NULLPTR;
+
 	QLabel * headerBlock = Q_NULLPTR;
 	/*QLabel * passPhrase = Q_NULLPTR;
 	QLineEdit * passPhraseValue = Q_NULLPTR;*/
@@ -67,7 +69,6 @@ private:
 private:
 	void _roundCorners();
 	void _disableSignButton();
-	//void closeEvent(QCloseEvent *);
 
 protected:
 	void keyPressEvent(QKeyEvent *event) override;
@@ -78,8 +79,10 @@ private:
 	const int START_POSITION = 96;
 
 public slots:
+
 	void OkButtonPress();
 	void CancelButtonPress();
 	void cancel_sign();
 	void set_sign_focus();
+	void changeLocale();
 };

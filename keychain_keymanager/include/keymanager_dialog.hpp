@@ -9,6 +9,7 @@
 #include <QTreeWidget>
 #include <QFontDatabase>
 #include <QFont>
+#include <QTextEdit>
 #include "keys_table_view.hpp"
 #include "menu_toolbar.hpp"
 #include "key_scroll_area.hpp"
@@ -28,6 +29,15 @@ private:
 	keys_table_view *keys_table;
 	QLabel *wList;
     menu_toolbar *toolbar;
+    QTextEdit *text_edit_form;
+
+public slots:
+    void ProcessExport(const QString &text);
+    void ProcessImport(const QString &text);
+    void ProcessAbout(const QString &text);
+    void ProcessStatus(const QString &text);
+    void ProcessExit(const QString &text);
+
 };
 
 #endif // ! KEYMANAGERDIALOG_H

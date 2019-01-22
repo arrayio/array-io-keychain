@@ -20,14 +20,14 @@ menu_toolbar::menu_toolbar(QWidget *parent)
     QAction *actionStatus = new QAction("&Status", this);
 
     //create menu and add actions to it
-    QMenu *menuAbout = new QMenu("&About");
+    QMenu *menuAbout = new QMenu("&About", this);
     menuAbout->setStyleSheet("QMenu {background-color: #fafafc;}");
     menuAbout->setStyleSheet(menuAbout->styleSheet() + "QMenu::item:selected {background-color: #9faec5;}");
     menuAbout->addAction(actionAbout);
     menuAbout->addAction(actionStatus);
 
     //create file button
-    QPushButton *FileButton = new QPushButton;
+    QPushButton *FileButton = new QPushButton(this);
     FileButton->setStyleSheet("QWidget > QPushButton {background-color: #fafafc; \
                                min-width: 4em; \
                                padding: 4px; \
@@ -47,7 +47,7 @@ menu_toolbar::menu_toolbar(QWidget *parent)
     FileButtonLabel->setFont(QFont("Segoe UI Semibold", 10, QFont::Normal, false));
     
     //create about button text label
-    QPushButton *AboutButton = new QPushButton("About");
+    QPushButton *AboutButton = new QPushButton(this);
     AboutButton->setStyleSheet("QWidget > QPushButton {background-color: #fafafc; \
                                 min-width: 4em; \
                                 padding: 4px; \
@@ -84,47 +84,40 @@ menu_toolbar::menu_toolbar(QWidget *parent)
     //add toolbar to main layout
     this->addWidget(toolBarFile);
 
-    //temporary use textedit for debug output
-    text_edit_form = new QTextEdit();
-    text_edit_form->setFixedSize(100, 30);
-    text_edit_form->setStyleSheet("font:10px \"Segoe UI\";");
-    this->addWidget(text_edit_form);
-
     //connect actions to slots via qt signals
-    connect(actionExit, SIGNAL(triggered()), this, SLOT(Exit()));
-    connect(actionExport, SIGNAL(triggered()), this, SLOT(Export()));
-    connect(actionImport, SIGNAL(triggered()), this, SLOT(Import()));
-    connect(actionAbout, SIGNAL(triggered()), this, SLOT(About()));
-    connect(actionStatus, SIGNAL(triggered()), this, SLOT(Status()));
+    QObject::connect(actionExport, SIGNAL(triggered()), this, SLOT(Export()));
+    QObject::connect(actionImport, SIGNAL(triggered()), this, SLOT(Import()));
+    QObject::connect(actionAbout, SIGNAL(triggered()), this, SLOT(About()));
+    QObject::connect(actionStatus, SIGNAL(triggered()), this, SLOT(Status()));
+    QObject::connect(actionExit, SIGNAL(triggered()), this, SLOT(Exit()));
 }
 
 //call export dialog
 void menu_toolbar::Export()
 {
-    text_edit_form->setText("Export was clicked!");
+    emit ExportSelected("Export was clicked!");
 }
 
 //call import dialog
 void menu_toolbar::Import()
 {
-    text_edit_form->setText("Import was clicked!");
+    emit ImportSelected("Import was clicked!");
 }
 
-//handle exit event
-void menu_toolbar::Exit()
-{
-    text_edit_form->setText("Exit was clicked!");
-    QApplication::quit();
-}
-
-//print version info and other information 
+//call about dialog
 void menu_toolbar::About()
 {
-    text_edit_form->setText("About was clicked!");
+    emit AboutSelected("About was clicked!");
 }
 
-//print current keychain status ok / failed
+//call status dialog
 void menu_toolbar::Status()
 {
-    text_edit_form->setText("Status was clicked!");
+    emit StatusSelected("Status was clicked!");
+}
+
+//call exit dialog
+void menu_toolbar::Exit()
+{
+    emit ExitSelected("Exit was clicked!");
 }

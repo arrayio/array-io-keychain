@@ -48,7 +48,50 @@ keymanager_dialog::keymanager_dialog(QWidget * parent)
 
     //create menu toolbar 
     toolbar = new menu_toolbar(this);
-    //toolbar->setFixedSize(400, 35);
     toolbar->setStyleSheet("font:\"Segoe UI\";background:transparent;");
     toolbar->move(27, 10);
+
+    //create text-edit as temporary GUI element
+    text_edit_form = new QTextEdit(this);
+    text_edit_form->setFixedSize(100, 30);
+    text_edit_form->setStyleSheet("font:10px \"Segoe UI\";");
+    text_edit_form->move(210, 10);
+
+    QObject::connect(toolbar, SIGNAL(ExportSelected(QString)), this, SLOT(ProcessExport(QString)));
+    QObject::connect(toolbar, SIGNAL(ImportSelected(QString)), this, SLOT(ProcessImport(QString)));
+    QObject::connect(toolbar, SIGNAL(AboutSelected(QString)), this, SLOT(ProcessAbout(QString)));
+    QObject::connect(toolbar, SIGNAL(StatusSelected(QString)), this, SLOT(ProcessStatus(QString)));
+    QObject::connect(toolbar, SIGNAL(ExitSelected(QString)), this, SLOT(ProcessExit(QString)));
 }
+
+//process export dialog signal call
+void keymanager_dialog::ProcessExport(const QString &text)
+{
+    text_edit_form->setText("Process Export!");
+}
+
+//process import dialog signal call
+void keymanager_dialog::ProcessImport(const QString &text)
+{
+    text_edit_form->setText("Process Import!");
+}
+
+//process about dialog signal call
+void keymanager_dialog::ProcessAbout(const QString &text)
+{
+    text_edit_form->setText("Process About!");
+}
+
+//process status dialog signal call
+void keymanager_dialog::ProcessStatus(const QString &text)
+{
+    text_edit_form->setText("Process Status!");
+}
+
+//process exit dialog signal call
+void keymanager_dialog::ProcessExit(const QString &text)
+{
+    text_edit_form->setText("Process Exit!");
+    QApplication::quit();
+}
+

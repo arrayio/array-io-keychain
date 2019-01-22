@@ -1,9 +1,5 @@
 #include "keymanager_dialog.hpp"
 #include <QtWidgets/QApplication>
-#include <windows.h>
-#include <UserEnv.h>
-#include <Tchar.h>
-#include <WtsApi32.h>
 #include <QJsonDocument>
 //#include "Transaction.h"
 #include <QString>
@@ -12,12 +8,7 @@
 #include <keychain_lib/version_info.hpp>
 #include <keychain_lib/secmod_parser_cmd.hpp>
 
-#define DESKTOP_ALL (DESKTOP_READOBJECTS | DESKTOP_CREATEWINDOW | \
-DESKTOP_CREATEMENU | DESKTOP_HOOKCONTROL | DESKTOP_JOURNALRECORD | \
-DESKTOP_JOURNALPLAYBACK | DESKTOP_ENUMERATE | DESKTOP_WRITEOBJECTS | \
-DESKTOP_SWITCHDESKTOP | STANDARD_RIGHTS_REQUIRED)
-#define FROMPROCCESS
-HDESK hOldDesktop, hNewDesktop;
+
 
 using namespace std;
 using namespace keychain_app;

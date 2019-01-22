@@ -176,6 +176,11 @@
       document.getElementById('request').value = JSON.stringify(request, undefined, 2);
       keychain.command(request, function(data) {
         document.getElementById('response').value = JSON.stringify(data, undefined, 2);
+        if (commandName === 'SELECT_KEY' && data.result) {
+          document.getElementById('public_key_UNLOCK').value = data.result;
+          document.getElementById('public_key_SIGN_HASH').value = data.result;
+          document.getElementById('public_key_SIGN_HEX').value = data.result;
+        }
       })
     });
   }

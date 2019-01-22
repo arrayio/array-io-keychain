@@ -63,9 +63,9 @@ logger_singleton::logger_singleton(std::string postfix)
 
 }
 
-const logger_singleton& logger_singleton::instance(std::string postfix)
+logger_singleton& logger_singleton::instance(std::string postfix)
 {
-    static const logger_singleton instance(postfix);
+    static  logger_singleton instance(postfix);
     return instance;
 }
 

@@ -49,7 +49,7 @@ void SecurityManager::CreateSecureDesktop(const int unlock_time) {
 		app_args = args;
 	}
 	LPCWSTR appToStart = dst;
-    auto log = logger_singleton::instance();
+    auto& log = logger_singleton::instance();
     BOOST_LOG_SEV(log.lg, info) << "CreateSecureDescktop function StartInteractiveClientProcess to enter credentials";
 	BOOST_LOG_SEV(log.lg, info) << appToStart;
 	if (!StartInteractiveClientProcess(appToStart, app_args))

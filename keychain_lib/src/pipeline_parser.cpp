@@ -30,7 +30,7 @@ pipeline_parser::pipeline_parser(keychain_invoke_f&& keychain_f, int pipein_desc
 
 int pipeline_parser::run()
 {
-	auto log = logger_singleton::instance();
+	auto& log = logger_singleton::instance();
 
 	buf_type read_buf(4096, 0x00);
 	auto ptr_from_it = [&read_buf](buf_iterator &i) {

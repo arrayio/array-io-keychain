@@ -56,7 +56,7 @@ bool swap_action(std::string data, swap_cmd_t::swap_t &swap_info) {
 fc_light::variant create_secmod_signhex_cmd(std::vector<unsigned char> raw, blockchain_te blockchain, std::string from, int unlock_time, std::string keyname)
 {
   std::string json;
-  auto log = logger_singleton::instance();
+  auto& log = logger_singleton::instance();
   secmod_commands::secmod_command_common cmd;
   cmd.json = true;
   cmd.keyname = keyname;

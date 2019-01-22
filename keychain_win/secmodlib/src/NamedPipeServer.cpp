@@ -24,7 +24,7 @@ using namespace keychain_app;
 void NamedPipeServer::ListenChannel(/*LPTSTR channelName*/) {
 
   lpszPipename = (LPTSTR)__TEXT("\\\\.\\pipe\\keychainservice");//channelName;
-  auto log = logger_singleton::instance();
+  auto& log = logger_singleton::instance();
   BOOST_LOG_SEV(log.lg, info) << "Creating NamedPipe object";
 
   hPipe = CreateNamedPipe(

@@ -482,7 +482,7 @@ struct keychain_command<command_te::sign_hash> : keychain_command_base
 
   virtual std::string operator()(keychain_base* keychain, const fc_light::variant& params_variant, int id) const override
   {
-    auto log = logger_singleton::instance();
+    auto& log = logger_singleton::instance();
   
     params_t params;
     try

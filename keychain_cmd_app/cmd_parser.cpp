@@ -45,7 +45,7 @@ int cmd_parser::run(int argc, const char* const argv[])
 
   const secure_dlg_mod_base* sec_mod;
   const gui_mod_base* gui_mod;
-  auto log = logger_singleton::instance();
+  auto& log = logger_singleton::instance();
 
   std::string task_type;
   po::options_description desc("Options");

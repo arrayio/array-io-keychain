@@ -13,7 +13,7 @@ namespace attrs = boost::log::attributes;
 
 int main(int argc, char* argv[])
 {
-  auto log = logger_singleton::instance();
+  auto& log = logger_singleton::instance();
 
   BOOST_LOG_SEV(log.lg, info) << "KeyChain application started, version = " << keychain_app::version_info::version();
 

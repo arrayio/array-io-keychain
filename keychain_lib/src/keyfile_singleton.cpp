@@ -41,7 +41,7 @@ const keyfile_singleton::third_index_type& keyfile_singleton::third_index() cons
 keyfile_singleton::keyfile_singleton()
 {
   auto print_exception = [](const auto& filename, fc_light::exception &er) {
-    auto log = logger_singleton::instance();
+    auto& log = logger_singleton::instance();
     BOOST_LOG_SEV(log.lg, warning) << "Cannot read key file \"" << filename.c_str() << "\"" << er.to_detail_string();
   };
   try

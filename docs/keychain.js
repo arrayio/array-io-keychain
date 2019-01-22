@@ -31,7 +31,7 @@
   };
 
   WS.prototype.sign = function(data, privateKey) {
-    const params = { keyname: privateKey, transaction: data, blockchain_type: "ethereum" };
+    const params = { public_key: privateKey, transaction: data, blockchain_type: "ethereum" };
     return this.method({command: 'sign_hex',  params });
   };
 
@@ -41,7 +41,7 @@
     const rawHex = result.rawTransaction;
     const messageHashInitial = result.messageHash;
 
-    const params = { keyname: privateKey, transaction: rawHex, blockchain_type: "ethereum" };
+    const params = { public_key: privateKey, transaction: rawHex, blockchain_type: "ethereum" };
     return this.method({ command: 'sign_hex', params })
       .then(data => {
         const signature = data.result;

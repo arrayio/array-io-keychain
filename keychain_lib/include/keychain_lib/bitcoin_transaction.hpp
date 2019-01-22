@@ -31,6 +31,11 @@ public:
         SIGHASH_TYPE_SIGHASH_SINGLE = 3,
         SIGHASH_TYPE_SIGHASH_ANYONECANPAY = 80
     };
+  
+    enum end_of_vin_seq_t {
+        END_OF_VIN_SEQ_FE = 4278190079,
+        END_OF_VIN_SEQ_FF = 4294967295
+    };
 
     bitcoin_transaction_t(kaitai::kstream* p__io, kaitai::kstruct* p__parent = 0, bitcoin_transaction_t* p__root = 0);
     bitcoin_transaction_t();

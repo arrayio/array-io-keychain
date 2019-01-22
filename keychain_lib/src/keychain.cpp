@@ -3,7 +3,7 @@
 //
 
 #include "keychain.hpp"
-#include "key_file_parser.hpp"
+#include "keyfile_parser.hpp"
 #include "keychain_commands.hpp"
 
 #include <boost/hana/for_each.hpp>
@@ -35,14 +35,14 @@ keychain_commands_singleton::keychain_commands_singleton()
 }
 
 
-keychain& keychain::instance(const secure_dlg_mod_base* secure_dlg )
+keychain& keychain::instance()
 {
-  static keychain _instance (secure_dlg);
+  static keychain _instance;
   return _instance;
 }
 
 
-keychain::keychain(const secure_dlg_mod_base* secure_dlg)
+keychain::keychain()
   : keychain_base(),
     m_init_path(bfs::current_path())
 {
@@ -55,11 +55,6 @@ keychain::keychain(const secure_dlg_mod_base* secure_dlg)
       FC_LIGHT_THROW_EXCEPTION(fc_light::internal_error_exception,
                                "Can not create key directory, path = ${directory}", ("directory", key_dir.string()));
   }
-
-  get_passwd_trx.connect(std::bind(&secure_dlg_mod_base::get_passwd_trx, secure_dlg, std::placeholders::_1));
-  get_passwd_on_create.connect(std::bind(&secure_dlg_mod_base::get_passwd_on_create, secure_dlg, std::placeholders::_1));
-  get_passwd_unlock.connect(std::bind(&secure_dlg_mod_base::get_passwd_unlock, secure_dlg, std::placeholders::_1, std::placeholders::_2));
-  print_mnemonic.connect(std::bind(&secure_dlg_mod_base::print_mnemonic, secure_dlg, std::placeholders::_1));
 }
 
 keychain::~keychain()
@@ -89,6 +84,11 @@ std::string keychain::operator()(const fc_light::variant& command) {
     fc_light::rpc_command_parse_exception er_(er.get_log());
     er_.append_log( FC_LIGHT_LOG_MESSAGE( error, "cannot parse command" ) );
     return print_exception(cmd.id, er_);
+  }
+  catch (fc_light::exception& er)
+  {
+    er.append_log(FC_LIGHT_LOG_MESSAGE(error, "unknown error"));
+    return print_exception(cmd.id, er);
   }
   try
   {
@@ -123,3 +123,15 @@ const keychain_commands_singleton::command_ptr keychain_commands_singleton::oper
   return m_command_list[ind];
 }
 
+void keychain_app::secure_dlg_mod_base::connect(keychain_app::keychain_base &keychain_) const
+{
+  keychain_.get_passwd_trx.connect(std::bind(&secure_dlg_mod_base::get_passwd_trx, this, std::placeholders::_1));
+  keychain_.get_passwd_on_create.connect(std::bind(&secure_dlg_mod_base::get_passwd_on_create, this, std::placeholders::_1));
+  keychain_.get_passwd_unlock.connect(std::bind(&secure_dlg_mod_base::get_passwd_unlock, this, std::placeholders::_1, std::placeholders::_2));
+  keychain_.print_mnemonic.connect(std::bind(&secure_dlg_mod_base::print_mnemonic, this, std::placeholders::_1));
+}
+
+void keychain_app::gui_mod_base::connect(keychain_app::keychain_base &keychain_) const
+{
+  keychain_.select_key.connect(std::bind(&gui_mod_base::select_key, this));
+}

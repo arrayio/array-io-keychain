@@ -2,13 +2,11 @@
 #include "cmd.hpp"
 
 keychain_gui_win::keychain_gui_win(Transaction &transaction, QWidget *parent)
-	: QDialog(parent)
+	: QDialog(parent), close_event(false)
 {
     ui.setupUi(this);
     setWindowFlags(Qt::FramelessWindowHint);
     setFixedSize(600, 347);
-    passClearOnExit = true;
-    send_msg  = true;
 }
 
 void keychain_gui_win::refresh(Transaction& transaction)
@@ -113,7 +111,6 @@ void keychain_gui_win::refresh(Transaction& transaction)
     password->move(0, endControlPosition);
     endControlPosition += password->GetElementHeigth();
     endControlPosition += 10;
-
     if (element != Q_NULLPTR)
         headerBlock->setFixedWidth(element->GetCurrentWidth() + 20);
     else
@@ -163,10 +160,9 @@ void keychain_gui_win::refresh(Transaction& transaction)
     else
         lockIcon->move(width() - 55, 28);
     lockIcon->setMouseTracking(true);
-    this->connect(OKButton, &QPushButton::released, this, &keychain_gui_win::found_pass);
-    this->connect(OKButton, &QPushButton::released, this, &keychain_gui_win::close);
-    this->connect(CancelButton, &QPushButton::released, this, &keychain_gui_win::close);
-    this->connect(password, &PasswordEnterElement::focus, this, &keychain_gui_win::focus);
+    this->connect(OKButton, &QPushButton::released, this, &keychain_gui_win::OkButtonPress);
+    this->connect(CancelButton, &QPushButton::released, this, &keychain_gui_win::CancelButtonPress);
+    this->connect(password, &PasswordEnterElement::focus, this, &keychain_gui_win::setFocusByMouse);
 
     _roundCorners();
     password->setValueFocus();
@@ -246,46 +242,47 @@ void keychain_gui_win::keyPressEvent(QKeyEvent *event)
 	}
 }
 
-/*
-void keychain_gui_win::closeEvent(QCloseEvent * event)
-{
-	serviceExchange->EncodeCancel();
-	this->close();
-}
-*/
-
 void keychain_gui_win::closeEvent(QCloseEvent *event)
 {
-    if (send_msg)
-    {
-        passClearOnExit ?
-        send(fc_light::json::to_string(fc_light::variant( master::cmd<( master::cmds::cancel)>().base))) :
-        send(fc_light::json::to_string(fc_light::variant( master::cmd<( master::cmds::ok)>().base)));
-    }
-
-    event->accept();
+    if (close_event)
+        event->accept();
+    else
+        send(fc_light::json::to_string(fc_light::variant( master::cmd<( master::cmds::cancel)>().base)));
 }
 
-
-void keychain_gui_win::found_pass() {
-    //QString passPhrase("");
-    //passPhrase = password->GetValue();
-    //if (passPhrase.isEmpty()) {
-    //	serviceExchange->EncodeError(L"empty_password", 14);
-    //	return;
-    //}
-    //serviceExchange->EncodeSuccess(passPhrase.toStdWString(), passPhrase.length());
-    passClearOnExit = false;
-    //this->close();
+void keychain_gui_win::OkButtonPress() {
+    send(fc_light::json::to_string(fc_light::variant( master::cmd<( master::cmds::ok)>().base)));
 }
 
-void keychain_gui_win::send(std::string a)
-{
-    if ( write(STDIN_FILENO, a.c_str(), a.length() ) != a.length() )
-        close();
+void keychain_gui_win::CancelButtonPress() {
+    send(fc_light::json::to_string(fc_light::variant( master::cmd<( master::cmds::cancel)>().base)));
 }
 
-void keychain_gui_win::focus(int line)
+void keychain_gui_win::setFocusByMouse(int line)
 {
     send(fc_light::json::to_string(fc_light::variant(static_cast<master::cmd_base>(master::cmd<(master::cmds::focus)>(line)))));
+}
+
+void keychain_gui_win::setFocusByTabKey(int line_edit)
+{
+    line_edit ? password->valueConfirm->setFocus(): password->value->setFocus();
+}
+
+void keychain_gui_win::passentry(int len, int line_edit)
+{
+    if (line_edit)
+    {
+        password->valueConfirm->setText(QString(len, '*'));
+        password->valueConfirm->setFocus();
+    }
+    else
+    {
+        password->value->setText(QString (len, '*'));
+        password->value->setFocus();
+    }
+}
+
+void keychain_gui_win:: closeExpertMode()
+{
+    emit element->closeExpertMode();
 }

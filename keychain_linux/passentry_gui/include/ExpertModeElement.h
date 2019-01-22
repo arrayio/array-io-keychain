@@ -6,6 +6,7 @@
 #include <QPushButton>
 #include "ExpertModeDialog.h"
 #include "ExpertModeLabel.h"
+#include "KeychainWidget.h"
 
 class ExpertModeElement : public QWidget
 {
@@ -16,7 +17,7 @@ public:
 	~ExpertModeElement();
 	void SetExpertModeText(QString expertMode, bool cut=true);
 	void SetPosition(int x, int y, int labelWidth, int valueWidth);
-
+	KeychainWidget * widget;
 private:
 	QLabel * expertLabel;
 	ExpertModeLabel * expertValue;

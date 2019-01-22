@@ -22,7 +22,7 @@ namespace fc_light
      command_not_implemented_code      , ///< command is not implemented
      command_depreciated_code          , ///< command is depreciates
      invalid_arg_exception_code        , ///< invalid command arguments
-     privkey_not_found_code            , ///< private key not found by keyname
+     privkey_not_found_code            , ///< private key not found by public key
      privkey_invalid_unlock_code       , ///< cannot unlock private key, possible wrong password
      password_input_error_code         , ///< error while getting password
      internal_error_code               , ///< some unspecified internal error
@@ -526,25 +526,30 @@ namespace fc_light
 
 FC_LIGHT_REFLECT_ENUM(
   fc_light::exception_code_te,
-(unspecified_exception_code)
-(unhandled_exception_code)
-(std_exception_code)
-(command_not_implemented_code)
-(command_depreciated_code)
-(invalid_arg_exception_code)
-(password_input_error_code)
-(privkey_not_found_code)
-(timeout_exception_code)
-(parse_error_exception_code)
-(internal_error_code)
-(file_not_found_exception_code)
-(key_not_found_exception_code)
-(bad_cast_exception_code)
-(assert_exception_code)
-(encryption_error_code)
-(null_optional_code)
-(overflow_code)
-(underflow_code)
-(divide_by_zero_code)
-(out_of_range_exception_code)
-(eof_exception_code))
+  (unspecified_exception_code)
+  (json_parse_error_code)
+  (rpc_command_parse_code)
+  (command_not_implemented_code)
+  (command_depreciated_code)
+  (invalid_arg_exception_code)
+  (privkey_not_found_code)
+  (privkey_invalid_unlock_code)
+  (password_input_error_code)
+  (internal_error_code)
+
+  (parse_error_exception_code)
+  (timeout_exception_code)
+  (file_not_found_exception_code)
+  (key_not_found_exception_code)
+  (bad_cast_exception_code)
+  (assert_exception_code)
+  (encryption_error_code)
+  (null_optional_code)
+  (overflow_code)
+  (underflow_code)
+  (divide_by_zero_code)
+  (out_of_range_exception_code)
+  (eof_exception_code)
+
+  (std_exception_code)
+  (unhandled_exception_code))

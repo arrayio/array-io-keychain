@@ -121,6 +121,16 @@
     <div class="column col-2">
       <button class="btn btn-primary input-group-btn" id="btn_CREATE">Create</button>
     </div>
+    <div class="column col-8">
+      <div class="columns">
+        <div class="column col-6 col-xs-12">
+          <div class="input-group">
+            <span class="input-group-addon">keyname: </span>
+            <input type="text" class="form-input" placeholder="test1" id="keyname_CREATE">
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
   <div class="columns m-1">
     <div class="column col-2">
@@ -172,7 +182,7 @@
     attachListener('PUBLIC_KEY', ['keyname']);
     attachListener('SIGN_HEX', ['keyname', 'unlock_time']);
     attachListener('SIGN_HASH', ['keyname']);
-    attachListener('CREATE');
+    attachListener('CREATE', ['keyname']);
     attachListener('LIST');
     attachListener('LOCK');
     attachListener('ABOUT');
@@ -236,7 +246,7 @@
     CREATE: {
       command: "create",
       params: {
-        keyname: "test1",
+        // keyname: null,
         encrypted: true,
         curve: "secp256k1",
         cipher: "aes256"

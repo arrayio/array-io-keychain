@@ -10,8 +10,9 @@ PasswordLineEdit::~PasswordLineEdit()
 {
 }
 
-void PasswordLineEdit::keyPressEvent(QKeyEvent * event)
+/*void PasswordLineEdit::keyPressEvent(QKeyEvent * event)
 {
+
 	if (event->key()==Qt::Key_Return) {
 		emit finishEnter();
 	}
@@ -20,9 +21,10 @@ void PasswordLineEdit::keyPressEvent(QKeyEvent * event)
 		QLineEdit::keyPressEvent(event);
 	}
 }
-
+*/
 
 void PasswordLineEdit::focusInEvent(QFocusEvent *event)
 {
+    QLineEdit::focusInEvent(event);
 	emit focus(window);
 }

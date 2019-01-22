@@ -160,14 +160,14 @@ void keychain_base::lock_all_priv_keys()
   key_map.clear();
 }
 
-dev::Secret keychain_base::get_private_key(const std::string& keyname, int unlock_time, keychain_base::create_secmod_cmd_f&& create_cmd_func)
+dev::Secret keychain_base::get_private_key(const dev::Public& public_key, int unlock_time, keychain_base::create_secmod_cmd_f&& create_cmd_func)
 {
   dev::Secret result;
   do
   {
     if(unlock_time == 0)
     {
-      auto it = key_map.find(keyname);
+      auto it = key_map.find(public_key);
       if(it == key_map.end())
         break;
       auto now = std::chrono::system_clock::now();
@@ -185,21 +185,21 @@ dev::Secret keychain_base::get_private_key(const std::string& keyname, int unloc
   if (!result)
   {
     auto& keyfiles = keyfile_singleton::instance();
-    auto keyfile = keyfiles[keyname];
+    auto keyfile = keyfiles[public_key];
     if(keyfile.keyinfo.encrypted)
     {
       byte_seq_t passwd;
       if(create_cmd_func)
-        passwd = std::move(*(get_passwd_trx(create_cmd_func())));
+        passwd = std::move(*(get_passwd_trx(create_cmd_func(keyfile.keyname))));
       else
-        passwd = std::move(*(get_passwd_unlock(keyname, unlock_time)));
+        passwd = std::move(*(get_passwd_unlock(keyfile.keyname, unlock_time)));
       if (passwd.empty())
         FC_LIGHT_THROW_EXCEPTION(fc_light::password_input_exception, "");
       auto encrypted_data = keyfile.keyinfo.priv_key_data.as<keyfile_format::encrypted_data>();
       auto& encryptor = encryptor_singleton::instance();
       result = encryptor.decrypt_private_key(passwd, encrypted_data);
       if(unlock_time > 0)
-        key_map.insert(private_key_item(keyname, result, unlock_time));
+        key_map.insert(private_key_item(result, unlock_time));
     }
   }
   return result;

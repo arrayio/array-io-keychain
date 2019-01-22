@@ -9,7 +9,7 @@
 #include <regex>
 #include <iostream>
 #include <fstream>
-#include <keychain_lib/keychain_wrapper.hpp>
+#include <keychain_lib/keychain.hpp>
 #include <X11/Xatom.h>
 #include <linux/input.h>
 #include <X11/extensions/XInput.h>
@@ -29,7 +29,7 @@
 class pass_entry_term
 {
 public:
-    pass_entry_term();
+    pass_entry_term(bool);
     ~pass_entry_term();
 
     keychain_app::byte_seq_t fork_gui(const KeySym*, const std::string&);
@@ -46,6 +46,7 @@ private:
     XDeviceInfo * dev_info;
     Atom device_enabled_prop, kbd_atom;
     uid_t oruid, oeuid, osuid; // original value
+    bool confirm;
 };
 
 

@@ -1,6 +1,7 @@
 #include "ExpertModeDialog.h"
+#include <cmd.hpp>
 
-ExpertModeDialog::ExpertModeDialog(QWidget * parent)
+ExpertModeDialog::ExpertModeDialog(KeychainWidget * widget, QWidget * parent)
 	: QDialog(parent)
 {
 	QMetaObject::connectSlotsByName(this);
@@ -19,12 +20,16 @@ ExpertModeDialog::ExpertModeDialog(QWidget * parent)
 	OKButton->setText("OK");
 	OKButton->setStyleSheet("color:white;background-color:rgb(70,134,255);border-style:outset;border-width:0px;border-radius:5px;font:16px \"Segoe UI\"");
 	connect(OKButton, &QPushButton::pressed, this, &ExpertModeDialog::closeExpertMode);
+
+	connect(widget, &KeychainWidget::closeExpertMode, this, &ExpertModeDialog::closeExpertMode);
+    send(fc_light::json::to_string(fc_light::variant(static_cast<master::cmd_base>(master::cmd<(master::cmds::expert_mode)>(true)))));
+
 }
 
 
 ExpertModeDialog::~ExpertModeDialog()
 {
-
+    send(fc_light::json::to_string(fc_light::variant(static_cast<master::cmd_base>(master::cmd<(master::cmds::expert_mode)>(false)))));
 }
 
 void ExpertModeDialog::keyPressEvent(QKeyEvent *event)

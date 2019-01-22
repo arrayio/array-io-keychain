@@ -26,9 +26,9 @@ public:
 	void checkFinishedEnterance();
 	void setFocusOnConfirm();
 	bool validConfirm();
-	PasswordLineEdit *value = Q_NULLPTR;
-	PasswordLineEdit *valueConfirm = Q_NULLPTR;
-	void focusProcess (int line);
+    PasswordLineEdit *value = Q_NULLPTR;
+    PasswordLineEdit *valueConfirm = Q_NULLPTR;
+	void tabFocusByMouse (int line);
 
 signals:
 	void finishEnterPassword();

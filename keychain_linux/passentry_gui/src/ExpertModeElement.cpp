@@ -1,7 +1,7 @@
 #include "ExpertModeElement.h"
 
 ExpertModeElement::ExpertModeElement(QWidget * parent)
-	: QWidget(parent)
+	: QWidget(parent), widget((KeychainWidget*) parent)
 {
 	QMetaObject::connectSlotsByName(this);
 	expertLabel = new QLabel(this);
@@ -68,7 +68,9 @@ void ExpertModeElement::SetExpertModeText(QString expertMode, bool cut)
 
 void ExpertModeElement::showMoreForExpert()
 {
-	ExpertModeDialog dialog;
+	ExpertModeDialog dialog(widget);
+
 	dialog.SetExpertModeText(expertModeText);
 	dialog.exec();
 }
+

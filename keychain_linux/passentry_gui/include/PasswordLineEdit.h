@@ -15,7 +15,7 @@ public:
 	~PasswordLineEdit();
 
 protected:
-	void keyPressEvent(QKeyEvent *event) override;
+	//void keyPressEvent(QKeyEvent *event) override;
 	void focusInEvent(QFocusEvent *event) override;
 
 signals:

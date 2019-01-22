@@ -73,7 +73,6 @@ EthereumSwapWidget::EthereumSwapWidget(Transaction &transaction, QWidget * paren
 
 	expertModeElement = new ExpertModeElement(this);
 	expertModeElement->SetExpertModeText(QString::fromStdString(cmd_parse.to_expert_mode_string()));
-
 }
 
 void EthereumSwapWidget::SetPosition(int x, int y, int width)

@@ -10,6 +10,8 @@
 
 #include <fc_light/time.hpp>
 
+#include <eth-crypto/crypto/Common.h>
+
 namespace keychain_app {
 
 namespace keyfile_format
@@ -56,12 +58,14 @@ struct keyfile_t
   std::string keychain_version;
   fc_light::time_point creation_time;
   fc_light::time_point usage_time;
+  const dev::Public& public_key() const;
+  const fc_light::time_point& last_date() const;
   struct keyinfo_t
   {
     bool encrypted;
     curve_etype curve_type;
     fc_light::variant priv_key_data;//either std::string or encrypted_data
-    std::string public_key;
+    dev::Public public_key;
   } keyinfo;
 };
 

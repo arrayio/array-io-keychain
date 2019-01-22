@@ -5,7 +5,6 @@ set(CMAKE_CXX_FLAGS "-std=c++14 ")
 
 project(testproject)
 
-
 if (NOT MSVC)
     if ( LIBCXX_BUILD )
         set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}  -stdlib=libc++" )
@@ -22,7 +21,7 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTOUIC ON)
-#set(CMAKE_AUTORCC ON)
+set(CMAKE_AUTORCC ON)
 
 find_package(Qt5Widgets CONFIG REQUIRED)
 find_package(Qt5Core)
@@ -35,13 +34,14 @@ find_package(Qt5Core)
 
 #add_definitions(-DUNICODE -D_UNICODE)
 
-#qt5_add_resources(RESOURCES "${CMAKE_SOURCE_DIR}/keychain_linux/passentry_gui/Resources/*.qrc")
-#QT5_WRAP_UI(MOC_FILES "${CMAKE_SOURCE_DIR}/keychain_linux/passentry_gui/src/*.ui")
-#include_directories(${Qt5Widgets_INCLUDES})
-#include_directories(${Qt5Core_INCLUDES})
-#include_directories(${Qt5Qml_INCLUDES})
-#include_directories(${Qt5Svg_INCLUDES})
-#add_definitions(${Qt5Widgets_DEFINITIONS})
+qt5_add_resources(RESOURCES "${CMAKE_SOURCE_DIR}/keychain_linux/passentry_gui/Resources/*.qrc")
+
+QT5_WRAP_UI(MOC_FILES "${CMAKE_SOURCE_DIR}/keychain_linux/passentry_gui/src/*.ui")
+include_directories(${Qt5Widgets_INCLUDES})
+include_directories(${Qt5Core_INCLUDES})
+include_directories(${Qt5Qml_INCLUDES})
+include_directories(${Qt5Svg_INCLUDES})
+add_definitions(${Qt5Widgets_DEFINITIONS})
 
 find_library(LIB_PTHREAD NAME pthread HINTS "/usr/lib/x86_64-linux-gnu")
 

@@ -32,7 +32,7 @@
   </div>
   <div class="columns m-1">
     <div class="column col-2 ">
-      <button class="btn btn-primary" id="btn_LIST">List</button>
+      <button class="btn btn-primary" id="btn_SELECT_KEY">Select Key</button>
     </div>
   </div>
   <div class="columns m-1">
@@ -48,8 +48,8 @@
       <div class="columns">
         <div class="column col-6 col-xs-12">
           <div class="input-group">
-            <span class="input-group-addon">keyname: </span>
-            <input type="text" class="form-input" placeholder="test1@be5f6e75878b84ba" id="keyname_UNLOCK">
+            <span class="input-group-addon">public_key: </span>
+            <input type="text" class="form-input" placeholder="0292315b2b2eb4284f46832a633e7a12605d3ed6083d920987f586297f59895d20cf8b84a6fe674a52efe71c73725204443301a361a2c6da91ac2b02c37c2368" id="public_key_UNLOCK">
           </div>
         </div>
         <div class="column col-6 col-xs-12">
@@ -65,29 +65,14 @@
   </div>
   <div class="columns m-1">
     <div class="column col-2">
-      <button class="btn btn-primary input-group-btn" id="btn_PUBLIC_KEY">Public key</button>
-    </div>
-    <div class="column col-8">
-      <div class="columns">
-        <div class="column col-6 col-xs-12">
-          <div class="input-group">
-            <span class="input-group-addon">keyname: </span>
-            <input type="text" class="form-input" placeholder="test1@be5f6e75878b84ba" id="keyname_PUBLIC_KEY">
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-  <div class="columns m-1">
-    <div class="column col-2">
       <button class="btn btn-primary input-group-btn" id="btn_SIGN_HEX">Sign hex</button>
     </div>
     <div class="column col-8">
       <div class="columns">
         <div class="column col-6 col-xs-12">
           <div class="input-group">
-            <span class="input-group-addon">keyname: </span>
-            <input type="text" class="form-input" placeholder="test1@be5f6e75878b84ba" id="keyname_SIGN_HEX">
+            <span class="input-group-addon">public_key: </span>
+            <input type="text" class="form-input" placeholder="0292315b2b2eb4284f46832a633e7a12605d3ed6083d920987f586297f59895d20cf8b84a6fe674a52efe71c73725204443301a361a2c6da91ac2b02c37c2368" id="public_key_SIGN_HEX">
           </div>
         </div>
         <div class="column col-6 col-xs-12">
@@ -110,23 +95,8 @@
       <div class="columns">
         <div class="column col-6 col-xs-12">
           <div class="input-group">
-            <span class="input-group-addon">keyname: </span>
-            <input type="text" class="form-input" placeholder="test1@be5f6e75878b84ba" id="keyname_SIGN_HASH">
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-  <div class="columns m-1">
-    <div class="column col-2">
-      <button class="btn btn-primary input-group-btn" id="btn_CREATE">Create</button>
-    </div>
-    <div class="column col-8">
-      <div class="columns">
-        <div class="column col-6 col-xs-12">
-          <div class="input-group">
-            <span class="input-group-addon">keyname: </span>
-            <input type="text" class="form-input" placeholder="test1" id="keyname_CREATE">
+            <span class="input-group-addon">public_key: </span>
+            <input type="text" class="form-input" placeholder="0292315b2b2eb4284f46832a633e7a12605d3ed6083d920987f586297f59895d20cf8b84a6fe674a52efe71c73725204443301a361a2c6da91ac2b02c37c2368" id="public_key_SIGN_HASH">
           </div>
         </div>
       </div>
@@ -178,12 +148,10 @@
   };
 
   window.onload = function () {
-    attachListener('UNLOCK', ['keyname', 'unlock_time']);
-    attachListener('PUBLIC_KEY', ['keyname']);
-    attachListener('SIGN_HEX', ['keyname', 'unlock_time']);
-    attachListener('SIGN_HASH', ['keyname']);
-    attachListener('CREATE', ['keyname']);
-    attachListener('LIST');
+    attachListener('UNLOCK', ['public_key', 'unlock_time']);
+    attachListener('SIGN_HEX', ['public_key', 'unlock_time']);
+    attachListener('SIGN_HASH', ['public_key']);
+    attachListener('SELECT_KEY');
     attachListener('LOCK');
     attachListener('ABOUT');
     attachListener('VERSION');
@@ -216,14 +184,8 @@
     UNLOCK: {
       command: "unlock",
       params: {
-        // keyname: null,
+        // public_key: null,
         // unlock_time: null
-      }
-    },
-    PUBLIC_KEY: {
-      command: "public_key",
-      params: {
-        // keyname: null
       }
     },
     SIGN_HEX: {
@@ -231,7 +193,7 @@
       params: {
         transaction: "eb0885098bca5a00825208948ec6977b1255854169e5f9f8f163f371bcf1ffd287038d7ea4c6800080038080",
         blockchain_type: "ethereum",
-        // keyname: null,
+        // public_key: null,
         // unlock_time: null
       }
     },
@@ -240,20 +202,11 @@
       params: {
         sign_type: "VRS_canonical",
         hash: "fe5e4a8974715e20f47c8bb609547c9e66b0b9e31d521199b3d8d6af6da74cb1",
-        // keyname: null
+        // public_key: null
       }
     },
-    CREATE: {
-      command: "create",
-      params: {
-        // keyname: null,
-        encrypted: true,
-        curve: "secp256k1",
-        cipher: "aes256"
-      }
-    },
-    LIST: {
-      command: "list"
+    SELECT_KEY: {
+      command: "select_key"
     },
     LOCK: {
       command: "lock"

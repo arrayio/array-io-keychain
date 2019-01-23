@@ -28,45 +28,27 @@ menu_toolbar::menu_toolbar(QWidget *parent)
 
     //create file button
     QPushButton *FileButton = new QPushButton(this);
-    FileButton->setStyleSheet("QWidget > QPushButton {background-color: #fafafc; \
-                               min-width: 4em; \
-                               padding: 4px; \
-                               border: 4px solid #fafafc; \
-                               border-radius: 5px;}");
     FileButton->setStyleSheet(FileButton->styleSheet() + "QPushButton::menu-indicator{image: none;}");
 
     //create file button text label
-    QLabel *FileButtonLabel = new QLabel(FileButton);
+    custom_qlabel *FileButtonLabel = new custom_qlabel(FileButton);
     FileButtonLabel->setText("File");
     FileButtonLabel->setAlignment(Qt::AlignCenter);
-    FileButtonLabel->setStyleSheet("QWidget > QLabel {background-color: #fafafc; \
-                                    text-align: center; \
-                                    min-width: 4em; \
-                                    border: 4px solid #fafafc; \
-                                    border-radius: 5px;}");
+    FileButtonLabel->setStyleSheet("QWidget > QLabel {background-color: #ffffff; \
+                                    text-align: center;}");
     FileButtonLabel->setFont(QFont("Segoe UI Semibold", 10, QFont::Normal, false));
     
     //create about button text label
     QPushButton *AboutButton = new QPushButton(this);
-    AboutButton->setStyleSheet("QWidget > QPushButton {background-color: #fafafc; \
-                                min-width: 4em; \
-                                padding: 4px; \
-                                margin-left: 4px; \
-                                border: 4px solid #fafafc; \
-                                border-radius: 5px;}");
     AboutButton->setStyleSheet(AboutButton->styleSheet() + "QPushButton::menu-indicator{image: none;}");
 
     //create about button text label
-    QLabel *AboutButtonLabel = new QLabel(AboutButton);
-    AboutButtonLabel->setText("About");
-    AboutButtonLabel->setAlignment(Qt::AlignCenter);
-    AboutButtonLabel->setStyleSheet("QWidget > QLabel {background-color: #fafafc; \
-                                    text-align: center; \
-                                    min-width: 4em; \
-                                    margin-left: 4px; \
-                                    border: 4px solid #fafafc; \
-                                    border-radius: 5px;}");
-    AboutButtonLabel->setFont(QFont("Segoe UI Semibold", 10, QFont::Normal, false));
+    custom_qlabel *Aboutbuttonlabel = new custom_qlabel(AboutButton);
+    Aboutbuttonlabel->setText("About");
+    Aboutbuttonlabel->setAlignment(Qt::AlignCenter);
+    Aboutbuttonlabel->setStyleSheet("QWidget > QLabel {background-color: #ffffff; \
+                                    text-align: center;}");
+    Aboutbuttonlabel->setFont(QFont("Segoe UI Semibold", 10, QFont::Normal, false));
     
     //change buttons to flat style
     FileButton->setFlat(true);

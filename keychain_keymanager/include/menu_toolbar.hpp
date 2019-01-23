@@ -8,7 +8,7 @@
 #include <QTreeWidget>
 #include <QPushButton>
 #include <QApplication>
-#include <QLabel>
+#include "custom_qlabel.hpp"
 
 class menu_toolbar : public QToolBar
 {

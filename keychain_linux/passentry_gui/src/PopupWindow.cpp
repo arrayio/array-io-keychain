@@ -9,8 +9,8 @@ PopupWindow::PopupWindow(const KeychainWarningMessage wMessage, QWidget *parent)
 	header = new QLabel(this);
 	body = new QLabel(this);
 	setStyleSheet("background-color:white;border-color:rgb(158,158,158);border-style:outset;border-width:1px;border-radius:5px;");
-	header->setFixedWidth(150);
-	header->move(105, 2);
+	header->setFixedWidth(350);
+	header->move(0, 2);
 	header->setAlignment(Qt::AlignCenter);
 	
 	body->move(0, 10);

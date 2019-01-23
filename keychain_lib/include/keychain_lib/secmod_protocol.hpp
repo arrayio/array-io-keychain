@@ -20,7 +20,6 @@ enum struct blockchain_secmod_te {
   ethereum,
   bitcoin,
   ethereum_swap, //HACK:
-  parse_error = -1
 };
 
 template<blockchain_secmod_te blockchain_type>
@@ -199,7 +198,7 @@ struct secmod_command
 
 }
 
-FC_LIGHT_REFLECT_ENUM(keychain_app::secmod_commands::blockchain_secmod_te, (unknown)(ethereum)(bitcoin)(ethereum_swap)(parse_error))
+FC_LIGHT_REFLECT_ENUM(keychain_app::secmod_commands::blockchain_secmod_te, (unknown)(ethereum)(bitcoin)(ethereum_swap))
 FC_LIGHT_REFLECT_ENUM(keychain_app::secmod_commands::events_te,
                       (unknown)(create_key)(sign_hex)(sign_hash)(unlock)(remove_key)(export_keys)(import_keys)(print_mnemonic))
 

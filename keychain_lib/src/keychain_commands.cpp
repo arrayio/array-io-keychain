@@ -14,9 +14,9 @@
 
 namespace keychain_app {
 
-using swap_cmd_t = secmod_commands::trx_view<secmod_commands::blockchain_secmod_te::ethereum_swap>::type;
+using swap_trx_t = secmod_commands::trx_view<secmod_commands::blockchain_secmod_te::ethereum_swap>::type;
 
-bool swap_action(std::string data, swap_cmd_t::swap_t &swap_info) {
+bool swap_action(std::string data, swap_trx_t::swap_t &swap_info) {
   if (data.size() < 8)
     return false;
   
@@ -28,7 +28,7 @@ bool swap_action(std::string data, swap_cmd_t::swap_t &swap_info) {
     
     auto hash = data.substr(8, 40);
     auto address = data.substr(8 + 64+24, 40);
-    swap_info.action = swap_cmd_t::action_te::create_swap;
+    swap_info.action = swap_trx_t::action_te::create_swap;
     swap_info.hash = hash;
     swap_info.address = address;
   } else if (func == SWAP_F2) {
@@ -36,7 +36,7 @@ bool swap_action(std::string data, swap_cmd_t::swap_t &swap_info) {
       return false;
     
     auto address = data.substr(8+24, 40);
-    swap_info.action = swap_cmd_t::action_te::refund;
+    swap_info.action = swap_trx_t::action_te::refund;
     swap_info.address = address;
   } else if (func == SWAP_F3) {
     if (data.length() != 8 + 64 + 64)
@@ -44,7 +44,7 @@ bool swap_action(std::string data, swap_cmd_t::swap_t &swap_info) {
     
     auto secret = data.substr(8, 64);
     auto address = data.substr(8 + 64+24, 40);
-    swap_info.action = swap_cmd_t::action_te::withdraw;
+    swap_info.action = swap_trx_t::action_te::withdraw;
     swap_info.address = address;
     swap_info.secret = secret;
   } else
@@ -58,14 +58,16 @@ fc_light::variant create_secmod_signhex_cmd(std::vector<unsigned char> raw, bloc
   std::string json;
   auto& log = logger_singleton::instance();
   secmod_commands::secmod_command cmd;
-  cmd.json = true;
-  cmd.keyname = keyname;
+  using params_t = secmod_commands::secmod_event<secmod_commands::events_te::sign_hex>::params_t;
+  params_t params;
+  params.is_parsed = true;
+  params.keyname = keyname;
   
   switch (blockchain)
   {
     case (keychain_app::blockchain_te::bitcoin):
     {
-      cmd.blockchain = secmod_commands::blockchain_secmod_te::bitcoin;
+      params.blockchain = secmod_commands::blockchain_secmod_te::bitcoin;
       try
       {
         streambuf_derived buf((char*) raw.data(),  (char*)raw.data() + raw.size());
@@ -73,13 +75,13 @@ fc_light::variant create_secmod_signhex_cmd(std::vector<unsigned char> raw, bloc
         
         kaitai::kstream ks(&is);
         bitcoin_transaction_t trx_info(&ks);
-        using cmd_t = secmod_commands::secmod_command<secmod_commands::blockchain_secmod_te::bitcoin>::type;
-        cmd_t data(std::move(from), std::move(trx_info));
-        cmd.data = fc_light::variant(data);
+        using trx_t = secmod_commands::trx_view<secmod_commands::blockchain_secmod_te::bitcoin>::type;
+        trx_t data(std::move(from), std::move(trx_info));
+        params.trx_view = fc_light::variant(data);
         BOOST_LOG_SEV(log.lg, info) << "bitcoin transaction parse complete: \n";
       } catch (std::exception &exc) {
-        cmd.json = false;
-        cmd.data = to_hex(raw.data(), raw.size());
+        params.is_parsed = false;
+        params.trx_view = to_hex(raw.data(), raw.size());
         BOOST_LOG_SEV(log.lg, info) << "bitcoin transaction parse is not complete: \n" + std::string(exc.what());
       }
       
@@ -99,58 +101,58 @@ fc_light::variant create_secmod_signhex_cmd(std::vector<unsigned char> raw, bloc
         trx.value     = tx.value().str();
         trx.data      = to_hex(tx.data().data(), tx.data().size());
         
-        using swap_cmd_t = secmod_commands::secmod_command<secmod_commands::blockchain_secmod_te::ethereum_swap>::type;
-        swap_cmd_t::swap_t swap_info;
+        using swap_trx_t = secmod_commands::trx_view<secmod_commands::blockchain_secmod_te::ethereum_swap>::type;
+        swap_trx_t::swap_t swap_info;
         if (swap_action(trx.data, swap_info))
         {
-          swap_cmd_t data(std::move(from),std::move(trx), std::move(swap_info));
-          cmd.blockchain = secmod_commands::blockchain_secmod_te::ethereum_swap;
-          cmd.data = fc_light::variant(data);
+          swap_trx_t data(std::move(from),std::move(trx), std::move(swap_info));
+          params.blockchain = secmod_commands::blockchain_secmod_te::ethereum_swap;
+          params.trx_view = fc_light::variant(data);
           BOOST_LOG_SEV(log.lg, info) << "ethereum transaction swap-on-line specific-fields parse complete:";
         }
         else
         {
-          using cmd_t = secmod_commands::secmod_command<secmod_commands::blockchain_secmod_te::ethereum>::type;
-          cmd_t data(std::move(from),std::move(trx));
-          cmd.blockchain = secmod_commands::blockchain_secmod_te::ethereum;
-          cmd.data = fc_light::variant(data);
+          using trx_t = secmod_commands::trx_view<secmod_commands::blockchain_secmod_te::ethereum>::type;
+          trx_t data(std::move(from),std::move(trx));
+          params.blockchain = secmod_commands::blockchain_secmod_te::ethereum;
+          params.trx_view = fc_light::variant(data);
           BOOST_LOG_SEV(log.lg, info) << "ethereum transaction parse complete:";
         }
       }
       catch (const std::exception& exc)
       {
-        cmd.json = false;
-        cmd.blockchain = secmod_commands::blockchain_secmod_te::ethereum;
-        cmd.data = to_hex(raw.data(), raw.size());
+        params.is_parsed = false;
+        params.blockchain = secmod_commands::blockchain_secmod_te::ethereum;
+        params.trx_view = to_hex(raw.data(), raw.size());
         BOOST_LOG_SEV(log.lg, info) << "ethereum transaction parse is not complete: \n" + std::string(exc.what());
       }
       break;
     }
     default:
     {
-      cmd.json = false;
-      cmd.blockchain = secmod_commands::blockchain_secmod_te::unknown;
-      cmd.data = to_hex(raw.data(), raw.size());
+      params.is_parsed = false;
+      params.blockchain = secmod_commands::blockchain_secmod_te::unknown;
+      params.trx_view = to_hex(raw.data(), raw.size());
       BOOST_LOG_SEV(log.lg, info) << " transaction parse is not implementated:";
     }
   }
-  cmd.unlock_time = unlock_time;
+  params.unlock_time = unlock_time;
+  cmd.etype = secmod_commands::events_te::sign_hex;
+  cmd.params = params;
   return fc_light::variant(cmd);
-//  BOOST_LOG_SEV(log.lg, info) << "\n" + fc_light::json::to_pretty_string(variant);//TODO: it is more preferable to log this into security module
 }
-
 
 fc_light::variant create_secmod_signhash_cmd(const std::string& raw, std::string from, std::string keyname)
 {
-  using cmd_t = secmod_commands::secmod_command<secmod_commands::blockchain_secmod_te::rawhash>::type;
-  cmd_t data(std::move(from), raw);
+  secmod_commands::secmod_command cmd;
+  using params_t = secmod_commands::secmod_event<secmod_commands::events_te::sign_hash>::params_t;
+  params_t params;
+  params.hash = raw;
+  params.from = std::move(from);
+  params.keyname = std::move(keyname);
   
-  secmod_commands::secmod_command_common cmd;
-  cmd.json = true;
-  cmd.keyname = keyname;
-  cmd.blockchain = secmod_commands::blockchain_secmod_te::rawhash;
-  cmd.unlock_time = 0;
-  cmd.data = fc_light::variant(data);
+  cmd.etype = secmod_commands::events_te::sign_hash;
+  cmd.params = params;
   
   return fc_light::variant(cmd);
 }

@@ -2,8 +2,12 @@
   "use strict";
 
   this.WS =
-    function WS(url) {
+    function WS(web3, url) {
+      if (!url) {
+        url = 'ws://localhost:16384/';
+      }
       this.ws = new WebSocket(url);
+      this.web3 = web3;
       const _parent = this;
       this.ws.onmessage = function(response) {
         try {
@@ -23,7 +27,7 @@
   };
 
   /** Promise implementation of the 'command' method */
-  WS.prototype.method = function (request) {
+  WS.prototype.method = function(request) {
     const _parent = this;
     return new Promise(function(resolve, reject) {
       _parent.command(request, resolve);
@@ -35,7 +39,18 @@
     return this.method({command: 'sign_hex',  params });
   };
 
-  WS.prototype.signTransaction = function (tx, privateKey) {
+  WS.prototype.signTransaction = async function (tx, privateKey) {
+    const web3 = this.web3;
+    if (!tx.chainId) {
+      tx.chainId = await web3.eth.net.getId();
+    }
+    if (!tx.nonce) {
+      const address = ethereumjs.Util.publicToAddress('0x' + privateKey).toString('hex');
+      tx.nonce = await web3.eth.getTransactionCount('0x' + address);
+    }
+    if (!tx.gasPrice) {
+      tx.gasPrice = await web3.eth.getGasPrice().then(Number);
+    }
     const rsv = this.rsv('', tx.chainId);
     const result = this.getResult(rsv, tx);
     const rawHex = result.rawTransaction;

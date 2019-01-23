@@ -26,7 +26,7 @@
       <div class="container">
         <div class="form-group">
           <label class="form-label" for="input-endpoint">Endpoint</label>
-          <input class="form-input" type="text" id="input-endpoint" value="https://ropsten.infura.io/v3/046804e3dd3240b09834531326f310cf" />
+          <input class="form-input" type="text" id="input-endpoint" disabled value="https://rinkeby.infura.io/v3/6e07edb991d64b9197996b7ff174de42" />
         </div>
         <div class="form-group">
           <label class="form-label" for="input-to-address">To address</label>
@@ -71,9 +71,12 @@
 
       window.onload = function () {
         let web3;
-        const valueTx = 100;
-
-        const keychain = new WS('ws://localhost:16384/');
+        // const endpoint = 'https://ropsten.infura.io/v3/046804e3dd3240b09834531326f310cf';
+        // const endpoint = 'https://rinkeby.infura.io/v3/6e07edb991d64b9197996b7ff174de42';
+        const endpoint = document.getElementById('input-endpoint').value;
+        web3 = new Web3(new Web3.providers.HttpProvider(endpoint));
+        const valueTx = 100;        
+        const keychain = new WS(web3, 'ws://localhost:16384/');
 
         keychain.ws.onopen = function() {
           document.body.style.backgroundColor = '#cfc';
@@ -88,29 +91,22 @@
         };
 
         document.getElementById('btn_SIGN').addEventListener('click', function() {
-          const endpoint = document.getElementById('input-endpoint').value;
-          web3 = new Web3(new Web3.providers.HttpProvider(endpoint));
+          // const endpoint = document.getElementById('input-endpoint').value;
+          // web3 = new Web3(new Web3.providers.HttpProvider(endpoint));  // todo set web3 to KeyChain on Sign button click
           const toAddress = document.getElementById('input-to-address').value;
-          let fromAddress, publicKey;
+          let publicKey;
 
-          log(`Getting public key from KeyChain`);
+          log(`Select key from KeyChain`);
           keychain.method({ command: 'select_key' }).then(data => {
             log(`Result: ${JSON.stringify(data)}`);
             if (data.error) {
               throw data.error;
             }
             publicKey = data.result;
-            return ethereumjs.Util.publicToAddress('0x' + publicKey).toString('hex');
-          }).then( data => {
-            fromAddress = data;
-            log(`"From" address calculated from public key: ${fromAddress}`);
-            log('Building transaction with empty signature');
-            return buildTx(fromAddress, toAddress, valueTx);
+            return { to: toAddress, value: valueTx, gas: 21000 };
           }).then (tx => {
-            log(`Result: ${JSON.stringify(tx)}`);
+            log(`Transaction to sign: ${JSON.stringify(tx)}`);
             log(`Signing it with KeyChain`);
-            // const privateKey = 'b3d3427eea7867c243baaf2f4c67a9551eea2ea96556acfb0051dffa18d182d4';
-            // return web3.eth.accounts.signTransaction(tx, privateKey);
             return keychain.signTransaction(tx, publicKey);
           }).then( result => {
             log(`Result: ${JSON.stringify(result)}`);
@@ -134,22 +130,13 @@
             document.getElementById('progress').style.display = 'none';
             log(`Transfer result: \n${JSON.stringify(result, undefined, 2)}`);
             document.getElementById('etherscanLink').innerHTML = `<a href='https://ropsten.etherscan.io/tx/${result.transactionHash}'>Etherscan Link</a>`;
+            // todo change the link depending on a testnet
           } catch (e) {
             console.log(e);
             log(e);
             document.getElementById('progress').style.display = 'none';
           }
-        });
-
-        const buildTx = async (from, to, value) => {
-          const nonce = await web3.eth.getTransactionCount(from);
-          const chainId = 3;
-          const data = '';
-          const gasPrice = await web3.eth.getGasPrice().then(Number);
-          const gas = 21000;
-
-          return { nonce, chainId, to, value, data, gasPrice, gas }
-        };
+        });        
       };
 
       function log(message) {

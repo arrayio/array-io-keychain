@@ -16,26 +16,22 @@ class secmod_parser_f
 {
 public:
   
-  using ethereum_cmd = secmod_command<blockchain_secmod_te::ethereum>::type;
-  using bitcoin_cmd = secmod_command<blockchain_secmod_te::bitcoin>::type;
-  using ethereum_swap_cmd = secmod_command<blockchain_secmod_te::ethereum_swap>::type;
-  using rawhash_cmd = secmod_command<blockchain_secmod_te::rawhash>::type;
+  using create_cmd = secmod_event<events_te::create_key>::params;
+  using signhex_cmd = secmod_event<events_te::sign_hex>::params;
+  using signhash_cmd = secmod_event<events_te::sign_hash>::params;
+  using unlock_cmd = secmod_event<events_te::unlock>::params;
+  using remove_cmd = secmod_event<events_te::remove_key>::params;
+  using export_cmd = secmod_event<events_te::export_keys>::params;
+  using import_cmd = secmod_event<events_te::import_keys>::params;
+  using print_mnemonic_cmd = secmod_event<events_te::print_mnemonic>::params;
   
-  blockchain_secmod_te operator()(const std::string& json);
-  blockchain_secmod_te cmd_type() const;
-  std::string keyname() const;
-  int unlock_time() const;
-  bool is_json() const;
-  ethereum_cmd to_ethereum() const;
-  bitcoin_cmd to_bitcoin() const;
-  ethereum_swap_cmd to_ethereum_swap() const;
-  rawhash_cmd to_rawhash() const;
-  std::string to_raw_trx_string() const;
+  events_te operator()(const std::string& json);
+  events_te cmd_type() const;
   
-  std::string to_expert_mode_string() const;
-  
+  template <events_te etype>
+  secmod_event<etype>::params params() const;
 private:
-  secmod_command_common m_cmd;
+  secmod_command m_cmd;
 };
 
 }

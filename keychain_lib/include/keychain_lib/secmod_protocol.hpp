@@ -189,6 +189,12 @@ struct secmod_event<events_te::print_mnemonic>
   using params_t = void; //TODO: will be implemented in future
 };
 
+struct secmod_command
+{
+  events_te etype;
+  fc_light::variant params;
+};
+
 }
 
 }
@@ -207,6 +213,8 @@ FC_LIGHT_REFLECT(keychain_app::secmod_commands::ethereum_trx_t, (nonce)(gasPrice
 FC_LIGHT_REFLECT(keychain_app::secmod_commands::trx_view<keychain_app::secmod_commands::blockchain_secmod_te::ethereum>::type, (from)(trx_info))
 FC_LIGHT_REFLECT(keychain_app::secmod_commands::trx_view<keychain_app::secmod_commands::blockchain_secmod_te::bitcoin>::type, (from)(trx_info))
 FC_LIGHT_REFLECT(keychain_app::secmod_commands::trx_view<keychain_app::secmod_commands::blockchain_secmod_te::ethereum_swap>::type, (from)(trx_info)(swap_info))
+
+FC_LIGHT_REFLECT(keychain_app::secmod_commands::secmod_command, (etype)(params))
 
 FC_LIGHT_REFLECT_ENUM(
   keychain_app::secmod_commands::trx_view<keychain_app::secmod_commands::blockchain_secmod_te::ethereum_swap>::type::action_te,

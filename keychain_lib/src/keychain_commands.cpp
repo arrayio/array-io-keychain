@@ -14,7 +14,7 @@
 
 namespace keychain_app {
 
-using swap_cmd_t = secmod_commands::secmod_command<secmod_commands::blockchain_secmod_te::ethereum_swap>::type;
+using swap_cmd_t = secmod_commands::trx_view<secmod_commands::blockchain_secmod_te::ethereum_swap>::type;
 
 bool swap_action(std::string data, swap_cmd_t::swap_t &swap_info) {
   if (data.size() < 8)
@@ -57,7 +57,7 @@ fc_light::variant create_secmod_signhex_cmd(std::vector<unsigned char> raw, bloc
 {
   std::string json;
   auto& log = logger_singleton::instance();
-  secmod_commands::secmod_command_common cmd;
+  secmod_commands::secmod_command cmd;
   cmd.json = true;
   cmd.keyname = keyname;
   

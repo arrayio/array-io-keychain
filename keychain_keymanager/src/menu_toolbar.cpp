@@ -49,10 +49,23 @@ menu_toolbar::menu_toolbar(QWidget *parent)
     Aboutbuttonlabel->setStyleSheet("QWidget > QLabel {background-color: #ffffff; \
                                     text-align: center;}");
     Aboutbuttonlabel->setFont(QFont("Segoe UI Semibold", 10, QFont::Normal, false));
+
+    //create key button
+    QPushButton *KeyButton = new QPushButton(this);
+    KeyButton->setStyleSheet(KeyButton->styleSheet() + "QPushButton::menu-indicator{image: none;}");
+
+    //create key button text label
+    custom_qlabel *Keybuttonlabel = new custom_qlabel(KeyButton);
+    Keybuttonlabel->setText("K");
+    Keybuttonlabel->setAlignment(Qt::AlignCenter);
+    Keybuttonlabel->setStyleSheet("QWidget > QLabel {background-color: #ffffff; \
+                                    text-align: center;}");
+    Keybuttonlabel->setFont(QFont("Segoe UI Semibold", 10, QFont::Normal, false));
     
     //change buttons to flat style
     FileButton->setFlat(true);
     AboutButton->setFlat(true);
+    KeyButton->setFlat(true);
 
     //add menu to buttons
     FileButton->setMenu(menuFile);
@@ -62,6 +75,7 @@ menu_toolbar::menu_toolbar(QWidget *parent)
     QToolBar *toolBarFile = new QToolBar();
     toolBarFile->addWidget(FileButton);
     toolBarFile->addWidget(AboutButton);
+    toolBarFile->addWidget(KeyButton);
     
     //add toolbar to main layout
     this->addWidget(toolBarFile);

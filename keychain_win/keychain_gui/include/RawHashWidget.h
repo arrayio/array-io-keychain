@@ -12,7 +12,9 @@ class RawHashWidget : public KeychainWidget
 {
 	Q_OBJECT
 public:
-	RawHashWidget(Transaction &transaction, QWidget * parent = Q_NULLPTR);
+  using signhash_event = keychain_app::secmod_commands::secmod_event
+    <keychain_app::secmod_commands::events_te::sign_hash>::params_t;
+	RawHashWidget(const signhash_event& signhash, QWidget * parent = Q_NULLPTR);
 	void SetPosition(int x, int y, int width) override;
 	int GetCurrentHeight() override;
 	int GetCurrentWidth() override;

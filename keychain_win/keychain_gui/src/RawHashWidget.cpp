@@ -1,6 +1,6 @@
 #include "RawHashWidget.h"
 
-RawHashWidget::RawHashWidget(Transaction &transaction, QWidget * parent)
+RawHashWidget::RawHashWidget(const signhash_event& signhash, QWidget * parent)
 	:KeychainWidget(parent)
 {
 	QMetaObject::connectSlotsByName(this);
@@ -8,9 +8,7 @@ RawHashWidget::RawHashWidget(Transaction &transaction, QWidget * parent)
 	QString valueStyle("font:16px \"Segoe UI\";background:transparent;color:rgb(123,141,167);");
 	QString labelStyle("font:16px \"Segoe UI\";background:transparent;");
 
-	secmod_parser_f cmd_parse;
-	auto cmd_type = cmd_parse(transaction.getTransactionText().toStdString());
-	auto raw_hash = cmd_parse.to_rawhash();
+	auto& raw_hash = signhash;
 
 
 	from = new SecureWindowElement(this);
@@ -39,14 +37,12 @@ RawHashWidget::RawHashWidget(Transaction &transaction, QWidget * parent)
 	else
 		max_width = fromWidth;
 
+  /* TODO: What is it? we don't need unlock_time parameter in sign_hash command.
 	if (cmd_parse.unlock_time() > 0) {
 		unlockTime = new PrivateKeyInMemory(this);
 		unlockTime->SetTime(QString::number(cmd_parse.unlock_time()));
 	}
-
-	//expertModeElement = new ExpertModeElement(this);
-	//expertModeElement->SetExpertModeText(QString::fromStdString(cmd_parse.to_expert_mode_string()), false);
-
+  */
 }
 
 void RawHashWidget::SetPosition(int x, int y, int width)

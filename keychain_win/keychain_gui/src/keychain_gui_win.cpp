@@ -1,13 +1,14 @@
 #include "keychain_gui_win.h"
 
-keychain_gui_win::keychain_gui_win(Transaction &transaction, QWidget *parent)
+keychain_gui_win::keychain_gui_win(QObject *parent)
 	: QDialog(parent)
+  , mEndControlPosition(START_POSITION)
 {
 	ui.setupUi(this);
 	setWindowFlags(Qt::FramelessWindowHint);
 	setFixedSize(600, 347);
 	QInputMethod inputMethod();
-	KeychainWarningMessage warningMessage;
+	
 
 	headerBlock = new QLabel(this);
 	logoLabel = new QLabel(this);
@@ -31,8 +32,6 @@ keychain_gui_win::keychain_gui_win(Transaction &transaction, QWidget *parent)
 
 
 	int _x = 0, _y = 204, _labelWidth = 116;
-
-	int endControlPosition = START_POSITION;
 
 	if (transaction.isUnlockKey() != -1) {
 		warningMessage.SetWarning(KeychainWarningMessage::WarningType::UnlockWarning);

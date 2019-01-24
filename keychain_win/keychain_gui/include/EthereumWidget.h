@@ -8,12 +8,13 @@
 #include "PrivateKeyInMemoryWidget.h"
 #include "KeychainWidget.h"
 
-
 class EthereumWidget : public KeychainWidget
 {
 	Q_OBJECT
 public:
-	EthereumWidget(Transaction &transaction, QWidget * parent = Q_NULLPTR);
+  using ethereum_event = keychain_app::secmod_commands::transaction_view
+    <keychain_app::secmod_commands::blockchain_secmod_te::ethereum>::type;
+	EthereumWidget(const ethereum_event &eth_event, QWidget * parent = Q_NULLPTR);
 	void SetPosition(int x, int y, int width) override;
 	int GetCurrentHeight() override;
 	int GetCurrentWidth() override;

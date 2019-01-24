@@ -1,7 +1,7 @@
 #include "UnparsedTransactionWidget.h"
 
 
-UnparsedTransactionWidget::UnparsedTransactionWidget(Transaction &transaction, QWidget * parent)
+UnparsedTransactionWidget::UnparsedTransactionWidget(const std::string& raw_trx, int unlock_time, QWidget * parent)
 	:KeychainWidget(parent)
 {
 	QMetaObject::connectSlotsByName(this);
@@ -10,14 +10,13 @@ UnparsedTransactionWidget::UnparsedTransactionWidget(Transaction &transaction, Q
 	QString labelStyle("font:16px \"Segoe UI\";background:transparent;");
 
 	secmod_parser_f cmd_parse;
-	auto cmd_type = cmd_parse(transaction.getTransactionText().toStdString());
 
 	expertModeElement = new ExpertModeElement(this);
-	expertModeElement->SetExpertModeText(QString::fromStdString(cmd_parse.to_expert_mode_string()));
+	expertModeElement->SetExpertModeText(QString::fromStdString(raw_trx));
 
-	if (cmd_parse.unlock_time() > 0) {
+	if (unlock_time > 0) {
 		unlockTime = new PrivateKeyInMemory(this);
-		unlockTime->SetTime(QString::number(cmd_parse.unlock_time()));
+		unlockTime->SetTime(QString::number(unlock_time));
 	}
 }
 

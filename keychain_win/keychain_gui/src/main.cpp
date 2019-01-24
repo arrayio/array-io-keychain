@@ -34,6 +34,7 @@ int main(int argc, char *argv[])
 #ifdef FROMPROCCESS
 	DWORD dwWritten;
 	char buffer[9000];
+  memset(buffer, 0x00, 9000);
 	DWORD dwRead = 0;
 	HANDLE transPipe = CreateFile(TEXT("\\\\.\\pipe\\transpipe"),
 		GENERIC_READ | GENERIC_WRITE,
@@ -60,15 +61,10 @@ int main(int argc, char *argv[])
 	SwitchDesktop(hNewDesktop);
 	SetThreadDesktop(hNewDesktop);
 #endif
-	int endIndex = -1;
-	QString srcTrans;
-#ifdef FROMPROCCESS
-	for (int i = 0; i < dwRead; i++) {
-		srcTrans.push_back(buffer[i]);
-	}
-#endif
-	BOOST_LOG_SEV(log.lg, info) << "Got from pipe:" + srcTrans.toStdString();
-	Transaction trans(srcTrans);
+	BOOST_LOG_SEV(log.lg, info) << "Got from pipe: " << buffer;
+  secmod_parser_f parser;
+  auto etype = parser(std::string(buffer)); //TODO:
+
 	for (int i = 0; i < argc; i++) {
 		QString arg(argv[i]);
 		if (!arg.isEmpty()) {

@@ -1,7 +1,7 @@
 #include "EthereumWidget.h"
 
 
-EthereumWidget::EthereumWidget(Transaction &transaction, QWidget * parent)
+EthereumWidget::EthereumWidget(const EthereumWidget::ethereum_event& eth_event, QWidget * parent)
 	:KeychainWidget(parent)
 {
 	QMetaObject::connectSlotsByName(this);
@@ -15,16 +15,12 @@ EthereumWidget::EthereumWidget(Transaction &transaction, QWidget * parent)
 
 	//QList<QString> fieldList({ "From","To","Amount" });
 
-	secmod_parser_f cmd_parse;
-	auto cmd_type = cmd_parse(transaction.getTransactionText().toStdString());
-	auto eth_trx = cmd_parse.to_ethereum();
-
 	from = new SecureWindowElement(this);
-	from->SetLabelAndValue("From", QString::fromStdString(eth_trx.from));
+	from->SetLabelAndValue("From", QString::fromStdString(eth_event.from));
 	from->SetLabelStyle(labelStyle);
 	from->SetValueStyle(valueStyle);
 
-	auto eth_data = eth_trx.trx_info;
+	auto eth_data = eth_event.trx_info;
 
 	to = new SecureWindowElement(this);
 	to->SetLabelAndValue("To", QString::fromStdString(eth_data.to));

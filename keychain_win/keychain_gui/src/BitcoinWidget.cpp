@@ -1,7 +1,7 @@
 #include "BitcoinWidget.h"
 
 
-BitcoinWidget::BitcoinWidget(Transaction &transaction, QWidget * parent)
+BitcoinWidget::BitcoinWidget(const bitcoin_event& bitcoin_event, QWidget * parent)
 	:KeychainWidget(parent)
 {
 	QMetaObject::connectSlotsByName(this);
@@ -28,10 +28,8 @@ BitcoinWidget::BitcoinWidget(Transaction &transaction, QWidget * parent)
 	//	(*(from+i))->SetLabelAndValue("From", "fdsfsdfsdfsdfsdfdffafdafasdf");
 
 	//}
-	secmod_parser_f cmd_parse;
-	auto cmd_type = cmd_parse(transaction.getTransactionText().toStdString());
 
-	auto bitcoin_trx = cmd_parse.to_bitcoin();
+  auto& bitcoin_trx = bitcoin_event;
 	auto bitcoin_data = bitcoin_trx.trx_info;
 	
 	num_vouts = bitcoin_data.num_vouts;//chech num of vouts

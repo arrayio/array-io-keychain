@@ -30,6 +30,9 @@
 using namespace keychain_app;
 using secmod_commands::secmod_parser_f;
 
+template <secmod_commands::events_te etype>
+struct EventHandler;
+
 class keychain_gui_win : public QDialog
 {
 	Q_OBJECT
@@ -38,11 +41,13 @@ private:
 	Ui::keychain_gui_winClass ui;
 
 public:
-	keychain_gui_win(Transaction &transaction, QWidget *parent = Q_NULLPTR);
+	keychain_gui_win(QObject *parent = nullptr);
 	PopupWindow * popupWindow;
 	
 private:
 	QString mExpertValue;
+  KeychainWarningMessage mWarningMessage;
+  int mEndControlPosition;
 	QLabel * logoLabel;
 	QPushButton * OKButton = Q_NULLPTR;
 	QPushButton * CancelButton = Q_NULLPTR;
@@ -68,12 +73,16 @@ protected:
 	void closeEvent(QCloseEvent * event) override;
 
 private:
-	const int FIELD_WIDTH = 446;
-	const int START_POSITION = 96;
+	static constexpr int FIELD_WIDTH = 446;
+  static constexpr int START_POSITION = 96;
 
 public slots:
 	void transaction_sign();
 	void cancel_sign();
 	void set_sign_focus();
 	void changeLocale();
+
+private:
+  template<secmod_commands::events_te>
+  friend struct EventHandler;
 };

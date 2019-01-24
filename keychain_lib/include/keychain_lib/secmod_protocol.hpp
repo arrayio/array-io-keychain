@@ -23,8 +23,9 @@ enum struct blockchain_secmod_te {
 };
 
 template<blockchain_secmod_te blockchain_type>
-struct trx_view {
-  using type = void;
+struct transaction_view
+{
+  using type = std::string; // if transaction cannot be parsed
 };
 
 struct ethereum_trx_t {
@@ -36,7 +37,7 @@ struct ethereum_trx_t {
 };
 
 template<>
-struct trx_view<blockchain_secmod_te::ethereum> {
+struct transaction_view<blockchain_secmod_te::ethereum> {
   struct secmod_command_ethereum {
     secmod_command_ethereum() {}
     
@@ -51,7 +52,7 @@ struct trx_view<blockchain_secmod_te::ethereum> {
 };
 
 template<>
-struct trx_view<blockchain_secmod_te::ethereum_swap> {
+struct transaction_view<blockchain_secmod_te::ethereum_swap> {
   struct secmod_command_swap {
     enum struct action_te {
       create_swap = 0,
@@ -80,7 +81,7 @@ struct trx_view<blockchain_secmod_te::ethereum_swap> {
 };
 
 template<>
-struct trx_view<blockchain_secmod_te::bitcoin> {
+struct transaction_view<blockchain_secmod_te::bitcoin> {
   struct secmod_command_bitcoin {
     secmod_command_bitcoin() {}
     
@@ -132,6 +133,13 @@ struct secmod_event<events_te::sign_hex>
     blockchain_secmod_te blockchain;
     int unlock_time;
     fc_light::variant trx_view;
+
+    template <blockchain_secmod_te blockchain_type>
+    typename transaction_view<blockchain_type>::type get_trx_view() const
+    {
+      using return_t = typename transaction_view<blockchain_type>::type;
+      return trx_view.as<return_t>();
+    }
   };
   
   using params_t = params;
@@ -190,9 +198,10 @@ struct secmod_event<events_te::print_mnemonic>
 
 struct secmod_command
 {
+  secmod_command() : etype(secmod_commands::events_te::unknown) {}
   events_te etype;
   fc_light::variant params;
-};
+};  
 
 }
 

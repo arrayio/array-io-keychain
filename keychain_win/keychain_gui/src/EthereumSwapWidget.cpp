@@ -1,6 +1,6 @@
 #include "EthereumSwapWidget.h"
 
-EthereumSwapWidget::EthereumSwapWidget(Transaction &transaction, QWidget * parent)
+EthereumSwapWidget::EthereumSwapWidget(const ethereum_event& eth_event, QWidget * parent)
 	:KeychainWidget(parent)
 {
 	QMetaObject::connectSlotsByName(this);
@@ -13,9 +13,7 @@ EthereumSwapWidget::EthereumSwapWidget(Transaction &transaction, QWidget * paren
 
 	//QList<QString> fieldList({ "From","To","Amount" });
 
-	secmod_parser_f cmd_parse;
-	auto cmd_type = cmd_parse(transaction.getTransactionText().toStdString());
-	auto swap_trx = cmd_parse.to_ethereum_swap();
+	auto& swap_trx = eth_event;
 	auto swap_info = swap_trx.swap_info;
 
 	action = new SecureWindowElement(this);

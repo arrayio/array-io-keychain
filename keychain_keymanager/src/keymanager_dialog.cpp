@@ -45,11 +45,23 @@ keymanager_dialog::keymanager_dialog(QWidget * parent)
     text_edit_form->setStyleSheet("font:10px \"Segoe UI\";");
     text_edit_form->move(230, 10);
 
+    //connect to toolbar actions
     QObject::connect(toolbar, SIGNAL(ExportSelected(QString)), this, SLOT(ProcessExport(QString)));
     QObject::connect(toolbar, SIGNAL(ImportSelected(QString)), this, SLOT(ProcessImport(QString)));
     QObject::connect(toolbar, SIGNAL(AboutSelected(QString)), this, SLOT(ProcessAbout(QString)));
     QObject::connect(toolbar, SIGNAL(StatusSelected(QString)), this, SLOT(ProcessStatus(QString)));
     QObject::connect(toolbar, SIGNAL(ExitSelected(QString)), this, SLOT(ProcessExit(QString)));
+	
+	//create window hints toolbar 
+    hintsbar = new hints_toolbar(this);
+    hintsbar->setStyleSheet("font:\"Segoe UI\";background:transparent;");
+    QPoint hints_location = mapToGlobal(QPoint(size().width(), size().height())) - QPoint(hintsbar->size().width(), this->size().height());
+    hintsbar->move(hints_location);
+	
+    //connect to hintsbar actions
+	QObject::connect(hintsbar, SIGNAL(MinimizeSelected(QString)), this, SLOT(ProcessMinimize(QString)));
+    QObject::connect(hintsbar, SIGNAL(MaximizeSelected(QString)), this, SLOT(ProcessMaximize(QString)));
+    QObject::connect(hintsbar, SIGNAL(CloseWindowSelected(QString)), this, SLOT(ProcessExit(QString)));
 }
 
 //process export dialog signal call
@@ -83,3 +95,37 @@ void keymanager_dialog::ProcessExit(const QString &text)
     QApplication::quit();
 }
 
+//process minimize signal call
+void keymanager_dialog::ProcessMinimize(const QString &text)
+{
+    text_edit_form->setText("Process Minimize!");
+    showMinimized();
+}
+
+//process maximize signal call
+void keymanager_dialog::ProcessMaximize(const QString &text)
+{
+    text_edit_form->setText("Process Maximize!");
+    showMaximized();
+}
+
+//process hint events
+void keymanager_dialog::changeEvent(QEvent* e)
+{
+    if (e->type() == QEvent::WindowStateChange)
+    {
+        QWindowStateChangeEvent* event = static_cast<QWindowStateChangeEvent*>(e);
+
+        if (this->windowState() & Qt::WindowMaximized)
+        {
+            if (event->oldState() & Qt::WindowNoState)
+            {
+                showMaximized();
+            }
+            else if (event->oldState() == Qt::WindowMaximized)
+            {
+                showNormal();
+            }
+        }
+    }
+}

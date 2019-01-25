@@ -112,6 +112,7 @@ namespace  slave {
 }
 
 namespace  master {
+    enum struct strength_lev {unknown=0, weak, middle, strong, last };
     enum struct cmds {unknown = 0, rawtrx, close, modify, length, create, unlock, check, focus, close_expert_mode, strength, last};
 
     struct cmd_base {
@@ -199,18 +200,6 @@ namespace  master {
     };
 
     template<>
-    struct cmd<cmds::strength> : cmd_base{
-        cmd(bool res): cmd_base(), strength_param(res){
-            cmd_base::cmd = cmds::strength;
-            params = fc_light::variant(strength_param);
-        };
-        struct params_t {
-            params_t(bool res_):res(res_) {}
-            bool res;
-        } strength_param;
-    };
-
-    template<>
     struct cmd<cmds::focus> : cmd_base{
         cmd(int line): cmd_base(), focus_param(line){
             cmd_base::cmd = cmds::focus;
@@ -226,6 +215,18 @@ namespace  master {
     struct cmd<cmds::close_expert_mode> {
         cmd():base(){}
         struct params_t {params_t():cmd(cmds::close_expert_mode){} cmds cmd;} base;
+    };
+
+    template<>
+    struct cmd<cmds::strength> : cmd_base{
+        cmd(master::strength_lev res): cmd_base(), strength_param(res){
+            cmd_base::cmd = cmds::strength;
+            params = fc_light::variant(strength_param);
+        };
+        struct params_t {
+            params_t(master::strength_lev res_):res(res_) {}
+            master::strength_lev  res;
+        } strength_param;
     };
 }
 
@@ -246,5 +247,7 @@ FC_LIGHT_REFLECT_ENUM(slave::cmds, (unknown)(ok)(cancel)(focus)(expert_mode)(las
 FC_LIGHT_REFLECT(slave::cmd_common, (cmd)(params))
 FC_LIGHT_REFLECT(slave::cmd<slave::cmds::focus>::params_t, (line_edit))
 FC_LIGHT_REFLECT(slave::cmd<slave::cmds::expert_mode>::params_t, (enable))
+
+FC_LIGHT_REFLECT_ENUM(master::strength_lev, (unknown)(weak)(middle)(strong)(last))
 
 #endif //KEYCHAINAPP_CMD_H

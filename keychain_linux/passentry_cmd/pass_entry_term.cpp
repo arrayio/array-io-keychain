@@ -13,7 +13,8 @@
 #include <crack.h>
 
 #define path_ "./passentry_gui"
-#define dict  "/usr/local/share/cracklib/pw_dict"
+#define small  "/usr/local/share/cracklib/pw_small"
+#define large  "/usr/local/share/cracklib/pw_dict"
 
 pass_entry_term::pass_entry_term(bool confirm_) : confirm(confirm_)
 {
@@ -355,18 +356,32 @@ std::string  pass_entry_term::input_password(const KeySym * map, int socket)
                     send_gui( mes, socket );
 
                     keychain_app::byte_seq_t vec(password[0].begin(), password[0].end());
-                    const char * strength = nullptr;
-                    if (vec.size())   strength = FascistCheck(vec.data(), dict);
-                    if (strength)
+                    if (vec.size())
                     {
-                        auto t = master::cmd<master::cmds::strength>(false);
-                        auto mes = fc_light::json::to_string(fc_light::variant(static_cast<const master::cmd_base&>(t)));
-                        send_gui( mes, socket );
-                    }
-                    else{
-                        auto t = master::cmd<master::cmds::strength>(true);
-                        auto mes = fc_light::json::to_string(fc_light::variant(static_cast<const master::cmd_base&>(t)));
-                        send_gui( mes, socket );
+                        const char * err = nullptr;
+                        err = FascistCheck(vec.data(), large);
+                        if (err )
+                        {
+                            err = FascistCheck(vec.data(), small);
+                            if (err)
+                            {
+                                auto t = master::cmd<master::cmds::strength>(master::strength_lev::weak);
+                                auto mes = fc_light::json::to_string(fc_light::variant(static_cast<const master::cmd_base&>(t)));
+                                send_gui( mes, socket );
+                            }
+                            else
+                            {
+                                auto t = master::cmd<master::cmds::strength>(master::strength_lev::middle);
+                                auto mes = fc_light::json::to_string(fc_light::variant(static_cast<const master::cmd_base&>(t)));
+                                send_gui( mes, socket );
+                            }
+                        }
+                        else{ //strong
+                            auto t = master::cmd<master::cmds::strength>(master::strength_lev::strong);
+                            auto mes = fc_light::json::to_string(fc_light::variant(static_cast<const master::cmd_base&>(t)));
+                            send_gui( mes, socket );
+                        }
+
                     }
                 }
             }

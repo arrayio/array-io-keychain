@@ -1,20 +1,20 @@
 #ifndef CHECKPASSWORDSTRENGTH_H
 #define CHECKPASSWORDSTRENGTH_H
 
-#include <QString>
-#include <QRegExp>
 
 class CheckPasswordStrength {
-public :
-	enum PasswordStrength {
-		weak=1,
-		middle=2,
-		strong=3
-	};
+public:
+    enum struct PasswordStrength {
+        unknown=0,
+        weak,
+        middle,
+        strong,
+        last
+    };
 public:
 	CheckPasswordStrength();
 	~CheckPasswordStrength();
-	PasswordStrength check(QString password);
+	PasswordStrength check();
 };
 
 #endif

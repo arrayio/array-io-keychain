@@ -29,6 +29,7 @@ public:
     PasswordLineEdit *value = Q_NULLPTR;
     PasswordLineEdit *valueConfirm = Q_NULLPTR;
 	void tabFocusByMouse (int line);
+    void checkStrength(int);
 
 signals:
 	void finishEnterPassword();
@@ -49,7 +50,6 @@ private:
 	bool isSame = false;
 
 public slots:
-	void checkStrength(bool stregth);
 	void checkConfirm(const bool confirm);
 };
 

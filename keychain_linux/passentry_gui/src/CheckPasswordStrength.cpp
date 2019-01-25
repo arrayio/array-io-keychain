@@ -8,7 +8,7 @@ CheckPasswordStrength::~CheckPasswordStrength()
 {
 }
 
-CheckPasswordStrength::PasswordStrength CheckPasswordStrength::check(QString password)
+CheckPasswordStrength::PasswordStrength CheckPasswordStrength::check()
 {/*
 	QRegExp regLetter("[a-zA-Z]+");
 	QRegExp regDigit("[0-9]+");

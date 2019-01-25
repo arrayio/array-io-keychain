@@ -9,7 +9,7 @@ const EventHandlerSingleton& EventHandlerSingleton::instance()
   return handler;
 }
 
-const EventHandlerSingleton::command_ptr EventHandlerSingleton::operator[](sm_cmd::events_te etype) const
+const EventHandlerSingleton::event_handler_ptr EventHandlerSingleton::operator[](sm_cmd::events_te etype) const
 {
   size_t ind = static_cast<size_t>(etype);
   if (ind >= m_command_list.size())
@@ -22,8 +22,8 @@ EventHandlerSingleton::EventHandlerSingleton()
   m_command_list.reserve(32);//TODO: it is may be possible to get size info from boost::hana::tuple
   boost::hana::for_each(event_handlers_static_list, [&](auto val) {
     using value_type = decltype(val);
-    constexpr auto const_val = static_cast<command_te>(value_type::value);
-    m_command_list.push_back(command_ptr(new keychain_command<const_val>));
+    constexpr auto const_val = static_cast<sm_cmd::events_te>(value_type::value);
+    m_command_list.push_back(event_handler_ptr(new EventHandler<const_val>));
   });
 }
 

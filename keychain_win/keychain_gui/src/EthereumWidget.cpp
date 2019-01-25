@@ -1,7 +1,7 @@
 #include "EthereumWidget.h"
 
 
-EthereumWidget::EthereumWidget(const EthereumWidget::ethereum_event& eth_event, QWidget * parent)
+EthereumWidget::EthereumWidget(const signhex_event_t &signhex_event, QWidget * parent)
 	:KeychainWidget(parent)
 {
 	QMetaObject::connectSlotsByName(this);
@@ -15,12 +15,14 @@ EthereumWidget::EthereumWidget(const EthereumWidget::ethereum_event& eth_event, 
 
 	//QList<QString> fieldList({ "From","To","Amount" });
 
+  auto& ether_trx = signhex_event.get_trx_view<secmod_commands::blockchain_secmod_te::ethereum>();
+
 	from = new SecureWindowElement(this);
-	from->SetLabelAndValue("From", QString::fromStdString(eth_event.from));
+	from->SetLabelAndValue("From", QString::fromStdString(ether_trx.from));
 	from->SetLabelStyle(labelStyle);
 	from->SetValueStyle(valueStyle);
 
-	auto eth_data = eth_event.trx_info;
+	auto eth_data = ether_trx.trx_info;
 
 	to = new SecureWindowElement(this);
 	to->SetLabelAndValue("To", QString::fromStdString(eth_data.to));
@@ -32,13 +34,13 @@ EthereumWidget::EthereumWidget(const EthereumWidget::ethereum_event& eth_event, 
 	amount->SetLabelStyle(labelStyle);
 	amount->SetValueStyle(valueStyle);
 
-	if (cmd_parse.unlock_time() > 0) {
+  if (signhex_event.unlock_time > 0) {
 		unlockTime = new PrivateKeyInMemory(this);
-		unlockTime->SetTime(QString::number(cmd_parse.unlock_time()));
+		unlockTime->SetTime(QString::number(signhex_event.unlock_time));
 	}
 
 	expertModeElement = new ExpertModeElement(this);
-	expertModeElement->SetExpertModeText(QString::fromStdString(cmd_parse.to_expert_mode_string()));
+	expertModeElement->SetExpertModeText(QString::fromStdString(to_expert_mode_string(signhex_event)));
 	
 }
 

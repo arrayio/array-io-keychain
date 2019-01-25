@@ -105,7 +105,7 @@ enum struct events_te {
   export_keys,
   import_keys,
   print_mnemonic,
-  last = -1,
+  last
 };
 
 template<events_te event>
@@ -219,18 +219,18 @@ FC_LIGHT_REFLECT(keychain_app::secmod_commands::secmod_event<keychain_app::secmo
 FC_LIGHT_REFLECT(keychain_app::secmod_commands::secmod_event<keychain_app::secmod_commands::events_te::remove_key>::params_t, (keyname))
 
 FC_LIGHT_REFLECT(keychain_app::secmod_commands::ethereum_trx_t, (nonce)(gasPrice)(gas)(to)(value)(data)(chainid))
-FC_LIGHT_REFLECT(keychain_app::secmod_commands::trx_view<keychain_app::secmod_commands::blockchain_secmod_te::ethereum>::type, (from)(trx_info))
-FC_LIGHT_REFLECT(keychain_app::secmod_commands::trx_view<keychain_app::secmod_commands::blockchain_secmod_te::bitcoin>::type, (from)(trx_info))
-FC_LIGHT_REFLECT(keychain_app::secmod_commands::trx_view<keychain_app::secmod_commands::blockchain_secmod_te::ethereum_swap>::type, (from)(trx_info)(swap_info))
+FC_LIGHT_REFLECT(keychain_app::secmod_commands::transaction_view<keychain_app::secmod_commands::blockchain_secmod_te::ethereum>::type, (from)(trx_info))
+FC_LIGHT_REFLECT(keychain_app::secmod_commands::transaction_view<keychain_app::secmod_commands::blockchain_secmod_te::bitcoin>::type, (from)(trx_info))
+FC_LIGHT_REFLECT(keychain_app::secmod_commands::transaction_view<keychain_app::secmod_commands::blockchain_secmod_te::ethereum_swap>::type, (from)(trx_info)(swap_info))
 
 FC_LIGHT_REFLECT(keychain_app::secmod_commands::secmod_command, (etype)(params))
 
 FC_LIGHT_REFLECT_ENUM(
-  keychain_app::secmod_commands::trx_view<keychain_app::secmod_commands::blockchain_secmod_te::ethereum_swap>::type::action_te,
+  keychain_app::secmod_commands::transaction_view<keychain_app::secmod_commands::blockchain_secmod_te::ethereum_swap>::type::action_te,
   (create_swap)(refund)(withdraw))
 
 FC_LIGHT_REFLECT(
-  keychain_app::secmod_commands::trx_view<keychain_app::secmod_commands::blockchain_secmod_te::ethereum_swap>::type::swap_t,
+  keychain_app::secmod_commands::transaction_view<keychain_app::secmod_commands::blockchain_secmod_te::ethereum_swap>::type::swap_t,
   (action)(hash)(address)(secret))
 
 #endif //KEYCHAINAPP_KEYCHAIN_SEC_MOD_PROTOCOL_HPP

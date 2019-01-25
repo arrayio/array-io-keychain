@@ -1,6 +1,6 @@
 #include "keychain_gui_win.h"
 
-keychain_gui_win::keychain_gui_win(QObject *parent)
+keychain_gui_win::keychain_gui_win(QWidget *parent)
 	: QDialog(parent)
   , mEndControlPosition(START_POSITION)
 {

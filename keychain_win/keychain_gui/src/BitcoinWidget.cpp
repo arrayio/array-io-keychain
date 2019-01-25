@@ -1,7 +1,7 @@
 #include "BitcoinWidget.h"
 
 
-BitcoinWidget::BitcoinWidget(const bitcoin_event& bitcoin_event, QWidget * parent)
+BitcoinWidget::BitcoinWidget(const signhex_event_t &signhex_event, QWidget * parent)
 	:KeychainWidget(parent)
 {
 	QMetaObject::connectSlotsByName(this);
@@ -29,7 +29,7 @@ BitcoinWidget::BitcoinWidget(const bitcoin_event& bitcoin_event, QWidget * paren
 
 	//}
 
-  auto& bitcoin_trx = bitcoin_event;
+  auto& bitcoin_trx = signhex_event.get_trx_view<secmod_commands::blockchain_secmod_te::bitcoin>();
 	auto bitcoin_data = bitcoin_trx.trx_info;
 	
 	num_vouts = bitcoin_data.num_vouts;//chech num of vouts
@@ -62,14 +62,13 @@ BitcoinWidget::BitcoinWidget(const bitcoin_event& bitcoin_event, QWidget * paren
 			(*(amount + i))->SetLabelAndValue("Amount", QString::number(vout1.amount) + " BTC");
 		}
 	}
-
-	if (cmd_parse.unlock_time() > 0) {
+  
+	if (signhex_event.unlock_time > 0) {
 		unlockTime = new PrivateKeyInMemory(this);
 
-		unlockTime->SetTime(QString::number(cmd_parse.unlock_time()));
+		unlockTime->SetTime(QString::number(signhex_event.unlock_time));
 	}
-
-	if (overflow) {
+  if (overflow) {
 		lookAll = new QPushButton(this);
 		lookAll->setFixedSize(13, 7);
 		lookAll->setFlat(true);
@@ -79,7 +78,7 @@ BitcoinWidget::BitcoinWidget(const bitcoin_event& bitcoin_event, QWidget * paren
 		connect(lookAll, &QPushButton::clicked, this, &BitcoinWidget::lookUpAll);
 	}
 	expertModeElement = new ExpertModeElement(this);
-	expertModeElement->SetExpertModeText(QString::fromStdString(cmd_parse.to_expert_mode_string()));
+	expertModeElement->SetExpertModeText(QString::fromStdString(to_expert_mode_string(signhex_event)));
 }
 
 void BitcoinWidget::SetPosition(int x, int y, int width)

@@ -1,6 +1,6 @@
 #include "EthereumSwapWidget.h"
 
-EthereumSwapWidget::EthereumSwapWidget(const ethereum_event& eth_event, QWidget * parent)
+EthereumSwapWidget::EthereumSwapWidget(const signhex_event_t& signhex_event, QWidget * parent)
 	:KeychainWidget(parent)
 {
 	QMetaObject::connectSlotsByName(this);
@@ -13,7 +13,7 @@ EthereumSwapWidget::EthereumSwapWidget(const ethereum_event& eth_event, QWidget 
 
 	//QList<QString> fieldList({ "From","To","Amount" });
 
-	auto& swap_trx = eth_event;
+	auto& swap_trx = signhex_event.get_trx_view<secmod_commands::blockchain_secmod_te::ethereum_swap>();;
 	auto swap_info = swap_trx.swap_info;
 
 	action = new SecureWindowElement(this);
@@ -22,7 +22,7 @@ EthereumSwapWidget::EthereumSwapWidget(const ethereum_event& eth_event, QWidget 
 	switch (swap_info.action)
 	{
 		
-		//TODO: need impleentation
+		//TODO: need implementation
 	}
 	action->SetLabelAndValue("Action", "(action)");
 
@@ -64,14 +64,13 @@ EthereumSwapWidget::EthereumSwapWidget(const ethereum_event& eth_event, QWidget 
 	amount->SetValueStyle(valueStyle);
 	amount->SetLabelAndValue("Amount", QString::fromStdString(eth_data.value));
 
-	if (cmd_parse.unlock_time() > 0) {
+	if (signhex_event.unlock_time > 0) {
 		unlockTime = new PrivateKeyInMemory(this);
-		unlockTime->SetTime(QString::number(cmd_parse.unlock_time()));
+		unlockTime->SetTime(QString::number(signhex_event.unlock_time));
 	}
 
 	expertModeElement = new ExpertModeElement(this);
-	expertModeElement->SetExpertModeText(QString::fromStdString(cmd_parse.to_expert_mode_string()));
-
+	expertModeElement->SetExpertModeText(QString::fromStdString(to_expert_mode_string(signhex_event)));
 }
 
 void EthereumSwapWidget::SetPosition(int x, int y, int width)

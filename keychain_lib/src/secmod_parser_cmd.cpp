@@ -21,6 +21,7 @@ events_te secmod_parser_f::operator()(const std::string& json)
 {
   auto variant = fc_light::json::from_string(json);
   m_cmd = variant.as<secmod_command>();
+  return m_cmd.etype;
 }
 
 std::string to_expert_mode_string(const signhex_event& signhex_event)

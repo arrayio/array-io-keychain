@@ -41,7 +41,7 @@ private:
 	Ui::keychain_gui_winClass ui;
 
 public:
-	keychain_gui_win(QObject *parent = nullptr);
+	keychain_gui_win(QWidget *parent = nullptr);
 	PopupWindow * popupWindow;
 	
 private:

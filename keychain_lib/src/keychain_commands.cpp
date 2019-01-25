@@ -14,7 +14,7 @@
 
 namespace keychain_app {
 
-using swap_trx_t = secmod_commands::trx_view<secmod_commands::blockchain_secmod_te::ethereum_swap>::type;
+using swap_trx_t = secmod_commands::transaction_view<secmod_commands::blockchain_secmod_te::ethereum_swap>::type;
 
 bool swap_action(std::string data, swap_trx_t::swap_t &swap_info) {
   if (data.size() < 8)
@@ -75,7 +75,7 @@ fc_light::variant create_secmod_signhex_cmd(std::vector<unsigned char> raw, bloc
         
         kaitai::kstream ks(&is);
         bitcoin_transaction_t trx_info(&ks);
-        using trx_t = secmod_commands::trx_view<secmod_commands::blockchain_secmod_te::bitcoin>::type;
+        using trx_t = secmod_commands::transaction_view<secmod_commands::blockchain_secmod_te::bitcoin>::type;
         trx_t data(std::move(from), std::move(trx_info));
         params.trx_view = fc_light::variant(data);
         BOOST_LOG_SEV(log.lg, info) << "bitcoin transaction parse complete: \n";
@@ -101,7 +101,7 @@ fc_light::variant create_secmod_signhex_cmd(std::vector<unsigned char> raw, bloc
         trx.value     = tx.value().str();
         trx.data      = to_hex(tx.data().data(), tx.data().size());
         
-        using swap_trx_t = secmod_commands::trx_view<secmod_commands::blockchain_secmod_te::ethereum_swap>::type;
+        using swap_trx_t = secmod_commands::transaction_view<secmod_commands::blockchain_secmod_te::ethereum_swap>::type;
         swap_trx_t::swap_t swap_info;
         if (swap_action(trx.data, swap_info))
         {
@@ -112,7 +112,7 @@ fc_light::variant create_secmod_signhex_cmd(std::vector<unsigned char> raw, bloc
         }
         else
         {
-          using trx_t = secmod_commands::trx_view<secmod_commands::blockchain_secmod_te::ethereum>::type;
+          using trx_t = secmod_commands::transaction_view<secmod_commands::blockchain_secmod_te::ethereum>::type;
           trx_t data(std::move(from),std::move(trx));
           params.blockchain = secmod_commands::blockchain_secmod_te::ethereum;
           params.trx_view = fc_light::variant(data);

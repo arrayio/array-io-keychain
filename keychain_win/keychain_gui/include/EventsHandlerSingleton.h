@@ -16,10 +16,10 @@ sm_cmd::events_te parseSecmodEvents(const std::string& json);
 
 struct EventHandlerSingleton
 {
-  using command_ptr = std::shared_ptr<EventHandlerBase>;
+  using event_handler_ptr = std::shared_ptr<EventHandlerBase>;
   static const EventHandlerSingleton& instance();
-  const command_ptr operator[](sm_cmd::events_te etype) const;
+  const event_handler_ptr operator[](sm_cmd::events_te etype) const;
 private:
-  std::vector<command_ptr> m_command_list;
+  std::vector<event_handler_ptr> m_command_list;
   EventHandlerSingleton();
 };

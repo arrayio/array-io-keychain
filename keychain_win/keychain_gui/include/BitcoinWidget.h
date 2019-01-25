@@ -15,9 +15,9 @@ class BitcoinWidget : public KeychainWidget
 {
 	Q_OBJECT
 public:
-  using bitcoin_event = keychain_app::secmod_commands::transaction_view
-    <keychain_app::secmod_commands::blockchain_secmod_te::bitcoin>::type;
-	BitcoinWidget(const bitcoin_event& bitcoin_event, QWidget *parent = Q_NULLPTR);
+  using signhex_event_t = keychain_app::secmod_commands::secmod_event
+    <keychain_app::secmod_commands::events_te::sign_hex>::params_t;
+	BitcoinWidget(const signhex_event_t& signhex_event, QWidget *parent = Q_NULLPTR);
 		void SetPosition(int x, int y, int width) override;
 	int GetCurrentHeight() override;
 	int GetCurrentWidth() override;

@@ -112,7 +112,7 @@ namespace  slave {
 }
 
 namespace  master {
-    enum struct cmds {unknown = 0, rawtrx, close, modify, length, create, unlock, check, focus, close_expert_mode, last};
+    enum struct cmds {unknown = 0, rawtrx, close, modify, length, create, unlock, check, focus, close_expert_mode, strenght, last};
 
     struct cmd_base {
         cmd_base(): cmd(cmds::unknown){};
@@ -199,6 +199,18 @@ namespace  master {
     };
 
     template<>
+    struct cmd<cmds::strenght> : cmd_base{
+        cmd(bool res): cmd_base(), strenght_param(res){
+            cmd_base::cmd = cmds::strenght;
+            params = fc_light::variant(strenght_param);
+        };
+        struct params_t {
+            params_t(bool res_):res(res_) {}
+            bool res;
+        } strenght_param;
+    };
+
+    template<>
     struct cmd<cmds::focus> : cmd_base{
         cmd(int line): cmd_base(), focus_param(line){
             cmd_base::cmd = cmds::focus;
@@ -217,7 +229,7 @@ namespace  master {
     };
 }
 
-FC_LIGHT_REFLECT_ENUM(master::cmds, (unknown)(rawtrx)(close)(modify)(length)(unlock)(check)(focus)(close_expert_mode)(last))
+FC_LIGHT_REFLECT_ENUM(master::cmds, (unknown)(rawtrx)(close)(modify)(length)(unlock)(check)(focus)(close_expert_mode)(strenght)(last))
 FC_LIGHT_REFLECT(master::cmd_base, (cmd)(params))
 FC_LIGHT_REFLECT(master::cmd<master::cmds::rawtrx>::params_t, (rawtrx))
 FC_LIGHT_REFLECT(master::cmd<master::cmds::close>::params_t, (cmd))
@@ -227,6 +239,7 @@ FC_LIGHT_REFLECT(master::cmd<master::cmds::create>::params_t, (keyname))
 FC_LIGHT_REFLECT(master::cmd<master::cmds::unlock>::params_t, (keyname)(unlock_time))
 FC_LIGHT_REFLECT(master::cmd<master::cmds::check>::params_t, (res))
 FC_LIGHT_REFLECT(master::cmd<master::cmds::focus>::params_t, (line))
+FC_LIGHT_REFLECT(master::cmd<master::cmds::strenght>::params_t, (res))
 FC_LIGHT_REFLECT(master::cmd<master::cmds::close_expert_mode>::params_t, (cmd))
 
 FC_LIGHT_REFLECT_ENUM(slave::cmds, (unknown)(ok)(cancel)(focus)(expert_mode)(last))

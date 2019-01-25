@@ -32,7 +32,6 @@ public:
 
 signals:
 	void finishEnterPassword();
-	void changePassword();
     void focus (int line);
 
 private:
@@ -50,7 +49,7 @@ private:
 	bool isSame = false;
 
 public slots:
-	void checkStrength(const QString &text);
+	void checkStrength(bool stregth);
 	void checkConfirm(const bool confirm);
 };
 

@@ -185,7 +185,6 @@ void keychain_gui_win::refresh(Transaction& transaction)
 	password->setValueFocus();
 //	connect(password, &PasswordEnterElement::finishEnterPassword, this, &keychain_gui_win::transaction_sign);
 //	if (transaction.isCreatePassword()) {
-//		connect(password, &PasswordEnterElement::changePassword, this, &keychain_gui_win::_disableSignButton);
 //	}
 }
 

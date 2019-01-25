@@ -35,9 +35,9 @@ public:
     keychain_app::byte_seq_t fork_gui(const KeySym*, const std::string&);
     Display* _display = NULL;
 private:
-    std::wstring input_password(const KeySym *, int);
+    std::string input_password(const KeySym *, int);
     void ChangeKbProperty(XDeviceInfo *, Atom, Atom, int, unsigned char);
-    bool OnKey (unsigned short, int, int, int, std::wstring&, const KeySym *);
+    bool OnKey (unsigned short, int, int, int, std::string&, const KeySym *);
     unsigned int keyState(unsigned int);
     std::list<std::string> parse_device_file();
     void send_gui (std::string, int);

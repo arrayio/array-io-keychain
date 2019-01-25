@@ -96,36 +96,17 @@ void PasswordEnterElement::SetLabel(QString labelValue)
 	label->setText(labelValue);
 }
 
-void PasswordEnterElement::checkStrength(const QString &text)
+void PasswordEnterElement::checkStrength(bool stregth)
 {
-	CheckPasswordStrength passwordChecker;
-	switch (passwordChecker.check(text)) {
-		case CheckPasswordStrength::strong: {
-			description->setStyleSheet("font:10px \"Segoe UI\";background:transparent;color:rgb(82,172,75);");
-			value->setStyleSheet("font:16px \"Segoe UI\";background-color:rgb(195,231,192);border-style:solid;border-width:1px;border-radius:4px;border-color:rgb(82,172,75);");
-			break;
-		}
-		case CheckPasswordStrength::middle: {
-			description->setStyleSheet("font:10px \"Segoe UI\";background:transparent;color:rgb(255,142,4);");
-			value->setStyleSheet("font:16px \"Segoe UI\";background-color:rgb(240,230,180);border-style:solid;border-width:1px;border-radius:4px;border-color:rgb(255,142,4);");
-			break;
-		}
-		case CheckPasswordStrength::weak: {
-			description->setStyleSheet("font:10px \"Segoe UI\";background:transparent;color:rgb(158,37,17);");
-			value->setStyleSheet("font:16px \"Segoe UI\";background-color:rgb(230,201,201);border-style:solid;border-width:1px;border-radius:4px;border-color:rgb(158,37,17);");
-			break;
-		}
+	if (stregth)
+	{
+		description->setStyleSheet("font:10px \"Segoe UI\";background:transparent;color:rgb(82,172,75);");
+		value->setStyleSheet("font:16px \"Segoe UI\";background-color:rgb(195,231,192);border-style:solid;border-width:1px;border-radius:4px;border-color:rgb(82,172,75);");
 	}
-	if (pCreatePassword) {
-		if (!valueConfirm->text().isEmpty()) {
-			if (isSame) {
-				valueConfirm->setStyleSheet("font:16px \"Segoe UI\";background-color:rgb(195,231,192);border-style:solid;border-width:1px;border-radius:4px;border-color:rgb(82,172,75);");
-			}
-			else {
-				valueConfirm->setStyleSheet("font:16px \"Segoe UI\";background-color:rgb(230,201,201);border-style:solid;border-width:1px;border-radius:4px;border-color:rgb(158,37,17);");
-			}
-		}
-		emit changePassword();
+	else
+	{
+		description->setStyleSheet("font:10px \"Segoe UI\";background:transparent;color:rgb(158,37,17);");
+		value->setStyleSheet("font:16px \"Segoe UI\";background-color:rgb(230,201,201);border-style:solid;border-width:1px;border-radius:4px;border-color:rgb(158,37,17);");
 	}
 }
 
@@ -164,7 +145,6 @@ void PasswordEnterElement::checkConfirm(const bool confirm)
 			confirmDescription->setStyleSheet("font:10px \"Segoe UI\";background:transparent;color:rgb(158,37,17);");
 			valueConfirm->setStyleSheet("font:16px \"Segoe UI\";background-color:rgb(230,201,201);border-style:solid;border-width:1px;border-radius:4px;border-color:rgb(158,37,17);");
 		}
-		emit changePassword();
 	}
 }
 

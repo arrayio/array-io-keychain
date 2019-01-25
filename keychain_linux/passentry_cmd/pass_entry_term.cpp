@@ -10,8 +10,10 @@
 #include <sys/types.h>
 #include "pass_entry_term.hpp"
 #include "cmd.hpp"
+#include <crack.h>
 
 #define path_ "./passentry_gui"
+#define dict  "/usr/local/share/cracklib/pw_dict"
 
 pass_entry_term::pass_entry_term(bool confirm_) : confirm(confirm_)
 {
@@ -64,7 +66,7 @@ void pass_entry_term::ChangeKbProperty(
 }
 
 
-bool pass_entry_term::OnKey (unsigned short scancode, int shft, int cpslock, int nmlock, std::wstring& pass, const KeySym * map)
+bool pass_entry_term::OnKey (unsigned short scancode, int shft, int cpslock, int nmlock, std::string& pass, const KeySym * map)
 {
     // HACK: manual NumPad processing (It is right only for English keyboard layout)
     switch (scancode)
@@ -188,20 +190,19 @@ keychain_app::byte_seq_t pass_entry_term::fork_gui(const KeySym * map, const std
     close(sockets[0]);
     send_gui(mes , sockets[1]);
 
-    std::wstring pass = input_password(map, sockets[1]);
+    std::string pass = input_password(map, sockets[1]);
     close(sockets[1]);
     if (wait(NULL) == -1)   throw std::runtime_error("waiting gui");
 
-    keychain_app::byte_seq_t vec(std::distance(pass.begin(), pass.end()));
-    std::transform(pass.begin(), pass.end(), vec.begin(), [](auto a){ return ((char) a);});
+    keychain_app::byte_seq_t vec(pass.begin(), pass.end());
 
     return vec;
 };
 
 
-std::wstring  pass_entry_term::input_password(const KeySym * map, int socket)
+std::string  pass_entry_term::input_password(const KeySym * map, int socket)
 {
-    std::vector<std::wstring> password(2);
+    std::vector<std::string> password(2);
     int line_edit = 0;
 
     std::list<std::string>  devices;
@@ -215,7 +216,7 @@ std::wstring  pass_entry_term::input_password(const KeySym * map, int socket)
     char name[256] = "Unknown";
     bool first_key = true;
     auto gui = polling(socket);
-    ChangeKbProperty(dev_info, kbd_atom, device_enabled_prop, dev_cnt, 0);
+//    ChangeKbProperty(dev_info, kbd_atom, device_enabled_prop, dev_cnt, 0);
 
     capslock = keyState(XK_Caps_Lock);
     numlock = keyState(XK_Num_Lock);
@@ -256,7 +257,7 @@ std::wstring  pass_entry_term::input_password(const KeySym * map, int socket)
                             if ( ev[1].code <= 255)
                             {
                                 kbd_id = fd_list[id];
-                                if (ioctl(kbd_id, EVIOCGRAB, 1) != 0) throw std::runtime_error("cannot get exclusive access to keyboard");
+//                                if (ioctl(kbd_id, EVIOCGRAB, 1) != 0) throw std::runtime_error("cannot get exclusive access to keyboard");
                                 break;
                             }
                         }
@@ -352,6 +353,20 @@ std::wstring  pass_entry_term::input_password(const KeySym * map, int socket)
                     auto t = master::cmd<master::cmds::check>(password[0] == password[1]);
                     auto mes = fc_light::json::to_string(fc_light::variant(static_cast<const master::cmd_base&>(t)));
                     send_gui( mes, socket );
+
+                    keychain_app::byte_seq_t vec(password[0].begin(), password[0].end());
+                    const char * strength = FascistCheck(vec.data(), dict);
+                    if (strength)
+                    {
+                        auto t = master::cmd<master::cmds::strenght>(false);
+                        auto mes = fc_light::json::to_string(fc_light::variant(static_cast<const master::cmd_base&>(t)));
+                        send_gui( mes, socket );
+                    }
+                    else{
+                        auto t = master::cmd<master::cmds::strenght>(true);
+                        auto mes = fc_light::json::to_string(fc_light::variant(static_cast<const master::cmd_base&>(t)));
+                        send_gui( mes, socket );
+                    }
                 }
             }
 

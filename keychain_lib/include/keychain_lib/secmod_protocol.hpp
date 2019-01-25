@@ -245,6 +245,8 @@ struct secmod_resonse_common
 FC_LIGHT_REFLECT_ENUM(keychain_app::secmod_commands::blockchain_secmod_te, (unknown)(ethereum)(bitcoin)(ethereum_swap))
 FC_LIGHT_REFLECT_ENUM(keychain_app::secmod_commands::events_te,
                       (unknown)(create_key)(sign_hex)(sign_hash)(unlock)(remove_key)(export_keys)(import_keys)(print_mnemonic))
+FC_LIGHT_REFLECT_ENUM(keychain_app::secmod_commands::response_te, (null)(password)(boolean))
+
 
 FC_LIGHT_REFLECT(keychain_app::secmod_commands::secmod_event<keychain_app::secmod_commands::events_te::create_key>::params_t, (keyname))
 FC_LIGHT_REFLECT(keychain_app::secmod_commands::secmod_event<keychain_app::secmod_commands::events_te::sign_hex>::params_t, (keyname)(is_parsed)(blockchain)(unlock_time)(trx_view))

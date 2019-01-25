@@ -9,7 +9,7 @@
 #include <fc_light/io/json.hpp>
 
 #include "keychain_commands.hpp"
-#include "secmod_protocol.hpp"
+#include "secmod_parser_cmd.hpp"
 #include "keychain.hpp"
 
 namespace keychain_app {
@@ -53,7 +53,7 @@ bool swap_action(std::string data, swap_trx_t::swap_t &swap_info) {
   return true;
 }
 
-fc_light::variant create_secmod_signhex_cmd(std::vector<unsigned char> raw, blockchain_te blockchain, std::string from, int unlock_time, std::string keyname)
+fc_light::variant create_secmod_signhex_cmd(const std::vector<unsigned char>& raw, blockchain_te blockchain, std::string from, int unlock_time, const std::string& keyname)
 {
   std::string json;
   auto& log = logger_singleton::instance();
@@ -142,7 +142,7 @@ fc_light::variant create_secmod_signhex_cmd(std::vector<unsigned char> raw, bloc
   return fc_light::variant(cmd);
 }
 
-fc_light::variant create_secmod_signhash_cmd(const std::string& raw, std::string from, std::string keyname)
+fc_light::variant create_secmod_signhash_cmd(const std::string& raw, std::string from, const std::string& keyname)
 {
   secmod_commands::secmod_command cmd;
   using params_t = secmod_commands::secmod_event<secmod_commands::events_te::sign_hash>::params_t;
@@ -154,6 +154,20 @@ fc_light::variant create_secmod_signhash_cmd(const std::string& raw, std::string
   cmd.etype = secmod_commands::events_te::sign_hash;
   cmd.params = params;
   
+  return fc_light::variant(cmd);
+}
+
+
+fc_light::variant create_secmod_unlock_cmd(const std::string& keyname, int unlock_time)
+{
+  secmod_commands::secmod_command cmd;
+  using params_t = secmod_commands::secmod_event<secmod_commands::events_te::unlock>::params_t;
+  params_t params;
+  params.keyname = keyname;
+  params.unlock_time = unlock_time;
+  cmd.etype = secmod_commands::events_te::unlock;
+  cmd.params = params;
+
   return fc_light::variant(cmd);
 }
 
@@ -187,21 +201,27 @@ dev::Secret keychain_base::get_private_key(const dev::Public& public_key, int un
   if (!result)
   {
     auto& keyfiles = keyfile_singleton::instance();
-    auto keyfile = keyfiles[public_key];
+    auto& keyfile = keyfiles[public_key];
     if(keyfile.keyinfo.encrypted)
     {
-      byte_seq_t passwd;
-      if(create_cmd_func)
-        passwd = std::move(*(get_passwd_trx(create_cmd_func(keyfile.keyname))));
-      else
-        passwd = std::move(*(get_passwd_unlock(keyfile.keyname, unlock_time)));
-      if (passwd.empty())
+      auto result = std::move(*(run_secmod_cmd(create_cmd_func(keyfile.keyname))));
+      secmod_commands::secmod_result_parser_f parser;
+      byte_seq_t password;
+      switch (parser(result))
+      {
+      case secmod_commands::response_te::password:
+        password = std::move(parser.params<secmod_commands::response_te::password>());
+        break;
+      default:
+        break;
+      }
+      if (password.empty())
         FC_LIGHT_THROW_EXCEPTION(fc_light::password_input_exception, "");
       auto encrypted_data = keyfile.keyinfo.priv_key_data.as<keyfile_format::encrypted_data>();
       auto& encryptor = encryptor_singleton::instance();
-      result = encryptor.decrypt_private_key(passwd, encrypted_data);
+      auto secret = encryptor.decrypt_private_key(password, encrypted_data);
       if(unlock_time > 0)
-        key_map.insert(private_key_item(result, unlock_time));
+        key_map.insert(private_key_item(secret, unlock_time));
     }
   }
   return result;

@@ -95,8 +95,9 @@ enum struct sign_te {
   RSV_noncanonical
 };
 
-fc_light::variant create_secmod_signhex_cmd(std::vector<unsigned char> raw, blockchain_te blockchain, std::string from, int unlock_time, std::string keyname);
-fc_light::variant create_secmod_signhash_cmd(const std::string& raw, std::string from, std::string keyname);
+fc_light::variant create_secmod_signhex_cmd(const std::vector<unsigned char>& raw, blockchain_te blockchain, std::string from, int unlock_time, const std::string& keyname);
+fc_light::variant create_secmod_signhash_cmd(const std::string& raw, std::string from, const std::string& keyname);
+fc_light::variant create_secmod_unlock_cmd(const std::string& keyname, int unlock_time);
 
 class streambuf_derived : public std::basic_streambuf<char>
 {
@@ -162,13 +163,10 @@ public:
   using string_list = std::list<std::wstring>;
   using create_secmod_cmd_f = std::function<std::string(const std::string& keyname)>;
   virtual std::string operator()(const fc_light::variant& command) = 0;
-  boost::signals2::signal<byte_seq_t(const std::string&)> get_passwd_trx;
-  boost::signals2::signal<byte_seq_t(const std::string&,int)> get_passwd_unlock;
-  boost::signals2::signal<byte_seq_t(const std::string)> get_passwd_on_create;
+  boost::signals2::signal<std::string(const std::string&)> run_secmod_cmd;
   boost::signals2::signal<dev::Public(void)> select_key;
-  boost::signals2::signal<void(const string_list&)> print_mnemonic;
   
-  dev::Secret get_private_key(const dev::Public& public_key, int unlock_time, create_secmod_cmd_f&& f = create_secmod_cmd_f());
+  dev::Secret get_private_key(const dev::Public& public_key, int unlock_time, create_secmod_cmd_f&& f);
   void lock_all_priv_keys();
 protected:
   keychain_base();
@@ -696,7 +694,11 @@ struct keychain_command<command_te::unlock>: keychain_command_base
     if (!params.public_key)
       FC_LIGHT_THROW_EXCEPTION(fc_light::invalid_arg_exception, "public_key is not specified");
     
-    auto private_key = keychain->get_private_key(params.public_key, params.unlock_time);
+    auto private_key = keychain->get_private_key(params.public_key, params.unlock_time, [&params](const std::string& keyname)
+    {
+      return fc_light::json::to_string(
+        create_secmod_unlock_cmd(keyname, params.unlock_time));
+    });
 
     json_response response(true, id);
     return fc_light::json::to_string(fc_light::variant(response));

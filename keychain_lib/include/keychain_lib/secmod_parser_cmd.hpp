@@ -36,6 +36,24 @@ public:
   secmod_command m_cmd;
 };
 
+class secmod_result_parser_f
+{
+public:
+  template <response_te etype>
+  typename secmod_response<etype>::params_t params() const
+  {
+    using params_t = typename secmod_response<etype>::params_t;
+    try
+    {
+      return m_response.params.as<params_t>();
+    }
+    FC_LIGHT_CAPTURE_TYPECHANGE_AND_RETHROW(fc_light::parse_error_exception, error, "cannot parse secmod command params")
+  }
+  void params() const {}
+  response_te operator()(const std::string& json);
+  secmod_resonse_common m_response;
+};
+
 }
 
 }

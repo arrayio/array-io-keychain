@@ -13,6 +13,8 @@
 
 namespace keychain_app {
 
+using byte_seq_t = std::vector<char>;
+
 namespace secmod_commands {
 
 enum struct blockchain_secmod_te {
@@ -204,6 +206,38 @@ struct secmod_command
   fc_light::variant params;
 };  
 
+enum struct response_te
+{
+  null = 0,
+  password,
+  boolean
+};
+
+template <response_te response_type>
+struct secmod_response
+{
+  using params_t = void;
+};
+
+template <>
+struct secmod_response<response_te::password>
+{
+  using params_t = byte_seq_t;
+};
+
+template <>
+struct secmod_response<response_te::boolean>
+{
+  using params_t = bool;
+};
+
+struct secmod_resonse_common
+{
+  secmod_resonse_common() : etype(secmod_commands::response_te::null) {}
+  response_te etype;
+  fc_light::variant params;
+};
+
 }
 
 }
@@ -224,6 +258,7 @@ FC_LIGHT_REFLECT(keychain_app::secmod_commands::transaction_view<keychain_app::s
 FC_LIGHT_REFLECT(keychain_app::secmod_commands::transaction_view<keychain_app::secmod_commands::blockchain_secmod_te::ethereum_swap>::type, (from)(trx_info)(swap_info))
 
 FC_LIGHT_REFLECT(keychain_app::secmod_commands::secmod_command, (etype)(params))
+FC_LIGHT_REFLECT(keychain_app::secmod_commands::secmod_resonse_common, (etype)(params))
 
 FC_LIGHT_REFLECT_ENUM(
   keychain_app::secmod_commands::transaction_view<keychain_app::secmod_commands::blockchain_secmod_te::ethereum_swap>::type::action_te,

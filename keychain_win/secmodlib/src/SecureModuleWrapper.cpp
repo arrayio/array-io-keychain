@@ -1,10 +1,13 @@
 
 #include "SecureModuleWrapper.h"
 #include "NamedPipeServer.h"
+#include <keychain_lib/secmod_parser_cmd.hpp>
 #include <sddl.h>
 #include <algorithm>
 
 #pragma comment(lib, "advapi32.lib")
+
+namespace sm_cmd = keychain_app::secmod_commands;
 
 SecurityManager _secman;
 
@@ -13,32 +16,28 @@ SecureModuleWrapper::~SecureModuleWrapper()
 	//TODO: need implementation
 }
 
-keychain_app::byte_seq_t SecureModuleWrapper::get_passwd_trx(const std::string& json_cmd) const
+std::string SecureModuleWrapper::exec_cmd(const std::string& json_cmd) const
 {
-	return _startSecureDesktop(json_cmd);
-}
+  sm_cmd::secmod_parser_f parser;
+  auto etype = parser(json_cmd);
+  int unlock_time = 0;
+  switch (etype)
+  {
+    case sm_cmd::events_te::sign_hex:
+    {
+      auto cmd = parser.params<sm_cmd::events_te::sign_hex>();
+      unlock_time = cmd.unlock_time;
+    }
+    break;
+    case sm_cmd::events_te::unlock:
+    {
+      auto cmd = parser.params<sm_cmd::events_te::unlock>();
+      unlock_time = cmd.unlock_time;
+    }
+    break;
+  }
 
-keychain_app::byte_seq_t SecureModuleWrapper::get_passwd_unlock(const std::string& keyname, int unlock_time) const
-{
-	//TODO: need to implement
-	//it is experimental future
-	//need ot print red lock icon on user dialog window
-	return _startSecureDesktop(keyname, unlock_time);
-}
-
-keychain_app::byte_seq_t SecureModuleWrapper::get_passwd_on_create(const std::string& keyname) const
-{
-	return _startSecureDesktop("create_password");
-}
-
-void SecureModuleWrapper::print_mnemonic(const string_list& mnemonic) const
-{
-	//TODO: need implementation
-}
-
-keychain_app::byte_seq_t SecureModuleWrapper::_startSecureDesktop(const std::string& str, int unlock_time) const
-{
-	std::vector<char> result_pass;
+	keychain_app::byte_seq_t result_pass;
 	result_pass.reserve(512);
 	HANDLE hPipe;
 	char buffer[1024];
@@ -47,7 +46,7 @@ keychain_app::byte_seq_t SecureModuleWrapper::_startSecureDesktop(const std::str
 	HANDLE transactionPipe;
 
 	auto& log = logger_singleton::instance();
-	BOOST_LOG_SEV(log.lg, info) << "Send to pipe:"+ str;
+	BOOST_LOG_SEV(log.lg, info) << "Send to pipe:"+ json_cmd;
 	//initializing security attributes
 	SECURITY_ATTRIBUTES  sa;
 	sa.nLength = sizeof(SECURITY_ATTRIBUTES);
@@ -79,7 +78,7 @@ keychain_app::byte_seq_t SecureModuleWrapper::_startSecureDesktop(const std::str
 		DWORD dwWritten;
 		if (ConnectNamedPipe(transactionPipe, NULL) != FALSE)   // wait for someone to connect to the pipe
 		{
-			std::string trans = str;
+			std::string trans = json_cmd;
 			BOOST_LOG_SEV(log.lg, info) << "Send to pipe: (hardcode)" + trans;
 			trans.push_back('\0');
 			WriteFile(transactionPipe,
@@ -109,54 +108,58 @@ keychain_app::byte_seq_t SecureModuleWrapper::_startSecureDesktop(const std::str
 	if (hPipe == INVALID_HANDLE_VALUE)
 		FC_LIGHT_THROW_EXCEPTION(fc_light::password_input_exception,"Can't receive password: INVALID_HANDLE_VALUE");
 
-    const int MAX_WAIT_TIME = 1000;
-    /*if (WaitForSingleObject(hPipe, MAX_WAIT_TIME) == WAIT_OBJECT_0)
-    {
-        FlushFileBuffers(hPipe);
-        DisconnectNamedPipe(hPipe);
-        CloseHandle(hPipe);
-        throw std::runtime_error("Cannot connect to pipe");
-    }
-    else
-    {*/
-        if (ConnectNamedPipe(hPipe, NULL) != FALSE)   // wait for someone to connect to the pipe
-        {
-            while (ReadFile(hPipe, buffer, sizeof(buffer) - 1, &dwRead, NULL) != FALSE)
-            {
-                buffer[dwRead] = '\0';
-                LPWSTR pDescrOut = NULL;
-                DATA_BLOB DataOut;
-                DataOut.cbData = sizeof(buffer) - 1;
-                DataOut.pbData = (BYTE*)buffer;
-                DATA_BLOB DataVerify;
-                if (CryptUnprotectData(
-                    &DataOut,
-                    &pDescrOut,
-                    NULL,                 // Optional entropy
-                    NULL,                 // Reserved
-                    NULL,        // Optional PromptStruct
-                    CRYPTPROTECT_LOCAL_MACHINE,
-                    &DataVerify))
-                {
-                    //here is decrypted password
-                    //printf("The decrypted data is: %s\n", DataVerify.pbData);
-                    result_pass.resize(DataVerify.cbData);
-                    std::strncpy(result_pass.data(), (char*)DataVerify.pbData, result_pass.size());
-					std::string resPass(result_pass.data());
-					if (resPass.find("cancel_pass_enterance") != -1) {
-						result_pass.resize(0);
-					}
-                    //printf("The description of the data was: %S\n", pDescrOut);
-                }
-                else {
-                    DWORD lastError = GetLastError();
-                }
-            }
-            FlushFileBuffers(hPipe);
-            DisconnectNamedPipe(hPipe);
-            CloseHandle(hPipe);
-		};
+  constexpr int MAX_WAIT_TIME = 1000;
+   
+  if (ConnectNamedPipe(hPipe, NULL) != FALSE)   // wait for someone to connect to the pipe
+  {
+      while (ReadFile(hPipe, buffer, sizeof(buffer) - 1, &dwRead, NULL) != FALSE)
+      {
+          buffer[dwRead] = '\0';
+          LPWSTR pDescrOut = NULL;
+          DATA_BLOB DataOut;
+          DataOut.cbData = sizeof(buffer) - 1;
+          DataOut.pbData = (BYTE*)buffer;
+          DATA_BLOB DataVerify;
+          if (CryptUnprotectData(
+              &DataOut,
+              &pDescrOut,
+              NULL,                 // Optional entropy
+              NULL,                 // Reserved
+              NULL,        // Optional PromptStruct
+              CRYPTPROTECT_LOCAL_MACHINE,
+              &DataVerify))
+          {
+              //here is decrypted password
+              //printf("The decrypted data is: %s\n", DataVerify.pbData);
+              result_pass.resize(DataVerify.cbData);
+              std::strncpy(result_pass.data(), (char*)DataVerify.pbData, result_pass.size());
+		std::string resPass(result_pass.data());
+		if (resPass.find("cancel_pass_enterance") != -1) {
+			result_pass.resize(0);
+		}
+              //printf("The description of the data was: %S\n", pDescrOut);
+          }
+          else {
+              DWORD lastError = GetLastError();
+          }
+      }
+      FlushFileBuffers(hPipe);
+      DisconnectNamedPipe(hPipe);
+      CloseHandle(hPipe);
+	}
 
-	//}
-	return result_pass;
+  std::string result;
+  sm_cmd::secmod_resonse_common response;
+  if (result_pass.empty())
+  {
+    response.etype = sm_cmd::response_te::null;
+    result = fc_light::json::to_pretty_string(fc_light::variant(response));
+  }    
+  else
+  {
+    response.etype = sm_cmd::response_te::password;
+    response.params = result_pass;
+    result = fc_light::json::to_pretty_string(fc_light::variant(response));
+  }    
+	return result;
 }

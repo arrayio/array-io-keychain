@@ -2,6 +2,9 @@
 // Created by roman on 5/14/18.
 //
 
+#include <fc_light/exception/exception.hpp>
+#include <keychain_lib/secmod_parser_cmd.hpp>
+
 #include "sec_mod.hpp"
 
 using namespace keychain_app;
@@ -12,28 +15,35 @@ sec_mod_dummy::sec_mod_dummy()
 sec_mod_dummy::~sec_mod_dummy()
 {}
 
-void sec_mod_dummy::print_mnemonic(const string_list& mnemonic) const
+std::string keychain_app::sec_mod_dummy::exec_cmd(const std::string& json_cmd) const
 {
-}
+  secmod_commands::secmod_parser_f parser;
+  auto etype = parser(json_cmd);
+  int unlock_time = 0;
+  switch (etype)
+  {
+  case secmod_commands::events_te::create_key:
+  case secmod_commands::events_te::sign_hex:
+  case secmod_commands::events_te::sign_hash:
+  case secmod_commands::events_te::remove_key:
+  case secmod_commands::events_te::export_keys:
+  case secmod_commands::events_te::import_keys:
+  case secmod_commands::events_te::unlock:
+  {
+    std::string str = "blank";
+    keychain_app::byte_seq_t pass(str.begin(), str.end());
 
-byte_seq_t sec_mod_dummy::get_passwd_trx(const std::string& raw_trx) const
-{
-  std::string str = "blank";
-  keychain_app::byte_seq_t pass(str.begin(), str.end());
-  return pass;
-}
+    secmod_commands::secmod_resonse_common response;
+    response.etype = secmod_commands::response_te::password;
+    response.params = pass;
+    return fc_light::json::to_pretty_string(fc_light::variant(response));
+  }
+  default:
+  {
+    FC_LIGHT_THROW_EXCEPTION(fc_light::internal_error_exception, "Secmod command is not implemented, etype = %{ETYPE}", ("ETYPE", etype));
+  }
+  }
 
-byte_seq_t sec_mod_dummy::get_passwd_on_create(const std::string& keyname) const
-{
-  std::string str = "blank";
-  keychain_app::byte_seq_t pass(str.begin(), str.end());
-  return pass;
-}
-
-keychain_app::byte_seq_t keychain_app::sec_mod_dummy::get_passwd_unlock(const std::string& keyname, int unlock_time) const
-{
-	std::string str = "blank";
-	keychain_app::byte_seq_t pass(str.begin(), str.end());
-	return pass;
+ 
 }
 

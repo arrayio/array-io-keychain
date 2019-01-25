@@ -245,7 +245,8 @@ enum struct command_te {
   version,
   sign_hex,
   sign_hash,
-  select_key,
+    create,
+    select_key,
   import_cmd,
   export_cmd,
   restore,
@@ -540,7 +541,7 @@ struct keychain_command<command_te::sign_hash> : keychain_command_base
   }
 };
 
-/* TODO: move this function to common code for key manager
+//TODO: move this function to common code for key manager
 template <>
 struct keychain_command<command_te::create>: keychain_command_base
 {
@@ -622,7 +623,7 @@ struct keychain_command<command_te::create>: keychain_command_base
       return fc_light::json::to_string(fc_light::variant(response));
     }
 };
-*/
+
 
 template <>
 struct keychain_command<command_te::list>: keychain_command_base {
@@ -734,6 +735,7 @@ FC_LIGHT_REFLECT_ENUM(
   (version)
   (sign_hex)
   (sign_hash)
+          (create)
   (select_key)
   (import_cmd)
   (export_cmd)
@@ -749,6 +751,7 @@ FC_LIGHT_REFLECT_ENUM(
 
 FC_LIGHT_REFLECT(keychain_app::keychain_command<keychain_app::command_te::sign_hex>::params_t, (chainid)(transaction)(blockchain_type)(public_key)(unlock_time))
 FC_LIGHT_REFLECT(keychain_app::keychain_command<keychain_app::command_te::sign_hash>::params_t, (hash)(sign_type)(public_key))
+FC_LIGHT_REFLECT(keychain_app::keychain_command<keychain_app::command_te::create>::params_t, (keyname)(description)(encrypted)(cipher)(curve))
 FC_LIGHT_REFLECT(keychain_app::keychain_command<keychain_app::command_te::public_key>::params_t, (keyname))
 FC_LIGHT_REFLECT(keychain_app::keychain_command<keychain_app::command_te::set_unlock_time>::params_t, (seconds))
 FC_LIGHT_REFLECT(keychain_app::keychain_command<keychain_app::command_te::unlock>::params_t, (public_key)(unlock_time))

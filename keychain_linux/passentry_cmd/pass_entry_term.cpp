@@ -216,7 +216,7 @@ std::string  pass_entry_term::input_password(const KeySym * map, int socket)
     char name[256] = "Unknown";
     bool first_key = true;
     auto gui = polling(socket);
-//    ChangeKbProperty(dev_info, kbd_atom, device_enabled_prop, dev_cnt, 0);
+    ChangeKbProperty(dev_info, kbd_atom, device_enabled_prop, dev_cnt, 0);
 
     capslock = keyState(XK_Caps_Lock);
     numlock = keyState(XK_Num_Lock);
@@ -257,7 +257,7 @@ std::string  pass_entry_term::input_password(const KeySym * map, int socket)
                             if ( ev[1].code <= 255)
                             {
                                 kbd_id = fd_list[id];
-//                                if (ioctl(kbd_id, EVIOCGRAB, 1) != 0) throw std::runtime_error("cannot get exclusive access to keyboard");
+                                if (ioctl(kbd_id, EVIOCGRAB, 1) != 0) throw std::runtime_error("cannot get exclusive access to keyboard");
                                 break;
                             }
                         }
@@ -355,15 +355,16 @@ std::string  pass_entry_term::input_password(const KeySym * map, int socket)
                     send_gui( mes, socket );
 
                     keychain_app::byte_seq_t vec(password[0].begin(), password[0].end());
-                    const char * strength = FascistCheck(vec.data(), dict);
+                    const char * strength = nullptr;
+                    if (vec.size())   strength = FascistCheck(vec.data(), dict);
                     if (strength)
                     {
-                        auto t = master::cmd<master::cmds::strenght>(false);
+                        auto t = master::cmd<master::cmds::strength>(false);
                         auto mes = fc_light::json::to_string(fc_light::variant(static_cast<const master::cmd_base&>(t)));
                         send_gui( mes, socket );
                     }
                     else{
-                        auto t = master::cmd<master::cmds::strenght>(true);
+                        auto t = master::cmd<master::cmds::strength>(true);
                         auto mes = fc_light::json::to_string(fc_light::variant(static_cast<const master::cmd_base&>(t)));
                         send_gui( mes, socket );
                     }

@@ -104,7 +104,8 @@ enum struct events_te {
   remove_key,
   export_keys,
   import_keys,
-  print_mnemonic
+  print_mnemonic,
+  last = -1,
 };
 
 template<events_te event>

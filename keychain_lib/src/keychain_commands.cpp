@@ -178,7 +178,7 @@ void keychain_base::lock_all_priv_keys()
 
 dev::Secret keychain_base::get_private_key(const dev::Public& public_key, int unlock_time, keychain_base::create_secmod_cmd_f&& create_cmd_func)
 {
-  dev::Secret result;
+  dev::Secret result_secret;
   do
   {
     if(unlock_time == 0)
@@ -197,34 +197,30 @@ dev::Secret keychain_base::get_private_key(const dev::Public& public_key, int un
     }
   } while (false);
   
-  
-  if (!result)
+  auto& keyfiles = keyfile_singleton::instance();
+  auto& keyfile = keyfiles[public_key];
+  if(keyfile.keyinfo.encrypted)
   {
-    auto& keyfiles = keyfile_singleton::instance();
-    auto& keyfile = keyfiles[public_key];
-    if(keyfile.keyinfo.encrypted)
+    auto result = std::move(*(run_secmod_cmd(create_cmd_func(keyfile.keyname))));
+    secmod_commands::secmod_result_parser_f parser;
+    byte_seq_t password;
+    switch (parser(result))
     {
-      auto result = std::move(*(run_secmod_cmd(create_cmd_func(keyfile.keyname))));
-      secmod_commands::secmod_result_parser_f parser;
-      byte_seq_t password;
-      switch (parser(result))
-      {
-      case secmod_commands::response_te::password:
-        password = std::move(parser.params<secmod_commands::response_te::password>());
-        break;
-      default:
-        break;
-      }
-      if (password.empty())
-        FC_LIGHT_THROW_EXCEPTION(fc_light::password_input_exception, "");
-      auto encrypted_data = keyfile.keyinfo.priv_key_data.as<keyfile_format::encrypted_data>();
-      auto& encryptor = encryptor_singleton::instance();
-      auto secret = encryptor.decrypt_private_key(password, encrypted_data);
-      if(unlock_time > 0)
-        key_map.insert(private_key_item(secret, unlock_time));
+    case secmod_commands::response_te::password:
+      password = std::move(parser.params<secmod_commands::response_te::password>());
+      break;
+    default:
+      break;
     }
-  }
-  return result;
+    if (password.empty())
+      FC_LIGHT_THROW_EXCEPTION(fc_light::password_input_exception, "");
+    auto encrypted_data = keyfile.keyinfo.priv_key_data.as<keyfile_format::encrypted_data>();
+    auto& encryptor = encryptor_singleton::instance();
+    result_secret = encryptor.decrypt_private_key(password, encrypted_data);
+    if(unlock_time > 0)
+      key_map.insert(private_key_item(result_secret, unlock_time));
+  }  
+  return result_secret;
 }
 
 }

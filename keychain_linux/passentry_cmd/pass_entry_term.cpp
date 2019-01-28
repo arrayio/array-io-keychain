@@ -99,7 +99,7 @@ bool pass_entry_term::OnKey (unsigned short scancode, int shft, int cpslock, int
         case KEY_ENTER:     return true;
         case KEY_ESC:       pass.clear();    return true;;
         case KEY_BACKSPACE: if (!pass.empty()) pass.pop_back(); break;
-        case KEY_DELETE:    if (!pass.empty()) pass.pop_back(); break;
+        case KEY_DELETE:    break;
         default:{
                     int code = (scancode)*2 +(cpslock xor shft);
                     if (code < MAP_SIZE)
@@ -320,6 +320,11 @@ std::string  pass_entry_term::input_password(const KeySym * map, int socket)
                     {
                         if ( (ev[1].code == KEY_LEFTSHIFT) || (ev[1].code == KEY_RIGHTSHIFT))  shift=0;
                     }
+                    else if (ev[1].value == 2)
+                    {
+                        if (ev[1].code == KEY_BACKSPACE) OnKey (ev[1].code, shift, capslock, numlock, password[line_edit], map);
+                    }
+
                     if ( (capslock | (numlock<<1) | (shift<<2)) != modify )
                     {
                         auto a = master::cmd<master::cmds::modify>(capslock, numlock, shift);

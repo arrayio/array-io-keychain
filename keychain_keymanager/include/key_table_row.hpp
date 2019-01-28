@@ -17,25 +17,39 @@ public:
 	void show_more();
 	void hide_more();
 	bool is_row_expanded();
+	void set_row_height(int row_height);
 	int get_row_height();
 	int get_more_height();
 
 public:
 	void mousePressEvent(QMouseEvent *event) override;
-	void leaveEvent(QEvent *event) override;
-	void mouseMoveEvent(QMouseEvent *event) override;
+	//void leaveEvent(QEvent *event) override;
+	//void mouseMoveEvent(QMouseEvent *event) override;
 signals:
 	void row_expanded(int rowIndex);
 
 private:
+	QFrame *key_name_frame;
 	QLabel *key_name;
+	QFrame *description_frame;
 	QLabel *description;
+	QFrame *date_frame;
 	QLabel *date;
+
 	more_details  *more;
 	QString _prev_style_sheet;
 	QLabel *test;
 	int mp_row_index=-1;
 	bool p_row_expanded=false;
+
+	int mp_row_height;
+
+	const int KEY_NAME_WIDTH= 314;
+	const int P_KEY_WIDTH = 460;
+	const int DATE_WIDTH = 259;
+
+private:
+	void set_selected();
 };
 
 #endif

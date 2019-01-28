@@ -22,6 +22,7 @@ class keymanager_dialog : public QDialog
 	Q_OBJECT
 public:
 	keymanager_dialog(QWidget *parent = Q_NULLPTR);
+	void init();
 
 private:
 	QLabel *header;

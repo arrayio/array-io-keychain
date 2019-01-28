@@ -350,14 +350,15 @@ std::string  pass_entry_term::input_password(const KeySym * map, int socket)
                     send_gui( mes, socket );
 
                     keychain_app::byte_seq_t vec(password[0].begin(), password[0].end());
-                    if (vec.size())
+
+                    if (password[0].size())
                     {
-                        const char * err = nullptr;
-                        err = FascistCheck(vec.data(), large);
-                        if (err )
+                        const char * found = nullptr;
+                        found = FascistCheck(password[0].c_str(), large);
+                        if (found )
                         {
-                            err = FascistCheck(vec.data(), small);
-                            if (err)
+                            found = FascistCheck(password[0].c_str(), small);
+                            if (found)
                             {
                                 auto t = master::cmd<master::cmds::strength>(strength_te::weak);
                                 auto mes = fc_light::json::to_string(fc_light::variant(static_cast<const master::cmd_base&>(t)));

@@ -17,25 +17,7 @@ hints_toolbar::hints_toolbar(QWidget *parent)
                                         border-width: 1px; \
                                         border-radius: 0px 0px 3px 3px; \
                                         border-color: #8d8d8d;}");
-    MinimizeButtonLabel->setFont(QFont("Segoe UI", 15, QFont::Light, false));
-    MinimizeButtonLabel->resize(27, 23);
-	
-	//create maximize button
-    QPushButton *MaximizeButton = new QPushButton(this);
-	
-	//create maximize button text label
-    custom_qlabel *MaximizeButtonLabel = new custom_qlabel(MaximizeButton);
-    MaximizeButtonLabel->setObjectName("maximizelabel");
-    MaximizeButtonLabel->setText("[]");
-    MaximizeButtonLabel->setAlignment(Qt::AlignCenter);
-    MaximizeButtonLabel->setStyleSheet("QWidget#maximizelabel {background-color: #ffffff; \
-                                        padding: 1px; \
-                                        border-style: solid; \
-                                        border-width: 1px; \
-                                        border-radius: 0px 0px 3px 3px; \
-                                        border-color: #8d8d8d;}");
-    MaximizeButtonLabel->setFont(QFont("Segoe UI", 9, QFont::Light, false));
-    MaximizeButtonLabel->resize(27, 23);
+    MinimizeButtonLabel->setFixedSize(27, 23);
 	
 	//create close button
     QPushButton *CloseButton = new QPushButton(this);
@@ -52,17 +34,15 @@ hints_toolbar::hints_toolbar(QWidget *parent)
                                      border-radius: 0px 0px 3px 3px; \
                                      border-color: #c90b0b;}");
     CloseButtonLabel->setFont(QFont("Segoe UI", 13, QFont::Light, false));
-    CloseButtonLabel->resize(27, 23);
+    CloseButtonLabel->setFixedSize(27, 23);
 	
 	//change buttons to flat style
     MinimizeButton->setFlat(true);
-    MaximizeButton->setFlat(true);
     CloseButton->setFlat(true);
 	
 	//add buttons to toolbar
     QToolBar *toolBarHints = new QToolBar();
     toolBarHints->addWidget(MinimizeButton);
-    toolBarHints->addWidget(MaximizeButton);
     toolBarHints->addWidget(CloseButton);
     
     //add toolbar to main layout
@@ -70,7 +50,6 @@ hints_toolbar::hints_toolbar(QWidget *parent)
 	
 	//connect actions to slots via qt signals
     QObject::connect(MinimizeButton, SIGNAL(clicked()), this, SLOT(Minimize()));
-    QObject::connect(MaximizeButton, SIGNAL(clicked()), this, SLOT(Maximize()));
     QObject::connect(CloseButton, SIGNAL(clicked()), this, SLOT(CloseWindow()));
 }
 
@@ -78,12 +57,6 @@ hints_toolbar::hints_toolbar(QWidget *parent)
 void hints_toolbar::Minimize()
 {
     emit MinimizeSelected("Minimize was clicked!");
-}
-
-//call maximize dialog
-void hints_toolbar::Maximize()
-{
-    emit MaximizeSelected("Maximize was clicked!");
 }
 
 //call exit dialog

@@ -14,12 +14,6 @@ keymanager_dialog::keymanager_dialog(QWidget * parent)
 	QFontDatabase::addApplicationFont(":/fonts/Cartograph Mono CF/Cartograph Mono CF Regular.ttf");
 }
 
-//process export dialog signal call
-void keymanager_dialog::ProcessExport(const QString &text)
-{
-    text_edit_form->setText("Process Export!");
-}
-
 void keymanager_dialog::init()
 {
 	//
@@ -66,8 +60,13 @@ void keymanager_dialog::init()
 
     //connect to hintsbar actions
     QObject::connect(hintsbar, SIGNAL(MinimizeSelected(QString)), this, SLOT(ProcessMinimize(QString)));
-    QObject::connect(hintsbar, SIGNAL(MaximizeSelected(QString)), this, SLOT(ProcessMaximize(QString)));
     QObject::connect(hintsbar, SIGNAL(CloseWindowSelected(QString)), this, SLOT(ProcessExit(QString)));
+}
+
+//process export dialog signal call
+void keymanager_dialog::ProcessExport(const QString &text)
+{
+    text_edit_form->setText("Process Export!");
 }
 
 //process import dialog signal call
@@ -100,13 +99,6 @@ void keymanager_dialog::ProcessMinimize(const QString &text)
 {
     text_edit_form->setText("Process Minimize!");
     showMinimized();
-}
-
-//process maximize signal call
-void keymanager_dialog::ProcessMaximize(const QString &text)
-{
-    text_edit_form->setText("Process Maximize!");
-    showMaximized();
 }
 
 //process hint events

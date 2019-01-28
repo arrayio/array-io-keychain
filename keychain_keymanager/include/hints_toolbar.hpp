@@ -18,12 +18,10 @@ public:
 
 private slots:
     void Minimize();
-    void Maximize();
     void CloseWindow();
 
 signals:
     void MinimizeSelected(QString text);
-    void MaximizeSelected(QString text);
     void CloseWindowSelected(QString text);
 };
 

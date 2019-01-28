@@ -45,7 +45,6 @@ public slots:
 	
 	//process hintsbar actions
 	void ProcessMinimize(const QString &text);
-    void ProcessMaximize(const QString &text);
     
 protected:
     //process hint events to control window behavior 

@@ -70,6 +70,7 @@ if(WIN32)
 	   "${wixsrcpath}/CustomInstallDirDlg.wxs"
 	   "${wixsrcpath}/CustomVerifyReadyDlg.wxs"
 	   "${wixsrcpath}/CustomLicenseAgreementDlg.wxs"
+	   "${wixsrcpath}/CustomMaintenanceTypeDlg.wxs"
 	   "${wixsrcpath}/CustomVersionDlg.wxs"
 	   "${wixsrcpath}/en-us.wxl"
 	   "${wixsrcpath}/wsservice_manager.bat"
@@ -175,6 +176,7 @@ if(WIN32)
 					   ${installerpath}/CustomVerifyReadyDlg.wxs
 					   ${installerpath}/basic_components.wxs
 					   ${installerpath}/CustomVersionDlg.wxs
+					   ${installerpath}/CustomMaintenanceTypeDlg.wxs
 					   -dProcessorArchitecture=${TARGET_PLATFORM}
 					   -dUpgradecode=${upgradecode}
 					   -dvcrpath=${VCR_PATH}
@@ -192,6 +194,7 @@ if(WIN32)
 					   ${installerpath}/CustomVerifyReadyDlg.wixobj
 					   ${installerpath}/basic_components.wixobj
 					   ${installerpath}/CustomVersionDlg.wixobj
+					   ${installerpath}/CustomMaintenanceTypeDlg.wixobj
 					   -cultures:en-us -loc ${installerpath}/en-us.wxl 
 					   -out ${installerpath}/keychain-${installerversion}.msi
 					   VERBATIM)

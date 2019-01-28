@@ -357,7 +357,7 @@ struct keychain_command<command_te::sign_hex> : keychain_command_base
     FC_LIGHT_CAPTURE_TYPECHANGE_AND_RETHROW (fc_light::invalid_arg_exception, error, "cannot parse command params")
     
     unit_list_t unit_list;
-    std::array<unsigned char, 65> signature = {0};
+    dev::Signature signature;
     std::vector<unsigned char> chain(32);
     std::vector<unsigned char> raw(params.transaction.length());
     fc_light::variant json;
@@ -419,8 +419,11 @@ struct keychain_command<command_te::sign_hex> : keychain_command_base
         if (chain.size())
           unit_list.push_back(chain);
         unit_list.push_back(raw);
+  
+        std::array<unsigned char, 65> signature_;
+        std::copy(signature.begin(), signature.end(), signature_.begin());
 
-        sign_canonical(signature, get_hash(unit_list, sha2_256_encoder()).data(),(unsigned char *) private_key.data() );
+        sign_canonical(signature_, get_hash(unit_list, sha2_256_encoder()).data(),(unsigned char *) private_key.data() );
         break;
       }
       case blockchain_te::array:
@@ -430,13 +433,13 @@ struct keychain_command<command_te::sign_hex> : keychain_command_base
         unit_list.push_back(raw);
 
         signature = dev::sign(private_key,dev::FixedHash<32>(((byte const*) get_hash(unit_list, dev::openssl::sha3_256_encoder()).data()),
-                                   dev::FixedHash<32>::ConstructFromPointerType::ConstructFromPointer)).asArray();
+                                   dev::FixedHash<32>::ConstructFromPointerType::ConstructFromPointer));
         break;
       }
       case blockchain_te::ethereum:
       {
         auto hash = dev::ethash::sha3_ethash(raw);
-        signature = dev::sign(private_key,hash).asArray();
+        signature = dev::sign(private_key,hash);
         break;
       }
       case blockchain_te::bitcoin:
@@ -447,7 +450,7 @@ struct keychain_command<command_te::sign_hex> : keychain_command_base
         unit_list.push_back(hash.asBytes());
         auto hash2 = get_hash(unit_list, sha2_256_encoder());
         signature = dev::sign(private_key,dev::FixedHash<32>(((byte const*) hash2.data()),
-                                   dev::FixedHash<32>::ConstructFromPointerType::ConstructFromPointer)).asArray();
+                                   dev::FixedHash<32>::ConstructFromPointerType::ConstructFromPointer));
         break;
       }
       default:
@@ -455,11 +458,14 @@ struct keychain_command<command_te::sign_hex> : keychain_command_base
                                  "Unknown blockchain_type, blockchain = ${type}", ("type", params.blockchain_type));
     }
     
+    if (!signature)
+      FC_LIGHT_THROW_EXCEPTION(fc_light::internal_error_exception, "Resulting signature is null");
+    
     keyfiles.update(params.public_key, [](auto& keyfile)
     {
       keyfile.usage_time = fc_light::time_point::now();
     });
-    json_response response(to_hex(signature.data(), signature.size()).c_str(), id);
+    json_response response(fc_light::variant(signature), id);
     fc_light::variant res(response);
     return fc_light::json::to_string(res);
   }
@@ -513,19 +519,21 @@ struct keychain_command<command_te::sign_hash> : keychain_command_base
     auto trans_len = keychain_app::from_hex(params.hash, hash.data(), hash.size());
     hash.resize(trans_len);
 
-    std::array<unsigned char, 65> signature = {0};
+    dev::Signature signature;
 
     switch (params.sign_type)
     {
       case sign_te::VRS_canonical:
       {
-        sign_canonical(signature, hash.data(),(unsigned char *) private_key.data() );
+        std::array<unsigned char, 65> signature_;
+        std::copy(signature.begin(), signature.end(), signature_.begin());
+        sign_canonical(signature_, hash.data(),(unsigned char *) private_key.data() );
         break;
       }
       default:
       {
         signature = dev::sign(private_key, dev::FixedHash<32>(((byte const*) hash.data()),
-                                   dev::FixedHash<32>::ConstructFromPointerType::ConstructFromPointer)).asArray();
+                                   dev::FixedHash<32>::ConstructFromPointerType::ConstructFromPointer));
         break;
       }
     }
@@ -534,7 +542,7 @@ struct keychain_command<command_te::sign_hash> : keychain_command_base
     {
       keyfile.usage_time = fc_light::time_point::now();
     });
-    json_response response(to_hex(signature.data(), signature.size()).c_str(), id);
+    json_response response(fc_light::variant(signature), id);
     fc_light::variant res(response);
     return fc_light::json::to_string(res);
   }

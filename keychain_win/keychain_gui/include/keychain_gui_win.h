@@ -68,6 +68,8 @@ private:
 	void _roundCorners();
 	void _disableSignButton();
 
+  void _initialize_hack();
+
 protected:
 	void keyPressEvent(QKeyEvent *event) override;
 	void closeEvent(QCloseEvent * event) override;

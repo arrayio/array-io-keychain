@@ -133,6 +133,7 @@ struct EventHandler < sm_cmd::events_te::sign_hex > : EventHandlerBase
       gui_dlg.element->SetPosition(0, gui_dlg.mEndControlPosition, keychain_gui_win::FIELD_WIDTH);
       gui_dlg.mEndControlPosition += 10;
       gui_dlg.mEndControlPosition = gui_dlg.mEndControlPosition + gui_dlg.element->GetCurrentHeight();
+      gui_dlg._initialize_hack();
       gui_dlg.show();
     }
     FC_LIGHT_CAPTURE_AND_RETHROW()
@@ -182,6 +183,7 @@ struct EventHandler < sm_cmd::events_te::sign_hash> : EventHandlerBase
       gui_dlg.element->SetPosition(0, gui_dlg.mEndControlPosition, keychain_gui_win::FIELD_WIDTH);
       gui_dlg.mEndControlPosition += 10;
       gui_dlg.mEndControlPosition = gui_dlg.mEndControlPosition + gui_dlg.element->GetCurrentHeight();
+      gui_dlg._initialize_hack();
       gui_dlg.show();
     }
     FC_LIGHT_CAPTURE_AND_RETHROW()
@@ -230,7 +232,7 @@ struct EventHandler < sm_cmd::events_te::unlock> : EventHandlerBase
     gui_dlg.OKButton->setWindowFlags(Qt::FramelessWindowHint);
     gui_dlg.setFixedHeight(gui_dlg.mEndControlPosition + gui_dlg.OKButton->height() + 15);
     gui_dlg.OKButton->move(gui_dlg.width() - 109, gui_dlg.mEndControlPosition);
-
+    gui_dlg._initialize_hack();
     gui_dlg.show();
   }
 };

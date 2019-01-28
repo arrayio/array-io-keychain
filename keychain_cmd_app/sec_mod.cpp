@@ -17,6 +17,8 @@ sec_mod_dummy::~sec_mod_dummy()
 
 std::string keychain_app::sec_mod_dummy::exec_cmd(const std::string& json_cmd) const
 {
+  auto& log = logger_singleton::instance();
+  BOOST_LOG_SEV(log.lg, info) << "Send to secmod dummy:" + json_cmd;
   secmod_commands::secmod_parser_f parser;
   auto etype = parser(json_cmd);
   int unlock_time = 0;

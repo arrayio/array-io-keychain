@@ -49,7 +49,7 @@ menu_toolbar::menu_toolbar(QWidget *parent)
     Aboutbuttonlabel->setText("About");
     Aboutbuttonlabel->setAlignment(Qt::AlignCenter);
     Aboutbuttonlabel->setStyleSheet("QWidget#aboutlabel {background-color: #ffffff; \
-                                    text-align: center;}");
+                                     text-align: center;}");
     Aboutbuttonlabel->setFont(QFont("Segoe UI Semibold", 10, QFont::Normal, false));
 
     //create key button

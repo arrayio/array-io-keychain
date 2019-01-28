@@ -1,4 +1,4 @@
-#include "hints_toolbar.hpp"
+﻿#include "hints_toolbar.hpp"
 
 hints_toolbar::hints_toolbar(QWidget *parent)
 	: QToolBar(parent)
@@ -9,7 +9,7 @@ hints_toolbar::hints_toolbar(QWidget *parent)
 	//create minimize button text label
     custom_qlabel *MinimizeButtonLabel = new custom_qlabel(MinimizeButton);
     MinimizeButtonLabel->setObjectName("minimizelabel");
-    MinimizeButtonLabel->setText("-");
+    MinimizeButtonLabel->setText(QStringLiteral("–")); //U + 2013
     MinimizeButtonLabel->setAlignment(Qt::AlignCenter);
     MinimizeButtonLabel->setStyleSheet("QWidget#minimizelabel {background-color: #ffffff; \
                                         padding: 1px; \
@@ -17,8 +17,8 @@ hints_toolbar::hints_toolbar(QWidget *parent)
                                         border-width: 1px; \
                                         border-radius: 0px 0px 3px 3px; \
                                         border-color: #8d8d8d;}");
-    MinimizeButtonLabel->setFont(QFont("Segoe UI Semibold", 10, QFont::Normal, false));
-    MinimizeButtonLabel->resize(23, 23);
+    MinimizeButtonLabel->setFont(QFont("Segoe UI", 15, QFont::Light, false));
+    MinimizeButtonLabel->resize(27, 23);
 	
 	//create maximize button
     QPushButton *MaximizeButton = new QPushButton(this);
@@ -34,8 +34,8 @@ hints_toolbar::hints_toolbar(QWidget *parent)
                                         border-width: 1px; \
                                         border-radius: 0px 0px 3px 3px; \
                                         border-color: #8d8d8d;}");
-    MaximizeButtonLabel->setFont(QFont("Segoe UI Semibold", 10, QFont::Normal, false));
-    MaximizeButtonLabel->resize(23, 23);
+    MaximizeButtonLabel->setFont(QFont("Segoe UI", 9, QFont::Light, false));
+    MaximizeButtonLabel->resize(27, 23);
 	
 	//create close button
     QPushButton *CloseButton = new QPushButton(this);
@@ -43,16 +43,16 @@ hints_toolbar::hints_toolbar(QWidget *parent)
 	//create close button text label
     custom_qlabel *CloseButtonLabel = new custom_qlabel(CloseButton);
     CloseButtonLabel->setObjectName("closelabel");
-    CloseButtonLabel->setText("x");
+    CloseButtonLabel->setText("X");
     CloseButtonLabel->setAlignment(Qt::AlignCenter);
     CloseButtonLabel->setStyleSheet("QWidget#closelabel {background-color: #c90b0b; \
                                      padding: 1px; \
                                      border-style: solid; \
                                      border-width: 1px; \
                                      border-radius: 0px 0px 3px 3px; \
-                                     border-color: #8d8d8d;}");
-    CloseButtonLabel->setFont(QFont("Segoe UI Semibold", 10, QFont::Normal, false));
-    CloseButtonLabel->resize(23, 23);
+                                     border-color: #c90b0b;}");
+    CloseButtonLabel->setFont(QFont("Segoe UI", 13, QFont::Light, false));
+    CloseButtonLabel->resize(27, 23);
 	
 	//change buttons to flat style
     MinimizeButton->setFlat(true);

@@ -29,18 +29,11 @@ void keymanager_dialog::init()
 	header->setStyleSheet("background-color:rgb(255,255,255);");
 	//define logo picture
 	QPixmap logo(":/keymanager/keychain_logo.png");
-	logo = logo.scaled(100, 38, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+	logo = logo.scaled(80, 27, Qt::KeepAspectRatio, Qt::SmoothTransformation);
 	logoLabel = new QLabel(this);
 	logoLabel->setStyleSheet("background:transparent;");
 	logoLabel->setPixmap(logo);
-	logoLabel->move(811, 4);
-	//create logo title "KeyManager
-	logoTitle = new QLabel("KeyManager", this);
-	logoTitle->move(884, 20);
-	QFont font("Cartograph Mono CF");
-	font.setPixelSize(15);
-	logoTitle->setFont(font);
-	logoTitle->setStyleSheet("background:transparent;");
+	logoLabel->move(32, 14);
 	//end dialog initialization
 
 	keys_table = new keychain_table(this);
@@ -51,19 +44,30 @@ void keymanager_dialog::init()
 	//create menu toolbar 
 	toolbar = new menu_toolbar(this);
 	toolbar->setStyleSheet("font:\"Segoe UI\";background:transparent;");
-	toolbar->move(27, 10);
+	toolbar->move(80, 15);
 
 	//create text-edit as temporary GUI element
 	text_edit_form = new QTextEdit(this);
 	text_edit_form->setFixedSize(100, 30);
 	text_edit_form->setStyleSheet("font:10px \"Segoe UI\";");
-	text_edit_form->move(210, 10);
+	text_edit_form->move(250, 10);
 
 	QObject::connect(toolbar, SIGNAL(ExportSelected(QString)), this, SLOT(ProcessExport(QString)));
 	QObject::connect(toolbar, SIGNAL(ImportSelected(QString)), this, SLOT(ProcessImport(QString)));
 	QObject::connect(toolbar, SIGNAL(AboutSelected(QString)), this, SLOT(ProcessAbout(QString)));
 	QObject::connect(toolbar, SIGNAL(StatusSelected(QString)), this, SLOT(ProcessStatus(QString)));
 	QObject::connect(toolbar, SIGNAL(ExitSelected(QString)), this, SLOT(ProcessExit(QString)));
+
+    //create window hints toolbar 
+    hintsbar = new hints_toolbar(this);
+    hintsbar->setStyleSheet("font:\"Segoe UI\";background:transparent;");
+    QPoint hints_location = mapToGlobal(QPoint(size().width(), size().height())) - QPoint(hintsbar->size().width(), this->size().height());
+    hintsbar->move(hints_location);
+
+    //connect to hintsbar actions
+    QObject::connect(hintsbar, SIGNAL(MinimizeSelected(QString)), this, SLOT(ProcessMinimize(QString)));
+    QObject::connect(hintsbar, SIGNAL(MaximizeSelected(QString)), this, SLOT(ProcessMaximize(QString)));
+    QObject::connect(hintsbar, SIGNAL(CloseWindowSelected(QString)), this, SLOT(ProcessExit(QString)));
 }
 
 //process import dialog signal call

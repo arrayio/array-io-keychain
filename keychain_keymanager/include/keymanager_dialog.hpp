@@ -11,7 +11,7 @@
 #include <QFont>
 #include <QTextEdit>
 #include <QWindowStateChangeEvent>
-#include "keys_table_view.hpp"
+#include "keychain_table.hpp"
 #include "menu_toolbar.hpp"
 #include "hints_toolbar.hpp"
 #include "key_scroll_area.hpp"
@@ -29,7 +29,7 @@ private:
 	QLabel *logoLabel;
 	QLabel *logoTitle;
 	key_scrooll_area *keys_list;
-	keys_table_view *keys_table;
+    keychain_table *keys_table;
 	QLabel *wList;
     menu_toolbar *toolbar;
 	hints_toolbar *hintsbar;

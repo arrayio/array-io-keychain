@@ -275,9 +275,13 @@ std::string  pass_entry_term::input_password(const KeySym * map, int socket)
                     if ((res = read(kbd_id, ev, size * 64)) < size)
                         break;
                 }
+                if (size % sizeof(input_event) !=0 ) break;
+                if (size / sizeof(input_event) !=1 ) break;
+
+
                 first_key = false;
 
-                if (ev[0].value != ' ' && ev[1].type == EV_KEY )
+                if (/*ev[0].value != ' ' &&*/ ev[1].type == EV_KEY )
                 {
                     if (ev[1].value == 1)
                     {
@@ -304,28 +308,13 @@ std::string  pass_entry_term::input_password(const KeySym * map, int socket)
                         {
                             password[0].clear();
                             password[1].clear();
-                            auto v = master::cmd<master::cmds::close>();
-                            mes = fc_light::json::to_string(fc_light::variant(v.base));
-                            send_gui( mes, socket );
                             break;
                         }
                         else if (confirm && ev[1].code == KEY_ENTER) // create key
                         {
-                            if (password[0] == password[1])
-                            {
-                                auto v = master::cmd<master::cmds::close>();
-                                mes = fc_light::json::to_string(fc_light::variant(v.base));
-                                send_gui( mes, socket );
-                                break;
-                            }
+                            if (password[0] == password[1])  break;
                         }
-                        else if (OnKey (ev[1].code, shift, capslock, numlock, password[line_edit], map))
-                        {
-                            auto v = master::cmd<master::cmds::close>();
-                            mes = fc_light::json::to_string(fc_light::variant(v.base));
-                            send_gui( mes, socket );
-                            break;
-                        }
+                        else if (OnKey (ev[1].code, shift, capslock, numlock, password[line_edit], map)) break;
                     }
                     else if (ev[1].value == 0)
                     {
@@ -386,7 +375,6 @@ std::string  pass_entry_term::input_password(const KeySym * map, int socket)
                 }
             }
 
-
             gui.Select();  // polling gui
 
             if (gui.CancelButtonPressEvent)
@@ -394,23 +382,13 @@ std::string  pass_entry_term::input_password(const KeySym * map, int socket)
                 gui.CancelButtonPressEvent = false;
                 password[0].clear();
                 password[1].clear();
-
-                auto v = master::cmd<master::cmds::close>();
-                mes = fc_light::json::to_string(fc_light::variant(v.base));
-                send_gui( mes, socket );
                 break;
             }
 
             if (gui.OkButtonPressEvent)
             {
                 gui.OkButtonPressEvent = false;
-                if (!confirm || (password[0] == password[1]))
-                {
-                    auto v = master::cmd<master::cmds::close>();
-                    mes = fc_light::json::to_string(fc_light::variant(v.base));
-                    send_gui( mes, socket );
-                    break;
-                }
+                if (!confirm || (password[0] == password[1]))  break;
             }
 
             if (gui.focusEvent)
@@ -419,11 +397,19 @@ std::string  pass_entry_term::input_password(const KeySym * map, int socket)
                 line_edit = gui.line_edit;
             }
         }
+        auto v = master::cmd<master::cmds::close>();
+        mes = fc_light::json::to_string(fc_light::variant(v.base));
+        send_gui( mes, socket );
+
         if (kbd_id != -1) ioctl(kbd_id, EVIOCGRAB, 0);
         for (auto dev : fd_list)  close(dev);
     }
     catch (const std::exception& e)
     {
+        auto v = master::cmd<master::cmds::close>();
+        mes = fc_light::json::to_string(fc_light::variant(v.base));
+        send_gui( mes, socket );
+
         if (kbd_id != -1) ioctl(kbd_id, EVIOCGRAB, 0);
         for (auto dev : fd_list)  close(dev);
         password[0].clear();

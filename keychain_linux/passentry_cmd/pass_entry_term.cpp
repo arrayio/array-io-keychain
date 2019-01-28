@@ -365,19 +365,19 @@ std::string  pass_entry_term::input_password(const KeySym * map, int socket)
                             err = FascistCheck(vec.data(), small);
                             if (err)
                             {
-                                auto t = master::cmd<master::cmds::strength>(master::strength_lev::weak);
+                                auto t = master::cmd<master::cmds::strength>(strength_te::weak);
                                 auto mes = fc_light::json::to_string(fc_light::variant(static_cast<const master::cmd_base&>(t)));
                                 send_gui( mes, socket );
                             }
                             else
                             {
-                                auto t = master::cmd<master::cmds::strength>(master::strength_lev::middle);
+                                auto t = master::cmd<master::cmds::strength>(strength_te::middle);
                                 auto mes = fc_light::json::to_string(fc_light::variant(static_cast<const master::cmd_base&>(t)));
                                 send_gui( mes, socket );
                             }
                         }
                         else{ //strong
-                            auto t = master::cmd<master::cmds::strength>(master::strength_lev::strong);
+                            auto t = master::cmd<master::cmds::strength>(strength_te::strong);
                             auto mes = fc_light::json::to_string(fc_light::variant(static_cast<const master::cmd_base&>(t)));
                             send_gui( mes, socket );
                         }

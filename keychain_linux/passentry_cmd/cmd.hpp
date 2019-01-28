@@ -18,6 +18,7 @@
 #include <boost/hana/for_each.hpp>
 #include <boost/hana/size.hpp>
 #include "polling.hpp"
+#include "../passentry_gui/include/password_strength.h"
 
 namespace  slave {
     enum struct cmds {unknown = 0, ok, cancel, focus, expert_mode, last}; //from gui
@@ -112,7 +113,6 @@ namespace  slave {
 }
 
 namespace  master {
-    enum struct strength_lev {unknown=0, weak, middle, strong, last };
     enum struct cmds {unknown = 0, rawtrx, close, modify, length, create, unlock, check, focus, close_expert_mode, strength, last};
 
     struct cmd_base {
@@ -219,13 +219,13 @@ namespace  master {
 
     template<>
     struct cmd<cmds::strength> : cmd_base{
-        cmd(master::strength_lev res): cmd_base(), strength_param(res){
+        cmd(strength_te res): cmd_base(), strength_param(res){
             cmd_base::cmd = cmds::strength;
             params = fc_light::variant(strength_param);
         };
         struct params_t {
-            params_t(master::strength_lev res_):res(res_) {}
-            master::strength_lev  res;
+            params_t(strength_te res_):res(res_) {}
+            strength_te  res;
         } strength_param;
     };
 }
@@ -248,6 +248,6 @@ FC_LIGHT_REFLECT(slave::cmd_common, (cmd)(params))
 FC_LIGHT_REFLECT(slave::cmd<slave::cmds::focus>::params_t, (line_edit))
 FC_LIGHT_REFLECT(slave::cmd<slave::cmds::expert_mode>::params_t, (enable))
 
-FC_LIGHT_REFLECT_ENUM(master::strength_lev, (unknown)(weak)(middle)(strong)(last))
+FC_LIGHT_REFLECT_ENUM(strength_te, (unknown)(weak)(middle)(strong)(last))
 
 #endif //KEYCHAINAPP_CMD_H

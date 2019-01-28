@@ -191,7 +191,7 @@ namespace slave
         cmd() : cmd_base(cmds::strength) {};
         virtual ~cmd() {};
         struct params {
-            int res;
+            strength_te res;
         };
         using params_t = params;
         virtual void operator()(keychain_gui_win& w, const fc_light::variant& v) const override {

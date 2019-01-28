@@ -96,23 +96,23 @@ void PasswordEnterElement::SetLabel(QString labelValue)
 	label->setText(labelValue);
 }
 
-void PasswordEnterElement::checkStrength(int strength)
+void PasswordEnterElement::checkStrength(strength_te strength)
 {
 	switch (strength)
 	{
-		case 1:
+	    case strength_te::weak:
 		{
 			description->setStyleSheet("font:10px \"Segoe UI\";background:transparent;color:rgb(158,37,17);");
 			value->setStyleSheet("font:16px \"Segoe UI\";background-color:rgb(230,201,201);border-style:solid;border-width:1px;border-radius:4px;border-color:rgb(158,37,17);");
 			break;
 		}
-		case 2:
+		case strength_te::middle:
 		{
 			description->setStyleSheet("font:10px \"Segoe UI\";background:transparent;color:rgb(255,142,4);");
 			value->setStyleSheet("font:16px \"Segoe UI\";background-color:rgb(240,230,180);border-style:solid;border-width:1px;border-radius:4px;border-color:rgb(255,142,4);");
 			break;
 		}
-		case 3:
+		case strength_te::strong:
 		{
 			description->setStyleSheet("font:10px \"Segoe UI\";background:transparent;color:rgb(82,172,75);");
 			value->setStyleSheet("font:16px \"Segoe UI\";background-color:rgb(195,231,192);border-style:solid;border-width:1px;border-radius:4px;border-color:rgb(82,172,75);");

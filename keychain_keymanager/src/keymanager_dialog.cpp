@@ -43,7 +43,7 @@ keymanager_dialog::keymanager_dialog(QWidget * parent)
     text_edit_form = new QTextEdit(this);
     text_edit_form->setFixedSize(100, 30);
     text_edit_form->setStyleSheet("font:10px \"Segoe UI\";");
-    text_edit_form->move(230, 10);
+    text_edit_form->move(250, 10);
 
     //connect to toolbar actions
     QObject::connect(toolbar, SIGNAL(ExportSelected(QString)), this, SLOT(ProcessExport(QString)));

@@ -32,9 +32,10 @@ menu_toolbar::menu_toolbar(QWidget *parent)
 
     //create file button text label
     custom_qlabel *FileButtonLabel = new custom_qlabel(FileButton);
+    FileButtonLabel->setObjectName("filelabel");
     FileButtonLabel->setText("File");
     FileButtonLabel->setAlignment(Qt::AlignCenter);
-    FileButtonLabel->setStyleSheet("QWidget > QLabel {background-color: #ffffff; \
+    FileButtonLabel->setStyleSheet("QWidget#filelabel {background-color: #ffffff; \
                                     text-align: center;}");
     FileButtonLabel->setFont(QFont("Segoe UI Semibold", 10, QFont::Normal, false));
     
@@ -44,9 +45,10 @@ menu_toolbar::menu_toolbar(QWidget *parent)
 
     //create about button text label
     custom_qlabel *Aboutbuttonlabel = new custom_qlabel(AboutButton);
+    FileButtonLabel->setObjectName("aboutlabel");
     Aboutbuttonlabel->setText("About");
     Aboutbuttonlabel->setAlignment(Qt::AlignCenter);
-    Aboutbuttonlabel->setStyleSheet("QWidget > QLabel {background-color: #ffffff; \
+    Aboutbuttonlabel->setStyleSheet("QWidget#aboutlabel {background-color: #ffffff; \
                                     text-align: center;}");
     Aboutbuttonlabel->setFont(QFont("Segoe UI Semibold", 10, QFont::Normal, false));
 
@@ -56,9 +58,10 @@ menu_toolbar::menu_toolbar(QWidget *parent)
 
     //create key button text label
     custom_qlabel *Keybuttonlabel = new custom_qlabel(KeyButton);
+    FileButtonLabel->setObjectName("keylabel");
     Keybuttonlabel->setText("K");
     Keybuttonlabel->setAlignment(Qt::AlignCenter);
-    Keybuttonlabel->setStyleSheet("QWidget > QLabel {background-color: #ffffff; \
+    Keybuttonlabel->setStyleSheet("QWidget#keylabel {background-color: #ffffff; \
                                     text-align: center;}");
     Keybuttonlabel->setFont(QFont("Segoe UI Semibold", 10, QFont::Normal, false));
     

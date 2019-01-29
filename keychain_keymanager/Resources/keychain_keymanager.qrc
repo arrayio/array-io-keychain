@@ -4,6 +4,7 @@
         <file>srch_icon.png</file>
         <file>tbl_title_back.png</file>
         <file>minimize_btn_icon.png</file>
+        <file>maximize_btn_icon.png</file>
         <file>close_btn_icon.png</file>
         <file>tbr_key_icon.png</file>
     </qresource>

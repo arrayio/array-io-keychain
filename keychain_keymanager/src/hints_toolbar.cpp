@@ -8,41 +8,64 @@ hints_toolbar::hints_toolbar(QWidget *parent)
 	
 	//create minimize button text label
     custom_qlabel *MinimizeButtonLabel = new custom_qlabel(MinimizeButton);
-    MinimizeButtonLabel->setObjectName("minimizelabel");
     MinimizeButtonLabel->setText(QStringLiteral("–")); //U + 2013
     MinimizeButtonLabel->setAlignment(Qt::AlignCenter);
-    MinimizeButtonLabel->setStyleSheet("QWidget#minimizelabel {background-color: #ffffff; \
-                                        padding: 1px; \
-                                        border-style: solid; \
-                                        border-width: 1px; \
-                                        border-radius: 0px 0px 3px 3px; \
-                                        border-color: #8d8d8d;}");
-    MinimizeButtonLabel->setFixedSize(27, 23);
-	
+
+    //set fixed size to make "border" frame equal to parent pushbutton frame
+    MinimizeButtonLabel->setFixedSize(30, 20);
+
+    //set flexy transformed pixmap for minimize button
+    QPixmap minimize_btn_logo(":/keymanager/minimize_btn_icon.png");
+    minimize_btn_logo = minimize_btn_logo.scaled(30, 20, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+    MinimizeButton->setIcon(minimize_btn_logo);
+    MinimizeButton->setIconSize(QSize(30, 20));
+    MinimizeButton->setFixedSize(30, 20);
+
+    //create maximize button
+    QPushButton *MaximizeButton = new QPushButton(this);
+
+    //create maximize button text label
+    custom_qlabel *MaximizeButtonLabel = new custom_qlabel(MaximizeButton);
+    MaximizeButtonLabel->setAlignment(Qt::AlignCenter);
+
+    //set fixed size to make "border" frame equal to parent pushbutton frame
+    MaximizeButtonLabel->setFixedSize(30, 20);
+
+    //set flexy transformed pixmap for maximize button
+    QPixmap maximize_btn_logo(":/keymanager/maximize_btn_icon.png");
+    maximize_btn_logo = maximize_btn_logo.scaled(30, 20, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+    MaximizeButton->setIcon(maximize_btn_logo);
+    MaximizeButton->setIconSize(QSize(30, 20));
+    MaximizeButton->setFixedSize(30, 20);
+
 	//create close button
     QPushButton *CloseButton = new QPushButton(this);
 	
 	//create close button text label
     custom_qlabel *CloseButtonLabel = new custom_qlabel(CloseButton);
-    CloseButtonLabel->setObjectName("closelabel");
-    CloseButtonLabel->setText("X");
-    CloseButtonLabel->setAlignment(Qt::AlignCenter);
-    CloseButtonLabel->setStyleSheet("QWidget#closelabel {background-color: #c90b0b; \
-                                     padding: 1px; \
-                                     border-style: solid; \
-                                     border-width: 1px; \
-                                     border-radius: 0px 0px 3px 3px; \
-                                     border-color: #c90b0b;}");
+    CloseButtonLabel->setText("x");
+    CloseButtonLabel->setAlignment(Qt::AlignCenter | Qt::AlignVCenter);
     CloseButtonLabel->setFont(QFont("Segoe UI", 13, QFont::Light, false));
-    CloseButtonLabel->setFixedSize(27, 23);
+
+    //set fixed size to make "border" frame equal to parent pushbutton frame
+    CloseButtonLabel->setFixedSize(30, 20);
+
+    //set flexy transformed pixmap for close button
+    QPixmap close_btn_logo(":/keymanager/close_btn_icon.png");
+    close_btn_logo = close_btn_logo.scaled(30, 20, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+    CloseButton->setIcon(close_btn_logo);
+    CloseButton->setIconSize(QSize(30, 20));
+    CloseButton->setFixedSize(30, 20);
 	
 	//change buttons to flat style
     MinimizeButton->setFlat(true);
+    MaximizeButton->setFlat(true);
     CloseButton->setFlat(true);
 	
 	//add buttons to toolbar
     QToolBar *toolBarHints = new QToolBar();
     toolBarHints->addWidget(MinimizeButton);
+    toolBarHints->addWidget(MaximizeButton);
     toolBarHints->addWidget(CloseButton);
     
     //add toolbar to main layout

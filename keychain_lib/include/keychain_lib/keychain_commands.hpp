@@ -524,8 +524,8 @@ struct keychain_command<command_te::sign_hash> : keychain_command_base
       case sign_te::VRS_canonical:
       {
         std::array<unsigned char, 65> signature_;
-        std::copy(signature.begin(), signature.end(), signature_.begin());
         sign_canonical(signature_, hash.data(),(unsigned char *) private_key.data() );
+        signature = dev::Signature(signature_.data(), dev::Signature::ConstructFromPointer);
         break;
       }
       default:

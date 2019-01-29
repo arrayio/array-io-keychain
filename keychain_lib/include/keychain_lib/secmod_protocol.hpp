@@ -103,6 +103,7 @@ enum struct events_te {
   sign_hex,
   sign_hash,
   unlock,
+  edit_key,
   remove_key,
   export_keys,
   import_keys,
@@ -169,6 +170,19 @@ struct secmod_event<events_te::unlock>
     int unlock_time;
   };
   
+  using params_t = params;
+};
+
+template<>
+struct secmod_event<events_te::edit_key>
+{
+  struct params
+  {
+    params() : unlock_time(0) {}
+    std::string keyname;
+    int unlock_time;
+  };
+
   using params_t = params;
 };
 
@@ -244,7 +258,7 @@ struct secmod_resonse_common
 
 FC_LIGHT_REFLECT_ENUM(keychain_app::secmod_commands::blockchain_secmod_te, (unknown)(ethereum)(bitcoin)(ethereum_swap))
 FC_LIGHT_REFLECT_ENUM(keychain_app::secmod_commands::events_te,
-                      (unknown)(create_key)(sign_hex)(sign_hash)(unlock)(remove_key)(export_keys)(import_keys)(print_mnemonic))
+                      (unknown)(create_key)(sign_hex)(sign_hash)(unlock)(edit_key)(remove_key)(export_keys)(import_keys)(print_mnemonic))
 FC_LIGHT_REFLECT_ENUM(keychain_app::secmod_commands::response_te, (null)(password)(boolean))
 
 
@@ -252,6 +266,7 @@ FC_LIGHT_REFLECT(keychain_app::secmod_commands::secmod_event<keychain_app::secmo
 FC_LIGHT_REFLECT(keychain_app::secmod_commands::secmod_event<keychain_app::secmod_commands::events_te::sign_hex>::params_t, (keyname)(is_parsed)(blockchain)(unlock_time)(trx_view))
 FC_LIGHT_REFLECT(keychain_app::secmod_commands::secmod_event<keychain_app::secmod_commands::events_te::sign_hash>::params_t, (keyname)(from)(hash))
 FC_LIGHT_REFLECT(keychain_app::secmod_commands::secmod_event<keychain_app::secmod_commands::events_te::unlock>::params_t, (keyname)(unlock_time))
+FC_LIGHT_REFLECT(keychain_app::secmod_commands::secmod_event<keychain_app::secmod_commands::events_te::edit_key>::params_t, (keyname)(unlock_time))
 FC_LIGHT_REFLECT(keychain_app::secmod_commands::secmod_event<keychain_app::secmod_commands::events_te::remove_key>::params_t, (keyname))
 
 FC_LIGHT_REFLECT(keychain_app::secmod_commands::ethereum_trx_t, (nonce)(gasPrice)(gas)(to)(value)(data)(chainid))

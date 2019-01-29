@@ -42,7 +42,7 @@ std::string SecureModuleWrapper::exec_cmd(const std::string& json_cmd) const
 	HANDLE hPipe;
 	char buffer[1024];
 	DWORD dwRead;
-	
+#if 0
 	HANDLE transactionPipe;
 
 	auto& log = logger_singleton::instance();
@@ -147,8 +147,9 @@ std::string SecureModuleWrapper::exec_cmd(const std::string& json_cmd) const
       DisconnectNamedPipe(hPipe);
       CloseHandle(hPipe);
 	}
-
+#endif
   std::string result;
+  result_pass = { 'b', 'l', 'a', 'n', 'k' };
   sm_cmd::secmod_resonse_common response;
   if (result_pass.empty())
   {

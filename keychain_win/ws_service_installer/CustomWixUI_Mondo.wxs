@@ -47,13 +47,16 @@ Patch dialog sequence:
 			<DialogRef Id="CustomLicenseAgreementDlg" />
 			<DialogRef Id="CustomInstallDirDlg" />
 			<DialogRef Id="CustomVerifyReadyDlg" />
+			<DialogRef Id="CustomVersionDlg" />
+			<DialogRef Id="CustomMaintenanceTypeDlg" />
 
 			<Publish Dialog="BrowseDlg" Control="OK" Event="DoAction" Value="WixUIValidatePath" Order="3">1</Publish>
             <Publish Dialog="BrowseDlg" Control="OK" Event="SpawnDialog" Value="InvalidDirDlg" Order="4"><![CDATA[NOT WIXUI_DONTVALIDATEPATH AND WIXUI_INSTALLDIR_VALID<>"1"]]></Publish>
 
             <Publish Dialog="ExitDialog" Control="Finish" Event="EndDialog" Value="Return" Order="999">1</Publish>
 
-            <Publish Dialog="WelcomeDlg" Control="Next" Event="NewDialog" Value="CustomLicenseAgreementDlg">NOT Installed</Publish>
+			<Publish Dialog="WelcomeDlg" Control="Next" Event="NewDialog" Value="CustomVersionDlg">PREVIOUSVERSIONSINSTALLED</Publish>
+            <Publish Dialog="WelcomeDlg" Control="Next" Event="NewDialog" Value="CustomLicenseAgreementDlg">NOT Installed AND NOT PREVIOUSVERSIONSINSTALLED</Publish>
             <Publish Dialog="WelcomeDlg" Control="Next" Event="NewDialog" Value="CustomVerifyReadyDlg">Installed AND PATCH</Publish>
 
             <Publish Dialog="CustomLicenseAgreementDlg" Control="Back" Event="NewDialog" Value="WelcomeDlg">1</Publish>
@@ -68,14 +71,13 @@ Patch dialog sequence:
             <Publish Dialog="CustomInstallDirDlg" Control="ChangeFolder" Event="SpawnDialog" Value="BrowseDlg" Order="2">1</Publish>
             
             <Publish Dialog="CustomVerifyReadyDlg" Control="Back" Event="NewDialog" Value="CustomInstallDirDlg" Order="1">NOT Installed</Publish>
-            <Publish Dialog="CustomVerifyReadyDlg" Control="Back" Event="NewDialog" Value="MaintenanceTypeDlg" Order="2">Installed AND NOT PATCH</Publish>
+            <Publish Dialog="CustomVerifyReadyDlg" Control="Back" Event="NewDialog" Value="CustomMaintenanceTypeDlg" Order="2">Installed AND NOT PATCH</Publish>
             <Publish Dialog="CustomVerifyReadyDlg" Control="Back" Event="NewDialog" Value="WelcomeDlg" Order="2">Installed AND PATCH</Publish>
 
-            <Publish Dialog="MaintenanceWelcomeDlg" Control="Next" Event="NewDialog" Value="MaintenanceTypeDlg">1</Publish>
-
-            <Publish Dialog="MaintenanceTypeDlg" Control="RepairButton" Event="NewDialog" Value="CustomVerifyReadyDlg">1</Publish>
-            <Publish Dialog="MaintenanceTypeDlg" Control="RemoveButton" Event="NewDialog" Value="CustomVerifyReadyDlg">1</Publish>
-            <Publish Dialog="MaintenanceTypeDlg" Control="Back" Event="NewDialog" Value="MaintenanceWelcomeDlg">1</Publish>
+            <Publish Dialog="MaintenanceWelcomeDlg" Control="Next" Event="NewDialog" Value="CustomMaintenanceTypeDlg">1</Publish>
+            <Publish Dialog="CustomMaintenanceTypeDlg" Control="RepairButton" Event="NewDialog" Value="CustomVerifyReadyDlg">1</Publish>
+            <Publish Dialog="CustomMaintenanceTypeDlg" Control="RemoveButton" Event="NewDialog" Value="CustomVerifyReadyDlg">1</Publish>
+            <Publish Dialog="CustomMaintenanceTypeDlg" Control="Back" Event="NewDialog" Value="MaintenanceWelcomeDlg">1</Publish>
 
             <Property Id="ARPNOMODIFY" Value="1" />
         </UI>

@@ -56,7 +56,7 @@ void keymanager_dialog::init()
     hintsbar = new hints_toolbar(this);
     hintsbar->setStyleSheet("font:\"Segoe UI\";background:transparent;");
     //set absolute position
-    //because width delta between frame geometry width and width is equall zero
+    //because width delta between frame geometry width and width is equal zero
     hintsbar->move(1006, -5);
 
     //connect to hintsbar actions

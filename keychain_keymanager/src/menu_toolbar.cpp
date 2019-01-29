@@ -29,6 +29,7 @@ menu_toolbar::menu_toolbar(QWidget *parent)
     //create file button
     QPushButton *FileButton = new QPushButton(this);
     FileButton->setStyleSheet(FileButton->styleSheet() + "QPushButton::menu-indicator{image: none;}");
+    FileButton->setFixedSize(40, 20);
 
     //create file button text label
     custom_qlabel *FileButtonLabel = new custom_qlabel(FileButton);
@@ -42,6 +43,7 @@ menu_toolbar::menu_toolbar(QWidget *parent)
     //create about button text label
     QPushButton *AboutButton = new QPushButton(this);
     AboutButton->setStyleSheet(AboutButton->styleSheet() + "QPushButton::menu-indicator{image: none;}");
+    AboutButton->setFixedSize(40, 20);
 
     //create about button text label
     custom_qlabel *Aboutbuttonlabel = new custom_qlabel(AboutButton);
@@ -54,16 +56,17 @@ menu_toolbar::menu_toolbar(QWidget *parent)
 
     //create key button
     QPushButton *KeyButton = new QPushButton(this);
-    KeyButton->setStyleSheet(KeyButton->styleSheet() + "QPushButton::menu-indicator{image: none;}");
+    KeyButton->setFixedSize(50, 17);
 
     //create key button text label
     custom_qlabel *Keybuttonlabel = new custom_qlabel(KeyButton);
-    FileButtonLabel->setObjectName("keylabel");
-    Keybuttonlabel->setText("K");
     Keybuttonlabel->setAlignment(Qt::AlignCenter);
-    Keybuttonlabel->setStyleSheet("QWidget#keylabel {background-color: #ffffff; \
-                                    text-align: center;}");
-    Keybuttonlabel->setFont(QFont("Segoe UI Semibold", 10, QFont::Normal, false));
+
+    //set flexy transformed pixmap for key button
+    QPixmap key_btn_logo(":/keymanager/tbr_key_icon.png");
+    key_btn_logo = key_btn_logo.scaled(20, 16, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+    KeyButton->setIcon(key_btn_logo);
+    KeyButton->setIconSize(QSize(20, 16));
     
     //change buttons to flat style
     FileButton->setFlat(true);

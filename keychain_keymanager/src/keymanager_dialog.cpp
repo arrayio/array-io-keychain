@@ -55,8 +55,9 @@ void keymanager_dialog::init()
     //create window hints toolbar 
     hintsbar = new hints_toolbar(this);
     hintsbar->setStyleSheet("font:\"Segoe UI\";background:transparent;");
-    QPoint hints_location = mapToGlobal(QPoint(size().width(), size().height())) - QPoint(hintsbar->size().width(), this->size().height());
-    hintsbar->move(hints_location);
+    //set absolute position
+    //because width delta between frame geometry width and width is equall zero
+    hintsbar->move(1006, -5);
 
     //connect to hintsbar actions
     QObject::connect(hintsbar, SIGNAL(MinimizeSelected(QString)), this, SLOT(ProcessMinimize(QString)));

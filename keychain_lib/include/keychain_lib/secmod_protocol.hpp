@@ -11,64 +11,38 @@
 #include <fc_light/reflect/variant.hpp>
 #include "bitcoin_transaction.hpp"
 
-namespace keychain_app
-{
+namespace keychain_app {
 
-namespace secmod_commands
-{
+using byte_seq_t = std::vector<char>;
+
+namespace secmod_commands {
 
 enum struct blockchain_secmod_te {
   unknown = 0,
   ethereum,
   bitcoin,
-  rawhash, //NOTE: for sign_hash command
   ethereum_swap, //HACK:
-  parse_error = -1
 };
 
 template<blockchain_secmod_te blockchain_type>
-struct secmod_command
+struct transaction_view
 {
-  using type = void;
+  using type = std::string; // if transaction cannot be parsed
 };
 
-struct secmod_command_common
-{
-  secmod_command_common(bool json_, blockchain_secmod_te blockchain_, const std::string& keyname_, fc_light::variant&& data_, int unlock_time_ = 0)
-    : json(json_)
-    , blockchain(blockchain_)
-    , unlock_time(unlock_time_)
-	, keyname(keyname_)
-    , data(data_)
-  {}
+struct ethereum_trx_t {
+  ethereum_trx_t() : chainid(0) {}
   
-  secmod_command_common()
-    : json(false)
-    , blockchain(blockchain_secmod_te::unknown)
-    , unlock_time(0)
-  {}
-  
-  bool json;
-  blockchain_secmod_te blockchain;
-  int unlock_time;
-  std::string keyname;
-  fc_light::variant data;
-};
-
-struct ethereum_trx_t
-{
-  ethereum_trx_t () : chainid(0) {}
   std::string nonce, gasPrice, gas;
   int chainid;
-  std::string to ,value, data;
+  std::string to, value, data;
 };
 
 template<>
-struct secmod_command<blockchain_secmod_te::ethereum>
-{
-  struct secmod_command_ethereum
-  {
-    secmod_command_ethereum(){}
+struct transaction_view<blockchain_secmod_te::ethereum> {
+  struct secmod_command_ethereum {
+    secmod_command_ethereum() {}
+    
     secmod_command_ethereum(std::string &&from_, ethereum_trx_t &&trx_)
       : from(from_), trx_info(trx_) {}
     
@@ -80,10 +54,8 @@ struct secmod_command<blockchain_secmod_te::ethereum>
 };
 
 template<>
-struct secmod_command<blockchain_secmod_te::ethereum_swap>
-{
-  struct secmod_command_swap
-  {
+struct transaction_view<blockchain_secmod_te::ethereum_swap> {
+  struct secmod_command_swap {
     enum struct action_te {
       create_swap = 0,
       refund,
@@ -97,7 +69,8 @@ struct secmod_command<blockchain_secmod_te::ethereum_swap>
       std::string secret;
     };
     
-    secmod_command_swap(){}
+    secmod_command_swap() {}
+    
     secmod_command_swap(std::string &&from_, ethereum_trx_t &&trx_, swap_t &&swap_info_)
       : from(from_), trx_info(trx_), swap_info(swap_info_) {}
     
@@ -110,11 +83,10 @@ struct secmod_command<blockchain_secmod_te::ethereum_swap>
 };
 
 template<>
-struct secmod_command<blockchain_secmod_te::bitcoin>
-{
-  struct secmod_command_bitcoin
-  {
-    secmod_command_bitcoin(){}
+struct transaction_view<blockchain_secmod_te::bitcoin> {
+  struct secmod_command_bitcoin {
+    secmod_command_bitcoin() {}
+    
     secmod_command_bitcoin(std::string &&from_, bitcoin_transaction_t &&trx_)
       : from(from_), trx_info(trx_) {}
     
@@ -125,47 +97,192 @@ struct secmod_command<blockchain_secmod_te::bitcoin>
   using type = secmod_command_bitcoin;
 };
 
-template<>
-struct secmod_command<blockchain_secmod_te::rawhash>
+enum struct events_te {
+  unknown = 0,
+  create_key,
+  sign_hex,
+  sign_hash,
+  unlock,
+  edit_key,
+  remove_key,
+  export_keys,
+  import_keys,
+  print_mnemonic,
+  last
+};
+
+template<events_te event>
+struct secmod_event
 {
-  struct secmod_command_rawhash
-  {
-    secmod_command_rawhash(){}
-    secmod_command_rawhash(std::string &&from_, std::string hash_)
-      : from(from_), hash(hash_) {}
+  using params_t = void;
+};
+
+template<>
+struct secmod_event<events_te::create_key>
+{
+  struct params {
+    std::string keyname;
+  };
+  using params_t = params;
+};
+
+template<>
+struct secmod_event<events_te::sign_hex>
+{
+  struct params {
+    params() : is_parsed(false), unlock_time(0) {}
     
+    std::string keyname;
+    bool is_parsed;
+    blockchain_secmod_te blockchain;
+    int unlock_time;
+    fc_light::variant trx_view;
+
+    template <blockchain_secmod_te blockchain_type>
+    typename transaction_view<blockchain_type>::type get_trx_view() const
+    {
+      using return_t = typename transaction_view<blockchain_type>::type;
+      return trx_view.as<return_t>();
+    }
+  };
+  
+  using params_t = params;
+};
+
+template<>
+struct secmod_event<events_te::sign_hash>
+{
+  struct params {
+    std::string keyname;
     std::string from;
     std::string hash;
   };
+  using params_t = params;
+};
+
+template<>
+struct secmod_event<events_te::unlock>
+{
+  struct params
+  {
+    params(): unlock_time(0){}
+    std::string keyname;
+    int unlock_time;
+  };
   
-  using type = secmod_command_rawhash;
+  using params_t = params;
+};
+
+template<>
+struct secmod_event<events_te::edit_key>
+{
+  struct params
+  {
+    params() : unlock_time(0) {}
+    std::string keyname;
+    int unlock_time;
+  };
+
+  using params_t = params;
+};
+
+template<>
+struct secmod_event<events_te::remove_key>
+{
+  struct params {
+    std::string keyname;
+  };
+  using params_t = params;
+};
+
+template<>
+struct secmod_event<events_te::export_keys>
+{
+  using params_t = void;
+};
+
+template<>
+struct secmod_event<events_te::import_keys>
+{
+  using params_t = void;
+};
+
+template<>
+struct secmod_event<events_te::print_mnemonic>
+{
+  using params_t = void; //TODO: will be implemented in future
+};
+
+struct secmod_command
+{
+  secmod_command() : etype(secmod_commands::events_te::unknown) {}
+  events_te etype;
+  fc_light::variant params;
+};  
+
+enum struct response_te
+{
+  null = 0,
+  password,
+  boolean
+};
+
+template <response_te response_type>
+struct secmod_response
+{
+  using params_t = void;
+};
+
+template <>
+struct secmod_response<response_te::password>
+{
+  using params_t = byte_seq_t;
+};
+
+template <>
+struct secmod_response<response_te::boolean>
+{
+  using params_t = bool;
+};
+
+struct secmod_resonse_common
+{
+  secmod_resonse_common() : etype(secmod_commands::response_te::null) {}
+  response_te etype;
+  fc_light::variant params;
 };
 
 }
 
 }
 
-FC_LIGHT_REFLECT_ENUM(keychain_app::secmod_commands::blockchain_secmod_te, (unknown)(ethereum)(bitcoin)(rawhash)(ethereum_swap)(parse_error))
+FC_LIGHT_REFLECT_ENUM(keychain_app::secmod_commands::blockchain_secmod_te, (unknown)(ethereum)(bitcoin)(ethereum_swap))
+FC_LIGHT_REFLECT_ENUM(keychain_app::secmod_commands::events_te,
+                      (unknown)(create_key)(sign_hex)(sign_hash)(unlock)(edit_key)(remove_key)(export_keys)(import_keys)(print_mnemonic))
+FC_LIGHT_REFLECT_ENUM(keychain_app::secmod_commands::response_te, (null)(password)(boolean))
 
-FC_LIGHT_REFLECT(keychain_app::secmod_commands::secmod_command_common, (json)(blockchain)(keyname)(data)(unlock_time))
+
+FC_LIGHT_REFLECT(keychain_app::secmod_commands::secmod_event<keychain_app::secmod_commands::events_te::create_key>::params_t, (keyname))
+FC_LIGHT_REFLECT(keychain_app::secmod_commands::secmod_event<keychain_app::secmod_commands::events_te::sign_hex>::params_t, (keyname)(is_parsed)(blockchain)(unlock_time)(trx_view))
+FC_LIGHT_REFLECT(keychain_app::secmod_commands::secmod_event<keychain_app::secmod_commands::events_te::sign_hash>::params_t, (keyname)(from)(hash))
+FC_LIGHT_REFLECT(keychain_app::secmod_commands::secmod_event<keychain_app::secmod_commands::events_te::unlock>::params_t, (keyname)(unlock_time))
+FC_LIGHT_REFLECT(keychain_app::secmod_commands::secmod_event<keychain_app::secmod_commands::events_te::edit_key>::params_t, (keyname)(unlock_time))
+FC_LIGHT_REFLECT(keychain_app::secmod_commands::secmod_event<keychain_app::secmod_commands::events_te::remove_key>::params_t, (keyname))
+
 FC_LIGHT_REFLECT(keychain_app::secmod_commands::ethereum_trx_t, (nonce)(gasPrice)(gas)(to)(value)(data)(chainid))
-FC_LIGHT_REFLECT(keychain_app::secmod_commands::secmod_command<keychain_app::secmod_commands::blockchain_secmod_te::ethereum>::type, (from)(trx_info))
+FC_LIGHT_REFLECT(keychain_app::secmod_commands::transaction_view<keychain_app::secmod_commands::blockchain_secmod_te::ethereum>::type, (from)(trx_info))
+FC_LIGHT_REFLECT(keychain_app::secmod_commands::transaction_view<keychain_app::secmod_commands::blockchain_secmod_te::bitcoin>::type, (from)(trx_info))
+FC_LIGHT_REFLECT(keychain_app::secmod_commands::transaction_view<keychain_app::secmod_commands::blockchain_secmod_te::ethereum_swap>::type, (from)(trx_info)(swap_info))
+
+FC_LIGHT_REFLECT(keychain_app::secmod_commands::secmod_command, (etype)(params))
+FC_LIGHT_REFLECT(keychain_app::secmod_commands::secmod_resonse_common, (etype)(params))
 
 FC_LIGHT_REFLECT_ENUM(
-  keychain_app::secmod_commands::secmod_command<keychain_app::secmod_commands::blockchain_secmod_te::ethereum_swap>::type::action_te,
+  keychain_app::secmod_commands::transaction_view<keychain_app::secmod_commands::blockchain_secmod_te::ethereum_swap>::type::action_te,
   (create_swap)(refund)(withdraw))
 
 FC_LIGHT_REFLECT(
-  keychain_app::secmod_commands::secmod_command<keychain_app::secmod_commands::blockchain_secmod_te::ethereum_swap>::type::swap_t,
+  keychain_app::secmod_commands::transaction_view<keychain_app::secmod_commands::blockchain_secmod_te::ethereum_swap>::type::swap_t,
   (action)(hash)(address)(secret))
-
-FC_LIGHT_REFLECT(
-  keychain_app::secmod_commands::secmod_command<keychain_app::secmod_commands::blockchain_secmod_te::ethereum_swap>::type,
-  (from)(trx_info)(swap_info))
-
-FC_LIGHT_REFLECT(keychain_app::secmod_commands::secmod_command<keychain_app::secmod_commands::blockchain_secmod_te::bitcoin>::type, (from)(trx_info))
-
-FC_LIGHT_REFLECT(keychain_app::secmod_commands::secmod_command<keychain_app::secmod_commands::blockchain_secmod_te::rawhash>::type, (from)(hash))
-
 
 #endif //KEYCHAINAPP_KEYCHAIN_SEC_MOD_PROTOCOL_HPP

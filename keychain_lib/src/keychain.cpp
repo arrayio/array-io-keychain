@@ -125,10 +125,7 @@ const keychain_commands_singleton::command_ptr keychain_commands_singleton::oper
 
 void keychain_app::secure_dlg_mod_base::connect(keychain_app::keychain_base &keychain_) const
 {
-  keychain_.get_passwd_trx.connect(std::bind(&secure_dlg_mod_base::get_passwd_trx, this, std::placeholders::_1));
-  keychain_.get_passwd_on_create.connect(std::bind(&secure_dlg_mod_base::get_passwd_on_create, this, std::placeholders::_1));
-  keychain_.get_passwd_unlock.connect(std::bind(&secure_dlg_mod_base::get_passwd_unlock, this, std::placeholders::_1, std::placeholders::_2));
-  keychain_.print_mnemonic.connect(std::bind(&secure_dlg_mod_base::print_mnemonic, this, std::placeholders::_1));
+  keychain_.run_secmod_cmd.connect(std::bind(&secure_dlg_mod_base::exec_cmd, this, std::placeholders::_1));
 }
 
 void keychain_app::gui_mod_base::connect(keychain_app::keychain_base &keychain_) const

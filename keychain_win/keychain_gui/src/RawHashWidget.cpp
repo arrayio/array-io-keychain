@@ -7,7 +7,7 @@ RawHashWidget::RawHashWidget(Transaction &transaction, QWidget * parent)
 
 	QString valueStyle("font:16px \"Segoe UI\";background:transparent;color:rgb(123,141,167);");
 	QString labelStyle("font:16px \"Segoe UI\";background:transparent;");
-
+  /*
 	secmod_parser_f cmd_parse;
 	auto cmd_type = cmd_parse(transaction.getTransactionText().toStdString());
 	auto raw_hash = cmd_parse.to_rawhash();
@@ -46,7 +46,7 @@ RawHashWidget::RawHashWidget(Transaction &transaction, QWidget * parent)
 
 	//expertModeElement = new ExpertModeElement(this);
 	//expertModeElement->SetExpertModeText(QString::fromStdString(cmd_parse.to_expert_mode_string()), false);
-
+  */
 }
 
 void RawHashWidget::SetPosition(int x, int y, int width)

@@ -46,7 +46,7 @@ keychain_gui_win::keychain_gui_win(Transaction &transaction, QWidget *parent)
 	if (transaction.isCreatePassword()) {
 		warningMessage.SetWarning(KeychainWarningMessage::WarningType::CreateWarning);
 		descriptionLabel->setText("Enter the password for the new key");
-	}
+	}/*
 	if (!transaction.isCreatePassword() && transaction.isUnlockKey() == -1)
 	{
 		secmod_parser_f cmd_parse;
@@ -180,7 +180,7 @@ keychain_gui_win::keychain_gui_win(Transaction &transaction, QWidget *parent)
 	connect(password, &PasswordEnterElement::finishEnterPassword, this, &keychain_gui_win::transaction_sign);
 	if (transaction.isCreatePassword()) {
 		connect(password, &PasswordEnterElement::changePassword, this, &keychain_gui_win::_disableSignButton);
-	}
+	}*/
 }
 
 void keychain_gui_win::transaction_sign() {

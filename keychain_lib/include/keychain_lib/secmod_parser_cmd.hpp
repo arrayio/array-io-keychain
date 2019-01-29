@@ -4,6 +4,9 @@
 #ifndef KEYCHAINAPP_KEYCHAIN_SEC_MOD_PARSER_HPP
 #define KEYCHAINAPP_KEYCHAIN_SEC_MOD_PARSER_HPP
 
+#include <fc_light/exception/exception.hpp>
+#include <fc_light/io/json.hpp>
+
 #include "secmod_protocol.hpp"
 
 namespace keychain_app
@@ -12,30 +15,43 @@ namespace keychain_app
 namespace secmod_commands
 {
 
+using signhex_event = secmod_event<events_te::sign_hex>::params_t;
+
+std::string to_expert_mode_string(const signhex_event& signhex_event);
+
 class secmod_parser_f
 {
+public:  
+  template <events_te etype>
+  typename secmod_event<etype>::params_t params() const
+  {
+    using params_t = typename secmod_event<etype>::params_t;
+    try
+    {
+      return m_cmd.params.as<params_t>();
+    }
+    FC_LIGHT_CAPTURE_TYPECHANGE_AND_RETHROW(fc_light::parse_error_exception, error, "cannot parse secmod command params")
+  }
+  events_te operator()(const std::string& json);
+  secmod_command m_cmd;
+};
+
+class secmod_result_parser_f
+{
 public:
-  
-  using ethereum_cmd = secmod_command<blockchain_secmod_te::ethereum>::type;
-  using bitcoin_cmd = secmod_command<blockchain_secmod_te::bitcoin>::type;
-  using ethereum_swap_cmd = secmod_command<blockchain_secmod_te::ethereum_swap>::type;
-  using rawhash_cmd = secmod_command<blockchain_secmod_te::rawhash>::type;
-  
-  blockchain_secmod_te operator()(const std::string& json);
-  blockchain_secmod_te cmd_type() const;
-  std::string keyname() const;
-  int unlock_time() const;
-  bool is_json() const;
-  ethereum_cmd to_ethereum() const;
-  bitcoin_cmd to_bitcoin() const;
-  ethereum_swap_cmd to_ethereum_swap() const;
-  rawhash_cmd to_rawhash() const;
-  std::string to_raw_trx_string() const;
-  
-  std::string to_expert_mode_string() const;
-  
-private:
-  secmod_command_common m_cmd;
+  template <response_te etype>
+  typename secmod_response<etype>::params_t params() const
+  {
+    using params_t = typename secmod_response<etype>::params_t;
+    try
+    {
+      return m_response.params.as<params_t>();
+    }
+    FC_LIGHT_CAPTURE_TYPECHANGE_AND_RETHROW(fc_light::parse_error_exception, error, "cannot parse secmod command params")
+  }
+  void params() const {}
+  response_te operator()(const std::string& json);
+  secmod_resonse_common m_response;
 };
 
 }

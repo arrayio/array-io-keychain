@@ -12,6 +12,8 @@
 #include <keychain_lib/version_info.hpp>
 #include <keychain_lib/secmod_parser_cmd.hpp>
 
+#include "EventsHandlerSingleton.h"
+
 #pragma comment(lib, "advapi32.lib") //TODO: this is bad practice, need to add this depenedencies to CMakeLists.txt
 #pragma comment(lib, "Userenv.lib") //TODO: this is bad practice, need to add this depenedencies to CMakeLists.txt
 #pragma comment(lib, "Wtsapi32.lib") //TODO: this is bad practice, need to add this depenedencies to CMakeLists.txt
@@ -34,6 +36,7 @@ int main(int argc, char *argv[])
 #ifdef FROMPROCCESS
 	DWORD dwWritten;
 	char buffer[9000];
+  memset(buffer, 0x00, 9000);
 	DWORD dwRead = 0;
 	HANDLE transPipe = CreateFile(TEXT("\\\\.\\pipe\\transpipe"),
 		GENERIC_READ | GENERIC_WRITE,
@@ -60,41 +63,13 @@ int main(int argc, char *argv[])
 	SwitchDesktop(hNewDesktop);
 	SetThreadDesktop(hNewDesktop);
 #endif
-	int endIndex = -1;
-	QString srcTrans;
-#ifdef FROMPROCCESS
-	for (int i = 0; i < dwRead; i++) {
-		srcTrans.push_back(buffer[i]);
-	}
-#endif
-	BOOST_LOG_SEV(log.lg, info) << "Got from pipe:" + srcTrans.toStdString();
-	Transaction trans(srcTrans);
-	for (int i = 0; i < argc; i++) {
-		QString arg(argv[i]);
-		if (!arg.isEmpty()) {
-			BOOST_LOG_SEV(log.lg, info) << "Command args: " << arg.toStdString();
-			if (arg.contains("-unlock_t")) {
-				BOOST_LOG_SEV(log.lg, info) << "found time";
-				int start = arg.indexOf('=');
-				int unlockTime = std::stoi(arg.mid(start + 1, arg.length() - start).toStdString());
-				trans.setUnlockKey(srcTrans, unlockTime);
-			}
-		}
-	}
-	if (srcTrans.indexOf("create_password")!=-1) {
-		trans.setCreatePassword();
-	}
-	if (!trans.isCreatePassword() && trans.isUnlockKey() == -1) {
-		secmod_parser_f cmd_parse;
-		auto cmd_type = cmd_parse(srcTrans.toStdString());
-		auto unlock_time = cmd_parse.unlock_time(); //check unlock time. If unlock time > 0 print red lock icon with text warning.
-		auto is_json = cmd_parse.is_json();//need to check parse success. If json is false > 0 print red lock icon with text warning.
-	}
+	BOOST_LOG_SEV(log.lg, info) << "Got from pipe: " << buffer;
 
-	QApplication a(argc, argv);
-	keychain_gui_win w(trans);
-	w.show();
+//  std::string input = "{\"etype\":\"sign_hex\",\"params\":{\"keyname\":\"test1\",\"is_parsed\":false,\"blockchain\":\"unknown\",\"unlock_time\":45,\"trx_view\":\"871689d060721b5cec5a010080841e00000000000011130065cd1d0000000000000000\"}}";
 
+  QApplication a(argc, argv);
+  parseSecmodEvents(std::string(buffer));
+	
 	a.exec();
 
 #ifdef FROMPROCCESS

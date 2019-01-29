@@ -45,7 +45,7 @@
       tx.chainId = await web3.eth.net.getId();
     }
     if (!tx.nonce) {
-      const address = ethereumjs.Util.publicToAddress('0x' + privateKey).toString('hex');
+      const address = ethereumjs.Util.publicToAddress('0x' + privateKey).toString('hex'); // take it from selectedKey
       tx.nonce = await web3.eth.getTransactionCount('0x' + address);
     }
     if (!tx.gasPrice) {

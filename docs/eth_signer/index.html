@@ -44,7 +44,7 @@
           <button class="btn btn-primary" id="btn_PUBLISH">Publish</button>
         </div>
       </div>
-    </div>  
+    </div>
     <div class="container">
       <div class="columns">
         <div class="column col">
@@ -75,7 +75,7 @@
         // const endpoint = 'https://rinkeby.infura.io/v3/6e07edb991d64b9197996b7ff174de42';
         const endpoint = document.getElementById('input-endpoint').value;
         web3 = new Web3(new Web3.providers.HttpProvider(endpoint));
-        const valueTx = 100;        
+        const valueTx = 100;
         const keychain = new WS(web3, 'ws://localhost:16384/');
 
         keychain.ws.onopen = function() {
@@ -126,7 +126,7 @@
           log(`Sending signed transaction: ${rawHexGlobal}`);
           try {
             document.getElementById('progress').style.display = 'inline-block';
-            const result = await web3.eth.sendSignedTransaction(`${rawHexGlobal}`);
+            const result = await web3.eth.sendSignedTransaction(rawHexGlobal);
             document.getElementById('progress').style.display = 'none';
             log(`Transfer result: \n${JSON.stringify(result, undefined, 2)}`);
             document.getElementById('etherscanLink').innerHTML = `<a href='https://ropsten.etherscan.io/tx/${result.transactionHash}'>Etherscan Link</a>`;
@@ -136,7 +136,7 @@
             log(e);
             document.getElementById('progress').style.display = 'none';
           }
-        });        
+        });
       };
 
       function log(message) {
@@ -147,6 +147,6 @@
         loggerElement.value += message;
       }
     </script>
-    
+
   </body>
 </html>

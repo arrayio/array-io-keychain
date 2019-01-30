@@ -4,6 +4,8 @@
 #include <QWidget>
 #include <QObject>
 #include <QLabel>
+#include <QPushButton>
+#include "custom_qlabel.hpp"
 
 class more_details : public QWidget 
 {

@@ -45,6 +45,43 @@ more_details::more_details(QWidget *parent)
 	
 	public_key->setFont(font);
 	public_key->move(10, start_position + 5 * height);
+
+    //create edit button
+    QPushButton *EditButton = new QPushButton(this);
+
+    //create edit button text label
+    custom_qlabel *EditButtonLabel = new custom_qlabel(EditButton);
+    const int row_width = this->size().width() - 50;
+    EditButtonLabel->move(row_width, start_position);
+
+    //set styles for edit button and label elements
+    EditButtonLabel->setFixedSize(35, 50);
+    QPixmap edit_btn_logo(":/keymanager/edit_btn_icon.png");
+    edit_btn_logo = edit_btn_logo.scaled(35, 50, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+    EditButton->setIcon(edit_btn_logo);
+    EditButton->setFlat(true);
+    EditButton->setIconSize(QSize(35, 50));
+    EditButton->setFixedSize(35, 50);
+    EditButton->move(row_width, start_position);
+
+    //create delete button
+    QPushButton *DeleteButton = new QPushButton(this);
+
+    //create delete button text label
+    custom_qlabel *DeleteButtonLabel = new custom_qlabel(EditButton);
+
+    const int height_step = 40;
+    DeleteButtonLabel->move(row_width, height_step);
+
+    //set styles for delete button and label elements
+    DeleteButtonLabel->setFixedSize(35, 50);
+    QPixmap delete_btn_logo(":/keymanager/delete_btn_icon.png");
+    delete_btn_logo = delete_btn_logo.scaled(35, 50, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+    DeleteButton->setIcon(delete_btn_logo);
+    DeleteButton->setFlat(true);
+    DeleteButton->setIconSize(QSize(35, 50));
+    DeleteButton->setFixedSize(35, 50);
+    DeleteButton->move(row_width, height_step);
 }
 
 void more_details::set_details_value() {

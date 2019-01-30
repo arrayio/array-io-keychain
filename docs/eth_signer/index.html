@@ -86,6 +86,7 @@
         // };
         //
         document.getElementById('btn_SIGN').addEventListener('click', function() {
+          document.getElementById('etherscanLink').innerHTML = '';
           const endpoint = document.getElementById('input-endpoint').value;
           web3 = new Web3(new Web3.providers.HttpProvider(endpoint));
           const toAddress = document.getElementById('input-to-address').value;

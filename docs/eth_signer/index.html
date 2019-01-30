@@ -128,8 +128,8 @@
             const result = await web3.eth.sendSignedTransaction(rawHexGlobal);
             document.getElementById('progress').style.display = 'none';
             log(`Transfer result: \n${JSON.stringify(result, undefined, 2)}`);
-            document.getElementById('etherscanLink').innerHTML = `<a href='https://ropsten.etherscan.io/tx/${result.transactionHash}'>Etherscan Link</a>`;
-            // todo change the link depending on a testnet
+            const prefix = endpoint.indexOf('rinkeby') !== -1 ? 'rinkeby' : 'ropsten';
+            document.getElementById('etherscanLink').innerHTML = `<a href='https://${prefix}.etherscan.io/tx/${result.transactionHash}'>Etherscan Link</a>`;
           } catch (e) {
             console.log(e);
             log(e);

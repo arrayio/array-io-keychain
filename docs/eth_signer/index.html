@@ -75,16 +75,16 @@
         let keychain;
         web3override.Keychain.create()
                 .then(data => keychain = data)
+                .then(() => {
+                  keychain.wsp.onClose.addListener(() => {
+                    document.body.style.backgroundColor = null;
+                    document.getElementById('error').style.display = 'block';
+                  });
+                })
                 .then(() => document.body.style.backgroundColor = '#cfc')
                 .then(() => keychain.method({command: 'version'}))
                 .then(data => document.getElementById('version').innerText = data.result );
 
-        // todo process onclose WebSocket event
-        // keychain.ws.onclose = function() {
-        //   document.body.style.backgroundColor = null;
-        //   document.getElementById('error').style.display = 'block';
-        // };
-        //
         document.getElementById('btn_SIGN').addEventListener('click', function() {
           document.getElementById('etherscanLink').innerHTML = '';
           const endpoint = document.getElementById('input-endpoint').value;

@@ -8,7 +8,7 @@ UnparsedTransactionWidget::UnparsedTransactionWidget(Transaction &transaction, Q
 
 	QString valueStyle("font:16px \"Segoe UI\";background:transparent;color:rgb(123,141,167);");
 	QString labelStyle("font:16px \"Segoe UI\";background:transparent;");
-/*
+
 	secmod_parser_f cmd_parse;
 	auto cmd_type = cmd_parse(transaction.getTransactionText().toStdString());
 
@@ -18,7 +18,7 @@ UnparsedTransactionWidget::UnparsedTransactionWidget(Transaction &transaction, Q
 	if (cmd_parse.unlock_time() > 0) {
 		unlockTime = new PrivateKeyInMemory(this);
 		unlockTime->SetTime(QString::number(cmd_parse.unlock_time()));
-	}*/
+	}
 }
 
 void UnparsedTransactionWidget::SetPosition(int x, int y, int width)

@@ -42,14 +42,16 @@ public:
 	PopupWindow * popupWindow;
 	
 private:
+  QLabel * headerBlock;
+  QLabel * logoLabel;
 	QString mExpertValue;
-	QLabel * logoLabel;
+	
 	QPushButton * OKButton = Q_NULLPTR;
 	QPushButton * CancelButton = Q_NULLPTR;
 
 	QLabel * languageLabel = Q_NULLPTR;
 
-	QLabel * headerBlock = Q_NULLPTR;
+	
 	/*QLabel * passPhrase = Q_NULLPTR;
 	QLineEdit * passPhraseValue = Q_NULLPTR;*/
 	//QLabel * message= Q_NULLPTR;
@@ -65,7 +67,8 @@ private:
 
 protected:
 	void keyPressEvent(QKeyEvent *event) override;
-	void closeEvent(QCloseEvent * event) override;
+	void closeEvent(QCloseEvent * event) const int FIELD_WIDTH = 446;
+	const int START_POSITION = 96;override;
 
 private:
 	const int FIELD_WIDTH = 446;

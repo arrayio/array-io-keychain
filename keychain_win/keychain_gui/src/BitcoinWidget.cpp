@@ -30,7 +30,7 @@ BitcoinWidget::BitcoinWidget(Transaction &transaction, QWidget * parent)
 	//}
 	secmod_parser_f cmd_parse;
 	auto cmd_type = cmd_parse(transaction.getTransactionText().toStdString());
-/*
+
   auto bitcoin_trx = cmd_parse.to_bitcoin();
 	auto bitcoin_data = bitcoin_trx.trx_info;
 	
@@ -81,7 +81,7 @@ BitcoinWidget::BitcoinWidget(Transaction &transaction, QWidget * parent)
 		connect(lookAll, &QPushButton::clicked, this, &BitcoinWidget::lookUpAll);
 	}
 	expertModeElement = new ExpertModeElement(this);
-	expertModeElement->SetExpertModeText(QString::fromStdString(cmd_parse.to_expert_mode_string()));*/
+	expertModeElement->SetExpertModeText(QString::fromStdString(cmd_parse.to_expert_mode_string()));
 }
 
 void BitcoinWidget::SetPosition(int x, int y, int width)

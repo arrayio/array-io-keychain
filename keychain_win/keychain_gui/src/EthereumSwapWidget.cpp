@@ -12,7 +12,7 @@ EthereumSwapWidget::EthereumSwapWidget(Transaction &transaction, QWidget * paren
 	swap->SetValueStyle("font:14px \"Segoe UI\";background:transparent;color:rgb(123,141,167);");
 
 	//QList<QString> fieldList({ "From","To","Amount" });
-/*
+
 	secmod_parser_f cmd_parse;
 	auto cmd_type = cmd_parse(transaction.getTransactionText().toStdString());
 	auto swap_trx = cmd_parse.to_ethereum_swap();
@@ -31,7 +31,7 @@ EthereumSwapWidget::EthereumSwapWidget(Transaction &transaction, QWidget * paren
 	/*create_swap = 0,
 		refund,
 		withdraw*/
-  /*
+  
 	hash = new SecureWindowElement(this);
 	hash->SetLabelStyle(labelStyle);
 	hash->SetValueStyle(valueStyle);
@@ -73,7 +73,7 @@ EthereumSwapWidget::EthereumSwapWidget(Transaction &transaction, QWidget * paren
 
 	expertModeElement = new ExpertModeElement(this);
 	expertModeElement->SetExpertModeText(QString::fromStdString(cmd_parse.to_expert_mode_string()));
-  */
+  
 }
 
 void EthereumSwapWidget::SetPosition(int x, int y, int width)

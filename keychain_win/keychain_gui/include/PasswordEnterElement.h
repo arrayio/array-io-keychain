@@ -10,12 +10,12 @@
 #include "PasswordLineEdit.h"
 #include "CheckPasswordStrength.h"
 
-class PasswordEnterElement : public QWidget
+class PasswordEnterElementBase : public QWidget
 {
 	Q_OBJECT
 public:
-	PasswordEnterElement(bool passwordCreate = false, QWidget * parent=Q_NULLPTR);
-	~PasswordEnterElement();
+  PasswordEnterElementBase(QWidget * parent=nullptr);
+  virtual ~PasswordEnterElementBase();
 	void SetPosition(int x, int y, int valueWidth);
 	void SetLabel(QString label);
 	void SetLabelStyle(QString style);
@@ -31,7 +31,7 @@ signals:
 	void finishEnterPassword();
 	void changePassword();
 
-private:
+protected:
 	//Ui::SecureWindowElement ui;
 	QLabel *label = Q_NULLPTR;
 	PasswordLineEdit *value = Q_NULLPTR;
@@ -49,5 +49,20 @@ public slots:
 	void checkStrength(const QString &text);
 	void checkConfirm(const QString &text);
 };
+
+class PasswordEnterElementCreate : public PasswordEnterElementBase
+{
+public:
+  PasswordEnterElementCreate(QWidget * parent = nullptr);
+  virtual ~PasswordEnterElementCreate();
+};
+
+class PasswordEnterElement : public PasswordEnterElementBase
+{
+public:
+  PasswordEnterElement(QWidget * parent = nullptr);
+  virtual ~PasswordEnterElement();
+};
+
 
 #endif

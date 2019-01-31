@@ -1,6 +1,6 @@
 #include "PasswordEnterElement.h"
 
-PasswordEnterElement::PasswordEnterElement(bool passwordCreate, QWidget * parent)
+PasswordEnterElementBase::PasswordEnterElementBase(QWidget * parent)
 	:QWidget(parent)
 {
 	QMetaObject::connectSlotsByName(this); 
@@ -18,48 +18,14 @@ PasswordEnterElement::PasswordEnterElement(bool passwordCreate, QWidget * parent
 	value->setAlignment(Qt::AlignVCenter | Qt::AlignLeft);
 	value->setFocus();
 	pCreatePassword = false;
-	if (passwordCreate) {
-		pCreatePassword = true;
-		description = new QLabel(this);
-		description->setWordWrap(true);
-		description->setStyleSheet("font:10px \"Segoe UI\";background:transparent;color:rgb(147,148,151);");
-		description->setAlignment(Qt::AlignTop | Qt::AlignLeft);
-		description->setText("*We recommend to use more than 13 characters, to combine lowercase and uppercase letters, degits and symbols for extra safety (a-z, A-Z, 0-9, @#$%*)");
-		
-		labelConfirm = new QLabel(this);
-		labelConfirm->setFrameStyle(QFrame::NoFrame);
-		labelConfirm->setStyleSheet(labelStyle);
-		labelConfirm->setAlignment(Qt::AlignBottom | Qt::AlignRight);
-
-		valueConfirm = new PasswordLineEdit(this);
-		valueConfirm->setText("");
-		valueConfirm->setStyleSheet(passPhraseStyle);
-		valueConfirm->setEchoMode(QLineEdit::Password);
-		valueConfirm->setAlignment(Qt::AlignVCenter | Qt::AlignLeft);
-
-		confirmDescription = new QLabel(this);
-		confirmDescription->setWordWrap(true);
-		confirmDescription->setStyleSheet("font:10px \"Segoe UI\";background:transparent;color:rgb(147,148,151);");
-		confirmDescription->setAlignment(Qt::AlignTop | Qt::AlignLeft);
-		confirmDescription->setText("");
-
-		labelConfirm->setText("Confirm");
-		connect(value, &QLineEdit::textEdited, this, &PasswordEnterElement::checkStrength);
-		connect(value, &PasswordLineEdit::finishEnter, this, &PasswordEnterElement::setFocusOnConfirm);
-		connect(valueConfirm, &QLineEdit::textEdited, this, &PasswordEnterElement::checkConfirm);
-		connect(valueConfirm, &PasswordLineEdit::finishEnter, this, &PasswordEnterElement::checkFinishedEnterance);
-	}
-	else {
-		connect(value, &PasswordLineEdit::finishEnter, this, &PasswordEnterElement::checkFinishedEnterance);
-	}
 }
 
-PasswordEnterElement::~PasswordEnterElement()
+PasswordEnterElementBase::~PasswordEnterElementBase()
 {
 
 }
 
-void PasswordEnterElement::SetPosition(int x, int y, int valueWidth)
+void PasswordEnterElementBase::SetPosition(int x, int y, int valueWidth)
 {
 	label->move(0, 0);
 	label->setFixedSize(116, 25);
@@ -82,12 +48,12 @@ void PasswordEnterElement::SetPosition(int x, int y, int valueWidth)
 	setFixedSize(116 + valueWidth + 16, _height);
 }
 
-void PasswordEnterElement::SetLabel(QString labelValue)
+void PasswordEnterElementBase::SetLabel(QString labelValue)
 {
 	label->setText(labelValue);
 }
 
-void PasswordEnterElement::checkStrength(const QString &text)
+void PasswordEnterElementBase::checkStrength(const QString &text)
 {
 	CheckPasswordStrength passwordChecker;
 	switch (passwordChecker.check(text)) {
@@ -122,27 +88,27 @@ void PasswordEnterElement::checkStrength(const QString &text)
 	}
 }
 
-void PasswordEnterElement::SetLabelStyle(QString style)
+void PasswordEnterElementBase::SetLabelStyle(QString style)
 {
 	label->setStyleSheet(style);
 }
 
-void PasswordEnterElement::SetValueStyle(QString style)
+void PasswordEnterElementBase::SetValueStyle(QString style)
 {
 	value->setStyleSheet(style);
 }
 
-QString PasswordEnterElement::GetValue()
+QString PasswordEnterElementBase::GetValue()
 {
 	return value->text();
 }
 
-int PasswordEnterElement::GetElementHeigth()
+int PasswordEnterElementBase::GetElementHeigth()
 {
 	return _height;
 }
 
-void PasswordEnterElement::checkConfirm(const QString & text)
+void PasswordEnterElementBase::checkConfirm(const QString & text)
 {
 	if (value == Q_NULLPTR)
 		return;
@@ -162,12 +128,12 @@ void PasswordEnterElement::checkConfirm(const QString & text)
 }
 
 
-void PasswordEnterElement::setValueFocus()
+void PasswordEnterElementBase::setValueFocus()
 {
 	value->setFocus();
 }
 
-void PasswordEnterElement::checkFinishedEnterance()
+void PasswordEnterElementBase::checkFinishedEnterance()
 {
 	if (pCreatePassword)
 		if (!isSame)
@@ -175,12 +141,61 @@ void PasswordEnterElement::checkFinishedEnterance()
 	emit finishEnterPassword();
 }
 
-void PasswordEnterElement::setFocusOnConfirm()
+void PasswordEnterElementBase::setFocusOnConfirm()
 {
 	valueConfirm->setFocus();
 }
 
-bool PasswordEnterElement::validConfirm()
+bool PasswordEnterElementBase::validConfirm()
 {
 	return isSame;
+}
+
+PasswordEnterElementCreate::PasswordEnterElementCreate(QWidget * parent /*= nullptr*/)
+  : PasswordEnterElementBase(parent)
+{
+  pCreatePassword = true;
+  description = new QLabel(this);
+  description->setWordWrap(true);
+  description->setStyleSheet("font:10px \"Segoe UI\";background:transparent;color:rgb(147,148,151);");
+  description->setAlignment(Qt::AlignTop | Qt::AlignLeft);
+  description->setText("*We recommend to use more than 13 characters, to combine lowercase and uppercase letters, degits and symbols for extra safety (a-z, A-Z, 0-9, @#$%*)");
+
+  labelConfirm = new QLabel(this);
+  labelConfirm->setFrameStyle(QFrame::NoFrame);
+  labelConfirm->setStyleSheet(labelStyle);
+  labelConfirm->setAlignment(Qt::AlignBottom | Qt::AlignRight);
+
+  valueConfirm = new PasswordLineEdit(this);
+  valueConfirm->setText("");
+  valueConfirm->setStyleSheet(passPhraseStyle);
+  valueConfirm->setEchoMode(QLineEdit::Password);
+  valueConfirm->setAlignment(Qt::AlignVCenter | Qt::AlignLeft);
+
+  confirmDescription = new QLabel(this);
+  confirmDescription->setWordWrap(true);
+  confirmDescription->setStyleSheet("font:10px \"Segoe UI\";background:transparent;color:rgb(147,148,151);");
+  confirmDescription->setAlignment(Qt::AlignTop | Qt::AlignLeft);
+  confirmDescription->setText("");
+
+  labelConfirm->setText("Confirm");
+  connect(value, &QLineEdit::textEdited, this, &PasswordEnterElement::checkStrength);
+  connect(value, &PasswordLineEdit::finishEnter, this, &PasswordEnterElement::setFocusOnConfirm);
+  connect(valueConfirm, &QLineEdit::textEdited, this, &PasswordEnterElement::checkConfirm);
+  connect(valueConfirm, &PasswordLineEdit::finishEnter, this, &PasswordEnterElement::checkFinishedEnterance);
+}
+
+PasswordEnterElementCreate::~PasswordEnterElementCreate()
+{
+
+}
+
+PasswordEnterElement::PasswordEnterElement(QWidget * parent /*= nullptr*/)
+{
+  connect(value, &PasswordLineEdit::finishEnter, this, &PasswordEnterElement::checkFinishedEnterance);
+}
+
+PasswordEnterElement::~PasswordEnterElement()
+{
+
 }

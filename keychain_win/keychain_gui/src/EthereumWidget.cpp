@@ -1,11 +1,28 @@
 #include "EthereumWidget.h"
+#include "LabelsFactory.h"
+#include "KeychainWarningMessage.h"
 
+using secmod_commands::secmod_parser_f;
+namespace sm_cmd = secmod_commands;
 
-EthereumWidget::EthereumWidget(Transaction &transaction, QWidget * parent)
-	:KeychainWidget(parent)
-{/*
+EthereumWidget::EthereumWidget(const secmod_parser_f& cmd_parse, QWidget * parent)
+	: QDialog(parent)
+  , descriptionLabel(CreateLabel<Labels_te::DESCRIPTION>()(this))
+  , cryptoType(new SecureWindowElement(this))
+  , from(new SecureWindowElement(this))
+  , to(new SecureWindowElement(this))
+  , amount(new SecureWindowElement(this))
+  , expertModeElement(new ExpertModeElement(this))
+{
+  int endControlPosition = START_POSITION;
+  int _x = 0, _y = 204, _labelWidth = 116;
+
+  ui.setupUi(this);
+  setWindowFlags(Qt::FramelessWindowHint);
+  setFixedSize(600, 347);
+  setStyleSheet("background-color:rgb(242,243,246)");
+
 	QMetaObject::connectSlotsByName(this);
-	cryptoType = new SecureWindowElement(this);
 
 	QString valueStyle("font:16px \"Segoe UI\";background:transparent;color:rgb(123,141,167);");
 	QString labelStyle("font:16px \"Segoe UI\";background:transparent;");
@@ -15,37 +32,46 @@ EthereumWidget::EthereumWidget(Transaction &transaction, QWidget * parent)
 
 	//QList<QString> fieldList({ "From","To","Amount" });
 
-	secmod_parser_f cmd_parse;
-	auto cmd_type = cmd_parse(transaction.getTransactionText().toStdString());
-	auto eth_trx = cmd_parse.to_ethereum();
+  auto cmd = cmd_parse.params< sm_cmd::events_te::sign_hex >();
+  auto& eth_trx = cmd.get_trx_view<secmod_commands::blockchain_secmod_te::ethereum>();
 
-	from = new SecureWindowElement(this);
 	from->SetLabelAndValue("From", QString::fromStdString(eth_trx.from));
 	from->SetLabelStyle(labelStyle);
 	from->SetValueStyle(valueStyle);
 
 	auto eth_data = eth_trx.trx_info;
 
-	to = new SecureWindowElement(this);
 	to->SetLabelAndValue("To", QString::fromStdString(eth_data.to));
 	to->SetLabelStyle(labelStyle);
 	to->SetValueStyle(valueStyle);
 
-	amount = new SecureWindowElement(this);
 	amount->SetLabelAndValue("Amount", QString::fromStdString(eth_data.value));
 	amount->SetLabelStyle(labelStyle);
 	amount->SetValueStyle(valueStyle);
 
-	if (cmd_parse.unlock_time() > 0) {
+	if (cmd.unlock_time > 0) {
 		unlockTime = new PrivateKeyInMemory(this);
-		unlockTime->SetTime(QString::number(cmd_parse.unlock_time()));
+		unlockTime->SetTime(QString::number(cmd.unlock_time));
 	}
 
-	expertModeElement = new ExpertModeElement(this);
-	expertModeElement->SetExpertModeText(QString::fromStdString(cmd_parse.to_expert_mode_string()));
-	*/
+  expertModeElement->SetExpertModeText(QString::fromStdString(to_expert_mode_string(cmd)));
+  
+  KeychainWarningMessage warningMessage;
+
+  QString descr("Are you sure you want to sign this transaction with key <b>''" + QString::fromStdString(cmd_parse.keyname()) + "''</b>?");
+  descriptionLabel->setText(descr);
+
+  if (cmd.unlock_time > 0) {
+    warningMessage.SetWarning(KeychainWarningMessage::WarningType::UnlockUseWarning);
+  }
+  warningMessage.SetWarning(KeychainWarningMessage::WarningType::NoWarnig);
+
+  endControlPosition += 10;
+  endControlPosition = endControlPosition + currentHeight;
+
 }
 
+/*
 void EthereumWidget::SetPosition(int x, int y, int width)
 {
 	cryptoType->SetPosition(0, 0, 116, width);
@@ -82,7 +108,7 @@ int EthereumWidget::GetCurrentHeight() {
 int EthereumWidget::GetCurrentWidth() {
 	return currentWidth;
 }
-
+*/
 EthereumWidget::~EthereumWidget()
 {
 

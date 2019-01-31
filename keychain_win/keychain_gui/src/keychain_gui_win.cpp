@@ -1,7 +1,11 @@
+#include "LabelsFactory.h"
 #include "keychain_gui_win.h"
 
 keychain_gui_win::keychain_gui_win(Transaction &transaction, QWidget *parent)
 	: QDialog(parent)
+  , headerBlock(CreateLabel<Labels_te::HEADER>()(this))
+  , logoLabel(CreateLabel<Labels_te::LOGO>()(this))
+
 {
 	ui.setupUi(this);
 	setWindowFlags(Qt::FramelessWindowHint);
@@ -9,15 +13,6 @@ keychain_gui_win::keychain_gui_win(Transaction &transaction, QWidget *parent)
 	QInputMethod inputMethod();
 	KeychainWarningMessage warningMessage;
 
-	headerBlock = new QLabel(this);
-	logoLabel = new QLabel(this);
-	QPixmap logo(":/keychain_gui_win/kch_logo.png");
-	logo= logo.scaled(100, 50, Qt::KeepAspectRatio, Qt::SmoothTransformation);
-	logoLabel->setStyleSheet("background:transparent;");
-	logoLabel->setPixmap(logo);
-	logoLabel->move(25, 8);
-	headerBlock->setFixedHeight(68);
-	headerBlock->setStyleSheet("background-color:rgb(255,255,255);");
 	setStyleSheet("background-color:rgb(242,243,246)");
 
 	serviceExchange = new KeychainServiceExchange();
@@ -46,7 +41,7 @@ keychain_gui_win::keychain_gui_win(Transaction &transaction, QWidget *parent)
 	if (transaction.isCreatePassword()) {
 		warningMessage.SetWarning(KeychainWarningMessage::WarningType::CreateWarning);
 		descriptionLabel->setText("Enter the password for the new key");
-	}/*
+	}
 	if (!transaction.isCreatePassword() && transaction.isUnlockKey() == -1)
 	{
 		secmod_parser_f cmd_parse;
@@ -180,7 +175,7 @@ keychain_gui_win::keychain_gui_win(Transaction &transaction, QWidget *parent)
 	connect(password, &PasswordEnterElement::finishEnterPassword, this, &keychain_gui_win::transaction_sign);
 	if (transaction.isCreatePassword()) {
 		connect(password, &PasswordEnterElement::changePassword, this, &keychain_gui_win::_disableSignButton);
-	}*/
+	}
 }
 
 void keychain_gui_win::transaction_sign() {

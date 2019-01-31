@@ -209,6 +209,8 @@ dev::Secret keychain_base::get_private_key(const dev::Public& public_key, int un
     case secmod_commands::response_te::password:
       password = std::move(parser.params<secmod_commands::response_te::password>());
       break;
+    case secmod_commands::response_te::canceled:
+      FC_LIGHT_THROW_EXCEPTION(fc_light::operation_canceled, "");
     default:
       break;
     }

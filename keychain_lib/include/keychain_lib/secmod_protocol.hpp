@@ -224,7 +224,8 @@ enum struct response_te
 {
   null = 0,
   password,
-  boolean
+  boolean,
+  canceled
 };
 
 template <response_te response_type>

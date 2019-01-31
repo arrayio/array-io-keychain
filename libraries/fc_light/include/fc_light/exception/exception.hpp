@@ -41,6 +41,7 @@ namespace fc_light
      divide_by_zero_code               ,
      out_of_range_exception_code       ,
      eof_exception_code                ,
+     operation_canceled_code           ,
      
      //3d party exceptions
      std_exception_code                , ///< for std::exceptions (3rd party)
@@ -323,6 +324,7 @@ namespace fc_light
    */
   FC_LIGHT_DECLARE_EXCEPTION( assert_exception, assert_exception_code, "Assert exception" );
   FC_LIGHT_DECLARE_EXCEPTION( eof_exception, eof_exception_code, "End of file" );
+  FC_LIGHT_DECLARE_EXCEPTION( operation_canceled, operation_canceled_code, "Operation canceled by user")
   FC_LIGHT_DECLARE_EXCEPTION( null_optional, null_optional_code, "Null optional" );
   FC_LIGHT_DECLARE_EXCEPTION( encryption_exception, encryption_error_code, "Encryption error" );
   FC_LIGHT_DECLARE_EXCEPTION( internal_error_exception, internal_error_code, "Internal error" );
@@ -550,6 +552,7 @@ FC_LIGHT_REFLECT_ENUM(
   (divide_by_zero_code)
   (out_of_range_exception_code)
   (eof_exception_code)
+  (operation_canceled_code)
 
   (std_exception_code)
   (unhandled_exception_code))

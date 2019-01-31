@@ -40,6 +40,8 @@ hints_toolbar::hints_toolbar(QWidget *parent)
 
 	//create close button
     QPushButton *CloseButton = new QPushButton(this);
+    CloseButton->setObjectName("closebtn");
+    CloseButton->setStyleSheet("QPushButton#closebtn:hover:!pressed{background-color:#c90b0b;border-style:inset;}");
 	
 	//create close button text label
     custom_qlabel *CloseButtonLabel = new custom_qlabel(CloseButton);
@@ -49,12 +51,6 @@ hints_toolbar::hints_toolbar(QWidget *parent)
 
     //set fixed size to make "border" frame equal to parent pushbutton frame
     CloseButtonLabel->setFixedSize(30, 20);
-
-    //set flexy transformed pixmap for close button
-    QPixmap clsBtnLogo(":/keymanager/close_btn_icon.png");
-    clsBtnLogo = clsBtnLogo.scaled(30, 20, Qt::KeepAspectRatio, Qt::SmoothTransformation);
-    CloseButton->setIcon(clsBtnLogo);
-    CloseButton->setIconSize(QSize(30, 20));
     CloseButton->setFixedSize(30, 20);
 	
 	//change buttons to flat style

@@ -40,7 +40,7 @@
         <div class="column col-6 col-xs-12">
           <div class="input-group">
             <span class="input-group-addon">selected key: </span>
-            <input type="text" class="form-input" disabled id="selectedKey" placeholder="Please select a key">
+            <input type="text" class="form-input" readonly id="selectedKey" placeholder="Please select a key">
           </div>
         </div>
         <div class="column col-6 col-xs-12">
@@ -48,7 +48,7 @@
             <label class="form-switch">
             </label>
             <span class="input-group-addon">address: </span>
-            <input type="text" class="form-input" disabled id="address" placeholder="Please select a key">
+            <input type="text" class="form-input" readonly id="address" placeholder="Please select a key">
           </div>
         </div>
       </div>
@@ -100,7 +100,7 @@
               <input type="checkbox" id="checkbox_SIGN_HEX"><i class="form-icon"></i>
             </label>
             <span class="input-group-addon">unlock_time: </span>
-            <input type="number" class="form-input" placeholder="45" id="unlock_time_SIGN_HEX" title="This parameter is experimental and optional!" disabled>
+            <input type="number" class="form-input" placeholder="45" id="unlock_time_SIGN_HEX" title="This parameter is experimental and optional!" readonly>
           </div>
         </div>
       </div>
@@ -176,7 +176,7 @@
     attachListener('ABOUT');
     attachListener('VERSION');
     document.getElementById('checkbox_SIGN_HEX').addEventListener('click', function(e) {
-      document.getElementById('unlock_time_SIGN_HEX').disabled = !e.target.checked;
+      document.getElementById('unlock_time_SIGN_HEX').readOnly = !e.target.checked;
     })
   };
 
@@ -187,7 +187,7 @@
         for (let i = 0; i < paramNames.length; i++) {
           const paramName = paramNames[i];
           const input = document.getElementById(paramName + '_'  + commandName);
-          if (!input.disabled) {
+          if (!input.readOnly) {
             request.params[paramName] = input.value;
           }
         }

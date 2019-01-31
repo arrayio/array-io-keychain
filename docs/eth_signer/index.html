@@ -50,7 +50,14 @@
       </div>
       <div class="columns">
         <div class="column col">
-          <label class="form-label" for="log">Log</label>
+          <div class="columns">
+            <div class="column col-6">
+              <label class="form-label" for="log">Log</label>
+            </div>
+            <div class="column col-6 text-right">
+              <button class="btn btn-sm" id="btn_CLEAR_LOG">Clear log</button>
+            </div>
+          </div>
           <textarea class="form-input" id="log" rows="15"></textarea>
         </div>
       </div>
@@ -59,7 +66,7 @@
           <div class="input-group">
             <span class="input-group-addon">Raw Hex:</span>
             <input type="text" class="form-input" placeholder="Please, sign your transaction" id="rawHex" readonly>
-            <button class="btn input-group-btn btn-action" title="Copy to clipboard"><i class="icon icon-copy" id="btn_COPY"></i></button>
+            <button class="btn input-group-btn btn-action" title="Copy to clipboard" id="btn_COPY"><i class="icon icon-copy"></i></button>
           </div>
         </div>
       </div>
@@ -146,6 +153,10 @@
         document.getElementById('btn_COPY').addEventListener('click', function () {
           document.getElementById("rawHex").select();
           document.execCommand("copy");
+        });
+
+        document.getElementById('btn_CLEAR_LOG').addEventListener('click', function () {
+          document.getElementById('log').value = '';
         })
       };
 

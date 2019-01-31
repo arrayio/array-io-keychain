@@ -4,6 +4,7 @@
     <title>ETH Signer</title>
     <link rel="stylesheet" href="../assets/spectre.min.css">
     <link rel="stylesheet" href="../assets/icons.min.css">
+    <link rel="shortcut icon" href="../assets/favicon.ico">
   </head>
   <body>
     <div class="container">
@@ -134,7 +135,7 @@
             log(`Transfer result: \n${JSON.stringify(result, undefined, 2)}`);
             const endpoint = document.getElementById('input-endpoint').value;
             const prefix = endpoint.indexOf('rinkeby') !== -1 ? 'rinkeby' : 'ropsten';
-            document.getElementById('etherscanLink').innerHTML = `<a href='https://${prefix}.etherscan.io/tx/${result.transactionHash}'>Etherscan Link</a>`;
+            document.getElementById('etherscanLink').innerHTML = `<a href='https://${prefix}.etherscan.io/tx/${result.transactionHash}' target="_blank">Etherscan Link</a>`;
           } catch (e) {
             console.log(e);
             log(e);

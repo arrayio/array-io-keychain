@@ -23,29 +23,29 @@
           <h6>Documentation: <a href="https://github.com/arrayio/array-io-keychain/wiki/How-to-sign-Ethereum-transaction-via-KeyChain">How to sign Ethereum transaction via KeyChain</a></h6>
         </div>
       </div>
-      <div class="container">
-        <div class="form-group">
-          <label class="form-label" for="input-endpoint">Endpoint</label>
-          <input class="form-input" type="text" id="input-endpoint" value="https://rinkeby.infura.io/v3/6e07edb991d64b9197996b7ff174de42" />
-        </div>
-        <div class="form-group">
-          <label class="form-label" for="input-to-address">To address</label>
-          <input
-            class="form-input"
-            type="text"
-            id="input-to-address"
-            value="0xE8899BA12578d60e4D0683a596EDaCbC85eC18CC"
-          />
+      <div class="columns">
+        <div class="column col">
+          <div class="form-group">
+            <label class="form-label" for="input-endpoint">Endpoint</label>
+            <input class="form-input" type="text" id="input-endpoint" value="https://rinkeby.infura.io/v3/6e07edb991d64b9197996b7ff174de42" />
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="input-to-address">To address</label>
+            <input
+              class="form-input"
+              type="text"
+              id="input-to-address"
+              value="0xE8899BA12578d60e4D0683a596EDaCbC85eC18CC"
+            />
+          </div>
         </div>
       </div>
-      <div class="columns my-2 mx-1">
+      <div class="columns my-2">
         <div class="column col-4 ">
           <button class="btn btn-primary" id="btn_SIGN">Sign</button>
           <button class="btn btn-primary" id="btn_PUBLISH">Publish</button>
         </div>
       </div>
-    </div>
-    <div class="container">
       <div class="columns">
         <div class="column col">
           <label class="form-label" for="log">Log</label>
@@ -56,10 +56,12 @@
         <div class="column col-6">
           Raw Hex: <span id="rawHex" style="font-style: italic">Please, sign your transaction</span>
         </div>
-        <div class="column col-6" id="etherscanLink"></div>
       </div>
-      <div class="container">
-        <progress class="progress" style="display: none" max="100" id="progress"></progress>
+      <div class="columns">
+        <div class="column col-12 text-center">
+          <div class="loading loading-lg" id="progress" style="display: none"></div>
+          <div id="etherscanLink"></div>
+        </div>
       </div>
     </div>
     <script src="../bundle.js"></script>

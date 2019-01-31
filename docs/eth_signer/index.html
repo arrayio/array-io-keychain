@@ -3,6 +3,7 @@
   <head>
     <title>ETH Signer</title>
     <link rel="stylesheet" href="../assets/spectre.min.css">
+    <link rel="stylesheet" href="../assets/icons.min.css">
   </head>
   <body>
     <div class="container">
@@ -53,8 +54,12 @@
         </div>
       </div>
       <div class="columns my-2">
-        <div class="column col-6">
-          Raw Hex: <span id="rawHex" style="font-style: italic">Please, sign your transaction</span>
+        <div class="column col">
+          <div class="input-group">
+            <span class="input-group-addon">Raw Hex:</span>
+            <input type="text" class="form-input" placeholder="Please, sign your transaction" id="rawHex" readonly>
+            <button class="btn input-group-btn btn-action" title="Copy to clipboard"><i class="icon icon-copy" id="btn_COPY"></i></button>
+          </div>
         </div>
       </div>
       <div class="columns">
@@ -111,7 +116,7 @@
             const rawHex = result.rawTransaction;
             log(`Transaction built, rawHex: ${rawHex}`);
             log(`Please, publish your transaction`);
-            document.getElementById('rawHex').innerText = rawHex;
+            document.getElementById('rawHex').value = rawHex;
             rawHexGlobal = rawHex;
           }).catch(log)
         });
@@ -136,6 +141,11 @@
             document.getElementById('progress').style.display = 'none';
           }
         });
+
+        document.getElementById('btn_COPY').addEventListener('click', function () {
+          document.getElementById("rawHex").select();
+          document.execCommand("copy");
+        })
       };
 
       function log(message) {

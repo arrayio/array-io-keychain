@@ -15,7 +15,6 @@
 #include "menu_toolbar.hpp"
 #include "hints_toolbar.hpp"
 #include "key_scroll_area.hpp"
-#include "keylist.hpp"
 
 class keymanager_dialog : public QDialog
 {
@@ -28,12 +27,11 @@ private:
 	QLabel *header;
 	QLabel *logoLabel;
 	QLabel *logoTitle;
-	key_scrooll_area *keys_list;
-    keychain_table *keys_table;
+    keychain_table *keysTable;
 	QLabel *wList;
     menu_toolbar *toolbar;
 	hints_toolbar *hintsbar;
-    QTextEdit *text_edit_form;
+    QTextEdit *textEditform;
 
 public slots:
 	//process toolbar menu actions

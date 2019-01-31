@@ -15,9 +15,9 @@ hints_toolbar::hints_toolbar(QWidget *parent)
     MinimizeButtonLabel->setFixedSize(30, 20);
 
     //set flexy transformed pixmap for minimize button
-    QPixmap minimize_btn_logo(":/keymanager/minimize_btn_icon.png");
-    minimize_btn_logo = minimize_btn_logo.scaled(30, 20, Qt::KeepAspectRatio, Qt::SmoothTransformation);
-    MinimizeButton->setIcon(minimize_btn_logo);
+    QPixmap minBtnLogo(":/keymanager/minimize_btn_icon.png");
+    minBtnLogo = minBtnLogo.scaled(30, 20, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+    MinimizeButton->setIcon(minBtnLogo);
     MinimizeButton->setIconSize(QSize(30, 20));
     MinimizeButton->setFixedSize(30, 20);
 
@@ -32,9 +32,9 @@ hints_toolbar::hints_toolbar(QWidget *parent)
     MaximizeButtonLabel->setFixedSize(30, 20);
 
     //set flexy transformed pixmap for maximize button
-    QPixmap maximize_btn_logo(":/keymanager/maximize_btn_icon.png");
-    maximize_btn_logo = maximize_btn_logo.scaled(30, 20, Qt::KeepAspectRatio, Qt::SmoothTransformation);
-    MaximizeButton->setIcon(maximize_btn_logo);
+    QPixmap maxBtnLogo(":/keymanager/maximize_btn_icon.png");
+    maxBtnLogo = maxBtnLogo.scaled(30, 20, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+    MaximizeButton->setIcon(maxBtnLogo);
     MaximizeButton->setIconSize(QSize(30, 20));
     MaximizeButton->setFixedSize(30, 20);
 
@@ -51,9 +51,9 @@ hints_toolbar::hints_toolbar(QWidget *parent)
     CloseButtonLabel->setFixedSize(30, 20);
 
     //set flexy transformed pixmap for close button
-    QPixmap close_btn_logo(":/keymanager/close_btn_icon.png");
-    close_btn_logo = close_btn_logo.scaled(30, 20, Qt::KeepAspectRatio, Qt::SmoothTransformation);
-    CloseButton->setIcon(close_btn_logo);
+    QPixmap clsBtnLogo(":/keymanager/close_btn_icon.png");
+    clsBtnLogo = clsBtnLogo.scaled(30, 20, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+    CloseButton->setIcon(clsBtnLogo);
     CloseButton->setIconSize(QSize(30, 20));
     CloseButton->setFixedSize(30, 20);
 	
@@ -63,7 +63,7 @@ hints_toolbar::hints_toolbar(QWidget *parent)
     CloseButton->setFlat(true);
 	
 	//add buttons to toolbar
-    QToolBar *toolBarHints = new QToolBar();
+    QToolBar *toolBarHints = new QToolBar(this);
     toolBarHints->addWidget(MinimizeButton);
     toolBarHints->addWidget(MaximizeButton);
     toolBarHints->addWidget(CloseButton);

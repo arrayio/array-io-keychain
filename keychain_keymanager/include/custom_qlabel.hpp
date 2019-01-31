@@ -11,9 +11,9 @@ class custom_qlabel : public QLabel
 public:
     custom_qlabel(QWidget* parent = Q_NULLPTR);
 
-protected:
-    void custom_qlabel::enterEvent(QEvent *ev) override; 
-    void custom_qlabel::leaveEvent(QEvent *ev) override;
+//protected:
+//    void custom_qlabel::enterEvent(QEvent *ev) override; 
+//    void custom_qlabel::leaveEvent(QEvent *ev) override;
 };
 
 

@@ -8,7 +8,7 @@ menu_toolbar::menu_toolbar(QWidget *parent)
     QAction *actionImport = new QAction("&Import", this);
     QAction *actionExit = new QAction("&Exit", this);
 
-    QMenu *menuFile = new QMenu("&File");
+    QMenu *menuFile = new QMenu(this);
     menuFile->setStyleSheet("QMenu {background-color: #fafafc;}");
     menuFile->setStyleSheet(menuFile->styleSheet() + "QMenu::item:selected {background-color: #9faec5;}");
     menuFile->addAction(actionExport);
@@ -33,11 +33,9 @@ menu_toolbar::menu_toolbar(QWidget *parent)
 
     //create file button text label
     custom_qlabel *FileButtonLabel = new custom_qlabel(FileButton);
-    FileButtonLabel->setObjectName("filelabel");
+    FileButtonLabel->setObjectName("filelbl");
     FileButtonLabel->setText("File");
     FileButtonLabel->setAlignment(Qt::AlignCenter);
-    FileButtonLabel->setStyleSheet("QWidget#filelabel {background-color: #ffffff; \
-                                    text-align: center;}");
     FileButtonLabel->setFont(QFont("Segoe UI Semibold", 10, QFont::Normal, false));
     
     //create about button text label
@@ -50,8 +48,6 @@ menu_toolbar::menu_toolbar(QWidget *parent)
     FileButtonLabel->setObjectName("aboutlabel");
     Aboutbuttonlabel->setText("About");
     Aboutbuttonlabel->setAlignment(Qt::AlignCenter);
-    Aboutbuttonlabel->setStyleSheet("QWidget#aboutlabel {background-color: #ffffff; \
-                                     text-align: center;}");
     Aboutbuttonlabel->setFont(QFont("Segoe UI Semibold", 10, QFont::Normal, false));
 
     //create key button
@@ -63,9 +59,9 @@ menu_toolbar::menu_toolbar(QWidget *parent)
     Keybuttonlabel->setAlignment(Qt::AlignCenter);
 
     //set flexy transformed pixmap for key button
-    QPixmap key_btn_logo(":/keymanager/tbr_key_icon.png");
-    key_btn_logo = key_btn_logo.scaled(20, 16, Qt::KeepAspectRatio, Qt::SmoothTransformation);
-    KeyButton->setIcon(key_btn_logo);
+    QPixmap keyBtnLogo(":/keymanager/tbr_key_icon.png");
+    keyBtnLogo = keyBtnLogo.scaled(20, 16, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+    KeyButton->setIcon(keyBtnLogo);
     KeyButton->setIconSize(QSize(20, 16));
     
     //change buttons to flat style
@@ -78,7 +74,7 @@ menu_toolbar::menu_toolbar(QWidget *parent)
     AboutButton->setMenu(menuAbout);
 
     //add buttons to toolbar
-    QToolBar *toolBarFile = new QToolBar();
+    QToolBar *toolBarFile = new QToolBar(this);
     toolBarFile->addWidget(FileButton);
     toolBarFile->addWidget(AboutButton);
     toolBarFile->addWidget(KeyButton);

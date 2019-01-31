@@ -30,10 +30,10 @@ void keymanager_dialog::init()
 	logoLabel->move(32, 14);
 	//end dialog initialization
 
-	keys_table = new keychain_table(this);
-	keys_table->move(32, 90);
-	keys_table->init();
-	keys_table->load_records();
+	keysTable = new keychain_table(this);
+    keysTable->move(32, 90);
+    keysTable->init();
+    keysTable->load_records();
 
 	//create menu toolbar 
 	toolbar = new menu_toolbar(this);
@@ -41,10 +41,10 @@ void keymanager_dialog::init()
 	toolbar->move(80, 15);
 
 	//create text-edit as temporary GUI element
-	text_edit_form = new QTextEdit(this);
-	text_edit_form->setFixedSize(100, 30);
-	text_edit_form->setStyleSheet("font:10px \"Segoe UI\";");
-	text_edit_form->move(250, 10);
+	textEditform = new QTextEdit(this);
+    textEditform->setFixedSize(100, 30);
+    textEditform->setStyleSheet("font:10px\"Segoe UI\";background:transparent;");
+    textEditform->move(250, 10);
 
 	QObject::connect(toolbar, SIGNAL(ExportSelected(QString)), this, SLOT(ProcessExport(QString)));
 	QObject::connect(toolbar, SIGNAL(ImportSelected(QString)), this, SLOT(ProcessImport(QString)));
@@ -67,38 +67,38 @@ void keymanager_dialog::init()
 //process export dialog signal call
 void keymanager_dialog::ProcessExport(const QString &text)
 {
-    text_edit_form->setText("Process Export!");
+    textEditform->setText("Process Export!");
 }
 
 //process import dialog signal call
 void keymanager_dialog::ProcessImport(const QString &text)
 {
-    text_edit_form->setText("Process Import!");
+    textEditform->setText("Process Import!");
 }
 
 //process about dialog signal call
 void keymanager_dialog::ProcessAbout(const QString &text)
 {
-    text_edit_form->setText("Process About!");
+    textEditform->setText("Process About!");
 }
 
 //process status dialog signal call
 void keymanager_dialog::ProcessStatus(const QString &text)
 {
-    text_edit_form->setText("Process Status!");
+    textEditform->setText("Process Status!");
 }
 
 //process exit dialog signal call
 void keymanager_dialog::ProcessExit(const QString &text)
 {
-    text_edit_form->setText("Process Exit!");
+    textEditform->setText("Process Exit!");
     QApplication::quit();
 }
 
 //process minimize signal call
 void keymanager_dialog::ProcessMinimize(const QString &text)
 {
-    text_edit_form->setText("Process Minimize!");
+    textEditform->setText("Process Minimize!");
     showMinimized();
 }
 

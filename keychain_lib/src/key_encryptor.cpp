@@ -44,7 +44,7 @@ keyfile_format::encrypted_data encryptor_singleton::encrypt_private_key(keyfile_
   auto prkey_hash_unsec = prkey_hash.makeInsecure();
   auto it = std::copy(priv_key_unsec.begin(), priv_key_unsec.end(), plain_data.data());
   std::copy(prkey_hash_unsec.begin(), prkey_hash_unsec.end(), it);
-  encrypt_data(etype, key, plain_data.data(), plain_data.size);
+  return encrypt_data(etype, key, plain_data.data(), plain_data.size);
 }
 
 keyfile_format::encrypted_data encryptor_singleton::encrypt_data(keyfile_format::cipher_etype etype, const byte_seq_t& key, const unsigned char *in, int inl)

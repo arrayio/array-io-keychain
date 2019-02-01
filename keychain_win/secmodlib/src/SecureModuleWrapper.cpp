@@ -154,13 +154,13 @@ std::string SecureModuleWrapper::exec_cmd(const std::string& json_cmd) const
   if (result_pass.empty())
   {
     response.etype = sm_cmd::response_te::null;
-    result = fc_light::json::to_pretty_string(fc_light::variant(response));
+    result = fc_light::json::to_pretty_string(response);
   }    
   else
   {
     response.etype = sm_cmd::response_te::password;
     response.params = result_pass;
-    result = fc_light::json::to_pretty_string(fc_light::variant(response));
+    result = fc_light::json::to_pretty_string(response);
   }    
 	return result;
 }

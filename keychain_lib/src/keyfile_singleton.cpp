@@ -128,7 +128,7 @@ void keyfile_singleton::flush_keyfile_impl(const value_t& keyfile_data) const
   auto fout = std::ofstream(filepath.c_str());
   if (!fout.is_open())
     FC_LIGHT_THROW_EXCEPTION(fc_light::internal_error_exception, "Cannot open keyfile (${filename})", ("filename", filename));
-  fout << fc_light::json::to_pretty_string(fc_light::variant(keyfile_data)) << std::endl;
+  fout << fc_light::json::to_pretty_string(keyfile_data) << std::endl;
 }
 
 void keyfile_singleton::flush_all() const
@@ -143,6 +143,6 @@ void keyfile_singleton::flush_all() const
     auto fout = std::ofstream(filepath.c_str());
     if (!fout.is_open())
       FC_LIGHT_THROW_EXCEPTION(fc_light::internal_error_exception, "Cannot open keyfile (${filename})", ("filename", filename));
-    fout << fc_light::json::to_pretty_string(fc_light::variant(keyfile_data)) << std::endl;
+    fout << fc_light::json::to_pretty_string(keyfile_data) << std::endl;
   });
 }

@@ -12,7 +12,8 @@
 
 #include <eth-crypto/crypto/Common.h>
 
-namespace keychain_app {
+namespace keychain_app
+{
 
 namespace keyfile_format
 {

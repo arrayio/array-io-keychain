@@ -38,7 +38,7 @@ std::string keychain_app::sec_mod_dummy::exec_cmd(const std::string& json_cmd) c
     secmod_commands::secmod_resonse_common response;
     response.etype = secmod_commands::response_te::password;
     response.params = pass;
-    return fc_light::json::to_pretty_string(fc_light::variant(response));
+    return fc_light::json::to_pretty_string(response);
   }
   default:
   {

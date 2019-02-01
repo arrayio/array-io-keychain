@@ -38,19 +38,21 @@ encryptor_singleton& encryptor_singleton::instance()
 
 keyfile_format::encrypted_data encryptor_singleton::encrypt_private_key(keyfile_format::cipher_etype etype, const byte_seq_t& key, const dev::Secret& priv_key)
 {
-  keyfile_format::encrypted_data enc_data;
-  int enc_length = 0;
-  int length = 0;
-  
   dev::h512 plain_data;
   auto priv_key_unsec = priv_key.makeInsecure();
   auto prkey_hash = dev::openssl::sha3(priv_key);
   auto prkey_hash_unsec = prkey_hash.makeInsecure();
   auto it = std::copy(priv_key_unsec.begin(), priv_key_unsec.end(), plain_data.data());
   std::copy(prkey_hash_unsec.begin(), prkey_hash_unsec.end(), it);
+  encrypt_data(etype, key, plain_data.data(), plain_data.size);
+}
+
+keyfile_format::encrypted_data encryptor_singleton::encrypt_data(keyfile_format::cipher_etype etype, const byte_seq_t& key, const unsigned char *in, int inl)
+{
+  keyfile_format::encrypted_data enc_data;
   
-  std::vector<uint8_t > enc_byte_data(2048,0x00);//TODO: memory has been allocated with a stock
-  //TODO: need to figure out how much memory need to allocate for encrypted data in dependence of cipher algo type
+  int enc_length = 0;
+  int length = 0;
   
   //NOTE: in certain cases, an error with EVP_DecryptInit_ex func may occur
   //In different cases, the function handles raw C key strings differently
@@ -62,7 +64,10 @@ keyfile_format::encrypted_data encryptor_singleton::encrypt_private_key(keyfile_
   dev::openssl::sha3_512_encoder enc;//NOTE: use 512 hash for possible future 512 bit cipher algorithms
   enc.write(key.data(), key.size());
   auto key_hash = enc.result();
-
+  
+  std::vector<uint8_t > enc_byte_data(2048,0x00);//TODO: memory has been allocated with a stock
+  //TODO: need to figure out how much memory need to allocate for encrypted data in dependence of cipher algo type
+  
   if(1 != EVP_EncryptInit_ex(m_ctx, get_cipher(etype), NULL, key_hash.data(), iv.data()))
   {
     //TODO: need to print OpenSSL detailed error string
@@ -70,7 +75,7 @@ keyfile_format::encrypted_data encryptor_singleton::encrypt_private_key(keyfile_
   }
   iv.resize(EVP_CIPHER_CTX_iv_length(m_ctx));
   enc_data.iv = to_hex(iv.data(), iv.size());
-  if(1 != EVP_EncryptUpdate(m_ctx, enc_byte_data.data(), &length, plain_data.data(), plain_data.size))
+  if(1 != EVP_EncryptUpdate(m_ctx, enc_byte_data.data(), &length, in, inl))
   {
     //TODO: need to print OpenSSL detailed error string
     FC_LIGHT_THROW_EXCEPTION(fc_light::encryption_exception, "Error: EVP_EncryptUpdate");

@@ -40,7 +40,7 @@ Download and install KeyChain for [macOS](https://github.com/arrayio/array-io-ke
 
 After installation, connect to the demo-page: http://localhost:16384/ to check if the installation was successful and to test the KeyChain commands. In case everything went well, you will see the following page and you will be able to see responses to the commands in the "Response" box when you click on them.
 
-![screenshot from 2018-12-10 15-57-27](https://user-images.githubusercontent.com/34011337/49734247-be211a80-fc94-11e8-8d85-c70b738ecae3.png)
+![image_2019-02-01_18-12-11](https://user-images.githubusercontent.com/34011337/52132689-c40df900-2650-11e9-94cf-90b151d0c3e8.png)
 
 If you are having trouble connecting to the page, [contact us](#contact) and we will do our best to help you.
 
@@ -61,19 +61,17 @@ Require it
 const Module = require('web3override'); 
 ```
 
-2. Now create a new key with KeyChain and use an overridden web3 function 
+2. Now use an overridden web3 function 
 
 ```javascript
-// create new key in Keychain
-const keyInstance = await Module.Keychain.create();
-const data = await keyInstance.createKey('test1');
-const key = data.result;
-await keyInstance.term();
+  const keyInstance = await Module.Keychain.create();
+  const data = await keyInstance.selectKey();
+  const key = data.result;
+  await keyInstance.term();
+  web3.eth.accounts.signTransaction = Module.web3Override(web3).signTransaction;
 
-Module.override(web3);
-// now we use web3 with keychain
-await web3.eth.accounts.signTransaction(transactionParams, key); // overriden web3 function usage
-
+  // now we use web3 with keychain
+  await web3.eth.accounts.signTransaction(transactionParams, key);
 ```
 
 `signTransaction` with Keychain in action

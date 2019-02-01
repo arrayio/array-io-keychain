@@ -58,7 +58,7 @@ void key_table_row::setShortKeyInfo(QString key_name_str, QString description_st
 void key_table_row::ProcessRemoveKey(const QString &text)
 {
     //initialize remove dialog as unique resource
-    removeDialog = std::unique_ptr< remove_dialog>{ new remove_dialog(this) };
+    removeDialog = std::unique_ptr<remove_dialog>{ new remove_dialog(this) };
     removeDialog->instance()->show_dialog(key_name->text());
 }
 

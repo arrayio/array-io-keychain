@@ -12,14 +12,14 @@ hints_toolbar::hints_toolbar(QWidget *parent)
     MinimizeButtonLabel->setAlignment(Qt::AlignCenter);
 
     //set fixed size to make "border" frame equal to parent pushbutton frame
-    MinimizeButtonLabel->setFixedSize(30, 20);
+    MinimizeButtonLabel->setFixedSize(32, 21);
 
     //set flexy transformed pixmap for minimize button
     QPixmap minBtnLogo(":/keymanager/minimize_btn_icon.png");
-    minBtnLogo = minBtnLogo.scaled(30, 20, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+    minBtnLogo = minBtnLogo.scaled(32, 21, Qt::KeepAspectRatio, Qt::SmoothTransformation);
     MinimizeButton->setIcon(minBtnLogo);
-    MinimizeButton->setIconSize(QSize(30, 20));
-    MinimizeButton->setFixedSize(30, 20);
+    MinimizeButton->setIconSize(QSize(32, 21));
+    MinimizeButton->setFixedSize(32, 21);
 
     //create maximize button
     QPushButton *MaximizeButton = new QPushButton(this);
@@ -29,14 +29,14 @@ hints_toolbar::hints_toolbar(QWidget *parent)
     MaximizeButtonLabel->setAlignment(Qt::AlignCenter);
 
     //set fixed size to make "border" frame equal to parent pushbutton frame
-    MaximizeButtonLabel->setFixedSize(30, 20);
+    MaximizeButtonLabel->setFixedSize(32, 21);
 
     //set flexy transformed pixmap for maximize button
     QPixmap maxBtnLogo(":/keymanager/maximize_btn_icon.png");
-    maxBtnLogo = maxBtnLogo.scaled(30, 20, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+    maxBtnLogo = maxBtnLogo.scaled(32, 21, Qt::KeepAspectRatio, Qt::SmoothTransformation);
     MaximizeButton->setIcon(maxBtnLogo);
-    MaximizeButton->setIconSize(QSize(30, 20));
-    MaximizeButton->setFixedSize(30, 20);
+    MaximizeButton->setIconSize(QSize(32, 21));
+    MaximizeButton->setFixedSize(32, 21);
 
 	//create close button
     QPushButton *CloseButton = new QPushButton(this);
@@ -47,11 +47,14 @@ hints_toolbar::hints_toolbar(QWidget *parent)
     custom_qlabel *CloseButtonLabel = new custom_qlabel(CloseButton);
     CloseButtonLabel->setText("x");
     CloseButtonLabel->setAlignment(Qt::AlignCenter | Qt::AlignVCenter);
-    CloseButtonLabel->setFont(QFont("Segoe UI", 13, QFont::Light, false));
+    QFont clsButtonFont = CloseButtonLabel->font();
+    clsButtonFont.setStyleStrategy(QFont::PreferAntialias);
+    CloseButtonLabel->setFont(clsButtonFont);
+    //CloseButtonLabel->setFont(QFont("Segoe UI", 13, QFont::Light, false));
 
     //set fixed size to make "border" frame equal to parent pushbutton frame
-    CloseButtonLabel->setFixedSize(30, 20);
-    CloseButton->setFixedSize(30, 20);
+    CloseButtonLabel->setFixedSize(32, 15);
+    CloseButton->setFixedSize(32, 21);
 	
 	//change buttons to flat style
     MinimizeButton->setFlat(true);

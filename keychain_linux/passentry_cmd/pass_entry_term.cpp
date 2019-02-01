@@ -217,6 +217,7 @@ std::string  pass_entry_term::input_password(const KeySym * map, int socket)
     char name[256] = "Unknown";
     bool first_key = true;
     auto gui = polling(socket);
+    std::vector<int>  pass_len(2, 0);
     ChangeKbProperty(dev_info, kbd_atom, device_enabled_prop, dev_cnt, 0);
 
     capslock = keyState(XK_Caps_Lock);
@@ -226,21 +227,23 @@ std::string  pass_entry_term::input_password(const KeySym * map, int socket)
     auto mes = fc_light::json::to_string(fc_light::variant(static_cast<const master::cmd_base&>(a)));
     send_gui( mes, socket );
 
-    FD_ZERO(&readfds);
-    devices = parse_device_file();
-    for (auto &sdev : devices)
-    {
-        id = open(sdev.c_str(), O_RDONLY);
-        if (id > FD_SETSIZE || id == -1 ) continue;
-        if (id > nfds)  nfds = id + 1;
-
-        fd_list.push_back(id);
-        FD_SET(id, &readfds);
-    }
-
-    std::vector<int>  pass_len(2, 0);
     try
     {
+        FD_ZERO(&readfds);
+        devices = parse_device_file();
+        for (auto &sdev : devices)
+        {
+            id = open(sdev.c_str(), O_RDONLY);
+            if (id > FD_SETSIZE || id == -1 ) continue;
+            if (id > nfds)  nfds = id + 1;
+
+            fd_list.push_back(id);
+            FD_SET(id, &readfds);
+        }
+
+        if (!fd_list.size())
+            throw std::runtime_error("access denied to " PROC_BUS_INPUT_DEVICES);
+
         while (1)
         {
             res = select(nfds, &readfds, NULL, NULL, &to); // polling keyboard
@@ -376,7 +379,6 @@ std::string  pass_entry_term::input_password(const KeySym * map, int socket)
                             auto mes = fc_light::json::to_string(fc_light::variant(static_cast<const master::cmd_base&>(t)));
                             send_gui( mes, socket );
                         }
-
                     }
                 }
             }

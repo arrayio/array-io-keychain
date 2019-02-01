@@ -73,7 +73,7 @@ more_details::more_details(QWidget *parent)
     DeleteButton->setStyleSheet("QPushButton#deletebtn:focus{border:none;outline:none;}");
 
     //create delete button text label
-    custom_qlabel *DeleteButtonLabel = new custom_qlabel(EditButton);
+    custom_qlabel *DeleteButtonLabel = new custom_qlabel(DeleteButton);
 
     const int heightStep = 40;
     DeleteButtonLabel->move(rowWidth, heightStep);
@@ -87,6 +87,9 @@ more_details::more_details(QWidget *parent)
     DeleteButton->setIconSize(QSize(35, 50));
     DeleteButton->setFixedSize(35, 50);
     DeleteButton->move(rowWidth, heightStep);
+
+    //connect clicked trigger for delete keys button via qt signals with remove dialog
+    QObject::connect(DeleteButton, SIGNAL(clicked()), this, SLOT(RemoveKey()));
 }
 
 void more_details::set_details_value() {
@@ -101,4 +104,10 @@ void more_details::set_details_value() {
 int more_details::get_total_height()
 {
 	return p_total_height;
+}
+
+//call remove key dialog
+void more_details::RemoveKey()
+{
+    emit RemoveKeySelected("Remove key was clicked!");
 }

@@ -9,11 +9,17 @@
 
 class more_details : public QWidget 
 {
-	//Q_OBJECT
+	Q_OBJECT
 public:
 	more_details(QWidget *parent = Q_NULLPTR);
 	void set_details_value();
 	int get_total_height();
+
+private slots:
+    void RemoveKey();
+
+signals:
+    void RemoveKeySelected(QString text);
 
 private :
 	QLabel *creation_date;

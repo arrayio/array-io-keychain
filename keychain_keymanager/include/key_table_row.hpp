@@ -6,6 +6,7 @@
 #include <QLabel>
 #include <QString>
 #include "more_details.hpp"
+#include "remove_dialog.hpp"
 
 class key_table_row : public QWidget
 {
@@ -35,7 +36,7 @@ private:
 	QLabel *description;
 	QFrame *date_frame;
 	QLabel *date;
-
+    std::unique_ptr< remove_dialog> removeDialog;
 	more_details  *more;
 	QString _prev_style_sheet;
 	QLabel *test;
@@ -50,6 +51,10 @@ private:
 
 private:
 	void set_selected();
+
+public slots:
+    //process remove key button click action
+    void ProcessRemoveKey(const QString &text);
 };
 
 #endif

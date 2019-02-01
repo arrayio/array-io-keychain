@@ -30,8 +30,13 @@ void key_table_row::setShortKeyInfo(QString key_name_str, QString description_st
 	//move fields on the place of columns
 	description_frame->move(KEY_NAME_WIDTH, 0);
 	date_frame->move(KEY_NAME_WIDTH + P_KEY_WIDTH, 0);
+
 	//more_area initialization
 	more = new more_details(this);
+
+    //process remove key event while row expanded
+    QObject::connect(more, SIGNAL(RemoveKeySelected(QString)), this, SLOT(ProcessRemoveKey(QString)));
+
 	more->move(0, mp_row_height);
 	//set fonts
 	QFont font("Cartograph Mono CF");
@@ -47,6 +52,14 @@ void key_table_row::setShortKeyInfo(QString key_name_str, QString description_st
 	description->setText(description_str);
 	date->setText(date_str);
 	mp_row_index = row_index;
+}
+
+//process remove key signal call
+void key_table_row::ProcessRemoveKey(const QString &text)
+{
+    //initialize remove dialog as unique resource
+    removeDialog = std::unique_ptr< remove_dialog>{ new remove_dialog(this) };
+    removeDialog->instance()->show_dialog(key_name->text());
 }
 
 void key_table_row::set_row_style_sheet(QString style_sheet)

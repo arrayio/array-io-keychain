@@ -30,6 +30,7 @@ void keymanager_dialog::init()
 	logoLabel->move(32, 14);
 	//end dialog initialization
 
+    //initialize keys table
 	keysTable = new keychain_table(this);
     keysTable->move(32, 90);
     keysTable->init();

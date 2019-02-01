@@ -76,7 +76,7 @@ const Module = require('web3override');
 
 `signTransaction` with Keychain in action
 
-![alt image](https://raw.githubusercontent.com/cypherpunk99/web3override/master/screencast.gif)
+![keychain2](https://user-images.githubusercontent.com/34011337/52135027-f79f5200-2655-11e9-9718-6d47355fc0fb.gif)
 
 ## Companies using KeyChain
 

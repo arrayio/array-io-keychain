@@ -17,6 +17,7 @@ public:
     menu_toolbar(QWidget *parent = Q_NULLPTR);
 
 private slots:
+    void Create();
     void Export();
     void Import();
     void About();
@@ -24,11 +25,12 @@ private slots:
     void Exit();
 
 signals:
-    void ExportSelected(QString text);
-    void ImportSelected(QString text);
-    void AboutSelected(QString text);
-    void StatusSelected(QString text);
-    void ExitSelected(QString text);
+    void CreateSelected(const QString &text);
+    void ExportSelected(const QString &text);
+    void ImportSelected(const QString &text);
+    void AboutSelected(const QString &text);
+    void StatusSelected(const QString &text);
+    void ExitSelected(const QString &text);
 };
 
 #endif // ! MENU_TOOLBAR_H

@@ -47,6 +47,7 @@ void keymanager_dialog::init()
     textEditform->setStyleSheet("font:10px\"Segoe UI\";background:transparent;");
     textEditform->move(250, 10);
 
+    QObject::connect(toolbar, SIGNAL(CreateSelected(QString)), this, SLOT(ProcessCreate(QString)));
 	QObject::connect(toolbar, SIGNAL(ExportSelected(QString)), this, SLOT(ProcessExport(QString)));
 	QObject::connect(toolbar, SIGNAL(ImportSelected(QString)), this, SLOT(ProcessImport(QString)));
 	QObject::connect(toolbar, SIGNAL(AboutSelected(QString)), this, SLOT(ProcessAbout(QString)));
@@ -63,6 +64,12 @@ void keymanager_dialog::init()
     //connect to hintsbar actions
     QObject::connect(hintsbar, SIGNAL(MinimizeSelected(QString)), this, SLOT(ProcessMinimize(QString)));
     QObject::connect(hintsbar, SIGNAL(CloseWindowSelected(QString)), this, SLOT(ProcessExit(QString)));
+}
+
+//process create dialog signal call
+void keymanager_dialog::ProcessCreate(const QString &text)
+{
+    textEditform->setText("Process Create!");
 }
 
 //process export dialog signal call

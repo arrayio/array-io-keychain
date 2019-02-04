@@ -21,8 +21,8 @@ private slots:
     void CloseWindow();
 
 signals:
-    void MinimizeSelected(QString text);
-    void CloseWindowSelected(QString text);
+    void MinimizeSelected(const QString &text);
+    void CloseWindowSelected(const QString &text);
 };
 
 #endif // ! HINTS_TOOLBAR_H

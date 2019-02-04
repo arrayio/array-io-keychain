@@ -35,6 +35,7 @@ private:
 
 public slots:
 	//process toolbar menu actions
+    void ProcessCreate(const QString &text);
     void ProcessExport(const QString &text);
     void ProcessImport(const QString &text);
     void ProcessAbout(const QString &text);

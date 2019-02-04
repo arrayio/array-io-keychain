@@ -4,13 +4,25 @@ menu_toolbar::menu_toolbar(QWidget *parent)
 	: QToolBar(parent)
 {
     //create File menu actions for slots
-    QAction *actionExport = new QAction("&Export", this);
-    QAction *actionImport = new QAction("&Import", this);
+    QAction *actionCreate = new QAction("&Create key", this);
+    QAction *actionExport = new QAction("&Export file", this);
+    QAction *actionImport = new QAction("&Import file", this);
     QAction *actionExit = new QAction("&Exit", this);
 
     QMenu *menuFile = new QMenu(this);
-    menuFile->setStyleSheet("QMenu {background-color: #fafafc;}");
-    menuFile->setStyleSheet(menuFile->styleSheet() + "QMenu::item:selected {background-color: #9faec5;}");
+    menuFile->setObjectName("menufile");
+    menuFile->setStyleSheet("QMenu#menufile {background-color:#ffffff; \
+                                             font-family:\"Segoe UI Normal\"; \
+                                             border-style:inset; \
+                                             border-radius:2px; \
+                                             border: 1px solid #e7e9ef; \
+                                             font-size:14px;}");
+    menuFile->setStyleSheet(menuFile->styleSheet() + "QMenu#menufile::item:selected {background-color:#e7e9ef; \
+                                                      padding: 3px; \
+                                                      border-style:inset; \
+                                                      border-radius:2px; \
+                                                      border: 1px solid #e7e9ef; }");
+    menuFile->addAction(actionCreate);
     menuFile->addAction(actionExport);
     menuFile->addAction(actionImport);
     menuFile->addAction(actionExit);
@@ -21,8 +33,18 @@ menu_toolbar::menu_toolbar(QWidget *parent)
 
     //create menu and add actions to it
     QMenu *menuAbout = new QMenu("&About", this);
-    menuAbout->setStyleSheet("QMenu {background-color: #fafafc;}");
-    menuAbout->setStyleSheet(menuAbout->styleSheet() + "QMenu::item:selected {background-color: #9faec5;}");
+    menuAbout->setObjectName("menuabout");
+    menuAbout->setStyleSheet("QMenu#menuabout {background-color:#ffffff; \
+                                               font-family:\"Segoe UI Normal\"; \
+                                               border-style:inset; \
+                                               border-radius:2px; \
+                                               border: 1px solid #e7e9ef; \
+                                               font-size:14px;}");
+    menuAbout->setStyleSheet(menuAbout->styleSheet() + "QMenu#menuabout::item:selected {background-color:#e7e9ef; \
+                                                        padding: 3px; \
+                                                        border-style:inset; \
+                                                        border-radius:2px; \
+                                                        border: 1px solid #e7e9ef;}");
     menuAbout->addAction(actionAbout);
     menuAbout->addAction(actionStatus);
 
@@ -30,7 +52,10 @@ menu_toolbar::menu_toolbar(QWidget *parent)
     QPushButton *FileButton = new QPushButton(this);
     FileButton->setObjectName("filebtn");
     FileButton->setStyleSheet("QPushButton#filebtn {margin-left:3px; margin-right: 2px;}");
-    FileButton->setStyleSheet(FileButton->styleSheet() + "QPushButton#filebtn:hover:pressed{background-color:#e7e9ef;border-style:inset;border-radius:2px 2px 2px 2px; border: 2px solid #e7e9ef;}");
+    FileButton->setStyleSheet(FileButton->styleSheet() + "QPushButton#filebtn:hover:pressed{background-color:#e7e9ef;\
+                                                          border-style:inset; \
+                                                          border-radius:2px 2px 2px 2px; \
+                                                          border: 2px solid #e7e9ef;}");
     FileButton->setStyleSheet(FileButton->styleSheet() + "QPushButton::menu-indicator{image: none;}");
     FileButton->setFixedSize(35, 24);
 
@@ -45,7 +70,10 @@ menu_toolbar::menu_toolbar(QWidget *parent)
     QPushButton *AboutButton = new QPushButton(this);
     AboutButton->setObjectName("aboutbtn");
     AboutButton->setStyleSheet("QPushButton#aboutlabel{margin-right: 2px;}");
-    AboutButton->setStyleSheet(AboutButton->styleSheet() + "QPushButton#aboutbtn:hover:pressed{background-color:#e7e9ef;border-style:inset;border-radius:2px 2px 2px 2px; border: 2px solid #e7e9ef;}");
+    AboutButton->setStyleSheet(AboutButton->styleSheet() + "QPushButton#aboutbtn:hover:pressed{background-color:#e7e9ef; \
+                                                            border-style:inset; \
+                                                            border-radius:2px 2px 2px 2px; \
+                                                            border: 2px solid #e7e9ef;}");
     AboutButton->setStyleSheet(AboutButton->styleSheet() + "QPushButton::menu-indicator{image: none;}");
     AboutButton->setFixedSize(50, 24);
 
@@ -90,11 +118,18 @@ menu_toolbar::menu_toolbar(QWidget *parent)
     this->addWidget(toolBarFile);
 
     //connect actions to slots via qt signals
+    QObject::connect(actionCreate, SIGNAL(triggered()), this, SLOT(Create()));
     QObject::connect(actionExport, SIGNAL(triggered()), this, SLOT(Export()));
     QObject::connect(actionImport, SIGNAL(triggered()), this, SLOT(Import()));
     QObject::connect(actionAbout, SIGNAL(triggered()), this, SLOT(About()));
     QObject::connect(actionStatus, SIGNAL(triggered()), this, SLOT(Status()));
     QObject::connect(actionExit, SIGNAL(triggered()), this, SLOT(Exit()));
+}
+
+//call create dialog
+void menu_toolbar::Create()
+{
+    emit CreateSelected("Create was clicked!");
 }
 
 //call export dialog

@@ -6,6 +6,10 @@
 #include "keylist.hpp"
 #include "key_scroll_area.hpp"
 #include "table_header.hpp"
+#include <keychain_lib/keyfile_singleton.hpp>
+#include <keychain_lib/version_info.hpp>
+#include <keychain_lib/keychain_logger.hpp>
+#include <keychain_lib/secmod_parser_cmd.hpp>
 
 class keychain_table : public QWidget
 {

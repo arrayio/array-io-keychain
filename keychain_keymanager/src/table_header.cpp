@@ -3,7 +3,7 @@
 table_header::table_header(QWidget *parent)
 	:QWidget(parent)
 {
-	//QMetaObject::connectSlotsByName(this);
+	QMetaObject::connectSlotsByName(this);
 	setStyleSheet("background-image:url(':/keymanager/tbl_title_back.png');");
 	setFixedSize(1033, 40);
 	QString text_style("color:rgb(255,255,255);");
@@ -50,7 +50,12 @@ void table_header::set_search_enabled()
 	search_keyname_button->setFixedSize(15, 15);
 	search_keyname_button->move(291, 13);
 	search_keyname_button->setCursor(Qt::PointingHandCursor);
-	//search_keyname_box = new QLineEdit(key_name_frame);
+	search_keyname_box = new QLineEdit(key_name_frame);
+	search_keyname_box->setStyleSheet("font:16px \"Segoe UI\";background:rgb(255,255,255);border-style:solid;border-width:1px;border-radius:4px;border-color:rgb(225,224,224);");
+	search_keyname_box->setFixedSize(173, 26);
+	search_keyname_box->move(110, 7);
+	search_keyname_box->hide();
+	connect(search_keyname_button, &QPushButton::clicked, this, &table_header::show_filter_keyname);
 
 	//search button for public key
 	search_pub_key_button = new QPushButton(pub_key_frame);
@@ -58,6 +63,28 @@ void table_header::set_search_enabled()
 	search_pub_key_button->setFixedSize(15, 15);
 	search_pub_key_button->move(420, 13);
 	search_pub_key_button->setCursor(Qt::PointingHandCursor);
-	//search_pub_key_box = new QLineEdit(pub_key_frame);
+	search_pub_key_box = new QLineEdit(pub_key_frame);
+	search_pub_key_box->setStyleSheet("font:16px \"Segoe UI\";background:rgb(255,255,255);border-style:solid;border-width:1px;border-radius:4px;border-color:rgb(225,224,224);");
+	search_pub_key_box->setFixedSize(250, 26);
+	search_pub_key_box->move(150, 7);
+	search_pub_key_box->hide();
+	connect(search_pub_key_button, &QPushButton::clicked, this, &table_header::show_filter_pubkey);
+}
 
+void  table_header::show_filter_keyname()
+{
+	if (s_box_keyname_active)
+		search_keyname_box->hide();
+	else
+		search_keyname_box->show();
+	s_box_keyname_active = !s_box_keyname_active;
+}
+
+void table_header::show_filter_pubkey()
+{
+	if (s_box_pubkey_active)
+		search_pub_key_box->hide();
+	else
+		search_pub_key_box->show();
+	s_box_pubkey_active = !s_box_pubkey_active;
 }

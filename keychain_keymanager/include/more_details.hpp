@@ -28,6 +28,8 @@ private :
 	QLabel *location;
 	QLabel *description;
 	QLabel *public_key;
+	more_button *edit_button;
+	more_button *rem_button;
 	int p_total_height=0;
 };
 

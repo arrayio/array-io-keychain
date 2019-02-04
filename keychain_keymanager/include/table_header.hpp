@@ -16,7 +16,11 @@ public:
 	table_header(QWidget *parent=Q_NULLPTR);
 	void set_search_enabled();
 
-//signals:
+
+public slots:
+	void show_filter_keyname();
+	void show_filter_pubkey();
+	//signals:
 //	void search_key_name(QString query);
 //	void search_public_key(QString query);
 
@@ -26,12 +30,14 @@ private:
 	QLabel *key_name_label;
 	QPushButton *search_keyname_button;
 	QLineEdit *search_keyname_box;
+	bool s_box_keyname_active = false;
 	
 	//public key header field
 	QFrame *pub_key_frame;
 	QLabel *pub_key_label;
 	QPushButton *search_pub_key_button;
 	QLineEdit *search_pub_key_box;
+	bool s_box_pubkey_active = false;
 
 	//date headeer field
 	QFrame *date_frame;

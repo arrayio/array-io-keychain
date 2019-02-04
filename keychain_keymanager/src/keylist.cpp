@@ -14,7 +14,7 @@ void keylist::load_records()
 	for (int i = 0; i < p_rows_count; i++) {
 		*(rows + i) = new key_table_row(this);
 		(*(rows + i))->set_row_height(ROW_HEIGHT);
-		(*(rows + i))->setShortKeyInfo(QString("key_name%1").arg(i), QString("96f12a84ffcfb7gg98yh7pjhy6hbb531<...>54d566g5").arg(i), QString("date%1").arg(i), i);
+		(*(rows + i))->setShortKeyInfo(QString("key_name%1").arg(i), QString("96f12a84ffcfb7gg98yh7pjhy6hbb531<...>54d566g5"), QString("date%1").arg(i), i);
 		QString test("96f12a84ffcfb7gg98yh7pjhy6hbb531<...>54d566g5");
 		int test_len = test.length();
 		if (i % 2 == 0) {
@@ -48,7 +48,7 @@ void keylist::row_was_selected(int row_index)
 			expanded_row_index = row_index;
 		}
 	}
-	for (int i = expanded_row_index +1; i < p_rows_count - expanded_row_index -1; i++) {
+	for (int i = expanded_row_index +1; i < p_rows_count - 1; i++) {
 		QPoint _pos = (*(rows + i))->pos();
 		QPoint posn(_pos.x(), _pos.y()+ (*(rows + i))->get_more_height());
 		(*(rows + i))->move(posn);

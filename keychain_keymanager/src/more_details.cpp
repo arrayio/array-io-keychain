@@ -10,6 +10,13 @@ more_details::more_details(QWidget *parent)
 	//initialize gui items
 	int start_position = 0;
 	int height = 30;
+	edit_button = new more_button(this);
+	edit_button->set_edit_mode();
+	edit_button->move(980, 8);
+	rem_button = new more_button(this);
+	rem_button->set_remove_mode();
+	rem_button->move(980, 45);
+
 	creation_date = new QLabel(this);
 	creation_date->setFixedSize(1030, height-5);
 	keychain_version = new QLabel(this);

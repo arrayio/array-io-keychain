@@ -56,7 +56,10 @@ endif( NOT MSVC )
 
 include_directories("${CMAKE_SOURCE_DIR}/keychain_keymanager/include"
 			"${AUTOGEN_BUILD_DIR}"
+            "${CMAKE_SOURCE_DIR}/libraries/eth-crypto/include"
+			"${CMAKE_SOURCE_DIR}/libraries/secp256k1/include"
             "${CMAKE_SOURCE_DIR}/libraries/fc_light/include"
+			"${CMAKE_SOURCE_DIR}/libraries/secp256k1_ext/include"
 			"${CMAKE_SOURCE_DIR}/keychain_lib/include"
 			"${CMAKE_SOURCE_DIR}/libraries/kaitai_struct_cpp_stl_runtime"
 			${Boost_INCLUDE_DIR})
@@ -67,7 +70,7 @@ file(GLOB KEYCHAIN_KEYMANAGER_RESOURCES "${CMAKE_SOURCE_DIR}/keychain_keymanager
 add_executable(keychain_keymanager ${KEYCHAIN_KEYMANAGER_SOURCES} ${KEYCHAIN_KEYMANAGER_INCLUDES} ${KEYCHAIN_KEYMANAGER_RESOURCES})
 
 if(MSVC)
-	target_link_libraries(keychain_keymanager Crypt32.lib Qt5::Widgets Qt5::Core Qt5::Qml Qt5::Svg keychain_common secmodlib kaitai_struct_cpp_stl_runtime fc_light ${Boost_LIBRARIES} ${LIB_OPENSSL})
+	target_link_libraries(keychain_keymanager Crypt32.lib Qt5::Widgets Qt5::Core Qt5::Qml Qt5::Svg keychain_common secmodlib kaitai_struct_cpp_stl_runtime fc_light eth-crypto secp256k1 Userenv.lib ${Boost_LIBRARIES} ${LIB_OPENSSL})
 else()
 	target_link_libraries(keychain_keymanager Qt5::Widgets Qt5::Core Qt5::Qml Qt5::Svg keychain_common kaitai_struct_cpp_stl_runtime fc_light ${Boost_LIBRARIES} ${LIB_OPENSSL})
 endif()

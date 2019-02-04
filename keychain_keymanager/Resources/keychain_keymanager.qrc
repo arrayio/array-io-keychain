@@ -5,8 +5,8 @@
         <file>tbl_title_back.png</file>
         <file>maximize_btn_icon.png</file>
         <file>tbr_key_icon.png</file>
-        <file>edit_btn_icon.png</file>
-        <file>delete_btn_icon.png</file>
+        <file>edit_icon.png</file>
+        <file>trash_icon.png</file>
     </qresource>
     <qresource prefix="/fonts">
         <file>Cartograph Mono CF/Cartograph Mono CF Bold Italic.ttf</file>

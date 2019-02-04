@@ -5,12 +5,11 @@
 #include <QString>
 #include <cwchar>
 #include <keychain_lib/keychain_logger.hpp>
-#include <keychain_lib/version_info.hpp>
 #include <keychain_lib/secmod_parser_cmd.hpp>
-
 
 using namespace std;
 using namespace keychain_app;
+
 using secmod_commands::secmod_parser_f;
 
 int main(int argc, char *argv[])

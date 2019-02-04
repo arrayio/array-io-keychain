@@ -5,6 +5,7 @@
 #include <QWidget>
 #include <QLabel>
 #include <QString>
+#include <memory>
 #include "more_details.hpp"
 #include "remove_dialog.hpp"
 

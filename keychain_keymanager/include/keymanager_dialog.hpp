@@ -46,7 +46,7 @@ public slots:
     
 protected:
     //process hint events to control window behavior 
-    void keymanager_dialog::changeEvent(QEvent *ev) override;
+    virtual void changeEvent(QEvent *ev) override;
 };
 
 #endif // ! KEYMANAGERDIALOG_H

@@ -5,7 +5,9 @@ hints_toolbar::hints_toolbar(QWidget *parent)
 {
 	//create minimize button
     QPushButton *MinimizeButton = new QPushButton(this);
-	
+    MinimizeButton->setObjectName("minbtn");
+    MinimizeButton->setStyleSheet("QPushButton#minbtn:hover:!pressed{background-color:#eff2f5;border-style:inset;}");
+
 	//create minimize button text label
     custom_qlabel *MinimizeButtonLabel = new custom_qlabel(MinimizeButton);
     MinimizeButtonLabel->setText(QStringLiteral("–")); //U + 2013
@@ -13,12 +15,6 @@ hints_toolbar::hints_toolbar(QWidget *parent)
 
     //set fixed size to make "border" frame equal to parent pushbutton frame
     MinimizeButtonLabel->setFixedSize(32, 21);
-
-    //set flexy transformed pixmap for minimize button
-    QPixmap minBtnLogo(":/keymanager/minimize_btn_icon.png");
-    minBtnLogo = minBtnLogo.scaled(32, 21, Qt::KeepAspectRatio, Qt::SmoothTransformation);
-    MinimizeButton->setIcon(minBtnLogo);
-    MinimizeButton->setIconSize(QSize(32, 21));
     MinimizeButton->setFixedSize(32, 21);
 
     //create maximize button
@@ -45,16 +41,17 @@ hints_toolbar::hints_toolbar(QWidget *parent)
 	
 	//create close button text label
     custom_qlabel *CloseButtonLabel = new custom_qlabel(CloseButton);
+    CloseButtonLabel->setObjectName("closebtnlbl");
     CloseButtonLabel->setText("x");
     CloseButtonLabel->setAlignment(Qt::AlignCenter | Qt::AlignVCenter);
     QFont clsButtonFont = CloseButtonLabel->font();
     clsButtonFont.setStyleStrategy(QFont::PreferAntialias);
     CloseButtonLabel->setFont(clsButtonFont);
-    //CloseButtonLabel->setFont(QFont("Segoe UI", 13, QFont::Light, false));
+    CloseButtonLabel->update_style("QLabel#closebtnlbl:{background-color:black;color:black;}");
 
     //set fixed size to make "border" frame equal to parent pushbutton frame
-    CloseButtonLabel->setFixedSize(32, 15);
-    CloseButton->setFixedSize(32, 21);
+    CloseButtonLabel->setFixedSize(36, 15);
+    CloseButton->setFixedSize(36, 21);
 	
 	//change buttons to flat style
     MinimizeButton->setFlat(true);

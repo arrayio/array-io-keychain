@@ -27,7 +27,7 @@ void keymanager_dialog::init()
 	logoLabel = new QLabel(this);
 	logoLabel->setStyleSheet("background:transparent;");
 	logoLabel->setPixmap(logo);
-	logoLabel->move(32, 14);
+	logoLabel->move(32, 13);
 	//end dialog initialization
 
     //initialize keys table
@@ -39,7 +39,7 @@ void keymanager_dialog::init()
 	//create menu toolbar 
 	toolbar = new menu_toolbar(this);
 	toolbar->setStyleSheet("font:\"Segoe UI\";background:transparent;");
-	toolbar->move(80, 15);
+	toolbar->move(75, 13);
 
 	//create text-edit as temporary GUI element
 	textEditform = new QTextEdit(this);
@@ -58,7 +58,7 @@ void keymanager_dialog::init()
     hintsbar->setStyleSheet("font:\"Segoe UI\";background:transparent;");
     //set absolute position
     //because width delta between frame geometry width and width is equal zero
-    hintsbar->move(1001, -5);
+    hintsbar->move(996, -5);
 
     //connect to hintsbar actions
     QObject::connect(hintsbar, SIGNAL(MinimizeSelected(QString)), this, SLOT(ProcessMinimize(QString)));

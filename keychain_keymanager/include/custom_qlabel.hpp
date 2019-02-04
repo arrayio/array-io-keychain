@@ -10,6 +10,7 @@ class custom_qlabel : public QLabel
     Q_OBJECT
 public:
     custom_qlabel(QWidget* parent = Q_NULLPTR);
+    void update_style(const QString &style);
 
 //protected:
 //    void custom_qlabel::enterEvent(QEvent *ev) override; 

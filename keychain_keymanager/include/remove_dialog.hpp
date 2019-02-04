@@ -4,6 +4,10 @@
 #include <QtGui>
 #include <QDialog>
 #include <QGlobalStatic>
+#include <QGridLayout>
+#include <QVBoxLayout>
+#include <QTextEdit>
+#include "custom_qlabel.hpp"
 
 class remove_dialog : public QDialog
 {

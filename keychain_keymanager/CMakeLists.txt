@@ -72,7 +72,7 @@ add_executable(keychain_keymanager ${KEYCHAIN_KEYMANAGER_SOURCES} ${KEYCHAIN_KEY
 if(MSVC)
 	target_link_libraries(keychain_keymanager Crypt32.lib Qt5::Widgets Qt5::Core Qt5::Qml Qt5::Svg keychain_common secmodlib kaitai_struct_cpp_stl_runtime fc_light eth-crypto secp256k1 Userenv.lib ${Boost_LIBRARIES} ${LIB_OPENSSL})
 else()
-	target_link_libraries(keychain_keymanager Qt5::Widgets Qt5::Core Qt5::Qml Qt5::Svg keychain_common kaitai_struct_cpp_stl_runtime fc_light ${Boost_LIBRARIES} ${LIB_OPENSSL})
+	target_link_libraries(keychain_keymanager Qt5::Widgets Qt5::Core Qt5::Qml Qt5::Svg keychain_common kaitai_struct_cpp_stl_runtime fc_light eth-crypto ${Boost_LIBRARIES} ${LIB_OPENSSL} -pthread)
 endif()
 
 if(MSVC)

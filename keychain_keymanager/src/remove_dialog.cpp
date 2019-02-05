@@ -28,8 +28,8 @@ void remove_dialog::show_dialog(const QString& keyName)
 {
     subDialog = new QDialog(this, Qt::CustomizeWindowHint);
     //drop system style behavior 
-    subDialog->setWindowFlag(Qt::Window);
-    subDialog->setWindowFlag(Qt::FramelessWindowHint);
+    subDialog->setWindowFlags(Qt::Window);
+    subDialog->setWindowFlags(Qt::FramelessWindowHint);
     subDialog->setAttribute(Qt::WA_NoSystemBackground, true);
     subDialog->setAttribute(Qt::WA_TranslucentBackground, true);
     subDialog->setAttribute(Qt::WA_PaintOnScreen);

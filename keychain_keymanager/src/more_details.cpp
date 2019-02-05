@@ -1,3 +1,4 @@
+#include "more_button.hpp"
 #include "more_details.hpp"
 
 more_details::more_details(QWidget *parent)
@@ -105,7 +106,7 @@ void more_details::set_details_value() {
 	cipher_type->setText("Cipher type : aes 256");
 	location->setText("location : keychain storage");
 	description->setText("Description : My light wallet key 5");
-	public_key->setText("Public key : 4f190a432dcfda0e4ac09dba217eabbe5fdab4a746f2b90c205bb3åbef734d10<br>4f190a432dcfda0e4ac09dba217eabbe5fdab4a746f2b90c205bb3åbef734d10");
+	public_key->setText("Public key : 4f190a432dcfda0e4ac09dba217eabbe5fdab4a746f2b90c205bb3ï¿½bef734d10<br>4f190a432dcfda0e4ac09dba217eabbe5fdab4a746f2b90c205bb3ï¿½bef734d10");
 }
 
 int more_details::get_total_height()

@@ -7,6 +7,8 @@
 #include <QPushButton>
 #include "custom_qlabel.hpp"
 
+class more_button;
+
 class more_details : public QWidget 
 {
 	Q_OBJECT

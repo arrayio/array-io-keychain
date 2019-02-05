@@ -12,6 +12,7 @@
 #include <boost/multi_index/tag.hpp>
 #include <boost/multi_index/identity.hpp>
 
+#include <fc_light/exception/exception.hpp>
 #include "keyfile_parser.hpp"
 
 namespace keychain_app {

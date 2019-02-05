@@ -6,6 +6,7 @@
 #include <QLabel>
 #include <QPushButton>
 #include "custom_qlabel.hpp"
+#include <more_button.hpp>
 
 class more_button;
 

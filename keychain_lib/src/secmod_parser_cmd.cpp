@@ -26,6 +26,8 @@ events_te secmod_parser_f::operator()(const std::string& json)
 
 std::string to_expert_mode_string(const signhex_event& signhex_event)
 {
+  if (!signhex_event.is_parsed)
+    return signhex_event.trx_view.as<std::string>();
   switch (signhex_event.blockchain)
   {
   case blockchain_secmod_te::unknown:

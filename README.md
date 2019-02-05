@@ -50,6 +50,8 @@ You can find comprehensive installation guides for [macOS](https://github.com/ar
 
 After you have installed KeyChain for [macOS](https://github.com/arrayio/array-io-keychain/releases/download/0.14/KeyChain.Installer.macOS.zip) or for [Windows](https://github.com/arrayio/array-io-keychain/releases/download/0.13/keychain.msi), you can start using it with web3. Just follow these simple steps.
 
+NB: If you launch KeyChain for the first time, you need to get a public key with the "select_key" command. You can save the public key to local storage. Then you will not need to use "select_key" command again.
+
 1. Install `web3override` library from this [source](https://www.npmjs.com/package/web3override).
 
 ```

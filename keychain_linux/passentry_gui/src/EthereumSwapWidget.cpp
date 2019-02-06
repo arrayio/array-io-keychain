@@ -13,6 +13,7 @@ EthereumSwapWidget::EthereumSwapWidget(Transaction &transaction, QWidget * paren
 
 	//QList<QString> fieldList({ "From","To","Amount" });
 
+/*
 	secmod_parser_f cmd_parse;
 	auto cmd_type = cmd_parse(transaction.getTransactionText().toStdString());
 	auto swap_trx = cmd_parse.to_ethereum_swap();
@@ -28,9 +29,11 @@ EthereumSwapWidget::EthereumSwapWidget(Transaction &transaction, QWidget * paren
 	}
 	action->SetLabelAndValue("Action", "(action)");
 
-	/*create_swap = 0,
+	*/
+/*create_swap = 0,
 		refund,
-		withdraw*/
+		withdraw*//*
+
 
 	hash = new SecureWindowElement(this);
 	hash->SetLabelStyle(labelStyle);
@@ -73,6 +76,7 @@ EthereumSwapWidget::EthereumSwapWidget(Transaction &transaction, QWidget * paren
 
 	expertModeElement = new ExpertModeElement(this);
 	expertModeElement->SetExpertModeText(QString::fromStdString(cmd_parse.to_expert_mode_string()));
+*/
 
 }
 

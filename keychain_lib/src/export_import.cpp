@@ -11,7 +11,7 @@
 
 using namespace keychain_app;
 
-namespace secmod_commands = keychain_app::secmod_commands;
+//namespace secmod_commands = keychain_app::secmod_commands;
 
 fc_light::variant create_secmod_cmd()
 {

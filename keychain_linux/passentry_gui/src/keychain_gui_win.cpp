@@ -51,7 +51,7 @@ void keychain_gui_win::refresh(Transaction& transaction)
 	if (transaction.isCreatePassword()) {
 		warningMessage.SetWarning(KeychainWarningMessage::WarningType::CreateWarning);
 		descriptionLabel->setText("Enter the password for the new key");
-	}
+	}/*
 	if (!transaction.isCreatePassword() && transaction.isUnlockKey() == -1)
 	{
 		secmod_parser_f cmd_parse;
@@ -186,7 +186,7 @@ void keychain_gui_win::refresh(Transaction& transaction)
 //	connect(password, &PasswordEnterElement::finishEnterPassword, this, &keychain_gui_win::transaction_sign);
 //	if (transaction.isCreatePassword()) {
 //		connect(password, &PasswordEnterElement::changePassword, this, &keychain_gui_win::_disableSignButton);
-//	}
+//	}*/
 }
 
 

@@ -4,6 +4,7 @@
 EthereumWidget::EthereumWidget(Transaction &transaction, QWidget * parent)
 	:KeychainWidget(parent)
 {
+/*
 	QMetaObject::connectSlotsByName(this);
 	cryptoType = new SecureWindowElement(this);
 
@@ -43,7 +44,8 @@ EthereumWidget::EthereumWidget(Transaction &transaction, QWidget * parent)
 
 	expertModeElement = new ExpertModeElement(this);
 	expertModeElement->SetExpertModeText(QString::fromStdString(cmd_parse.to_expert_mode_string()));
-	
+*/
+
 }
 
 void EthereumWidget::SetPosition(int x, int y, int width)

@@ -130,10 +130,11 @@ template<>
 struct secmod_event<events_te::sign_hex>
 {
   struct params {
-    params() : is_parsed(false), unlock_time(0) {}
-    
-    std::string keyname;
+    params() : is_parsed(false), no_password(false), unlock_time(0) {}
+  
     bool is_parsed;
+    bool no_password;
+    std::string keyname;
     blockchain_secmod_te blockchain;
     int unlock_time;
     fc_light::variant trx_view;
@@ -153,6 +154,7 @@ template<>
 struct secmod_event<events_te::sign_hash>
 {
   struct params {
+    bool no_password = false;
     std::string keyname;
     std::string from;
     std::string hash;
@@ -165,7 +167,8 @@ struct secmod_event<events_te::unlock>
 {
   struct params
   {
-    params(): unlock_time(0){}
+    params(): no_password(false), unlock_time(0){}
+    bool no_password;
     std::string keyname;
     int unlock_time;
   };
@@ -260,13 +263,13 @@ struct secmod_resonse_common
 FC_LIGHT_REFLECT_ENUM(keychain_app::secmod_commands::blockchain_secmod_te, (unknown)(ethereum)(bitcoin)(ethereum_swap))
 FC_LIGHT_REFLECT_ENUM(keychain_app::secmod_commands::events_te,
                       (unknown)(create_key)(sign_hex)(sign_hash)(unlock)(edit_key)(remove_key)(export_keys)(import_keys)(print_mnemonic))
-FC_LIGHT_REFLECT_ENUM(keychain_app::secmod_commands::response_te, (null)(password)(boolean))
+FC_LIGHT_REFLECT_ENUM(keychain_app::secmod_commands::response_te, (null)(password)(boolean)(canceled))
 
 
 FC_LIGHT_REFLECT(keychain_app::secmod_commands::secmod_event<keychain_app::secmod_commands::events_te::create_key>::params_t, (keyname))
-FC_LIGHT_REFLECT(keychain_app::secmod_commands::secmod_event<keychain_app::secmod_commands::events_te::sign_hex>::params_t, (keyname)(is_parsed)(blockchain)(unlock_time)(trx_view))
-FC_LIGHT_REFLECT(keychain_app::secmod_commands::secmod_event<keychain_app::secmod_commands::events_te::sign_hash>::params_t, (keyname)(from)(hash))
-FC_LIGHT_REFLECT(keychain_app::secmod_commands::secmod_event<keychain_app::secmod_commands::events_te::unlock>::params_t, (keyname)(unlock_time))
+FC_LIGHT_REFLECT(keychain_app::secmod_commands::secmod_event<keychain_app::secmod_commands::events_te::sign_hex>::params_t, (is_parsed)(no_password)(keyname)(blockchain)(unlock_time)(trx_view))
+FC_LIGHT_REFLECT(keychain_app::secmod_commands::secmod_event<keychain_app::secmod_commands::events_te::sign_hash>::params_t, (no_password)(keyname)(from)(hash))
+FC_LIGHT_REFLECT(keychain_app::secmod_commands::secmod_event<keychain_app::secmod_commands::events_te::unlock>::params_t, (no_password)(keyname)(unlock_time))
 FC_LIGHT_REFLECT(keychain_app::secmod_commands::secmod_event<keychain_app::secmod_commands::events_te::edit_key>::params_t, (keyname)(unlock_time))
 FC_LIGHT_REFLECT(keychain_app::secmod_commands::secmod_event<keychain_app::secmod_commands::events_te::remove_key>::params_t, (keyname))
 

@@ -95,9 +95,9 @@ enum struct sign_te {
   RSV_noncanonical
 };
 
-fc_light::variant create_secmod_signhex_cmd(const std::vector<unsigned char>& raw, blockchain_te blockchain, std::string from, int unlock_time, const std::string& keyname);
-fc_light::variant create_secmod_signhash_cmd(const std::string& raw, std::string from, const std::string& keyname);
-fc_light::variant create_secmod_unlock_cmd(const std::string& keyname, int unlock_time);
+fc_light::variant create_secmod_signhex_cmd(const std::vector<unsigned char>& raw, blockchain_te blockchain, std::string from, int unlock_time, const std::string& keyname, bool no_password);
+fc_light::variant create_secmod_signhash_cmd(const std::string& raw, std::string from, const std::string& keyname, bool no_password);
+fc_light::variant create_secmod_unlock_cmd(const std::string& keyname, int unlock_time, bool no_password);
 
 class streambuf_derived : public std::basic_streambuf<char>
 {
@@ -161,7 +161,7 @@ class keychain_base
 {
 public:
   using string_list = std::list<std::wstring>;
-  using create_secmod_cmd_f = std::function<std::string(const std::string& keyname)>;
+  using create_secmod_cmd_f = std::function<std::string(const std::string& keyname, bool no_password)>;
   virtual std::string operator()(const fc_light::variant& command) = 0;
   boost::signals2::signal<std::string(const std::string&)> run_secmod_cmd;
   boost::signals2::signal<dev::Public(void)> select_key;
@@ -404,10 +404,10 @@ struct keychain_command<command_te::sign_hex> : keychain_command_base
       }
     };
     
-    private_key = keychain->get_private_key(params.public_key, params.unlock_time, [&evaluate_from, &raw, &params](const std::string& keyname)
+    private_key = keychain->get_private_key(params.public_key, params.unlock_time, [&evaluate_from, &raw, &params](const std::string& keyname, bool no_password)
     {
       return fc_light::json::to_string(
-        create_secmod_signhex_cmd(raw, params.blockchain_type, evaluate_from(), params.unlock_time, keyname));
+        create_secmod_signhex_cmd(raw, params.blockchain_type, evaluate_from(), params.unlock_time, keyname, no_password));
     });
     
     switch (params.blockchain_type)
@@ -506,10 +506,10 @@ struct keychain_command<command_te::sign_hash> : keychain_command_base
     };
 
     //TODO: it is more preferable to use move semantic instead copy for json argument
-    auto private_key = keychain->get_private_key(params.public_key, 0, [&evaluate_from, &params](const std::string& keyname)
+    auto private_key = keychain->get_private_key(params.public_key, 0, [&evaluate_from, &params](const std::string& keyname, bool no_password)
     {
       return fc_light::json::to_string(
-        create_secmod_signhash_cmd(params.hash, evaluate_from(), keyname));
+        create_secmod_signhash_cmd(params.hash, evaluate_from(), keyname, no_password));
     });
 
     //NOTE: using vector instead array because move semantic is implemented in the vector
@@ -702,10 +702,10 @@ struct keychain_command<command_te::unlock>: keychain_command_base
     if (!params.public_key)
       FC_LIGHT_THROW_EXCEPTION(fc_light::invalid_arg_exception, "public_key is not specified");
     
-    auto private_key = keychain->get_private_key(params.public_key, params.unlock_time, [&params](const std::string& keyname)
+    auto private_key = keychain->get_private_key(params.public_key, params.unlock_time, [&params](const std::string& keyname, bool no_password)
     {
       return fc_light::json::to_string(
-        create_secmod_unlock_cmd(keyname, params.unlock_time));
+        create_secmod_unlock_cmd(keyname, params.unlock_time, no_password));
     });
 
     json_response response(true, id);

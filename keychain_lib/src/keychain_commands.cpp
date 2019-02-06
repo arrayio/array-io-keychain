@@ -53,7 +53,7 @@ bool swap_action(std::string data, swap_trx_t::swap_t &swap_info) {
   return true;
 }
 
-fc_light::variant create_secmod_signhex_cmd(const std::vector<unsigned char>& raw, blockchain_te blockchain, std::string from, int unlock_time, const std::string& keyname)
+fc_light::variant create_secmod_signhex_cmd(const std::vector<unsigned char>& raw, blockchain_te blockchain, std::string from, int unlock_time, const std::string& keyname, bool no_password)
 {
   std::string json;
   auto& log = logger_singleton::instance();
@@ -62,6 +62,7 @@ fc_light::variant create_secmod_signhex_cmd(const std::vector<unsigned char>& ra
   params_t params;
   params.is_parsed = true;
   params.keyname = keyname;
+  params.no_password = no_password;
   
   switch (blockchain)
   {
@@ -142,7 +143,7 @@ fc_light::variant create_secmod_signhex_cmd(const std::vector<unsigned char>& ra
   return fc_light::variant(cmd);
 }
 
-fc_light::variant create_secmod_signhash_cmd(const std::string& raw, std::string from, const std::string& keyname)
+fc_light::variant create_secmod_signhash_cmd(const std::string& raw, std::string from, const std::string& keyname, bool no_password)
 {
   secmod_commands::secmod_command cmd;
   using params_t = secmod_commands::secmod_event<secmod_commands::events_te::sign_hash>::params_t;
@@ -150,6 +151,7 @@ fc_light::variant create_secmod_signhash_cmd(const std::string& raw, std::string
   params.hash = raw;
   params.from = std::move(from);
   params.keyname = std::move(keyname);
+  params.no_password = no_password;
   
   cmd.etype = secmod_commands::events_te::sign_hash;
   cmd.params = params;
@@ -158,13 +160,14 @@ fc_light::variant create_secmod_signhash_cmd(const std::string& raw, std::string
 }
 
 
-fc_light::variant create_secmod_unlock_cmd(const std::string& keyname, int unlock_time)
+fc_light::variant create_secmod_unlock_cmd(const std::string& keyname, int unlock_time, bool no_password)
 {
   secmod_commands::secmod_command cmd;
   using params_t = secmod_commands::secmod_event<secmod_commands::events_te::unlock>::params_t;
   params_t params;
   params.keyname = keyname;
   params.unlock_time = unlock_time;
+  params.no_password = no_password;
   cmd.etype = secmod_commands::events_te::unlock;
   cmd.params = params;
 
@@ -199,32 +202,41 @@ dev::Secret keychain_base::get_private_key(const dev::Public& public_key, int un
   
   auto& keyfiles = keyfile_singleton::instance();
   auto& keyfile = keyfiles[public_key];
-  if(keyfile.keyinfo.encrypted)
+  
+  auto result = std::move(*(run_secmod_cmd(create_cmd_func(keyfile.keyname, keyfile.keyinfo.encrypted))));
+  secmod_commands::secmod_result_parser_f parser;
+  byte_seq_t password;
+  switch (parser(result))
   {
-    auto result = std::move(*(run_secmod_cmd(create_cmd_func(keyfile.keyname))));
-    secmod_commands::secmod_result_parser_f parser;
-    byte_seq_t password;
-    switch (parser(result))
-    {
     case secmod_commands::response_te::password:
+    {
       password = std::move(parser.params<secmod_commands::response_te::password>());
+      if (password.empty())
+        FC_LIGHT_THROW_EXCEPTION(fc_light::password_input_exception, "");
+      auto encrypted_data = keyfile.keyinfo.priv_key_data.as<keyfile_format::encrypted_data>();
+      auto& encryptor = encryptor_singleton::instance();
+      result_secret = encryptor.decrypt_private_key(password, encrypted_data);
+      if(unlock_time > 0)
+        key_map.insert(private_key_item(result_secret, unlock_time));
+  
+    }
+      break;
+    case secmod_commands::response_te::boolean:
+    {
+      auto confirm = std::move(parser.params<secmod_commands::response_te::boolean>());
+      if (confirm)
+      {
+        result_secret = keyfile.keyinfo.priv_key_data.as<dev::Secret>();
+        if(unlock_time > 0)
+          key_map.insert(private_key_item(result_secret, unlock_time));
+      }
+      FC_LIGHT_THROW_EXCEPTION(fc_light::operation_canceled, "");
+    }
       break;
     case secmod_commands::response_te::canceled:
       FC_LIGHT_THROW_EXCEPTION(fc_light::operation_canceled, "");
     default:
       break;
-    }
-    if (password.empty())
-      FC_LIGHT_THROW_EXCEPTION(fc_light::password_input_exception, "");
-    auto encrypted_data = keyfile.keyinfo.priv_key_data.as<keyfile_format::encrypted_data>();
-    auto& encryptor = encryptor_singleton::instance();
-    result_secret = encryptor.decrypt_private_key(password, encrypted_data);
-    if(unlock_time > 0)
-      key_map.insert(private_key_item(result_secret, unlock_time));
-  } else {
-    result_secret = keyfile.keyinfo.priv_key_data.as<dev::Secret>();
-    if(unlock_time > 0)
-      key_map.insert(private_key_item(result_secret, unlock_time));
   }
   return result_secret;
 }

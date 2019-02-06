@@ -34,7 +34,7 @@ void keymanager_dialog::init()
 	keysTable = new keychain_table(this);
     keysTable->move(32, 90);
     keysTable->init();
-    keysTable->load_records();
+    //keysTable->load_records(); //remove temporary
 
 	//create menu toolbar 
 	toolbar = new menu_toolbar(this);
@@ -59,7 +59,7 @@ void keymanager_dialog::init()
     hintsbar->setStyleSheet("font:\"Segoe UI\";background:transparent;");
     //set absolute position
     //because width delta between frame geometry width and width is equal zero
-    hintsbar->move(996, -5);
+    hintsbar->move(985, -5);
 
     //connect to hintsbar actions
     QObject::connect(hintsbar, SIGNAL(MinimizeSelected(QString)), this, SLOT(ProcessMinimize(QString)));

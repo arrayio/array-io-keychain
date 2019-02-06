@@ -3,51 +3,6 @@
 menu_toolbar::menu_toolbar(QWidget *parent)
 	: QToolBar(parent)
 {
-    //create File menu actions for slots
-    QAction *actionCreate = new QAction("&Create key", this);
-    QAction *actionExport = new QAction("&Export file", this);
-    QAction *actionImport = new QAction("&Import file", this);
-    QAction *actionExit = new QAction("&Exit", this);
-
-    QMenu *menuFile = new QMenu(this);
-    menuFile->setObjectName("menufile");
-    menuFile->setStyleSheet("QMenu#menufile {background-color:#ffffff; \
-                                             font-family:\"Segoe UI Normal\"; \
-                                             border-style:inset; \
-                                             border-radius:2px; \
-                                             border: 1px solid #e7e9ef; \
-                                             font-size:14px;}");
-    menuFile->setStyleSheet(menuFile->styleSheet() + "QMenu#menufile::item:selected {background-color:#e7e9ef; \
-                                                      padding: 3px; \
-                                                      border-style:inset; \
-                                                      border-radius:2px; \
-                                                      border: 1px solid #e7e9ef; }");
-    menuFile->addAction(actionCreate);
-    menuFile->addAction(actionExport);
-    menuFile->addAction(actionImport);
-    menuFile->addAction(actionExit);
-
-    //create About menu actions for slots
-    QAction *actionAbout = new QAction("&About", this);
-    QAction *actionStatus = new QAction("&Status", this);
-
-    //create menu and add actions to it
-    QMenu *menuAbout = new QMenu("&About", this);
-    menuAbout->setObjectName("menuabout");
-    menuAbout->setStyleSheet("QMenu#menuabout {background-color:#ffffff; \
-                                               font-family:\"Segoe UI Normal\"; \
-                                               border-style:inset; \
-                                               border-radius:2px; \
-                                               border: 1px solid #e7e9ef; \
-                                               font-size:14px;}");
-    menuAbout->setStyleSheet(menuAbout->styleSheet() + "QMenu#menuabout::item:selected {background-color:#e7e9ef; \
-                                                        padding: 3px; \
-                                                        border-style:inset; \
-                                                        border-radius:2px; \
-                                                        border: 1px solid #e7e9ef;}");
-    menuAbout->addAction(actionAbout);
-    menuAbout->addAction(actionStatus);
-
     //create file button
     QPushButton *FileButton = new QPushButton(this);
     FileButton->setObjectName("filebtn");
@@ -57,14 +12,38 @@ menu_toolbar::menu_toolbar(QWidget *parent)
                                                           border-radius:2px 2px 2px 2px; \
                                                           border: 2px solid #e7e9ef;}");
     FileButton->setStyleSheet(FileButton->styleSheet() + "QPushButton::menu-indicator{image: none;}");
-    FileButton->setFixedSize(35, 24);
+    FileButton->setFixedSize(45, 24);
 
     //create file button text label
     custom_qlabel *FileButtonLabel = new custom_qlabel(FileButton);
     FileButtonLabel->setText("File");
     FileButtonLabel->setAlignment(Qt::AlignCenter);
-    FileButtonLabel->setFont(QFont("Segoe UI Semibold", 11, QFont::Bold, false));
-    FileButtonLabel->setFixedSize(35, 24);
+    FileButtonLabel->setFont(QFont("Segoe UI Semibold", 12, QFont::Bold, false));
+    FileButtonLabel->setFixedSize(40, 24);
+
+    custom_menu *menuFile = new custom_menu(FileButton, this);
+    menuFile->setObjectName("menufile");
+    menuFile->setStyleSheet("QMenu#menufile {background-color:#ffffff; \
+                                             padding: 5px; \
+                                             font-family:\"Segoe UI Normal\"; \
+                                             border-style:inset; \
+                                             border-radius:2px; \
+                                             border: 1px solid #e7e9ef; \
+                                             font-size:14px;}");
+    menuFile->setStyleSheet(menuFile->styleSheet() + "QMenu#menufile::item:selected {background-color:#e7e9ef; \
+                                                      border-style:inset; \
+                                                      border-radius:2px; \
+                                                      border: 0px solid #e7e9ef; }");
+
+    //create File menu actions for slots
+    QAction *actionCreate = new QAction("&Create key", this);
+    QAction *actionExport = new QAction("&Export file", this);
+    QAction *actionImport = new QAction("&Import file", this);
+    QAction *actionExit = new QAction("&Exit", this);
+    menuFile->addAction(actionCreate);
+    menuFile->addAction(actionExport);
+    menuFile->addAction(actionImport);
+    menuFile->addAction(actionExit);
     
     //create about button text label
     QPushButton *AboutButton = new QPushButton(this);
@@ -75,14 +54,35 @@ menu_toolbar::menu_toolbar(QWidget *parent)
                                                             border-radius:2px 2px 2px 2px; \
                                                             border: 2px solid #e7e9ef;}");
     AboutButton->setStyleSheet(AboutButton->styleSheet() + "QPushButton::menu-indicator{image: none;}");
-    AboutButton->setFixedSize(50, 24);
+    AboutButton->setFixedSize(55, 24);
 
     //create about button text label
     custom_qlabel *Aboutbuttonlabel = new custom_qlabel(AboutButton);
     Aboutbuttonlabel->setText("About");
     Aboutbuttonlabel->setAlignment(Qt::AlignCenter);
-    Aboutbuttonlabel->setFont(QFont("Segoe UI Semibold", 11, QFont::Bold, false));
-    Aboutbuttonlabel->setFixedSize(48, 24);
+    Aboutbuttonlabel->setFont(QFont("Segoe UI Semibold", 12, QFont::Bold, false));
+    Aboutbuttonlabel->setFixedSize(52, 24);
+
+    //create menu and add actions to it
+    custom_menu *menuAbout = new custom_menu(AboutButton, this);
+    menuAbout->setObjectName("menuabout");
+    menuAbout->setStyleSheet("QMenu#menuabout {background-color:#ffffff; \
+                                               font-family:\"Segoe UI Normal\"; \
+                                               padding: 5px; \
+                                               border-style:inset; \
+                                               border-radius:2px; \
+                                               border: 1px solid #e7e9ef; \
+                                               font-size:14px;}");
+    menuAbout->setStyleSheet(menuAbout->styleSheet() + "QMenu#menuabout::item:selected {background-color:#e7e9ef; \
+                                                        border-style:inset; \
+                                                        border-radius:2px; \
+                                                        border: 0px solid #e7e9ef;}");
+
+    //create About menu actions for slots
+    QAction *actionAbout = new QAction("&About", this);
+    QAction *actionStatus = new QAction("&Status", this);
+    menuAbout->addAction(actionAbout);
+    menuAbout->addAction(actionStatus);
 
     //create key button
     QPushButton *KeyButton = new QPushButton(this);
@@ -95,9 +95,9 @@ menu_toolbar::menu_toolbar(QWidget *parent)
 
     //set flexy transformed pixmap for key button
     QPixmap keyBtnLogo(":/keymanager/tbr_key_icon.png");
-    keyBtnLogo = keyBtnLogo.scaled(21, 17, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+    keyBtnLogo = keyBtnLogo.scaled(22, 18, Qt::KeepAspectRatio, Qt::SmoothTransformation);
     KeyButton->setIcon(keyBtnLogo);
-    KeyButton->setIconSize(QSize(21, 17));
+    KeyButton->setIconSize(QSize(22, 18));
     
     //change buttons to flat style
     FileButton->setFlat(true);
@@ -108,14 +108,23 @@ menu_toolbar::menu_toolbar(QWidget *parent)
     FileButton->setMenu(menuFile);
     AboutButton->setMenu(menuAbout);
 
-    //add buttons to toolbar
-    QToolBar *toolBarFile = new QToolBar(this);
-    toolBarFile->addWidget(FileButton);
-    toolBarFile->addWidget(AboutButton);
-    toolBarFile->addWidget(KeyButton);
+    QHBoxLayout* elementsLayout = new QHBoxLayout(this);
+    elementsLayout->setSizeConstraint(QLayout::SetFixedSize);
+    elementsLayout->addWidget(FileButton, 1);
+    elementsLayout->addWidget(AboutButton, 1);
+    elementsLayout->addWidget(KeyButton, 1);
+
+    QGridLayout* frameLayout = new QGridLayout(this);
+    frameLayout->setSizeConstraint(QLayout::SetFixedSize);
+
+    QWidget *extension = new QWidget(this);
+    extension->setLayout(frameLayout);
+    frameLayout->addLayout(elementsLayout, 0, 0);
+    frameLayout->setSpacing(0);
+    extension->setLayout(frameLayout);
 
     //add toolbar to main layout
-    this->addWidget(toolBarFile);
+    this->addWidget(extension);
 
     //connect actions to slots via qt signals
     QObject::connect(actionCreate, SIGNAL(triggered()), this, SLOT(Create()));

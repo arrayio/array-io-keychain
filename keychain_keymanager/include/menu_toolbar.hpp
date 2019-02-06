@@ -2,13 +2,15 @@
 #define MENU_TOOLBAR_H
 
 #include <QToolBar>
-#include <QMenu>
 #include <QAction>
 #include <QTreeView>
 #include <QTreeWidget>
 #include <QPushButton>
+#include <QHBoxLayout>
+#include <QVBoxLayout>
 #include <QApplication>
 #include "custom_qlabel.hpp"
+#include "custom_menu.hpp"
 
 class menu_toolbar : public QToolBar
 {

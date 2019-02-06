@@ -23,11 +23,11 @@ void keymanager_dialog::init()
 	header->setStyleSheet("background-color:rgb(255,255,255);");
 	//define logo picture
 	QPixmap logo(":/keymanager/keychain_logo.png");
-	logo = logo.scaled(80, 27, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+	logo = logo.scaled(85, 31, Qt::KeepAspectRatio, Qt::SmoothTransformation);
 	logoLabel = new QLabel(this);
 	logoLabel->setStyleSheet("background:transparent;");
 	logoLabel->setPixmap(logo);
-	logoLabel->move(32, 13);
+	logoLabel->move(36, 12);
 	//end dialog initialization
 
     //initialize keys table
@@ -39,7 +39,7 @@ void keymanager_dialog::init()
 	//create menu toolbar 
 	toolbar = new menu_toolbar(this);
 	toolbar->setStyleSheet("font:\"Segoe UI\";background:transparent;");
-	toolbar->move(75, 13);
+	toolbar->move(75, 6);
 
 	//create text-edit as temporary GUI element
 	textEditform = new QTextEdit(this);

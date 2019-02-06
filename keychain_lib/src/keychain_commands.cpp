@@ -201,6 +201,10 @@ dev::Secret keychain_base::get_private_key(const dev::Public& public_key, int un
       if(unlock_time > 0)
         key_map.insert(private_key_item(result, unlock_time));
     }
+    else
+    {
+        result = dev::Secret(keyfile.keyinfo.priv_key_data.as<std::string>());
+    }
   }
   return result;
 }

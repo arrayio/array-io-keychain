@@ -39,7 +39,7 @@ void keymanager_dialog::init()
 	//create menu toolbar 
 	toolbar = new menu_toolbar(this);
 	toolbar->setStyleSheet("font:\"Segoe UI\";background:transparent;");
-	toolbar->move(75, 6);
+	toolbar->move(74, 7);
 
 	//create text-edit as temporary GUI element
 	textEditform = new QTextEdit(this);

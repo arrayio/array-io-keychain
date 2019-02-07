@@ -52,6 +52,8 @@
 #include "secmod_protocol.hpp"
 
 #include "version_info.hpp"
+#include <byteswap.h>
+
 
 #ifdef __linux__
 #  define KEY_DEFAULT_PATH  "/var/keychain"
@@ -442,6 +444,30 @@ struct keychain_command<command_te::sign_hex> : keychain_command_base
       }
       case blockchain_te::bitcoin:
       {
+        streambuf_derived buf((char*) raw.data(),  (char*)raw.data() + raw.size());
+        std::istream is(&buf);
+        kaitai::kstream ks(&is);
+        bitcoin_transaction_t trx_info(&ks);
+        if (trx_info.num_vins>1)
+        {
+            std::string trx;
+            std::stringstream ss;
+
+            ss << std::setw(8) << std::setfill('0') << std::hex << __bswap_32 (trx_info.version)
+               << std::setw(2) << ((int) trx_info.num_vins);
+            trx += ss.str();
+
+            std::for_each(trx_info.vins.begin(), trx_info.vins.end(), [&trx, &ss](auto& a)
+            {
+                trx += a.txid;
+                ss.str("");
+                ss << std::setw(8) << __bswap_32(a.output_id) << std::setw(2) << ((int) a.script_len);
+                trx += ss.str();
+                trx += a.script_sig;
+                trx += a.end_of_vin;
+            });
+        }
+
         unit_list.push_back(raw);
         auto hash = get_hash(unit_list, sha2_256_encoder());
         unit_list.clear();

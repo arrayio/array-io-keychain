@@ -10,8 +10,11 @@
 #include <sys/types.h>
 #include "pass_entry_term.hpp"
 #include "cmd.hpp"
+#include <crack.h>
 
 #define path_ "./passentry_gui"
+#define small  "/usr/local/share/cracklib/pw_small"
+#define large  "/usr/local/share/cracklib/pw_dict"
 
 pass_entry_term::pass_entry_term(bool confirm_) : confirm(confirm_)
 {
@@ -64,7 +67,7 @@ void pass_entry_term::ChangeKbProperty(
 }
 
 
-bool pass_entry_term::OnKey (unsigned short scancode, int shft, int cpslock, int nmlock, std::wstring& pass, const KeySym * map)
+bool pass_entry_term::OnKey (unsigned short scancode, int shft, int cpslock, int nmlock, std::string& pass, const KeySym * map)
 {
     // HACK: manual NumPad processing (It is right only for English keyboard layout)
     switch (scancode)
@@ -96,7 +99,7 @@ bool pass_entry_term::OnKey (unsigned short scancode, int shft, int cpslock, int
         case KEY_ENTER:     return true;
         case KEY_ESC:       pass.clear();    return true;;
         case KEY_BACKSPACE: if (!pass.empty()) pass.pop_back(); break;
-        case KEY_DELETE:    if (!pass.empty()) pass.pop_back(); break;
+        case KEY_DELETE:    break;
         default:{
                     int code = (scancode)*2 +(cpslock xor shft);
                     if (code < MAP_SIZE)
@@ -188,20 +191,19 @@ keychain_app::byte_seq_t pass_entry_term::fork_gui(const KeySym * map, const std
     close(sockets[0]);
     send_gui(mes , sockets[1]);
 
-    std::wstring pass = input_password(map, sockets[1]);
+    std::string pass = input_password(map, sockets[1]);
     close(sockets[1]);
     if (wait(NULL) == -1)   throw std::runtime_error("waiting gui");
 
-    keychain_app::byte_seq_t vec(std::distance(pass.begin(), pass.end()));
-    std::transform(pass.begin(), pass.end(), vec.begin(), [](auto a){ return ((char) a);});
+    keychain_app::byte_seq_t vec(pass.begin(), pass.end());
 
     return vec;
 };
 
 
-std::wstring  pass_entry_term::input_password(const KeySym * map, int socket)
+std::string  pass_entry_term::input_password(const KeySym * map, int socket)
 {
-    std::vector<std::wstring> password(2);
+    std::vector<std::string> password(2);
     int line_edit = 0;
 
     std::list<std::string>  devices;
@@ -215,6 +217,7 @@ std::wstring  pass_entry_term::input_password(const KeySym * map, int socket)
     char name[256] = "Unknown";
     bool first_key = true;
     auto gui = polling(socket);
+    std::vector<int>  pass_len(2, 0);
     ChangeKbProperty(dev_info, kbd_atom, device_enabled_prop, dev_cnt, 0);
 
     capslock = keyState(XK_Caps_Lock);
@@ -224,21 +227,23 @@ std::wstring  pass_entry_term::input_password(const KeySym * map, int socket)
     auto mes = fc_light::json::to_string(fc_light::variant(static_cast<const master::cmd_base&>(a)));
     send_gui( mes, socket );
 
-    FD_ZERO(&readfds);
-    devices = parse_device_file();
-    for (auto &sdev : devices)
-    {
-        id = open(sdev.c_str(), O_RDONLY);
-        if (id > FD_SETSIZE || id == -1 ) continue;
-        if (id > nfds)  nfds = id + 1;
-
-        fd_list.push_back(id);
-        FD_SET(id, &readfds);
-    }
-
-    std::vector<int>  pass_len(2, 0);
     try
     {
+        FD_ZERO(&readfds);
+        devices = parse_device_file();
+        for (auto &sdev : devices)
+        {
+            id = open(sdev.c_str(), O_RDONLY);
+            if (id > FD_SETSIZE || id == -1 ) continue;
+            if (id > nfds)  nfds = id + 1;
+
+            fd_list.push_back(id);
+            FD_SET(id, &readfds);
+        }
+
+        if (!fd_list.size())
+            throw std::runtime_error("access denied to " PROC_BUS_INPUT_DEVICES);
+
         while (1)
         {
             res = select(nfds, &readfds, NULL, NULL, &to); // polling keyboard
@@ -273,9 +278,13 @@ std::wstring  pass_entry_term::input_password(const KeySym * map, int socket)
                     if ((res = read(kbd_id, ev, size * 64)) < size)
                         break;
                 }
+                if (size % sizeof(input_event) !=0 ) break;
+                if (size / sizeof(input_event) !=1 ) break;
+
+
                 first_key = false;
 
-                if (ev[0].value != ' ' && ev[1].type == EV_KEY )
+                if (/*ev[0].value != ' ' &&*/ ev[1].type == EV_KEY )
                 {
                     if (ev[1].value == 1)
                     {
@@ -302,33 +311,23 @@ std::wstring  pass_entry_term::input_password(const KeySym * map, int socket)
                         {
                             password[0].clear();
                             password[1].clear();
-                            auto v = master::cmd<master::cmds::close>();
-                            mes = fc_light::json::to_string(fc_light::variant(v.base));
-                            send_gui( mes, socket );
                             break;
                         }
                         else if (confirm && ev[1].code == KEY_ENTER) // create key
                         {
-                            if (password[0] == password[1])
-                            {
-                                auto v = master::cmd<master::cmds::close>();
-                                mes = fc_light::json::to_string(fc_light::variant(v.base));
-                                send_gui( mes, socket );
-                                break;
-                            }
+                            if (password[0] == password[1])  break;
                         }
-                        else if (OnKey (ev[1].code, shift, capslock, numlock, password[line_edit], map))
-                        {
-                            auto v = master::cmd<master::cmds::close>();
-                            mes = fc_light::json::to_string(fc_light::variant(v.base));
-                            send_gui( mes, socket );
-                            break;
-                        }
+                        else if (OnKey (ev[1].code, shift, capslock, numlock, password[line_edit], map)) break;
                     }
                     else if (ev[1].value == 0)
                     {
                         if ( (ev[1].code == KEY_LEFTSHIFT) || (ev[1].code == KEY_RIGHTSHIFT))  shift=0;
                     }
+                    else if (ev[1].value == 2)
+                    {
+                        if (ev[1].code == KEY_BACKSPACE) OnKey (ev[1].code, shift, capslock, numlock, password[line_edit], map);
+                    }
+
                     if ( (capslock | (numlock<<1) | (shift<<2)) != modify )
                     {
                         auto a = master::cmd<master::cmds::modify>(capslock, numlock, shift);
@@ -352,9 +351,37 @@ std::wstring  pass_entry_term::input_password(const KeySym * map, int socket)
                     auto t = master::cmd<master::cmds::check>(password[0] == password[1]);
                     auto mes = fc_light::json::to_string(fc_light::variant(static_cast<const master::cmd_base&>(t)));
                     send_gui( mes, socket );
+
+                    keychain_app::byte_seq_t vec(password[0].begin(), password[0].end());
+
+                    if (password[0].size())
+                    {
+                        const char * found = nullptr;
+                        found = FascistCheck(password[0].c_str(), large);
+                        if (found )
+                        {
+                            found = FascistCheck(password[0].c_str(), small);
+                            if (found)
+                            {
+                                auto t = master::cmd<master::cmds::strength>(strength_te::weak);
+                                auto mes = fc_light::json::to_string(fc_light::variant(static_cast<const master::cmd_base&>(t)));
+                                send_gui( mes, socket );
+                            }
+                            else
+                            {
+                                auto t = master::cmd<master::cmds::strength>(strength_te::middle);
+                                auto mes = fc_light::json::to_string(fc_light::variant(static_cast<const master::cmd_base&>(t)));
+                                send_gui( mes, socket );
+                            }
+                        }
+                        else{ //strong
+                            auto t = master::cmd<master::cmds::strength>(strength_te::strong);
+                            auto mes = fc_light::json::to_string(fc_light::variant(static_cast<const master::cmd_base&>(t)));
+                            send_gui( mes, socket );
+                        }
+                    }
                 }
             }
-
 
             gui.Select();  // polling gui
 
@@ -363,23 +390,13 @@ std::wstring  pass_entry_term::input_password(const KeySym * map, int socket)
                 gui.CancelButtonPressEvent = false;
                 password[0].clear();
                 password[1].clear();
-
-                auto v = master::cmd<master::cmds::close>();
-                mes = fc_light::json::to_string(fc_light::variant(v.base));
-                send_gui( mes, socket );
                 break;
             }
 
             if (gui.OkButtonPressEvent)
             {
                 gui.OkButtonPressEvent = false;
-                if (!confirm || (password[0] == password[1]))
-                {
-                    auto v = master::cmd<master::cmds::close>();
-                    mes = fc_light::json::to_string(fc_light::variant(v.base));
-                    send_gui( mes, socket );
-                    break;
-                }
+                if (!confirm || (password[0] == password[1]))  break;
             }
 
             if (gui.focusEvent)
@@ -388,11 +405,19 @@ std::wstring  pass_entry_term::input_password(const KeySym * map, int socket)
                 line_edit = gui.line_edit;
             }
         }
+        auto v = master::cmd<master::cmds::close>();
+        mes = fc_light::json::to_string(fc_light::variant(v.base));
+        send_gui( mes, socket );
+
         if (kbd_id != -1) ioctl(kbd_id, EVIOCGRAB, 0);
         for (auto dev : fd_list)  close(dev);
     }
     catch (const std::exception& e)
     {
+        auto v = master::cmd<master::cmds::close>();
+        mes = fc_light::json::to_string(fc_light::variant(v.base));
+        send_gui( mes, socket );
+
         if (kbd_id != -1) ioctl(kbd_id, EVIOCGRAB, 0);
         for (auto dev : fd_list)  close(dev);
         password[0].clear();

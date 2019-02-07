@@ -39,10 +39,10 @@ if( NOT MSVC )
 else()
   find_library(LIB_OPENSSL NAME libcrypto.lib HINTS "${OPENSSL_ROOT_DIR}/lib")
 endif( NOT MSVC )
-
-
 if ( ${CMAKE_HOST_SYSTEM_NAME} MATCHES "Linux")
-    include_directories(
+	find_library(LIB_CR NAMES crack HINTS "../keychain_linux")
+
+	include_directories(
             "../keychain_lib/include"
             "../keychain_linux/passentry_cmd"
             "../libraries/fc_light/include"
@@ -52,7 +52,9 @@ if ( ${CMAKE_HOST_SYSTEM_NAME} MATCHES "Linux")
             "${CMAKE_SOURCE_DIR}/libraries/kaitai_struct_cpp_stl_runtime"
             "${OPENSSL_ROOT_DIR}/include"
             "/usr/include/libcxxabi"
-            ${Boost_INCLUDE_DIR})
+            ${Boost_INCLUDE_DIR}
+			"../libraries/cracklib")
+
 
     file(GLOB KEYCHAIN_SOURCES "./*.cpp" "../keychain_linux/passentry_cmd/*.cpp" )
     file(GLOB KEYCHAIN_INCLUDE "./*.hpp" "../keychain_linux/passentry_cmd/*.hpp" )
@@ -66,8 +68,8 @@ if ( ${CMAKE_HOST_SYSTEM_NAME} MATCHES "Linux")
     endif()
     find_library(LIB_XI NAME Xi HINTS "/usr/lib/x86_64-linux-gnu/")
     add_executable(keychain ${KEYCHAIN_SOURCES} ${KEYCHAIN_INCLUDE} )
-    add_dependencies(keychain passentry_gui)
-    target_link_libraries(keychain keychain_common ${LIB_PTHREAD} fc_light eth-crypto ${LIB_OPENSSL} ${Boost_LIBRARIES} ${X11_LIBRARIES} ${LIB_XI})
+    add_dependencies(keychain passentry_gui)	
+    target_link_libraries(keychain keychain_common ${LIB_PTHREAD} fc_light eth-crypto ${LIB_OPENSSL} ${Boost_LIBRARIES} ${X11_LIBRARIES} ${LIB_XI} ${LIB_CR})
 
     set(GUI_BINARY ${CMAKE_BINARY_DIR}/keychain_linux/passentry_gui/passentry_gui)
     set(KEYCHAIN_BINARY_DIR ${CMAKE_BINARY_DIR}/keychain_cmd_app/passentry_gui)

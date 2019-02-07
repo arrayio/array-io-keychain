@@ -8,7 +8,7 @@
 #include  <QLineEdit>
 //#include <QRegexp>
 #include "PasswordLineEdit.h"
-#include "CheckPasswordStrength.h"
+#include "password_strength.h"
 
 class PasswordEnterElement : public QWidget
 {
@@ -29,10 +29,10 @@ public:
     PasswordLineEdit *value = Q_NULLPTR;
     PasswordLineEdit *valueConfirm = Q_NULLPTR;
 	void tabFocusByMouse (int line);
+    void checkStrength(strength_te);
 
 signals:
 	void finishEnterPassword();
-	void changePassword();
     void focus (int line);
 
 private:
@@ -50,7 +50,6 @@ private:
 	bool isSame = false;
 
 public slots:
-	void checkStrength(const QString &text);
 	void checkConfirm(const bool confirm);
 };
 

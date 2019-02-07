@@ -370,7 +370,7 @@ struct keychain_command<command_te::sign_hex> : keychain_command_base
     //NOTE: using vector instead array because move semantic is implemented in the vector
     auto trans_len = keychain_app::from_hex(params.transaction, raw.data(), raw.size());
     raw.resize(trans_len);
-  
+
     if (!params.public_key)
       FC_LIGHT_THROW_EXCEPTION(fc_light::invalid_arg_exception, "public_key is not specified");
   
@@ -448,33 +448,62 @@ struct keychain_command<command_te::sign_hex> : keychain_command_base
         std::istream is(&buf);
         kaitai::kstream ks(&is);
         bitcoin_transaction_t trx_info(&ks);
+        std::vector<dev::Signature> signatures;
+
+        auto sign = [&private_key](std::vector<unsigned char>& raw)->dev::Signature{
+            unit_list_t unit_list;
+            unit_list.push_back(raw);
+            auto hash = get_hash(unit_list, sha2_256_encoder());
+            unit_list.clear();
+            unit_list.push_back(hash.asBytes());
+            auto hash2 = get_hash(unit_list, sha2_256_encoder());
+            return  dev::sign(private_key,dev::FixedHash<32>(((byte const*) hash2.data()),
+                                                                 dev::FixedHash<32>::ConstructFromPointerType::ConstructFromPointer));
+        };
+
         if (trx_info.num_vins>1)
         {
+          for (int loop =0; loop < trx_info.vins.size(); loop++)
+          {
             std::string trx;
             std::stringstream ss;
-
             ss << std::setw(8) << std::setfill('0') << std::hex << __bswap_32 (trx_info.version)
                << std::setw(2) << ((int) trx_info.num_vins);
             trx += ss.str();
 
-            std::for_each(trx_info.vins.begin(), trx_info.vins.end(), [&trx, &ss](auto& a)
+            for (int input =0; input < trx_info.vins.size(); input++)
             {
-                trx += a.txid;
-                ss.str("");
-                ss << std::setw(8) << __bswap_32(a.output_id) << std::setw(2) << ((int) a.script_len);
-                trx += ss.str();
-                trx += a.script_sig;
-                trx += a.end_of_vin;
-            });
-        }
+              trx += trx_info.vins[input].txid;
+              ss.str("");
+              ss << std::setw(8) << __bswap_32(trx_info.vins[input].output_id) << std::setw(2)
+                << ((int) trx_info.vins[input].script_len);
+              trx += ss.str();
+              if (input != loop)
+                trx += trx_info.vins[input].script_sig;
+              trx += trx_info.vins[input].end_of_vin;
+            }
+            ss.str("");
+            ss << std::setw(2) << ((int) trx_info.num_vouts);
+            trx += ss.str();
 
-        unit_list.push_back(raw);
-        auto hash = get_hash(unit_list, sha2_256_encoder());
-        unit_list.clear();
-        unit_list.push_back(hash.asBytes());
-        auto hash2 = get_hash(unit_list, sha2_256_encoder());
-        signature = dev::sign(private_key,dev::FixedHash<32>(((byte const*) hash2.data()),
-                                   dev::FixedHash<32>::ConstructFromPointerType::ConstructFromPointer));
+            for (auto& a : trx_info.vouts)
+            {
+              ss.str("");
+              ss << std::setw(16) << __bswap_64(a.amount) << std::setw(2) << ((int) a.script_len);
+              trx += ss.str();
+              trx += a.script_pub_key;
+            }
+            ss.str("");
+            ss << std::setw(8) << __bswap_32(trx_info.locktime);
+            trx += ss.str();
+
+            std::vector<unsigned char> raw(trx.length());
+            auto raw_len = keychain_app::from_hex(trx, raw.data(), raw.size());
+            raw.resize(raw_len);
+            signatures[loop] = sign(raw);
+          }
+        }
+        signature = sign(raw);
         break;
       }
       default:

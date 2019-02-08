@@ -461,49 +461,77 @@ struct keychain_command<command_te::sign_hex> : keychain_command_base
                                                                  dev::FixedHash<32>::ConstructFromPointerType::ConstructFromPointer));
         };
 
-        if (trx_info.num_vins>1)
+          if (trx_info.num_vins>1)
         {
-          for (int loop =0; loop < trx_info.vins.size(); loop++)
-          {
-            std::string trx;
             std::stringstream ss;
+            std::string trx_header, trx_footer;
             ss << std::setw(8) << std::setfill('0') << std::hex << __bswap_32 (trx_info.version)
                << std::setw(2) << ((int) trx_info.num_vins);
-            trx += ss.str();
+            trx_header = ss.str();
 
-            for (int input =0; input < trx_info.vins.size(); input++)
-            {
-              trx += trx_info.vins[input].txid;
-              ss.str("");
-              ss << std::setw(8) << __bswap_32(trx_info.vins[input].output_id) << std::setw(2)
-                << ((int) trx_info.vins[input].script_len);
-              trx += ss.str();
-              if (input != loop)
-                trx += trx_info.vins[input].script_sig;
-              trx += trx_info.vins[input].end_of_vin;
-            }
             ss.str("");
             ss << std::setw(2) << ((int) trx_info.num_vouts);
-            trx += ss.str();
+            trx_footer = ss.str();
 
             for (auto& a : trx_info.vouts)
             {
-              ss.str("");
-              ss << std::setw(16) << __bswap_64(a.amount) << std::setw(2) << ((int) a.script_len);
-              trx += ss.str();
-              trx += a.script_pub_key;
+                ss.str("");
+                ss << std::setw(16) << __bswap_64(a.amount) << std::setw(2) << ((int) a.script_len);
+                trx_footer += ss.str();
+                trx_footer += a.script_pub_key;
             }
             ss.str("");
             ss << std::setw(8) << __bswap_32(trx_info.locktime);
-            trx += ss.str();
+            trx_footer += ss.str();
 
-            std::vector<unsigned char> raw(trx.length());
-            auto raw_len = keychain_app::from_hex(trx, raw.data(), raw.size());
-            raw.resize(raw_len);
-            signatures[loop] = sign(raw);
-          }
+            for (int loop =0; loop < trx_info.vins.size(); loop++)
+            {
+                std::string trx = trx_header;
+
+                for (int input =0; input < trx_info.vins.size(); input++)
+                {
+                    trx += trx_info.vins[input].txid;
+                    ss.str("");
+                    ss << std::setw(8) << __bswap_32(trx_info.vins[input].output_id);
+                    trx += ss.str();
+                    if (input == loop)
+                    {
+                        ss.str("");
+                        ss << std::setw(2) << ((int) trx_info.vins[input].script_len);
+                        trx += ss.str();
+                        trx += trx_info.vins[input].script_sig;
+                    }
+                    trx += trx_info.vins[input].end_of_vin;
+                }
+
+                trx += trx_footer;
+
+                std::vector<unsigned char> raw(trx.length());
+                auto raw_len = keychain_app::from_hex(trx, raw.data(), raw.size());
+                raw.resize(raw_len);
+                signatures.push_back(sign(raw)) ;
+            }
+
+            std::string trx = trx_header;
+            for (auto& a : trx_info.vins)
+            {
+/*
+                trx += a.txid;
+                ss.str("");
+                ss << std::setw(8) << __bswap_32(a.output_id);
+                trx += ss.str();
+                ss.str("");
+                ss << std::setw(2) << ((int) a.script_len);
+                trx += ss.str();
+                trx += a.script_sig;
+                trx += a.end_of_vin;
+*/
+            }
         }
-        signature = sign(raw);
+        else
+        {
+            signature = sign(raw);
+        }
         break;
       }
       default:

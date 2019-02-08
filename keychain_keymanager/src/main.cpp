@@ -7,6 +7,7 @@
 #include <cwchar>
 #include <keychain_lib/keychain_logger.hpp>
 #include <keychain_lib/secmod_parser_cmd.hpp>
+#include <boost/format.hpp>
 
 using namespace std;
 using namespace keychain_app;
@@ -23,19 +24,19 @@ void HandleLoggingOutput(QtMsgType type, const QMessageLogContext &context, cons
     auto log = logger_singleton::instance("key manager");
     switch (type) {
     case QtDebugMsg:
-        BOOST_LOG_SEV(log.lg, debug) << "Debug: %s (%s:%u, %s)\n" << localMsg.constData() << context.file << context.line << context.function;
+        BOOST_LOG_SEV(log.lg, debug) << boost::format("Debug:\n%1% %2% %3% %4%\n") % localMsg.constData() % context.file % context.line % context.function;
         break;
     case QtInfoMsg:
-        BOOST_LOG_SEV(log.lg, info) << "Info: %s (%s:%u, %s)\n" << localMsg.constData() << context.file << context.line << context.function;
+        BOOST_LOG_SEV(log.lg, info) << boost::format("Info:\n%1% %2% %3% %4%\n") % localMsg.constData() % context.file % context.line % context.function;
         break;
     case QtWarningMsg:
-        BOOST_LOG_SEV(log.lg, warning) << "Warning: %s (%s:%u, %s)\n" << localMsg.constData() << context.file << context.line << context.function;
+        BOOST_LOG_SEV(log.lg, warning) << boost::format("Warning:\n%1% %2% %3% %4%\n") % localMsg.constData() % context.file % context.line % context.function;
         break;
     case QtCriticalMsg:
-        BOOST_LOG_SEV(log.lg, error) << "Critical: %s (%s:%u, %s)\n" << localMsg.constData() << context.file << context.line << context.function;
+        BOOST_LOG_SEV(log.lg, error) << boost::format("Critical error:\n%1% %2% %3% %4%\n") % localMsg.constData() % context.file % context.line % context.function;
         break;
     case QtFatalMsg:
-        BOOST_LOG_SEV(log.lg, fatal) << "Fatal: %s (%s:%u, %s)\n" << localMsg.constData() << context.file << context.line << context.function;
+        BOOST_LOG_SEV(log.lg, fatal) << boost::format("Fatal error:\n%1% %2% %3% %4%\n") % localMsg.constData() % context.file % context.line % context.function;
         abort();
     }
     (*QT_DEFAULT_MESSAGE_HANDLER)(type, context, msg);
@@ -43,8 +44,8 @@ void HandleLoggingOutput(QtMsgType type, const QMessageLogContext &context, cons
 
 int main(int argc, char *argv[])
 {
-  qInstallMessageHandler(HandleLoggingOutput);
-  qDebug() << "Key manager started";
+    qInstallMessageHandler(HandleLoggingOutput);
+    qDebug() << "Key manager started";
 
 	QApplication a(argc, argv);
 	keymanager_dialog manager;
@@ -53,6 +54,6 @@ int main(int argc, char *argv[])
 	manager.show();
   
 	a.exec();
-  qDebug() << "Key manager stopped";
+    qDebug() << "Key manager stopped";
 	return 0;
 }

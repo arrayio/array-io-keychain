@@ -17,9 +17,8 @@
 
 logger_singleton::logger_singleton(std::string postfix)
 {
-
-    typedef sinks::synchronous_sink< sinks::text_file_backend > file_sink;
-	std::string def_log_path = std::string(LOG_DEFAULT_PATH);
+  typedef sinks::synchronous_sink< sinks::text_file_backend > file_sink;
+  std::string def_log_path = std::string(LOG_DEFAULT_PATH);
     // Create a text file sink
 #ifdef _WIN32
 	if (getenv("USERPROFILE") != NULL) {

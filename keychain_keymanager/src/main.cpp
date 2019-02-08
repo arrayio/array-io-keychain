@@ -20,7 +20,7 @@ static const QtMessageHandler QT_DEFAULT_MESSAGE_HANDLER = qInstallMessageHandle
 void HandleLoggingOutput(QtMsgType type, const QMessageLogContext &context, const QString &msg)
 {
     QByteArray localMsg = msg.toLocal8Bit();
-    auto log = logger_singleton::instance();
+    auto log = logger_singleton::instance("key manager");
     switch (type) {
     case QtDebugMsg:
         BOOST_LOG_SEV(log.lg, debug) << "Debug: %s (%s:%u, %s)\n" << localMsg.constData() << context.file << context.line << context.function;
@@ -43,14 +43,16 @@ void HandleLoggingOutput(QtMsgType type, const QMessageLogContext &context, cons
 
 int main(int argc, char *argv[])
 {
+  qInstallMessageHandler(HandleLoggingOutput);
+  qDebug() << "Key manager started";
+
 	QApplication a(argc, argv);
 	keymanager_dialog manager;
+  
 	manager.init();
 	manager.show();
-
-    //set logging redirection function
-    qInstallMessageHandler(HandleLoggingOutput);
-
+  
 	a.exec();
+  qDebug() << "Key manager stopped";
 	return 0;
 }

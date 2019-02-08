@@ -25,6 +25,7 @@ namespace fc_light
      privkey_not_found_code            , ///< private key not found by public key
      privkey_invalid_unlock_code       , ///< cannot unlock private key, possible wrong password
      password_input_error_code         , ///< error while getting password
+     declined_by_user_code             , ///< user does not approve transaction (decline or cancel has been pressed)
      internal_error_code               , ///< some unspecified internal error
      
      //internal errors
@@ -41,7 +42,6 @@ namespace fc_light
      divide_by_zero_code               ,
      out_of_range_exception_code       ,
      eof_exception_code                ,
-     operation_canceled_code           ,
      
      //3d party exceptions
      std_exception_code                , ///< for std::exceptions (3rd party)
@@ -324,7 +324,7 @@ namespace fc_light
    */
   FC_LIGHT_DECLARE_EXCEPTION( assert_exception, assert_exception_code, "Assert exception" );
   FC_LIGHT_DECLARE_EXCEPTION( eof_exception, eof_exception_code, "End of file" );
-  FC_LIGHT_DECLARE_EXCEPTION( operation_canceled, operation_canceled_code, "Operation canceled by user")
+  FC_LIGHT_DECLARE_EXCEPTION( declined_by_user_exception, declined_by_user_code, "Operation canceled or declined by user")
   FC_LIGHT_DECLARE_EXCEPTION( null_optional, null_optional_code, "Null optional" );
   FC_LIGHT_DECLARE_EXCEPTION( encryption_exception, encryption_error_code, "Encryption error" );
   FC_LIGHT_DECLARE_EXCEPTION( internal_error_exception, internal_error_code, "Internal error" );
@@ -537,6 +537,7 @@ FC_LIGHT_REFLECT_ENUM(
   (privkey_not_found_code)
   (privkey_invalid_unlock_code)
   (password_input_error_code)
+  (declined_by_user_code)
   (internal_error_code)
 
   (parse_error_exception_code)
@@ -552,7 +553,6 @@ FC_LIGHT_REFLECT_ENUM(
   (divide_by_zero_code)
   (out_of_range_exception_code)
   (eof_exception_code)
-  (operation_canceled_code)
 
   (std_exception_code)
   (unhandled_exception_code))

@@ -230,7 +230,8 @@ dev::Secret keychain_base::get_private_key(const dev::Public& public_key, int un
         if(unlock_time > 0)
           key_map.insert(private_key_item(result_secret, unlock_time));
       }
-      FC_LIGHT_THROW_EXCEPTION(fc_light::operation_canceled, "");
+      else
+        FC_LIGHT_THROW_EXCEPTION(fc_light::declined_by_user_exception, "");
     }
       break;
     case secmod_commands::response_te::canceled:

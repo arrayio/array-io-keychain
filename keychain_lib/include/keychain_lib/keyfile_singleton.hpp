@@ -14,16 +14,23 @@
 
 #include <fc_light/exception/exception.hpp>
 
+#include <iterator>
+
 #include "keyfile_parser.hpp"
+
+struct sqlite3;
 
 namespace keychain_app {
 
 namespace keyfiles_map {
 
-struct prim_pubkey_tag {};
-struct second_keyname_tag {};
-struct third_date_tag {};
-
+enum struct index_te {
+  null = 0,
+  public_key,
+  keyname,
+  date
+};
+/*
 using keyfile_map_t = boost::multi_index::multi_index_container<
   keyfile_format::keyfile_t,
   boost::multi_index::indexed_by<
@@ -41,10 +48,93 @@ using keyfile_map_t = boost::multi_index::multi_index_container<
     >
   >
 >;
+*/
+/*
+struct db_iterator
+{
+  db_iterator(index_te itype);
+  virtual ~db_iterator();
+  using self_traits = std::iterator_traits<keyfile_format::keyfile_t*>;
+  using iterator_category = self_traits::iterator_category;
+  using value_type = self_traits::value_type;
+  using difference_type = self_traits::difference_type;
+  using pointer = self_traits::pointer;
+  using reference = self_traits::reference;
+  const reference operator*() const;
+  const pointer operator->() const;
+  db_iterator& operator++();
+  db_iterator& operator--();
+  db_iterator operator++(int);
+  db_iterator operator--(int);
+  db_iterator operator+();
+  db_iterator operator-();
+  db_iterator& operator+=();
+  db_iterator& operator-=();
+  reference operator[](difference_type n) const;
+};
+
+template <index_te itype>
+bool operator==(const db_iterator<itype>& x, const db_iterator<itype>& y);
+
+template <index_te itype>
+bool operator<(const db_iterator<itype>& x, const db_iterator<itype>& y);
+
+template <index_te itype>
+bool operator!=(const db_iterator<itype>& x, const db_iterator<itype>& y);
+
+template <index_te itype>
+bool operator>(const db_iterator<itype>& x, const db_iterator<itype>& y);
+
+template <index_te itype>
+bool operator>=(const db_iterator<itype>& x, const db_iterator<itype>& y);
+
+template <index_te itype>
+bool operator<=(const db_iterator<itype>& x, const db_iterator<itype>& y);
+
+template <index_te itype>
+db_iterator<itype> operator-(const db_iterator<itype>& x, const db_iterator<itype>& y);
+
+template <index_te itype>
+db_iterator<itype> operator+(const db_iterator<itype>& x, const db_iterator<itype>& y);
+*/
+
+#define KEYFILES_DEFAULT_DB "keyfiles.db"
 
 }
 
-using keyfiles_map::keyfile_map_t;
+//NOTE: This database connection is not threadsafe, because it is not necessary
+class database_connection
+{
+  database_connection(const char* db_name);
+  virtual ~database_connection();
+private:
+  enum table_check_result: uint8_t {
+    CHECK_NULL = 0,
+    CHECK_KEYFILES_TABLE = 0x01,
+    CHECK_SIGNLOGS_TABLE = 0x10,
+    CHECK_FULL = 0x11
+  };
+  static constexpr const char* check_keyfiles_tables =
+    "SELECT name AS keyfiles_table_name FROM sqlite_master WHERE type='table' AND name='{keyfiles}';\
+     SELECT name AS signlogs_table_name FROM sqlite_master WHERE type='table' AND name='{sign_logs}'";
+  static constexpr const char* create_keyfiles_tables =
+    "CREATE ...;\
+     CREATE ...";//TODO:
+  static int callback(void *checker_value, int columns_num, char **row, char **column_name);
+  sqlite3 *m_db;
+};
+
+/*
+template <index_te itype>
+struct index
+{
+
+};
+*/
+
+}
+
+//using keyfiles_map::keyfile_map_t;
 
 class keyfile_singleton
 {

@@ -4,8 +4,75 @@
 
 #include "keychain_commands.hpp"
 #include "keyfile_singleton.hpp"
+#include "keychain_logger.hpp"
+
+#include <sqlite3/sqlite3.h>
+
 
 using namespace keychain_app;
+
+int database_connection::callback(void *checker_value_, int columns_num, char **row, char **column_name)
+{
+  //NOTE: I don't want to throw exception into callback function, because of possible errors in sqlite library.
+  auto& log = logger_singleton::instance();
+  assert(columns_num == 1);
+  if(columns_num != 1)
+    BOOST_LOG_SEV(log.lg, info) << "database_connection::callback(): invalid num of columns = " << columns_num;
+  assert(column_name[0]);
+  if(!column_name[0])
+    BOOST_LOG_SEV(log.lg, info) << "database_connection::callback(): column name is NULL ";
+  uint8_t* checker_value = (uint8_t*)checker_value_;
+  if(!strcmp(column_name[0], "keyfiles_table_name"))
+  {
+    if(row[0] && !strcmp(row[0], "keyfiles"))
+      *checker_value |= CHECK_KEYFILES_TABLE;
+  }
+  if(!strcmp(column_name[0], "signlogs_table_name"))
+  {
+    if(row[0] && !strcmp(row[0], "sign_logs"))
+      *checker_value |= CHECK_SIGNLOGS_TABLE;
+  }
+  return 0;
+}
+
+database_connection::database_connection(const char* db_name)
+{
+  char *err_msg = 0;
+  try {
+    auto rc = sqlite3_open(db_name, &m_db);
+    if (rc)
+      FC_LIGHT_THROW_EXCEPTION(fc_light::keyfiles_db_cannot_open_exception, "sqlite open error: %{ERRMSG}",
+                               ("ERRMSG", sqlite3_errmsg(m_db)));
+    table_check_result check_tables_result = CHECK_NULL;
+    rc = sqlite3_exec(m_db, check_keyfiles_tables, callback, &check_tables_result, &err_msg);
+    if( rc!=SQLITE_OK )
+      FC_LIGHT_THROW_EXCEPTION(fc_light::keyfiles_db_cannot_open_exception, "keyfiles check initialize error: %{ERRMSG}", ("ERRMSG", err_msg));\
+    switch (check_tables_result)
+    {
+      case CHECK_NULL: rc = sqlite3_exec(m_db, create_keyfiles_tables, nullptr, &check_tables_result, &err_msg);//TODO: need to figure out is it need to check result rows?
+        break;
+      case CHECK_KEYFILES_TABLE:
+      case CHECK_SIGNLOGS_TABLE:
+        FC_LIGHT_ASSERT(false);
+      case CHECK_FULL:
+        break;
+      default:
+        break;
+    }
+  }
+  catch (fc_light::exception& exc)
+  {
+    sqlite3_close(m_db);
+    if(err_msg)
+      sqlite3_free(err_msg);
+    FC_LIGHT_RETHROW_EXCEPTION(exc, error, "");
+  }
+}
+
+database_connection::~database_connection()
+{
+  sqlite3_close(m_db);
+}
 
 keyfile_singleton& keyfile_singleton::instance()
 {

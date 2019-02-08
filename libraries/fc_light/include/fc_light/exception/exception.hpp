@@ -42,6 +42,8 @@ namespace fc_light
      divide_by_zero_code               ,
      out_of_range_exception_code       ,
      eof_exception_code                ,
+     keyfiles_db_cannot_open_code      ,
+     sql_exception_code                ,
      
      //3d party exceptions
      std_exception_code                , ///< for std::exceptions (3rd party)
@@ -333,7 +335,14 @@ namespace fc_light
   FC_LIGHT_DECLARE_EXCEPTION( divide_by_zero_exception, divide_by_zero_code, "Integer divide by zero" );
   //  /* defined near assert_evaluator */ FC_LIGHT_DECLARE_EXCEPTION( transaction_dependency_exception, transaction_dependency_code, "Missing Transaction Dependency" );
 
-  std::string except_str();
+  /**
+   * @brief sqlite exceptions
+   */
+  FC_LIGHT_DECLARE_EXCEPTION( keyfiles_db_cannot_open_exception, keyfiles_db_cannot_open_code, "Keyfiles database cannot be open");
+  FC_LIGHT_DECLARE_EXCEPTION( sql_exception, sql_exception_code, "SQL exception");
+
+
+std::string except_str();
 
   void record_assert_trip(
      const char* filename,
@@ -553,6 +562,8 @@ FC_LIGHT_REFLECT_ENUM(
   (divide_by_zero_code)
   (out_of_range_exception_code)
   (eof_exception_code)
+  (keyfiles_db_cannot_open_code)
+  (sql_exception_code)
 
   (std_exception_code)
   (unhandled_exception_code))

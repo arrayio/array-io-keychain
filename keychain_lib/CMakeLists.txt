@@ -51,6 +51,7 @@ else ( MSVC )
             "../libraries/secp256k1/include"
             "../libraries/secp256k1_ext/include"
             "../libraries/eth-crypto/include"
+            "../3rd-party-components/include"
 #            "../libraries/eth-crypto/ethash/src/libethash"
             "${OPENSSL_ROOT_DIR}/include"
             "/usr/include/libcxxabi"
@@ -62,7 +63,9 @@ file(GLOB KEYCHAIN_LIB_SOURCES "./src/*.cpp" )
 file(GLOB KEYCHAIN_LIB_INCLUDE "./include/keychain_lib/*.hpp" )
 list(APPEND KEYCHAIN_LIB_SOURCES "${CMAKE_CURRENT_BINARY_DIR}/git_revision.cpp")
 
+find_library(SQLITE_LIB sqlite3 "../3rd-party-components/lib")
+
 add_library(keychain_common STATIC ${KEYCHAIN_LIB_SOURCES} ${KEYCHAIN_LIB_INCLUDE})
-target_link_libraries(keychain_common  kaitai_struct_cpp_stl_runtime)
+target_link_libraries(keychain_common kaitai_struct_cpp_stl_runtime ${SQLITE_LIB})
 
 

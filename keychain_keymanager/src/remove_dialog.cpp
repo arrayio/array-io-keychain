@@ -30,8 +30,8 @@ void remove_dialog::show_dialog(const QString& keyName)
     //drop system style behavior 
     subDialog->setWindowFlags(Qt::Window);
     subDialog->setWindowFlags(Qt::FramelessWindowHint);
-    subDialog->setAttribute(Qt::WA_NoSystemBackground, true);
-    subDialog->setAttribute(Qt::WA_TranslucentBackground, true);
+    subDialog->setAttribute(Qt::WA_NoSystemBackground);
+    subDialog->setAttribute(Qt::WA_TranslucentBackground);
     subDialog->setAttribute(Qt::WA_PaintOnScreen);
 
     custom_qlabel *titleBanner = new custom_qlabel(this);

@@ -12,6 +12,7 @@ class custom_menu : public QMenu
 
 public:
     custom_menu(QPushButton* button, QWidget* parent = Q_NULLPTR);
+    void const setFixedStyle();
 
 private:
     QPushButton* primaryButton;

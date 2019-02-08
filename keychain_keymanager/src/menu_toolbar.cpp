@@ -6,10 +6,10 @@ menu_toolbar::menu_toolbar(QWidget *parent)
     //create file button
     QPushButton *FileButton = new QPushButton(this);
     FileButton->setObjectName("filebtn");
-    FileButton->setStyleSheet(FileButton->styleSheet() + "QPushButton#filebtn:hover:pressed{background-color:#e7e9ef;\
+    FileButton->setStyleSheet("QPushButton#filebtn:hover:pressed{background-color:#e7e9ef;\
                                                           border-style:inset; \
                                                           border-radius:2px 2px 2px 2px; \
-                                                          border: 2px solid #e7e9ef;}");
+                                                          border:2px solid #e7e9ef;}");
     FileButton->setStyleSheet(FileButton->styleSheet() + "QPushButton::menu-indicator{image: none;}");
     FileButton->setFixedSize(45, 24);
 
@@ -20,23 +20,8 @@ menu_toolbar::menu_toolbar(QWidget *parent)
     FileButtonLabel->setFont(QFont("Segoe UI Semibold", 12, QFont::Bold, false));
     FileButtonLabel->setFixedSize(42, 24);
 
+    //create file menu
     custom_menu *menuFile = new custom_menu(FileButton, this);
-    menuFile->setObjectName("menufile");
-    menuFile->setStyleSheet("QMenu#menufile {background-color:#ffffff; \
-                                             font-family:\"Segoe UI Normal\"; \
-                                             border-style:inset; \
-                                             border-radius:2px; \
-                                             border: 1px solid #e7e9ef; \
-                                             font-size:14px;}");
-    menuFile->setStyleSheet(menuFile->styleSheet() + "QMenu#menufile::item:selected {background-color:#e7e9ef; \
-                                                      border-radius:2px; \
-                                                      border: 0px solid #e7e9ef; }" + 
-                                                     "QMenu#menufile::item {background-color:#ffffff; \
-                                                      padding: 5px; \
-                                                      border-radius:2px; \
-                                                      border: 0px solid #e7e9ef;}");
-    menuFile->setFixedWidth(85);
-
 
     //create File menu actions for slots
     QAction *actionCreate = new QAction("&Create key", this);
@@ -44,17 +29,17 @@ menu_toolbar::menu_toolbar(QWidget *parent)
     QAction *actionImport = new QAction("&Import file", this);
     QAction *actionExit = new QAction("&Exit", this);
     menuFile->addAction(actionCreate);
-    menuFile->addAction(actionExport);
     menuFile->addAction(actionImport);
+    menuFile->addAction(actionExport);
     menuFile->addAction(actionExit);
     
     //create about button text label
     QPushButton *AboutButton = new QPushButton(this);
     AboutButton->setObjectName("aboutbtn");
-    AboutButton->setStyleSheet(AboutButton->styleSheet() + "QPushButton#aboutbtn:hover:pressed{background-color:#e7e9ef; \
+    AboutButton->setStyleSheet("QPushButton#aboutbtn:hover:pressed{background-color:#e7e9ef; \
                                                             border-style:inset; \
                                                             border-radius:2px 2px 2px 2px; \
-                                                            border: 2px solid #e7e9ef;}");
+                                                            border:2px solid #e7e9ef;}");
     AboutButton->setStyleSheet(AboutButton->styleSheet() + "QPushButton::menu-indicator{image: none;}");
     AboutButton->setFixedSize(55, 24);
 
@@ -65,23 +50,8 @@ menu_toolbar::menu_toolbar(QWidget *parent)
     Aboutbuttonlabel->setFont(QFont("Segoe UI Semibold", 12, QFont::Bold, false));
     Aboutbuttonlabel->setFixedSize(52, 24);
 
-    //create menu and add actions to it
+    //create about menu
     custom_menu *menuAbout = new custom_menu(AboutButton, this);
-    menuAbout->setObjectName("menuabout");
-    menuAbout->setStyleSheet("QMenu#menuabout {background-color:#ffffff; \
-                                               font-family:\"Segoe UI Normal\"; \
-                                               border-style:inset; \
-                                               border-radius:2px; \
-                                               border: 1px solid #e7e9ef; \
-                                               font-size:14px;}");
-    menuAbout->setStyleSheet(menuAbout->styleSheet() + "QMenu#menuabout::item:selected {background-color:#e7e9ef; \
-                                                        border-radius:2px; \
-                                                        border: 0px solid #e7e9ef;}" +
-                                                       "QMenu#menuabout::item {background-color:#ffffff; \
-                                                        padding: 5px; \
-                                                        border-radius:2px; \
-                                                        border: 0px solid #e7e9ef;}");
-    menuAbout->setFixedWidth(85);
 
     //create About menu actions for slots
     QAction *actionAbout = new QAction("&About", this);

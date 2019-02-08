@@ -449,6 +449,7 @@ struct keychain_command<command_te::sign_hex> : keychain_command_base
         kaitai::kstream ks(&is);
         bitcoin_transaction_t trx_info(&ks);
         std::vector<dev::Signature> signatures;
+        std::vector<dev::Signature>::iterator it;
 
         auto sign = [&private_key](std::vector<unsigned char>& raw)->dev::Signature{
             unit_list_t unit_list;
@@ -505,6 +506,10 @@ struct keychain_command<command_te::sign_hex> : keychain_command_base
                 }
 
                 trx += trx_footer;
+                ss.str("");
+                uint32_t sig_hash_code = 1;
+                ss << std::setw(8) << __bswap_32(sig_hash_code);
+                trx += ss.str();
 
                 std::vector<unsigned char> raw(trx.length());
                 auto raw_len = keychain_app::from_hex(trx, raw.data(), raw.size());
@@ -513,20 +518,26 @@ struct keychain_command<command_te::sign_hex> : keychain_command_base
             }
 
             std::string trx = trx_header;
+            it = signatures.begin();
+            auto iter = [&it, &signatures]() { assert(it < signatures.end()); return *it++;};
             for (auto& a : trx_info.vins)
             {
-/*
+                auto sign_input = iter().hex();
                 trx += a.txid;
                 ss.str("");
                 ss << std::setw(8) << __bswap_32(a.output_id);
                 trx += ss.str();
                 ss.str("");
-                ss << std::setw(2) << ((int) a.script_len);
+                uint8_t script_len = 0x6a, pushdata_sig = 0x47, header=0x30, sig_length=0x44, integer=2, r_length=0x20,
+                        s_length=0x20, sig_hash_code=1, pushdata_pubkey=0x21;
+                ss << std::setw(2) << ((int) script_len) << ((int) pushdata_sig) << ((int) header) <<((int) sig_length)
+                << ((int) integer) << ((int) r_length) << sign_input.substr(0, 32)
+                << ((int) integer) << ((int) s_length) << sign_input.substr(32, 32) << ((int) sig_hash_code)
+                << ((int) pushdata_pubkey) << "03"+ dev::toPublic(private_key).hex().substr(0,32);
                 trx += ss.str();
-                trx += a.script_sig;
                 trx += a.end_of_vin;
-*/
             }
+            trx += trx_footer;
         }
         else
         {

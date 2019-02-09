@@ -77,7 +77,9 @@ int cmd_parser::run(int argc, const char* const argv[])
     {
 #ifdef LINUX
       BOOST_LOG_SEV(log.lg, info) << "secure_module: <sec_mod_linux>";
-      sec_mod = module_singleton<secure_dlg_mod_base>::instance<sec_mod_linux>();
+      sec_mod = module_singleton<secure_dlg_mod_base>::instance<sec_mod_dummy>();
+
+//      sec_mod = module_singleton<secure_dlg_mod_base>::instance<sec_mod_linux>();
       //TODO: need to implement gui module
       gui_mod = module_singleton<gui_mod_base>::instance<gui_mod_dummy>();
 #else

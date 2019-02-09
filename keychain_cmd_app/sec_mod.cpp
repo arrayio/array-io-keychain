@@ -36,8 +36,10 @@ std::string keychain_app::sec_mod_dummy::exec_cmd(const std::string& json_cmd) c
     keychain_app::byte_seq_t pass(str.begin(), str.end());
 
     secmod_commands::secmod_resonse_common response;
-    response.etype = secmod_commands::response_te::password;
-    response.params = pass;
+    response.etype = secmod_commands::response_te::boolean;
+//    response.etype = secmod_commands::response_te::password;
+//    response.params = pass;
+    response.params = true;
     return fc_light::json::to_pretty_string(response);
   }
   default:

@@ -52,6 +52,8 @@
 #include "secmod_protocol.hpp"
 
 #include "version_info.hpp"
+#include <byteswap.h>
+
 
 #ifdef __linux__
 #  define KEY_DEFAULT_PATH  "/var/keychain"
@@ -368,7 +370,7 @@ struct keychain_command<command_te::sign_hex> : keychain_command_base
     //NOTE: using vector instead array because move semantic is implemented in the vector
     auto trans_len = keychain_app::from_hex(params.transaction, raw.data(), raw.size());
     raw.resize(trans_len);
-  
+
     if (!params.public_key)
       FC_LIGHT_THROW_EXCEPTION(fc_light::invalid_arg_exception, "public_key is not specified");
   
@@ -409,7 +411,17 @@ struct keychain_command<command_te::sign_hex> : keychain_command_base
       return fc_light::json::to_string(
         create_secmod_signhex_cmd(raw, params.blockchain_type, evaluate_from(), params.unlock_time, keyname, no_password));
     });
-    
+
+    auto reply = [&keyfiles, &params, &id](auto& message){
+        keyfiles.update(params.public_key, [](auto& keyfile)
+        {
+            keyfile.usage_time = fc_light::time_point::now();
+        });
+        json_response response(fc_light::variant(message), id);
+        fc_light::variant res(response);
+        return fc_light::json::to_string(res);
+    };
+
     switch (params.blockchain_type)
     {
       case blockchain_te::bitshares:
@@ -442,30 +454,129 @@ struct keychain_command<command_te::sign_hex> : keychain_command_base
       }
       case blockchain_te::bitcoin:
       {
-        unit_list.push_back(raw);
-        auto hash = get_hash(unit_list, sha2_256_encoder());
-        unit_list.clear();
-        unit_list.push_back(hash.asBytes());
-        auto hash2 = get_hash(unit_list, sha2_256_encoder());
-        signature = dev::sign(private_key,dev::FixedHash<32>(((byte const*) hash2.data()),
-                                   dev::FixedHash<32>::ConstructFromPointerType::ConstructFromPointer));
+          streambuf_derived buf((char*) raw.data(),  (char*)raw.data() + raw.size());
+          std::istream is(&buf);
+          kaitai::kstream ks(&is);
+          bitcoin_transaction_t trx_info(&ks);
+          std::vector<dev::Signature> signatures;
+          std::vector<dev::Signature>::iterator it;
+
+          auto sign = [&private_key](std::vector<unsigned char>& raw)->dev::Signature{
+            unit_list_t unit_list;
+            unit_list.push_back(raw);
+            auto hash = get_hash(unit_list, sha2_256_encoder());
+            unit_list.clear();
+            unit_list.push_back(hash.asBytes());
+            auto hash2 = get_hash(unit_list, sha2_256_encoder());
+            return  dev::sign(private_key,dev::FixedHash<32>(((byte const*) hash2.data()),
+                                                                 dev::FixedHash<32>::ConstructFromPointerType::ConstructFromPointer));
+        };
+
+        if (trx_info.num_vins>1)
+        {
+            std::stringstream ss;
+
+            std::string trx_header;
+            ss << std::setfill('0') << std::hex
+               << std::setw(8) << __bswap_32 (trx_info.version) << std::setw(2) << ((int) trx_info.num_vins);
+            trx_header = ss.str();
+
+            std::string trx_footer;
+            ss.str("");
+            ss << std::setw(2) << ((int) trx_info.num_vouts);
+            trx_footer = ss.str();
+            for (auto& a : trx_info.vouts)
+            {
+                ss.str("");
+                ss << std::setw(16) << __bswap_64(a.amount) << std::setw(2) << ((int) a.script_len);
+                trx_footer += ss.str();
+                trx_footer += a.script_pub_key;
+            }
+            ss.str("");
+            ss << std::setw(8) << __bswap_32(trx_info.locktime);
+            trx_footer += ss.str();
+
+            for (int loop =0; loop < trx_info.vins.size(); loop++)
+            {   // construct Signing Message Template for each input and signing it.
+                std::string trx = trx_header;
+                for (int input =0; input < trx_info.vins.size(); input++)
+                {
+                    trx += trx_info.vins[input].txid;
+                    ss.str("");
+                    ss << std::setw(8) << __bswap_32(trx_info.vins[input].output_id);
+                    trx += ss.str();
+                    if (input == loop)
+                    {
+                        ss.str("");
+                        ss << std::setw(2) << ((int) trx_info.vins[input].script_len);
+                        trx += ss.str();
+                        trx += trx_info.vins[input].script_sig;
+                    }
+                    trx += trx_info.vins[input].end_of_vin;
+                }
+
+                trx += trx_footer;
+                ss.str("");
+                uint32_t sig_hash_code = 1;
+                ss << std::setw(8) << __bswap_32(sig_hash_code);
+                trx += ss.str();
+
+                std::vector<unsigned char> raw(trx.length());
+                auto raw_len = keychain_app::from_hex(trx, raw.data(), raw.size());
+                raw.resize(raw_len);
+                signatures.push_back(sign(raw)) ;
+            }
+
+            // construct Signed Transaction
+            std::string trx = trx_header;
+            it = signatures.begin();
+            auto iter = [&it, &signatures]() { assert(it < signatures.end()); return *it++;};
+            for (auto& a : trx_info.vins)
+            {
+                auto sig = iter().hex();
+                trx += a.txid;
+                ss.str("");
+                ss << std::setw(8) << __bswap_32(a.output_id);
+                trx += ss.str();
+                ss.str("");
+                uint8_t script_len = 0x6a, pushdata_sig = 0x47, header=0x30, sig_length=0x44, integer=2, r_length=0x20,
+                        s_length=0x20, sig_hash_code=1, pushdata_pubkey=0x21;
+                // script_len + signature DER-encoded + pub_key
+                ss  << std::setw(2) << ((int) script_len)
+                    << std::setw(2) << ((int) pushdata_sig)
+                    << std::setw(2) << ((int) header)
+                    << std::setw(2) << ((int) sig_length)
+                    << std::setw(2) << ((int) integer)
+                    << std::setw(2) << ((int) r_length)
+                    << sig.substr(0, 64)
+                    << std::setw(2) << ((int) integer)
+                    << std::setw(2) << ((int) s_length)
+                    << sig.substr(64, 64)
+                    << std::setw(2) << ((int) sig_hash_code)
+                    << std::setw(2) << ((int) pushdata_pubkey)
+                    << "03"+ dev::toPublic(private_key).hex().substr(0,64);
+                trx += ss.str();
+                trx += a.end_of_vin;
+            }
+            trx += trx_footer;
+
+            return reply(trx);
+        }
+        else
+        {
+            signature = sign(raw);
+        }
         break;
       }
       default:
         FC_LIGHT_THROW_EXCEPTION(fc_light::invalid_arg_exception,
                                  "Unknown blockchain_type, blockchain = ${type}", ("type", params.blockchain_type));
     }
-    
+
     if (!signature)
       FC_LIGHT_THROW_EXCEPTION(fc_light::internal_error_exception, "Resulting signature is null");
-    
-    keyfiles.update(params.public_key, [](auto& keyfile)
-    {
-      keyfile.usage_time = fc_light::time_point::now();
-    });
-    json_response response(fc_light::variant(signature), id);
-    fc_light::variant res(response);
-    return fc_light::json::to_string(res);
+
+    return reply(signature);
   }
 };
 
@@ -487,7 +598,7 @@ struct keychain_command<command_te::sign_hash> : keychain_command_base
   virtual std::string operator()(keychain_base* keychain, const fc_light::variant& params_variant, int id) const override
   {
     auto& log = logger_singleton::instance();
-  
+
     params_t params;
     try
     {
@@ -497,9 +608,9 @@ struct keychain_command<command_te::sign_hash> : keychain_command_base
 
     if (!params.public_key)
       FC_LIGHT_THROW_EXCEPTION( fc_light::parse_error_exception, "public_key is not specified" );
-  
+
     auto& keyfiles = keyfile_singleton::instance();
-    
+
     auto evaluate_from = [&keychain, &params, &keyfiles]() -> std::string
     {
       return to_hex(params.public_key.data(), params.public_key.size);
@@ -535,7 +646,7 @@ struct keychain_command<command_te::sign_hash> : keychain_command_base
         break;
       }
     }
-  
+
     keyfiles.update(params.public_key, [](auto& keyfile)
     {
       keyfile.usage_time = fc_light::time_point::now();
@@ -570,7 +681,7 @@ struct keychain_command<command_te::create>: keychain_command_base
         params = params_variant.as<params_t>();
       }
       FC_LIGHT_CAPTURE_TYPECHANGE_AND_RETHROW (fc_light::invalid_arg_exception, error, "cannot parse command params")
-  
+
       auto& keyfiles = keyfile_singleton::instance();
       keyfile_format::keyfile_t keyfile;
       dev::Secret priv_key;
@@ -611,7 +722,7 @@ struct keychain_command<command_te::create>: keychain_command_base
         keyfile.keyinfo.priv_key_data = fc_light::variant(priv_key);
         keyfile.keyinfo.encrypted = false;
       }
-      
+
       keyfile.keyinfo.public_key = pb_hex;
       keyfile.keyname = keyname;
       keyfile.description = params.description;
@@ -634,9 +745,9 @@ template <>
 struct keychain_command<command_te::list>: keychain_command_base {
   keychain_command() : keychain_command_base(command_te::list) {}
   virtual ~keychain_command() {}
-  
+
   using params_t = void;
-  
+
   virtual std::string operator()(keychain_base *keychain, const fc_light::variant &params_variant, int id) const override
   {
     FC_LIGHT_THROW_EXCEPTION(fc_light::command_depreciated, "Use \"select_key\" command instead");
@@ -698,10 +809,10 @@ struct keychain_command<command_te::unlock>: keychain_command_base
     if (params.unlock_time <= 0)
       FC_LIGHT_THROW_EXCEPTION(fc_light::invalid_arg_exception,
         "unlock_time invalid or not specified, unlock_time = ${UNLOCK_TIME}", ("UNLOCK_TIME", params.unlock_time));
-  
+
     if (!params.public_key)
       FC_LIGHT_THROW_EXCEPTION(fc_light::invalid_arg_exception, "public_key is not specified");
-    
+
     auto private_key = keychain->get_private_key(params.public_key, params.unlock_time, [&params](const std::string& keyname, bool no_password)
     {
       return fc_light::json::to_string(

@@ -15,17 +15,15 @@ void custom_menu::showEvent(QShowEvent* event)
 
 void const custom_menu::setFixedStyle()
 {
-    bool noSystemBackground = testAttribute(Qt::WA_NoSystemBackground);
+    setWindowFlags(Qt::Popup | Qt::FramelessWindowHint);
     setAttribute(Qt::WA_TranslucentBackground);
-    setAttribute(Qt::WA_PaintOnScreen);
     setStyleSheet("QMenu {background-color:#ffffff;\
                           background:#ffffff;\
                           font-family:\"Segoe UI Normal\";\
-                          border-radius:2px;\
+                          border-radius:2.5px;\
                           font-size:14px;\
-                          border:1.9px solid #ffffff;}");
+                          border:2px solid #ffffff;}");
     setStyleSheet(styleSheet() + "QMenu::item:selected {background-color:#e7e9ef;\
                                   border: 0px solid #e7e9ef;\
-                                  border-radius:1px;}" + "QMenu::item {padding:4px;}");
-    setAttribute(Qt::WA_NoSystemBackground, noSystemBackground);
+                                  border-radius:1.4px;}" + "QMenu::item {padding:4px;}");
 }

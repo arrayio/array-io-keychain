@@ -51,25 +51,62 @@ void keychain_gui_win::refresh(Transaction& transaction)
 	if (transaction.isCreatePassword()) {
 		warningMessage.SetWarning(KeychainWarningMessage::WarningType::CreateWarning);
 		descriptionLabel->setText("Enter the password for the new key");
-	}/*
+	}
+	std::string keyname;
+	bool is_parsed = false;
+	int unlock_time;
+	namespace sm_cmd = keychain_app::secmod_commands;
+	sm_cmd::blockchain_secmod_te blockchain;
 	if (!transaction.isCreatePassword() && transaction.isUnlockKey() == -1)
 	{
 		secmod_parser_f cmd_parse;
 		auto cmd_type = cmd_parse(transaction.getTransactionText().toStdString());
-		QString descr("Are you sure you want to sign this transaction with key <b>''" + QString::fromStdString(cmd_parse.keyname()) + "''</b>?");
+		switch (cmd_type)
+		{
+			case sm_cmd::events_te::create_key:
+			{
+				auto cmd = cmd_parse.params<sm_cmd::events_te::create_key>();
+				break;
+			}
+			case sm_cmd::events_te::sign_hex:
+			{
+				auto cmd = cmd_parse.params<sm_cmd::events_te::sign_hex>();
+				keyname = cmd.keyname;
+				is_parsed = cmd.is_parsed;
+				unlock_time = cmd.unlock_time;
+				blockchain = cmd.blockchain;
+				break;
+			}
+			case sm_cmd::events_te::sign_hash:
+			{
+				auto cmd = cmd_parse.params<sm_cmd::events_te::sign_hash>();
+				keyname = cmd.keyname;
+				break;
+			}
+			case sm_cmd::events_te::remove_key:
+			case sm_cmd::events_te::export_keys:
+			case sm_cmd::events_te::import_keys:
+			case sm_cmd::events_te::unlock:
+			{
+				auto cmd = cmd_parse.params<sm_cmd::events_te::unlock>();
+				unlock_time = cmd.unlock_time;
+				break;
+			}
+		}
+		QString descr("Are you sure you want to sign this transaction with key <b>''" + QString::fromStdString(keyname) + "''</b>?");
 		descriptionLabel->setText(descr);
-		if (!cmd_parse.is_json()) {
+		if (!is_parsed) {
 			element = new UnparsedTransactionWidget(transaction, this);
 			warningMessage.SetWarning(KeychainWarningMessage::WarningType::FailedWarning);
-			if (cmd_parse.unlock_time() > 0) {
+			if (unlock_time > 0) {
 				warningMessage.SetWarning(KeychainWarningMessage::WarningType::UnlockUseWarning);
 			}
 		}
 		else {
-			if (cmd_parse.unlock_time() > 0) {
+			if (unlock_time > 0) {
 				warningMessage.SetWarning(KeychainWarningMessage::WarningType::UnlockUseWarning);
 			}
-			switch (cmd_type)
+			switch (blockchain)
 			{
 			case keychain_app::secmod_commands::blockchain_secmod_te::ethereum: {
 				element = new EthereumWidget(transaction, this);
@@ -89,7 +126,7 @@ void keychain_gui_win::refresh(Transaction& transaction)
 				warningMessage.SetWarning(KeychainWarningMessage::WarningType::NoWarnig);
 				break;
 			}
-			case keychain_app::secmod_commands::blockchain_secmod_te::rawhash:
+/*			case keychain_app::secmod_commands::blockchain_secmod_te::rawhash:
 			{
 				warningMessage.SetWarning(KeychainWarningMessage::WarningType::HashWarnig);
 				element = new RawHashWidget(transaction, this);
@@ -103,7 +140,7 @@ void keychain_gui_win::refresh(Transaction& transaction)
 				break;
 			}
 			break;
-			}
+*/			}
 		}
 		element->move(0, endControlPosition);
 		element->SetPosition(0, endControlPosition, FIELD_WIDTH);
@@ -186,7 +223,7 @@ void keychain_gui_win::refresh(Transaction& transaction)
 //	connect(password, &PasswordEnterElement::finishEnterPassword, this, &keychain_gui_win::transaction_sign);
 //	if (transaction.isCreatePassword()) {
 //		connect(password, &PasswordEnterElement::changePassword, this, &keychain_gui_win::_disableSignButton);
-//	}*/
+//	}
 }
 
 

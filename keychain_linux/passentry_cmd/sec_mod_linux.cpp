@@ -13,40 +13,6 @@ using namespace keychain_app;
 
 namespace sm_cmd = keychain_app::secmod_commands;
 
-std::string keychain_app::sec_mod_dummy::exec_cmd(const std::string& json_cmd) const
-{
-    secmod_commands::secmod_parser_f parser;
-    auto etype = parser(json_cmd);
-    int unlock_time = 0;
-    switch (etype)
-    {
-        case secmod_commands::events_te::create_key:
-        case secmod_commands::events_te::sign_hex:
-        case secmod_commands::events_te::sign_hash:
-        case secmod_commands::events_te::remove_key:
-        case secmod_commands::events_te::export_keys:
-        case secmod_commands::events_te::import_keys:
-        case secmod_commands::events_te::unlock:
-        {
-            std::string str = "blank";
-            keychain_app::byte_seq_t pass(str.begin(), str.end());
-
-            secmod_commands::secmod_resonse_common response;
-            response.etype = secmod_commands::response_te::boolean;
-//    response.etype = secmod_commands::response_te::password;
-//    response.params = pass;
-            response.params = true;
-            return fc_light::json::to_pretty_string(response);
-        }
-        default:
-        {
-            FC_LIGHT_THROW_EXCEPTION(fc_light::internal_error_exception, "Secmod command is not implemented, etype = %{ETYPE}", ("ETYPE", etype));
-        }
-    }
-
-
-}
-
 
 std::string sec_mod_linux::exec_cmd(const std::string& json_cmd) const
 {
@@ -56,6 +22,10 @@ std::string sec_mod_linux::exec_cmd(const std::string& json_cmd) const
     sm_cmd::secmod_parser_f parser;
     auto etype = parser(json_cmd);
     int unlock_time = 0;
+    keychain_app::byte_seq_t result_pass;
+    result_pass.reserve(512);
+
+
     switch (etype)
     {
         case sm_cmd::events_te::create_key:
@@ -67,8 +37,8 @@ std::string sec_mod_linux::exec_cmd(const std::string& json_cmd) const
 
             auto pass_entry = pass_entry_term(true);
             auto map_instance = map_translate_singleton::instance(pass_entry._display);
-            auto pass = pass_entry.fork_gui(map_instance.map, mes);
-            return pass;
+            result_pass = pass_entry.fork_gui(map_instance.map, mes);
+            break;
         }
         case sm_cmd::events_te::sign_hex:
         {
@@ -80,11 +50,21 @@ std::string sec_mod_linux::exec_cmd(const std::string& json_cmd) const
 
             auto pass_entry = pass_entry_term(false);
             auto map_instance = map_translate_singleton::instance(pass_entry._display);
-            auto pass = pass_entry.fork_gui(map_instance.map, mes);
+            result_pass = pass_entry.fork_gui(map_instance.map, mes);
             break;
-            return pass;
         }
         case sm_cmd::events_te::sign_hash:
+        {
+            auto cmd = parser.params<sm_cmd::events_te::sign_hash>();
+
+            auto a = master::cmd<master::cmds::rawtrx>(cmd.hash );
+            auto mes = fc_light::json::to_string(fc_light::variant(static_cast<const master::cmd_base&>(a)));
+
+            auto pass_entry = pass_entry_term(false);
+            auto map_instance = map_translate_singleton::instance(pass_entry._display);
+            result_pass = pass_entry.fork_gui(map_instance.map, mes);
+            break;
+        }
         case sm_cmd::events_te::remove_key:
         case sm_cmd::events_te::export_keys:
         case sm_cmd::events_te::import_keys:
@@ -97,18 +77,12 @@ std::string sec_mod_linux::exec_cmd(const std::string& json_cmd) const
 
             auto pass_entry = pass_entry_term(false);
             auto map_instance = map_translate_singleton::instance(pass_entry._display);
-            auto pass = pass_entry.fork_gui(map_instance.map, mes);
-            return pass;
-
+            result_pass = pass_entry.fork_gui(map_instance.map, mes);
             break;
         }
     }
 
-    keychain_app::byte_seq_t result_pass;
-    result_pass.reserve(512);
-
     std::string result;
-    result_pass = { 'b', 'l', 'a', 'n', 'k' };
     sm_cmd::secmod_resonse_common response;
     if (result_pass.empty())
     {

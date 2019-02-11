@@ -80,44 +80,44 @@
     <div class="column col-8 page" id="page_lock"></div>
     <div class="column col-8 page" id="page_unlock">
       <div class="form-group">
-        <label class="form-label">public_key</label>
-        <input class="form-input" type="text" name="public_key" id="public_key_UNLOCK">
+        <label class="form-label" for="public_key_UNLOCK">public_key</label>
+        <input class="form-input param_field" type="text" name="public_key" id="public_key_UNLOCK">
       </div>
       <div class="form-group">
         <label class="form-label">unlock_time</label>
-        <input class="form-input" type="number" name="unlock_time">
+        <input class="form-input param_field" type="number" placeholder="45" name="unlock_time">
       </div>
     </div>
     <div class="column col-8 page" id="page_sign_hex">
       <div class="form-group">
         <label class="form-label">transaction</label>
-        <input class="form-input" type="text" placeholder="eb0885098bca5a00825208948ec6977b1255854169e5f9f8f163f371bcf1ffd287038d7ea4c6800080038080" name="transaction">
+        <input class="form-input param_field" type="text" value="eb0885098bca5a00825208948ec6977b1255854169e5f9f8f163f371bcf1ffd287038d7ea4c6800080038080" placeholder="eb0885098bca5a00825208948ec6977b1255854169e5f9f8f163f371bcf1ffd287038d7ea4c6800080038080" name="transaction">
       </div>
       <div class="form-group">
         <label class="form-label">blockchain_type</label>
-        <input class="form-input" type="text" placeholder="ethereum" value="ethereum" name="blockchain_type">
+        <input class="form-input param_field" type="text" placeholder="ethereum" value="ethereum" name="blockchain_type">
       </div>
       <div class="form-group">
-        <label class="form-label">public_key</label>
-        <input class="form-input" type="text" name="public_key" id="public_key_SIGN_HEX">
+        <label class="form-label" for="public_key_SIGN_HEX">public_key</label>
+        <input class="form-input param_field" type="text" name="public_key" id="public_key_SIGN_HEX">
       </div>
       <div class="form-group">
         <label class="form-label">unlock_time</label>
-        <input class="form-input" type="number" name="unlock_time">
+        <input class="form-input param_field" type="number" name="unlock_time" placeholder="45">
       </div>
     </div>
     <div class="column col-8 page" id="page_sign_hash">
       <div class="form-group">
         <label class="form-label">hash</label>
-        <input class="form-input" type="text" value="fe5e4a8974715e20f47c8bb609547c9e66b0b9e31d521199b3d8d6af6da74cb1" name="hash">
+        <input class="form-input param_field" type="text" value="fe5e4a8974715e20f47c8bb609547c9e66b0b9e31d521199b3d8d6af6da74cb1" placeholder="fe5e4a8974715e20f47c8bb609547c9e66b0b9e31d521199b3d8d6af6da74cb1" name="hash">
       </div>
       <div class="form-group">
         <label class="form-label">sign_type</label>
-        <input class="form-input" type="text" placeholder="VRS_canonical" value="VRS_canonical" name="sign_type">
+        <input class="form-input param_field" type="text" placeholder="VRS_canonical" value="VRS_canonical" name="sign_type">
       </div>
       <div class="form-group">
-        <label class="form-label">public_key</label>
-        <input class="form-input" type="text" name="public_key" id="public_key_SIGN_HASH">
+        <label class="form-label" for="public_key_SIGN_HASH">public_key</label>
+        <input class="form-input param_field" type="text" name="public_key" id="public_key_SIGN_HASH">
       </div>
     </div>
     <div class="column col-8 page" id="page_about"></div>
@@ -178,7 +178,7 @@
       }
       el.classList.add('page-active');
 
-      const inputs = el.getElementsByClassName('form-input');
+      const inputs = el.getElementsByClassName('param_field');
       const params = {};
       for (let i=0; i<inputs.length; i++) {
         const name = inputs[i].getAttribute('name');
@@ -206,6 +206,12 @@
       runRequest();
     });
     onHash();
+    const inputs = document.getElementsByClassName('param_field');
+    for (let i=0; i<inputs.length; i++) {
+      inputs[i].addEventListener('keyup', function () {
+        onHash();
+      });
+    }
   };
 
   function runRequest() {

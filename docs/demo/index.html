@@ -76,8 +76,10 @@
         <li class="menu-item"><a href="#version">Version</a></li>
       </ul>
     </div>
+
     <div class="column col-8 page" id="page_select_key"></div>
     <div class="column col-8 page" id="page_lock"></div>
+
     <div class="column col-8 page" id="page_unlock">
       <div class="form-group">
         <label class="form-label" for="public_key_UNLOCK">public_key</label>
@@ -103,9 +105,15 @@
       </div>
       <div class="form-group">
         <label class="form-label">unlock_time</label>
-        <input class="form-input param_field" type="number" name="unlock_time" placeholder="45">
+        <div class="input-group">
+          <label class="form-switch">
+            <input type="checkbox" id="checkbox_SIGN_HEX"><i class="form-icon"></i>
+          </label>
+          <input class="form-input param_field" type="number" name="unlock_time" placeholder="45" readonly id="unlock_time_SIGN_HEX">
+        </div>
       </div>
     </div>
+
     <div class="column col-8 page" id="page_sign_hash">
       <div class="form-group">
         <label class="form-label">hash</label>
@@ -123,6 +131,7 @@
     <div class="column col-8 page" id="page_about"></div>
     <div class="column col-8 page" id="page_version"></div>
   </div>
+
   <div class="columns">
     <div class="column col-6">
       <label class="form-label" for="request">Request</label>
@@ -182,7 +191,9 @@
       const params = {};
       for (let i=0; i<inputs.length; i++) {
         const name = inputs[i].getAttribute('name');
-        params[name] = inputs[i].value;
+        if (!inputs[i].readOnly) {
+          params[name] = inputs[i].value;
+        }
       }
 
       const request = {command: hash};
@@ -199,30 +210,42 @@
   window.onhashchange = onHash;
 
   window.onload = function () {
-    // document.getElementById('checkbox_SIGN_HEX').addEventListener('click', function(e) {
-    //   document.getElementById('unlock_time_SIGN_HEX').readOnly = !e.target.checked;
-    // });
+    document.getElementById('checkbox_SIGN_HEX').addEventListener('click', function(e) {
+      document.getElementById('unlock_time_SIGN_HEX').readOnly = !e.target.checked;
+      const request = getRequest();
+      if (request) {
+        if (!e.target.checked) {
+          delete request.params['unlock_time'];
+        } else {
+          request.params['unlock_time'] = document.getElementById('unlock_time_SIGN_HEX').value;
+        }
+        document.getElementById('request').value = JSON.stringify(request, undefined, 2)
+      }
+    });
     document.getElementById('btn_RUN_REQUEST').addEventListener('click', function() {
       runRequest();
     });
     onHash();
     const inputs = document.getElementsByClassName('param_field');
     for (let i=0; i<inputs.length; i++) {
-      inputs[i].addEventListener('keyup', function () {
-        onHash();
-      });
+      inputs[i].addEventListener('keyup', onHash);
+      inputs[i].addEventListener('change', onHash);
     }
   };
 
-  function runRequest() {
-    let request;
+  function getRequest() {
     try {
-      request = JSON.parse(document.getElementById('request').value);
+      return JSON.parse(document.getElementById('request').value);
     } catch (e) {
       document.getElementById('response').value = e;
+    }
+  }
+
+  function runRequest() {
+    const request = getRequest();
+    if (!request) {
       return;
     }
-
     keychain.command(request, function(data) {
       document.getElementById('response').value = JSON.stringify(data, undefined, 2);
       if (request.command === 'select_key' && data.result) {

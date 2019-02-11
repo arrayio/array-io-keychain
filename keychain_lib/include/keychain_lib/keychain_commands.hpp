@@ -472,101 +472,95 @@ struct keychain_command<command_te::sign_hex> : keychain_command_base
                                                                  dev::FixedHash<32>::ConstructFromPointerType::ConstructFromPointer));
         };
 
-        if (trx_info.num_vins>1)
+        // construct transaction header
+        std::stringstream ss;
+        std::string trx_header;
+        ss << std::setfill('0') << std::hex
+           << std::setw(8) << __bswap_32 (trx_info.version) << std::setw(2) << ((int) trx_info.num_vins);
+        trx_header = ss.str();
+
+        // construct transaction footer
+        std::string trx_footer;
+        ss.str("");
+        ss << std::setw(2) << ((int) trx_info.num_vouts);
+        trx_footer = ss.str();
+        for (auto& a : trx_info.vouts)
         {
-            std::stringstream ss;
-
-            std::string trx_header;
-            ss << std::setfill('0') << std::hex
-               << std::setw(8) << __bswap_32 (trx_info.version) << std::setw(2) << ((int) trx_info.num_vins);
-            trx_header = ss.str();
-
-            std::string trx_footer;
             ss.str("");
-            ss << std::setw(2) << ((int) trx_info.num_vouts);
-            trx_footer = ss.str();
-            for (auto& a : trx_info.vouts)
-            {
-                ss.str("");
-                ss << std::setw(16) << __bswap_64(a.amount) << std::setw(2) << ((int) a.script_len);
-                trx_footer += ss.str();
-                trx_footer += a.script_pub_key;
-            }
-            ss.str("");
-            ss << std::setw(8) << __bswap_32(trx_info.locktime);
+            ss << std::setw(16) << __bswap_64(a.amount) << std::setw(2) << ((int) a.script_len);
             trx_footer += ss.str();
-
-            for (int loop =0; loop < trx_info.vins.size(); loop++)
-            {   // construct Signing Message Template for each input and signing it.
-                std::string trx = trx_header;
-                for (int input =0; input < trx_info.vins.size(); input++)
-                {
-                    trx += trx_info.vins[input].txid;
-                    ss.str("");
-                    ss << std::setw(8) << __bswap_32(trx_info.vins[input].output_id);
-                    trx += ss.str();
-                    if (input == loop)
-                    {
-                        ss.str("");
-                        ss << std::setw(2) << ((int) trx_info.vins[input].script_len);
-                        trx += ss.str();
-                        trx += trx_info.vins[input].script_sig;
-                    }
-                    trx += trx_info.vins[input].end_of_vin;
-                }
-
-                trx += trx_footer;
-                ss.str("");
-                uint32_t sig_hash_code = 1;
-                ss << std::setw(8) << __bswap_32(sig_hash_code);
-                trx += ss.str();
-
-                std::vector<unsigned char> raw(trx.length());
-                auto raw_len = keychain_app::from_hex(trx, raw.data(), raw.size());
-                raw.resize(raw_len);
-                signatures.push_back(sign(raw)) ;
-            }
-
-            // construct Signed Transaction
-            std::string trx = trx_header;
-            it = signatures.begin();
-            auto iter = [&it, &signatures]() { assert(it < signatures.end()); return *it++;};
-            for (auto& a : trx_info.vins)
-            {
-                auto sig = iter().hex();
-                trx += a.txid;
-                ss.str("");
-                ss << std::setw(8) << __bswap_32(a.output_id);
-                trx += ss.str();
-                ss.str("");
-                uint8_t script_len = 0x6a, pushdata_sig = 0x47, header=0x30, sig_length=0x44, integer=2, r_length=0x20,
-                        s_length=0x20, sig_hash_code=1, pushdata_pubkey=0x21;
-                // script_len + signature DER-encoded + pub_key
-                ss  << std::setw(2) << ((int) script_len)
-                    << std::setw(2) << ((int) pushdata_sig)
-                    << std::setw(2) << ((int) header)
-                    << std::setw(2) << ((int) sig_length)
-                    << std::setw(2) << ((int) integer)
-                    << std::setw(2) << ((int) r_length)
-                    << sig.substr(0, 64)
-                    << std::setw(2) << ((int) integer)
-                    << std::setw(2) << ((int) s_length)
-                    << sig.substr(64, 64)
-                    << std::setw(2) << ((int) sig_hash_code)
-                    << std::setw(2) << ((int) pushdata_pubkey)
-                    << "03"+ dev::toPublic(private_key).hex().substr(0,64);
-                trx += ss.str();
-                trx += a.end_of_vin;
-            }
-            trx += trx_footer;
-
-            return reply(trx);
+            trx_footer += a.script_pub_key;
         }
-        else
+        ss.str("");
+        ss << std::setw(8) << __bswap_32(trx_info.locktime);
+        trx_footer += ss.str();
+
+        // construct Signing Message Template for each input and signing it.
+        for (int loop =0; loop < trx_info.vins.size(); loop++)
         {
-            signature = sign(raw);
+            std::string trx = trx_header;
+            for (int input =0; input < trx_info.vins.size(); input++)
+            {
+                trx += trx_info.vins[input].txid;
+                ss.str("");
+                ss << std::setw(8) << __bswap_32(trx_info.vins[input].output_id);
+                trx += ss.str();
+                if (input == loop) // include scriptSig only signing input
+                {
+                    ss.str("");
+                    ss << std::setw(2) << ((int) trx_info.vins[input].script_len);
+                    trx += ss.str();
+                    trx += trx_info.vins[input].script_sig;
+                }
+                trx += trx_info.vins[input].end_of_vin;
+            }
+
+            trx += trx_footer;
+            ss.str("");
+            uint32_t sig_hash_code = 1;
+            ss << std::setw(8) << __bswap_32(sig_hash_code);
+            trx += ss.str();
+
+            std::vector<unsigned char> raw(trx.length());
+            auto raw_len = keychain_app::from_hex(trx, raw.data(), raw.size());
+            raw.resize(raw_len);
+            signatures.push_back(sign(raw));
         }
-        break;
+
+        // construct Signed Transaction
+        std::string trx = trx_header;
+        it = signatures.begin();
+        auto iter = [&it, &signatures]() { assert(it < signatures.end()); return *it++;};
+        for (auto& a : trx_info.vins)
+        {
+            auto sig = iter().hex();
+            trx += a.txid;
+            ss.str("");
+            ss << std::setw(8) << __bswap_32(a.output_id);
+            trx += ss.str();
+            ss.str("");
+            uint8_t script_len = 0x6a, pushdata_sig = 0x47, header=0x30, sig_length=0x44, integer=2, r_length=0x20,
+                    s_length=0x20, sig_hash_code=1, pushdata_pubkey=0x21;
+            // script_len + signature DER-encoded + pub_key
+            ss  << std::setw(2) << ((int) script_len)
+                << std::setw(2) << ((int) pushdata_sig)
+                << std::setw(2) << ((int) header)
+                << std::setw(2) << ((int) sig_length)
+                << std::setw(2) << ((int) integer)
+                << std::setw(2) << ((int) r_length)
+                << sig.substr(0, 64)
+                << std::setw(2) << ((int) integer)
+                << std::setw(2) << ((int) s_length)
+                << sig.substr(64, 64)
+                << std::setw(2) << ((int) sig_hash_code)
+                << std::setw(2) << ((int) pushdata_pubkey)
+                << "03"+ dev::toPublic(private_key).hex().substr(0,64);
+            trx += ss.str();
+            trx += a.end_of_vin;
+        }
+        trx += trx_footer;
+
+        return reply(trx);
       }
       default:
         FC_LIGHT_THROW_EXCEPTION(fc_light::invalid_arg_exception,

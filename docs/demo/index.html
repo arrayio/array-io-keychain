@@ -228,8 +228,8 @@
     onHash();
     const inputs = document.getElementsByClassName('param_field');
     for (let i=0; i<inputs.length; i++) {
-      inputs[i].addEventListener('keyup', onHash);
-      inputs[i].addEventListener('change', onHash);
+      inputs[i].addEventListener('keyup', function() { onHash()});
+      inputs[i].addEventListener('change', function() {onHash()});
     }
   };
 

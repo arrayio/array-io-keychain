@@ -191,14 +191,7 @@
       document.getElementById('unlock_time_SIGN_HEX').readOnly = !e.target.checked;
     });
     document.getElementById('btn_RUN_REQUEST').addEventListener('click', function() {
-      let request;
-      try {
-        request = JSON.parse(document.getElementById('request').value);
-      } catch (e) {
-        document.getElementById('response').value = e;
-        return;
-      }
-      runRequest(request);
+      runRequest();
     })
   };
 
@@ -215,11 +208,19 @@
         }
       }
       document.getElementById('request').value = JSON.stringify(request, undefined, 2);
-      runRequest(request);
+      runRequest();
     });
   }
 
-  function runRequest(request) {
+  function runRequest() {
+    let request;
+    try {
+      request = JSON.parse(document.getElementById('request').value);
+    } catch (e) {
+      document.getElementById('response').value = e;
+      return;
+    }
+
     keychain.command(request, function(data) {
       document.getElementById('response').value = JSON.stringify(data, undefined, 2);
       if (request.command === 'select_key' && data.result) {

@@ -4,7 +4,6 @@
   <title>KeyChain test page</title>
   <link rel="stylesheet" href="../assets/spectre.min.css">
   <link rel="shortcut icon" href="../assets/favicon.ico">
-  <link rel="stylesheet" href="../assets/icons.min.css">
   <style>
     button {
       width: 100%;
@@ -156,7 +155,7 @@
   keychain.ws.onopen = function() {
     document.body.style.backgroundColor = '#cfc';
 
-    keychain.command(COMMANDS.version, function(data) {
+    keychain.command({command: 'version'}, function(data) {
       document.getElementById('version').innerText = data.result ? data.result : '';
     })
   };
@@ -186,7 +185,7 @@
         params[name] = inputs[i].value;
       }
 
-      const request = JSON.parse(JSON.stringify(COMMANDS[hash]));
+      const request = {command: hash};
       if (Object.keys(params).length > 0) {
         request.params = params;
       }
@@ -228,45 +227,6 @@
         document.getElementById('address').value = '0x' + ethereumjs.Util.publicToAddress('0x' + data.result).toString('hex');
       }
     })
-  }
-
-  const COMMANDS = {
-    unlock: {
-      command: "unlock",
-      params: {
-        // public_key: null,
-        // unlock_time: null
-      }
-    },
-    sign_hex: {
-      command: "sign_hex",
-      params: {
-        transaction: "eb0885098bca5a00825208948ec6977b1255854169e5f9f8f163f371bcf1ffd287038d7ea4c6800080038080",
-        blockchain_type: "ethereum",
-        // public_key: null,
-        // unlock_time: null
-      }
-    },
-    sign_hash: {
-      command: "sign_hash",
-      params: {
-        sign_type: "VRS_canonical",
-        hash: "fe5e4a8974715e20f47c8bb609547c9e66b0b9e31d521199b3d8d6af6da74cb1",
-        // public_key: null
-      }
-    },
-    select_key: {
-      command: "select_key"
-    },
-    lock: {
-      command: "lock"
-    },
-    about: {
-      command: "about"
-    },
-    version: {
-      command: "version"
-    }
   }
 </script>
 

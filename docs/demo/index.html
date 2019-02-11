@@ -4,9 +4,16 @@
   <title>KeyChain test page</title>
   <link rel="stylesheet" href="../assets/spectre.min.css">
   <link rel="shortcut icon" href="../assets/favicon.ico">
+  <link rel="stylesheet" href="../assets/icons.min.css">
   <style>
     button {
       width: 100%;
+    }
+    .page {
+      display: none;
+    }
+    .page-active {
+      display: block;
     }
   </style>
 </head>
@@ -38,7 +45,7 @@
       </div>
     </div>
   </div>
-  <div class="columns my-1">
+  <div class="columns">
     <div class="column col-2">
     </div>
     <div class="column col-4">
@@ -56,87 +63,66 @@
       </div>
     </div>
   </div>
-  <div class="columns my-1">
-    <div class="column col-2 ">
-      <button class="btn btn-primary" id="btn_SELECT_KEY">Select Key</button>
-    </div>
-  </div>
-  <div class="columns my-1">
+
+  <div class="columns my-2">
     <div class="column col-2">
-      <button class="btn btn-primary" id="btn_LOCK">Lock</button>
+      <ul class="menu">
+        <li class="divider" data-content="COMMANDS"></li>
+        <li class="menu-item"><a href="#select_key">Select Key</a></li>
+        <li class="menu-item"><a href="#lock">Lock</a></li>
+        <li class="menu-item"><a href="#unlock">Unlock</a></li>
+        <li class="menu-item"><a href="#sign_hex">Sign hex</a></li>
+        <li class="menu-item"><a href="#sign_hash">Sign hash</a></li>
+        <li class="menu-item"><a href="#about">About</a></li>
+        <li class="menu-item"><a href="#version">Version</a></li>
+      </ul>
     </div>
-  </div>
-  <div class="columns my-1">
-    <div class="column col-2">
-      <button class="btn btn-primary" id="btn_UNLOCK">Unlock</button>
-    </div>
-    <div class="column col-8">
-      <div class="columns">
-        <div class="column col-6 col-xs-12">
-          <div class="input-group">
-            <span class="input-group-addon">public_key: </span>
-            <input type="text" class="form-input" placeholder="0292315b2b2eb4284f46832a633e7a12605d3ed6083d920987f586297f59895d20cf8b84a6fe674a52efe71c73725204443301a361a2c6da91ac2b02c37c2368" id="public_key_UNLOCK">
-          </div>
-        </div>
-        <div class="column col-6 col-xs-12">
-          <div class="input-group">
-            <label class="form-switch">
-            </label>
-            <span class="input-group-addon">unlock_time: </span>
-            <input type="number" class="form-input" placeholder="45" id="unlock_time_UNLOCK" title="This parameter is experimental and optional!">
-          </div>
-        </div>
+    <div class="column col-8 page" id="page_select_key"></div>
+    <div class="column col-8 page" id="page_lock"></div>
+    <div class="column col-8 page" id="page_unlock">
+      <div class="form-group">
+        <label class="form-label">public_key</label>
+        <input class="form-input" type="text" name="public_key" id="public_key_UNLOCK">
+      </div>
+      <div class="form-group">
+        <label class="form-label">unlock_time</label>
+        <input class="form-input" type="number" name="unlock_time">
       </div>
     </div>
-  </div>
-  <div class="columns my-1">
-    <div class="column col-2">
-      <button class="btn btn-primary input-group-btn" id="btn_SIGN_HEX">Sign hex</button>
-    </div>
-    <div class="column col-8">
-      <div class="columns">
-        <div class="column col-6 col-xs-12">
-          <div class="input-group">
-            <span class="input-group-addon">public_key: </span>
-            <input type="text" class="form-input" placeholder="0292315b2b2eb4284f46832a633e7a12605d3ed6083d920987f586297f59895d20cf8b84a6fe674a52efe71c73725204443301a361a2c6da91ac2b02c37c2368" id="public_key_SIGN_HEX">
-          </div>
-        </div>
-        <div class="column col-6 col-xs-12">
-          <div class="input-group">
-            <label class="form-switch">
-              <input type="checkbox" id="checkbox_SIGN_HEX"><i class="form-icon"></i>
-            </label>
-            <span class="input-group-addon">unlock_time: </span>
-            <input type="number" class="form-input" placeholder="45" id="unlock_time_SIGN_HEX" title="This parameter is experimental and optional!" readonly>
-          </div>
-        </div>
+    <div class="column col-8 page" id="page_sign_hex">
+      <div class="form-group">
+        <label class="form-label">transaction</label>
+        <input class="form-input" type="text" placeholder="eb0885098bca5a00825208948ec6977b1255854169e5f9f8f163f371bcf1ffd287038d7ea4c6800080038080" name="transaction">
+      </div>
+      <div class="form-group">
+        <label class="form-label">blockchain_type</label>
+        <input class="form-input" type="text" placeholder="ethereum" value="ethereum" name="blockchain_type">
+      </div>
+      <div class="form-group">
+        <label class="form-label">public_key</label>
+        <input class="form-input" type="text" name="public_key" id="public_key_SIGN_HEX">
+      </div>
+      <div class="form-group">
+        <label class="form-label">unlock_time</label>
+        <input class="form-input" type="number" name="unlock_time">
       </div>
     </div>
-  </div>
-  <div class="columns my-1">
-    <div class="column col-2">
-      <button class="btn btn-primary input-group-btn" id="btn_SIGN_HASH">Sign hash</button>
-    </div>
-    <div class="column col-8">
-      <div class="columns">
-        <div class="column col-6 col-xs-12">
-          <div class="input-group">
-            <span class="input-group-addon">public_key: </span>
-            <input type="text" class="form-input" placeholder="0292315b2b2eb4284f46832a633e7a12605d3ed6083d920987f586297f59895d20cf8b84a6fe674a52efe71c73725204443301a361a2c6da91ac2b02c37c2368" id="public_key_SIGN_HASH">
-          </div>
-        </div>
+    <div class="column col-8 page" id="page_sign_hash">
+      <div class="form-group">
+        <label class="form-label">hash</label>
+        <input class="form-input" type="text" value="fe5e4a8974715e20f47c8bb609547c9e66b0b9e31d521199b3d8d6af6da74cb1" name="hash">
+      </div>
+      <div class="form-group">
+        <label class="form-label">sign_type</label>
+        <input class="form-input" type="text" placeholder="VRS_canonical" value="VRS_canonical" name="sign_type">
+      </div>
+      <div class="form-group">
+        <label class="form-label">public_key</label>
+        <input class="form-input" type="text" name="public_key" id="public_key_SIGN_HASH">
       </div>
     </div>
-  </div>
-  <div class="columns my-1">
-    <div class="column col-2">
-      <button class="btn btn-primary input-group-btn" id="btn_ABOUT">About</button>
-    </div>
-  </div>
-  <div class="columns my-1">
-    <div class="column col-2">
-      <button class="btn btn-primary input-group-btn" id="btn_VERSION">Version</button>
-    </div>
+    <div class="column col-8 page" id="page_about"></div>
+    <div class="column col-8 page" id="page_version"></div>
   </div>
   <div class="columns">
     <div class="column col-6">
@@ -170,7 +156,7 @@
   keychain.ws.onopen = function() {
     document.body.style.backgroundColor = '#cfc';
 
-    keychain.command(COMMANDS.VERSION, function(data) {
+    keychain.command(COMMANDS.version, function(data) {
       document.getElementById('version').innerText = data.result ? data.result : '';
     })
   };
@@ -179,38 +165,49 @@
     document.getElementById('error').style.display = 'block';
   };
 
-  window.onload = function () {
-    attachListener('UNLOCK', ['public_key', 'unlock_time']);
-    attachListener('SIGN_HEX', ['public_key', 'unlock_time']);
-    attachListener('SIGN_HASH', ['public_key']);
-    attachListener('SELECT_KEY');
-    attachListener('LOCK');
-    attachListener('ABOUT');
-    attachListener('VERSION');
-    document.getElementById('checkbox_SIGN_HEX').addEventListener('click', function(e) {
-      document.getElementById('unlock_time_SIGN_HEX').readOnly = !e.target.checked;
-    });
-    document.getElementById('btn_RUN_REQUEST').addEventListener('click', function() {
-      runRequest();
-    })
-  };
+  function onHash(e) {
+    if(!window.location.hash) {
+      return;
+    }
+    const hash = window.location.hash.substr(1);
+    const el = document.getElementById('page_' + hash);
 
-  function attachListener(commandName, paramNames) {
-    document.getElementById('btn_' + commandName).addEventListener('click', function() {
-      const request = JSON.parse(JSON.stringify(COMMANDS[commandName])); // copy object
-      if (paramNames) {
-        for (let i = 0; i < paramNames.length; i++) {
-          const paramName = paramNames[i];
-          const input = document.getElementById(paramName + '_'  + commandName);
-          if (!input.readOnly) {
-            request.params[paramName] = input.value;
-          }
-        }
+    if (el) {
+      const pageActive = document.getElementsByClassName('page-active');
+      if (pageActive.length > 0) {
+        document.getElementsByClassName('page-active')[0].classList.remove('page-active');
+      }
+      el.classList.add('page-active');
+
+      const inputs = el.getElementsByClassName('form-input');
+      const params = {};
+      for (let i=0; i<inputs.length; i++) {
+        const name = inputs[i].getAttribute('name');
+        params[name] = inputs[i].value;
+      }
+
+      const request = JSON.parse(JSON.stringify(COMMANDS[hash]));
+      if (Object.keys(params).length > 0) {
+        request.params = params;
       }
       document.getElementById('request').value = JSON.stringify(request, undefined, 2);
+      if (e) {
+        runRequest();
+      }
+    }
+  }
+
+  window.onhashchange = onHash;
+
+  window.onload = function () {
+    // document.getElementById('checkbox_SIGN_HEX').addEventListener('click', function(e) {
+    //   document.getElementById('unlock_time_SIGN_HEX').readOnly = !e.target.checked;
+    // });
+    document.getElementById('btn_RUN_REQUEST').addEventListener('click', function() {
       runRequest();
     });
-  }
+    onHash();
+  };
 
   function runRequest() {
     let request;
@@ -234,14 +231,14 @@
   }
 
   const COMMANDS = {
-    UNLOCK: {
+    unlock: {
       command: "unlock",
       params: {
         // public_key: null,
         // unlock_time: null
       }
     },
-    SIGN_HEX: {
+    sign_hex: {
       command: "sign_hex",
       params: {
         transaction: "eb0885098bca5a00825208948ec6977b1255854169e5f9f8f163f371bcf1ffd287038d7ea4c6800080038080",
@@ -250,7 +247,7 @@
         // unlock_time: null
       }
     },
-    SIGN_HASH: {
+    sign_hash: {
       command: "sign_hash",
       params: {
         sign_type: "VRS_canonical",
@@ -258,16 +255,16 @@
         // public_key: null
       }
     },
-    SELECT_KEY: {
+    select_key: {
       command: "select_key"
     },
-    LOCK: {
+    lock: {
       command: "lock"
     },
-    ABOUT: {
+    about: {
       command: "about"
     },
-    VERSION: {
+    version: {
       command: "version"
     }
   }

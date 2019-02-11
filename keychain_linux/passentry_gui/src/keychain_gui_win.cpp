@@ -63,11 +63,6 @@ void keychain_gui_win::refresh(Transaction& transaction)
 		auto cmd_type = cmd_parse(transaction.getTransactionText().toStdString());
 		switch (cmd_type)
 		{
-			case sm_cmd::events_te::create_key:
-			{
-				auto cmd = cmd_parse.params<sm_cmd::events_te::create_key>();
-				break;
-			}
 			case sm_cmd::events_te::sign_hex:
 			{
 				auto cmd = cmd_parse.params<sm_cmd::events_te::sign_hex>();
@@ -83,12 +78,10 @@ void keychain_gui_win::refresh(Transaction& transaction)
 				keyname = cmd.keyname;
 				break;
 			}
-			case sm_cmd::events_te::remove_key:
-			case sm_cmd::events_te::export_keys:
-			case sm_cmd::events_te::import_keys:
 			case sm_cmd::events_te::unlock:
 			{
 				auto cmd = cmd_parse.params<sm_cmd::events_te::unlock>();
+                keyname = cmd.keyname;
 				unlock_time = cmd.unlock_time;
 				break;
 			}

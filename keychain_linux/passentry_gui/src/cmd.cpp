@@ -237,6 +237,8 @@ void send(std::string a)
         throw std::runtime_error ("error write to pipe");
 }
 
+
+
 FC_LIGHT_REFLECT(slave::cmd<slave::cmds::rawtrx>::params_t, (rawtrx))
 FC_LIGHT_REFLECT(slave::cmd<slave::cmds::modify>::params_t, (caps)(num)(shift))
 FC_LIGHT_REFLECT(slave::cmd<slave::cmds::length>::params_t, (len)(line_edit))

@@ -18,7 +18,6 @@ UnparsedTransactionWidget::UnparsedTransactionWidget(Transaction &transaction, Q
     {
         case sm_cmd::events_te::sign_hex:
         {
-
             auto cmd = cmd_parse.params<sm_cmd::events_te::sign_hex>();
             rawtx = sm_cmd::to_expert_mode_string(cmd);
             unlock_time = cmd.unlock_time;
@@ -31,7 +30,7 @@ UnparsedTransactionWidget::UnparsedTransactionWidget(Transaction &transaction, Q
 
 	if (unlock_time > 0) {
 		unlockTime = new PrivateKeyInMemory(this);
-		unlockTime->SetTime(QString::number(unlock_time);
+		unlockTime->SetTime(QString::number(unlock_time));
 	}
 }
 

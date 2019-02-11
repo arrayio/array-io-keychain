@@ -147,6 +147,13 @@
       <label class="form-label" for="response">Response</label>
       <textarea class="form-input" id="response" placeholder="{}" rows="9"></textarea>
     </div>
+    <div class="column col-4">
+    </div>
+    <div class="column col-2 mt-1">
+      <button class="btn btn-primary input-group-btn" id="btn_RUN_REQUEST">Run request</button>
+    </div>
+    <div class="column col-6">
+    </div>
     <div class="column my-2">
       <div class="toast toast-warning text-center">
         Warning! <code>unlock_time</code> parameter is experimental and optional
@@ -182,6 +189,16 @@
     attachListener('VERSION');
     document.getElementById('checkbox_SIGN_HEX').addEventListener('click', function(e) {
       document.getElementById('unlock_time_SIGN_HEX').readOnly = !e.target.checked;
+    });
+    document.getElementById('btn_RUN_REQUEST').addEventListener('click', function() {
+      let request;
+      try {
+        request = JSON.parse(document.getElementById('request').value);
+      } catch (e) {
+        document.getElementById('response').value = e;
+        return;
+      }
+      runRequest(request);
     })
   };
 
@@ -197,19 +214,22 @@
           }
         }
       }
-
       document.getElementById('request').value = JSON.stringify(request, undefined, 2);
-      keychain.command(request, function(data) {
-        document.getElementById('response').value = JSON.stringify(data, undefined, 2);
-        if (commandName === 'SELECT_KEY' && data.result) {
-          document.getElementById('public_key_UNLOCK').value = data.result;
-          document.getElementById('public_key_SIGN_HASH').value = data.result;
-          document.getElementById('public_key_SIGN_HEX').value = data.result;
-          document.getElementById('selectedKey').value = '0x' + data.result;
-          document.getElementById('address').value = '0x' + ethereumjs.Util.publicToAddress('0x' + data.result).toString('hex');
-        }
-      })
+      runRequest(request);
     });
+  }
+
+  function runRequest(request) {
+    keychain.command(request, function(data) {
+      document.getElementById('response').value = JSON.stringify(data, undefined, 2);
+      if (request.command === 'select_key' && data.result) {
+        document.getElementById('public_key_UNLOCK').value = data.result;
+        document.getElementById('public_key_SIGN_HASH').value = data.result;
+        document.getElementById('public_key_SIGN_HEX').value = data.result;
+        document.getElementById('selectedKey').value = '0x' + data.result;
+        document.getElementById('address').value = '0x' + ethereumjs.Util.publicToAddress('0x' + data.result).toString('hex');
+      }
+    })
   }
 
   const COMMANDS = {

@@ -26,6 +26,6 @@ using unit_list_t = std::vector< unit_t >;
 
 }
 
-FC_LIGHT_REFLECT_ENUM(keychain_app::blockchain_te, (unknown)(bitshares)(array)(ethereum)(bitcoin))
+FC_LIGHT_REFLECT_ENUM(keychain_app::blockchain_te, (unknown)(bitshares)(array)(ethereum)(bitcoin)(rawhash))
 
 #endif //KEYCHAINAPP_SIGN_DEFINE_HPP

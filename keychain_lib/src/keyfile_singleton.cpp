@@ -42,7 +42,7 @@ void keyfile_singleton::keydata_initialize()
 {
   auto curdir = bfs::current_path();
   auto first = bfs::directory_iterator(bfs::path(KEY_DEFAULT_PATH_));
-  std::for_each(first, bfs::directory_iterator(), [&print_exception, this](const auto& unit) {
+  std::for_each(first, bfs::directory_iterator(), [this](const auto& unit) {
     try {
       fc_light::variant j_keyfile = open_keyfile(unit.path().c_str());
       m_keydata_map.insert(j_keyfile.as<keyfile_format::keyfile_t>());
@@ -60,11 +60,16 @@ void keyfile_singleton::keydata_initialize()
 void keyfile_singleton::signlog_initialize()
 {
   auto curdir = bfs::current_path();
-  first = bfs::directory_iterator(bfs::path(SIGN_LOGS_DEFAULT_PATH_));
-  std::for_each(first, bfs::directory_iterator(), [&print_exception, this](const auto& unit) {
+  auto first = bfs::directory_iterator(bfs::path(SIGN_LOGS_DEFAULT_PATH_));
+  std::for_each(first, bfs::directory_iterator(), [this](const auto& unit) {
     try {
       fc_light::variant j_keyfile = open_keyfile(unit.path().c_str());
-      m_signlog_map.insert(j_keyfile.as<keyfile_format::signlog_file_t>());
+      auto file = j_keyfile.as<keyfile_format::signlog_file_t>();
+      auto res = m_signlog_map.insert(signlog_map_t::value_type(file.public_key,log_records_t()));
+      FC_LIGHT_ASSERT(res.second);
+      auto it = res.first;
+      auto& logmap = it->second;
+      std::copy(file.sign_events.begin(), file.sign_events.end(), std::inserter(logmap, logmap.begin()));
     }
     catch (fc_light::parse_error_exception& er) {
       return print_exception(unit.path(), er);
@@ -76,12 +81,15 @@ void keyfile_singleton::signlog_initialize()
   });
 }
 
+void keyfile_singleton::print_exception (const boost::filesystem::path& filename, fc_light::exception &er)
+{
+  auto& log = logger_singleton::instance();
+  BOOST_LOG_SEV(log.lg, warning) << "Cannot read key file \"" << filename.c_str() << "\"" << er.to_detail_string();
+};
+
 keyfile_singleton::keyfile_singleton()
 {
-  auto print_exception = [](const auto& filename, fc_light::exception &er) {
-    auto& log = logger_singleton::instance();
-    BOOST_LOG_SEV(log.lg, warning) << "Cannot read key file \"" << filename.c_str() << "\"" << er.to_detail_string();
-  };
+  
   try
   {
     keydata_initialize();
@@ -95,7 +103,7 @@ keyfile_singleton::~keyfile_singleton()
   flush_all();
 }
 
-const keyfile_format::keyfile_t& keyfile_singleton::operator[](const keyfile_singleton::prim_key_type& key) const
+const keyfile_format::keyfile_t& keyfile_singleton::operator[](const keyfile_singleton::prim_key_type& key)
 {
   bool stop = false;
   do{
@@ -112,7 +120,7 @@ const keyfile_format::keyfile_t& keyfile_singleton::operator[](const keyfile_sin
   
 }
 
-const keyfile_format::keyfile_t& keyfile_singleton::operator[](const keyfile_singleton::second_key_type& key) const
+const keyfile_format::keyfile_t& keyfile_singleton::operator[](const keyfile_singleton::second_key_type& key)
 {
   bool stop = false;
   do {
@@ -216,7 +224,7 @@ void keyfile_singleton::flush_all() const
   });
 }
 
-const keyfile_singleton::log_index_type& keyfile_singleton::get_logs(const dev::Public& pkey) const
+const keyfile_singleton::log_index_type& keyfile_singleton::get_logs(const dev::Public& pkey)
 {
   signlog_initialize();//NOTE: it may be slowly, using sqlite and triggers is more preferable
   auto it = m_signlog_map.find(pkey);

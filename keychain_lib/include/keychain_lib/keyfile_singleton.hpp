@@ -84,13 +84,15 @@ class keyfile_singleton
   
   void keydata_initialize();
   void signlog_initialize();
+  
+  void print_exception (const boost::filesystem::path& filename, fc_light::exception &er);
 public:
   static keyfile_singleton& instance();
   
   using iterator = keyfile_map_t::iterator; //primary_index
   using const_iterator = keyfile_map_t::const_iterator; //primary_index
   
-  const log_index_type& get_logs(const dev::Public& pkey) const;
+  const log_index_type& get_logs(const dev::Public& pkey);
   void add_log_record(const dev::Public& pkey, const keyfile_format::log_record& record);
   
   const_iterator begin() const; //primary_index
@@ -114,8 +116,8 @@ public:
   const second_index_type& second_index() const;
   const third_index_type& third_index() const;
   
-  const keyfile_format::keyfile_t& operator[](const prim_key_type& key) const; //NOTE: use for searching by public key
-  const keyfile_format::keyfile_t& operator[](const second_key_type& key) const; //NOTE: use for searchin by keyname
+  const keyfile_format::keyfile_t& operator[](const prim_key_type& key); //NOTE: use for searching by public key
+  const keyfile_format::keyfile_t& operator[](const second_key_type& key); //NOTE: use for searchin by keyname
   void insert(keyfile_format::keyfile_t&& keyfile_data); //NOTE: keyfile_t (fc_light::variant) is not support move semantic
   
   template <typename modifier_f>

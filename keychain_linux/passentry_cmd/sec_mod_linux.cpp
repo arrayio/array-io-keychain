@@ -40,7 +40,7 @@ std::string sec_mod_linux::exec_cmd(const std::string& json_cmd) const
 
     std::string result;
     result_pass = { 'b', 'l', 'a', 'n', 'k' };
-    sm_cmd::secmod_resonse_common response;
+    sm_cmd::secmod_response_common response;
     if (result_pass.empty())
     {
         response.etype = sm_cmd::response_te::null;

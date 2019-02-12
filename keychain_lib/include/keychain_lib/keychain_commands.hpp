@@ -4,7 +4,6 @@
 #ifndef KEYCHAINAPP_KEYCHAIN_COMMANDS_HPP
 #define KEYCHAINAPP_KEYCHAIN_COMMANDS_HPP
 
-
 #include <string.h>
 #include <iostream>
 
@@ -74,6 +73,7 @@
 #endif //LINUX
 
 #define KEY_DEFAULT_PATH_ KEY_DEFAULT_PATH "/key_data"
+#define SIGN_LOGS_DEFAULT_PATH_ KEY_DEFAULT_PATH "/signlogs_data"
 
 #define SWAP_F1 "a543bae7"    // "createSwap(bytes20,address)"
 #define SWAP_F2 "fa89401a"      // "refund(address)"
@@ -82,14 +82,6 @@
 namespace keychain_app {
 
 struct keychain_command_base;
-
-enum struct blockchain_te {
-  unknown=0,
-  array,
-  bitshares,
-  ethereum,
-  bitcoin
-};
 
 enum struct sign_te {
   unknown=0,
@@ -412,11 +404,9 @@ struct keychain_command<command_te::sign_hex> : keychain_command_base
         create_secmod_signhex_cmd(raw, params.blockchain_type, evaluate_from(), params.unlock_time, keyname, no_password));
     });
 
-    auto reply = [&keyfiles, &params, &id](auto& message){
-        keyfiles.update(params.public_key, [](auto& keyfile)
-        {
-            keyfile.usage_time = fc_light::time_point::now();
-        });
+    auto reply = [&keyfiles, &params, &id](auto& message, const dev::bytes& transaction){
+        keyfiles.add_log_record(params.public_key,
+                                keyfile_format::log_record(transaction, fc_light::time_point::now(), params.blockchain_type, params.chainid ));
         json_response response(fc_light::variant(message), id);
         fc_light::variant res(response);
         return fc_light::json::to_string(res);
@@ -562,7 +552,7 @@ struct keychain_command<command_te::sign_hex> : keychain_command_base
         }
         trx += trx_footer;
 
-        return reply(trx);
+        return reply(trx, raw);
       }
       default:
         FC_LIGHT_THROW_EXCEPTION(fc_light::invalid_arg_exception,
@@ -572,7 +562,7 @@ struct keychain_command<command_te::sign_hex> : keychain_command_base
     if (!signature)
       FC_LIGHT_THROW_EXCEPTION(fc_light::internal_error_exception, "Resulting signature is null");
 
-    return reply(signature);
+    return reply(signature, raw);
   }
 };
 
@@ -642,11 +632,11 @@ struct keychain_command<command_te::sign_hash> : keychain_command_base
         break;
       }
     }
-
-    keyfiles.update(params.public_key, [](auto& keyfile)
-    {
-      keyfile.usage_time = fc_light::time_point::now();
-    });
+  
+    dev::bytes hash_vec;
+    std::copy(params.hash.begin(), params.hash.end(), std::back_inserter(hash_vec));
+    keyfiles.add_log_record(params.public_key,
+                            keyfile_format::log_record(hash_vec, fc_light::time_point::now(), blockchain_te::rawhash, ""));
     json_response response(fc_light::variant(signature), id);
     fc_light::variant res(response);
     return fc_light::json::to_string(res);
@@ -873,7 +863,6 @@ FC_LIGHT_REFLECT(keychain_app::keychain_command_common, (command)(id)(params))
 FC_LIGHT_REFLECT(keychain_app::json_response, (id)(result))
 FC_LIGHT_REFLECT(keychain_app::json_error::error_t, (code)(name)(message)(trace))
 FC_LIGHT_REFLECT(keychain_app::json_error, (id)(error))
-FC_LIGHT_REFLECT_ENUM(keychain_app::blockchain_te, (unknown)(bitshares)(array)(ethereum)(bitcoin))
 FC_LIGHT_REFLECT_ENUM(keychain_app::sign_te, (unknown)(VRS_canonical)(RSV_noncanonical))
 
 #endif //KEYCHAINAPP_KEYCHAIN_COMMANDS_HPP

@@ -26,6 +26,7 @@
 
 #ifdef APPLE
 #include "../keychain_mac/sec_mod_mac.hpp"
+#include "../keychain_mac/gui_mod_mac.hpp"
 #endif
 
 #ifdef _WIN32
@@ -85,7 +86,7 @@ int cmd_parser::run(int argc, const char* const argv[])
       BOOST_LOG_SEV(log.lg, info) << "secure_module: <sec_mod_mac>";
       sec_mod = module_singleton<secure_dlg_mod_base>::instance<sec_mod_mac>();
       //TODO: need to implement gui module
-      gui_mod = module_singleton<gui_mod_base>::instance<gui_mod_dummy>();
+      gui_mod = module_singleton<gui_mod_base>::instance<gui_mod_mac>();
 #	else
 #		ifdef _WIN32
       BOOST_LOG_SEV(log.lg, info) << "secure_module: <SecureModuleWrapper>";

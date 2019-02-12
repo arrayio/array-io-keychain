@@ -52,7 +52,7 @@
 #include "secmod_protocol.hpp"
 
 #include "version_info.hpp"
-#include <byteswap.h>
+#include <arpa/inet.h>
 
 
 #ifdef __linux__
@@ -476,7 +476,7 @@ struct keychain_command<command_te::sign_hex> : keychain_command_base
         std::stringstream ss;
         std::string trx_header;
         ss << std::setfill('0') << std::hex
-           << std::setw(8) << __bswap_32 (trx_info.version) << std::setw(2) << ((int) trx_info.num_vins);
+           << std::setw(8) << ntohl (trx_info.version) << std::setw(2) << ((int) trx_info.num_vins);
         trx_header = ss.str();
 
         // construct transaction footer
@@ -487,12 +487,14 @@ struct keychain_command<command_te::sign_hex> : keychain_command_base
         for (auto& a : trx_info.vouts)
         {
             ss.str("");
-            ss << std::setw(16) << __bswap_64(a.amount) << std::setw(2) << ((int) a.script_len);
+            ss << std::setw(8) << ntohl((int) a.amount) << std::setw(8) << ntohl(a.amount >> 32)
+            << std::setw(2) << ((int) a.script_len);
+
             trx_footer += ss.str();
             trx_footer += a.script_pub_key;
         }
         ss.str("");
-        ss << std::setw(8) << __bswap_32(trx_info.locktime);
+        ss << std::setw(8) << ntohl(trx_info.locktime);
         trx_footer += ss.str();
 
         // construct Signing Message Template for each input and signing it.
@@ -503,7 +505,7 @@ struct keychain_command<command_te::sign_hex> : keychain_command_base
             {
                 trx += trx_info.vins[input].txid;
                 ss.str("");
-                ss << std::setw(8) << __bswap_32(trx_info.vins[input].output_id);
+                ss << std::setw(8) << ntohl(trx_info.vins[input].output_id);
                 trx += ss.str();
                 if (input == loop) // include scriptSig only signing input
                 {
@@ -518,7 +520,7 @@ struct keychain_command<command_te::sign_hex> : keychain_command_base
             trx += trx_footer;
             ss.str("");
             uint32_t sig_hash_code = 1;
-            ss << std::setw(8) << __bswap_32(sig_hash_code);
+            ss << std::setw(8) << ntohl(sig_hash_code);
             trx += ss.str();
 
             std::vector<unsigned char> raw(trx.length());
@@ -536,7 +538,7 @@ struct keychain_command<command_te::sign_hex> : keychain_command_base
             auto sig = iter().hex();
             trx += a.txid;
             ss.str("");
-            ss << std::setw(8) << __bswap_32(a.output_id);
+            ss << std::setw(8) << ntohl(a.output_id);
             trx += ss.str();
             ss.str("");
             uint8_t script_len = 0x6a, pushdata_sig = 0x47, header=0x30, sig_length=0x44, integer=2, r_length=0x20,

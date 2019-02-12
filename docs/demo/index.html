@@ -187,22 +187,46 @@
       }
       el.classList.add('page-active');
 
-      const inputs = el.getElementsByClassName('param_field');
-      const params = {};
-      for (let i=0; i<inputs.length; i++) {
-        const name = inputs[i].getAttribute('name');
-        if (!inputs[i].readOnly) {
-          params[name] = inputs[i].value;
-        }
-      }
-
-      const request = {command: hash};
-      if (Object.keys(params).length > 0) {
-        request.params = params;
-      }
+      const request = fieldsToJson();
       document.getElementById('request').value = JSON.stringify(request, undefined, 2);
       if (e) {
         runRequest();
+      }
+    }
+  }
+
+  function fieldsToJson() {
+    const hash = window.location.hash.substr(1);
+    const el = document.getElementById('page_' + hash);
+
+    const inputs = el.getElementsByClassName('param_field');
+    const params = {};
+    for (let i=0; i<inputs.length; i++) {
+      const name = inputs[i].getAttribute('name');
+      if (!inputs[i].readOnly) {
+        params[name] = inputs[i].value;
+      }
+    }
+
+    const request = {command: hash};
+    if (Object.keys(params).length > 0) {
+      request.params = params;
+    }
+    return request;
+  }
+
+  function jsonToFields() {
+    const request = getRequest();
+    if (request && request.params) {
+      const hash = window.location.hash.substr(1);
+      const el = document.getElementById('page_' + hash);
+
+      const inputs = el.getElementsByClassName('param_field');
+      for (let i=0; i<inputs.length; i++) {
+        const name = inputs[i].getAttribute('name');
+        if (!inputs[i].readOnly) {
+          inputs[i].value = request.params[name];
+        }
       }
     }
   }
@@ -228,9 +252,12 @@
     onHash();
     const inputs = document.getElementsByClassName('param_field');
     for (let i=0; i<inputs.length; i++) {
-      inputs[i].addEventListener('keyup', function() { onHash()});
-      inputs[i].addEventListener('change', function() {onHash()});
+      inputs[i].addEventListener('keyup', function() { onHash() });
+      inputs[i].addEventListener('change', function() { onHash() });
     }
+    document.getElementById('request').addEventListener('keyup', function () {
+      jsonToFields();
+    })
   };
 
   function getRequest() {

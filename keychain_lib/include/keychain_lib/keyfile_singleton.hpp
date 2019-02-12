@@ -23,9 +23,10 @@ namespace keyfiles_map {
 struct prim_pubkey_tag {};
 struct second_keyname_tag {};
 struct third_date_tag {};
+struct log_record_tag {};
 
 using keyfile_map_t = boost::multi_index::multi_index_container<
-  keyfile_format::keyfile_t,
+  keychain_app::keyfile_format::keyfile_t,
   boost::multi_index::indexed_by<
     boost::multi_index::ordered_unique<
       boost::multi_index::tag <prim_pubkey_tag>,
@@ -42,9 +43,23 @@ using keyfile_map_t = boost::multi_index::multi_index_container<
   >
 >;
 
+using log_records_t = boost::multi_index::multi_index_container<
+  keyfile_format::log_record,
+  boost::multi_index::indexed_by<
+    boost::multi_index::ordered_non_unique<
+      boost::multi_index::tag<log_record_tag>,
+      boost::multi_index::member<keyfile_format::log_record, fc_light::time_point, &keyfile_format::log_record::sign_time>
+    >
+  >
+>;
+
+using signlog_map_t = std::map<dev::Public, log_records_t>;
+
 }
 
 using keyfiles_map::keyfile_map_t;
+using keyfiles_map::signlog_map_t;
+using keyfiles_map::log_records_t;
 
 class keyfile_singleton
 {
@@ -53,10 +68,12 @@ class keyfile_singleton
   
   using value_t = keyfile_map_t::value_type;
   keyfile_map_t m_keydata_map;
+  signlog_map_t m_signlog_map;
   
   using prim_index_type = keyfile_map_t::index<keyfiles_map::prim_pubkey_tag>::type;
   using second_index_type = keyfile_map_t::index<keyfiles_map::second_keyname_tag>::type;
   using third_index_type = keyfile_map_t::index<keyfiles_map::third_date_tag>::type;
+  using log_index_type = log_records_t::index<keyfiles_map::log_record_tag>::type;
   
   using prim_key_type = keyfile_map_t::key_type;
   using second_key_type = second_index_type::key_type;
@@ -68,6 +85,9 @@ public:
   
   using iterator = keyfile_map_t::iterator; //primary_index
   using const_iterator = keyfile_map_t::const_iterator; //primary_index
+  
+  const log_index_type& get_logs(const dev::Public& pkey) const;
+  void add_log_record(const dev::Public& pkey, const keyfile_format::log_record& record);
   
   const_iterator begin() const; //primary_index
   const_iterator end() const; //primary_index

@@ -4,7 +4,6 @@
 #ifndef KEYCHAINAPP_KEYCHAIN_COMMANDS_HPP
 #define KEYCHAINAPP_KEYCHAIN_COMMANDS_HPP
 
-
 #include <string.h>
 #include <iostream>
 
@@ -82,14 +81,6 @@
 namespace keychain_app {
 
 struct keychain_command_base;
-
-enum struct blockchain_te {
-  unknown=0,
-  array,
-  bitshares,
-  ethereum,
-  bitcoin
-};
 
 enum struct sign_te {
   unknown=0,
@@ -871,7 +862,6 @@ FC_LIGHT_REFLECT(keychain_app::keychain_command_common, (command)(id)(params))
 FC_LIGHT_REFLECT(keychain_app::json_response, (id)(result))
 FC_LIGHT_REFLECT(keychain_app::json_error::error_t, (code)(name)(message)(trace))
 FC_LIGHT_REFLECT(keychain_app::json_error, (id)(error))
-FC_LIGHT_REFLECT_ENUM(keychain_app::blockchain_te, (unknown)(bitshares)(array)(ethereum)(bitcoin))
 FC_LIGHT_REFLECT_ENUM(keychain_app::sign_te, (unknown)(VRS_canonical)(RSV_noncanonical))
 
 #endif //KEYCHAINAPP_KEYCHAIN_COMMANDS_HPP

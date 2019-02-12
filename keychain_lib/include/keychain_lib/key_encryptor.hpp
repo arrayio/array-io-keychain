@@ -16,6 +16,12 @@
 namespace keychain_app
 {
 
+namespace keyfile_format
+{
+enum struct cipher_etype;
+struct encrypted_data;
+}
+
 using byte_seq_t = std::vector<char>;
 
 class encryptor_singleton

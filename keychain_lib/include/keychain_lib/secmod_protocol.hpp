@@ -249,9 +249,9 @@ struct secmod_response<response_te::boolean>
   using params_t = bool;
 };
 
-struct secmod_resonse_common
+struct secmod_response_common
 {
-  secmod_resonse_common() : etype(secmod_commands::response_te::null) {}
+  secmod_response_common() : etype(secmod_commands::response_te::null) {}
   response_te etype;
   fc_light::variant params;
 };
@@ -279,7 +279,7 @@ FC_LIGHT_REFLECT(keychain_app::secmod_commands::transaction_view<keychain_app::s
 FC_LIGHT_REFLECT(keychain_app::secmod_commands::transaction_view<keychain_app::secmod_commands::blockchain_secmod_te::ethereum_swap>::type, (from)(trx_info)(swap_info))
 
 FC_LIGHT_REFLECT(keychain_app::secmod_commands::secmod_command, (etype)(params))
-FC_LIGHT_REFLECT(keychain_app::secmod_commands::secmod_resonse_common, (etype)(params))
+FC_LIGHT_REFLECT(keychain_app::secmod_commands::secmod_response_common, (etype)(params))
 
 FC_LIGHT_REFLECT_ENUM(
   keychain_app::secmod_commands::transaction_view<keychain_app::secmod_commands::blockchain_secmod_te::ethereum_swap>::type::action_te,

@@ -51,7 +51,7 @@ public:
   }
   void params() const {}
   response_te operator()(const std::string& json);
-  secmod_resonse_common m_response;
+  secmod_response_common m_response;
 };
 
 }

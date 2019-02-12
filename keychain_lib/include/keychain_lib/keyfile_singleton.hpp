@@ -80,6 +80,7 @@ class keyfile_singleton
   using third_key_type = third_index_type::key_type;
   
   void flush_keyfile_impl(const value_t& keyfile_data) const;
+  void flush_logrecords_impl(const prim_key_type& key, const log_records_t& log_records) const;
 public:
   static keyfile_singleton& instance();
   
@@ -156,6 +157,7 @@ public:
   bool is_exist(const prim_key_type& key) const;
   void flush_keyfile(const prim_key_type& key) const;
   void flush_keyfile(const second_key_type& key) const;
+  void flush_logrecords(const prim_key_type& key) const;
   void flush_all() const;
 };
 

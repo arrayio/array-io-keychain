@@ -131,6 +131,29 @@ void keyfile_singleton::flush_keyfile_impl(const value_t& keyfile_data) const
   fout << fc_light::json::to_pretty_string(keyfile_data) << std::endl;
 }
 
+void keyfile_singleton::flush_logrecords(const prim_key_type& key) const
+{
+  auto it = m_signlog_map.find(key);
+  if (it == m_signlog_map.end())
+    return;
+  flush_logrecords_impl(key, it->second);
+}
+
+void keyfile_singleton::flush_logrecords_impl(const prim_key_type& key, const log_records_t& log_records) const
+{
+  keyfile_format::signlog_file_t logfile;
+  logfile.public_key = key;
+  std::copy(log_records.begin(), log_records.end(), std::back_inserter(logfile.sign_events));
+  auto hash = dev::openssl::sha3(key);
+  auto filename = hash.hex().substr(0, 16);
+  filename += "_signlog.json";
+  bfs::path filepath(std::string(KEY_DEFAULT_PATH_"/") + std::string(filename));
+  auto fout = std::ofstream(filepath.c_str());
+  if (!fout.is_open())
+    FC_LIGHT_THROW_EXCEPTION(fc_light::internal_error_exception, "Cannot open keyfile (${filename})", ("filename", filename));
+  fout << fc_light::json::to_pretty_string(logfile) << std::endl;
+}
+
 void keyfile_singleton::flush_all() const
 {
   auto curdir = bfs::current_path();
@@ -144,6 +167,9 @@ void keyfile_singleton::flush_all() const
     if (!fout.is_open())
       FC_LIGHT_THROW_EXCEPTION(fc_light::internal_error_exception, "Cannot open keyfile (${filename})", ("filename", filename));
     fout << fc_light::json::to_pretty_string(keyfile_data) << std::endl;
+  });
+  std::for_each(m_signlog_map.begin(), m_signlog_map.end(), [this](const auto& val){
+    flush_logrecords(val.first);
   });
 }
 
@@ -166,4 +192,5 @@ void keyfile_singleton::add_log_record(const dev::Public& pkey, const keyfile_fo
       FC_LIGHT_THROW_EXCEPTION(fc_light::internal_error_exception, "Cannot insert log record, public_key: ${PKEY}", ("PKEY", pkey));
   }
   it->second.insert(record);
+  flush_logrecords(pkey);
 }

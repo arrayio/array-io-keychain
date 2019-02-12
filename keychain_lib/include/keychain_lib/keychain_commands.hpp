@@ -73,6 +73,7 @@
 #endif //LINUX
 
 #define KEY_DEFAULT_PATH_ KEY_DEFAULT_PATH "/key_data"
+#define SIGN_LOGS_DEFAULT_PATH_ KEY_DEFAULT_PATH "/signlogs_data"
 
 #define SWAP_F1 "a543bae7"    // "createSwap(bytes20,address)"
 #define SWAP_F2 "fa89401a"      // "refund(address)"

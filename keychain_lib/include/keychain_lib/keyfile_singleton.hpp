@@ -81,6 +81,9 @@ class keyfile_singleton
   
   void flush_keyfile_impl(const value_t& keyfile_data) const;
   void flush_logrecords_impl(const prim_key_type& key, const log_records_t& log_records) const;
+  
+  void keydata_initialize();
+  void signlog_initialize();
 public:
   static keyfile_singleton& instance();
   

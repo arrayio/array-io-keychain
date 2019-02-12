@@ -77,7 +77,8 @@ struct log_record
   std::string chainid;
 };
 
-struct signlog_file_t {
+struct signlog_file_t
+{
   file_type filetype = TYPE_LOG;
   dev::Public public_key;
   std::vector<log_record> sign_events;
@@ -96,6 +97,4 @@ FC_LIGHT_REFLECT(keychain_app::keyfile_format::encrypted_data, (cipher_type)(iv)
 FC_LIGHT_REFLECT(keychain_app::keyfile_format::keyfile_t::keyinfo_t, (encrypted)(curve_type)(priv_key_data)(public_key))
 FC_LIGHT_REFLECT(keychain_app::keyfile_format::keyfile_t, (filetype)(keyname)(description)(keychain_version)(creation_time)(keyinfo))
 
-
 #endif //KEYCHAINAPP_KEY_FILE_PARSER_HPP
-

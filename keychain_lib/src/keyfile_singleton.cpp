@@ -147,7 +147,7 @@ void keyfile_singleton::flush_all() const
   });
 }
 
-const log_index_type& keyfile_singleton::get_logs(const dev::Public& pkey) const
+const keyfile_singleton::log_index_type& keyfile_singleton::get_logs(const dev::Public& pkey) const
 {
   auto it = m_signlog_map.find(pkey);
   if (it == m_signlog_map.end())
@@ -156,14 +156,14 @@ const log_index_type& keyfile_singleton::get_logs(const dev::Public& pkey) const
   return records.get<keyfiles_map::log_record_tag>();
 }
 
-void keyfile_singleton::add_log_record(const dev::Public& pkey, const keyfile_format::signlog_file_t::log_record& record)
+void keyfile_singleton::add_log_record(const dev::Public& pkey, const keyfile_format::log_record& record)
 {
   auto it = m_signlog_map.find(pkey);
   if (it == m_signlog_map.end())
   {
     it = m_signlog_map.insert(m_signlog_map.begin(), std::pair<dev::Public, log_records_t>(pkey,log_records_t()));
     if (it == m_signlog_map.end())
-      FC_LIGHT_THROW_EXCEPTION(fc_light::internal_exception, "Cannot insert log record, public_key: ${PKEY}", ("PKEY", pkey));
+      FC_LIGHT_THROW_EXCEPTION(fc_light::internal_error_exception, "Cannot insert log record, public_key: ${PKEY}", ("PKEY", pkey));
   }
   it->second.insert(record);
 }

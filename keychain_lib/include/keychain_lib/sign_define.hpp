@@ -17,7 +17,8 @@ enum struct blockchain_te {
   array,
   bitshares,
   ethereum,
-  bitcoin
+  bitcoin,
+  rawhash
 };
 
 using unit_t =  std::vector<unsigned char> ;

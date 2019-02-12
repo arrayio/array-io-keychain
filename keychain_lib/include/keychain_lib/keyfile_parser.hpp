@@ -64,7 +64,13 @@ struct keyfile_t {
   } keyinfo;
 };
 
-struct log_record {
+struct log_record
+{
+  log_record(const dev::bytes& transaction_, const fc_light::time_point& sign_time_, blockchain_te blockchain_type_, const std::string& chainid_)
+    : transaction(transaction_)
+    , sign_time(sign_time_)
+    , blockchain_type(blockchain_type_)
+    , chainid(chainid_) {}
   dev::bytes transaction;
   fc_light::time_point sign_time;
   blockchain_te blockchain_type;

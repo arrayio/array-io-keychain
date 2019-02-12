@@ -403,11 +403,9 @@ struct keychain_command<command_te::sign_hex> : keychain_command_base
         create_secmod_signhex_cmd(raw, params.blockchain_type, evaluate_from(), params.unlock_time, keyname, no_password));
     });
 
-    auto reply = [&keyfiles, &params, &id](auto& message){
-        keyfiles.update(params.public_key, [](auto& keyfile)
-        {
-            keyfile.usage_time = fc_light::time_point::now();
-        });
+    auto reply = [&keyfiles, &params, &id](auto& message, const dev::bytes& transaction){
+        keyfiles.add_log_record(params.public_key,
+                                keyfile_format::log_record(transaction, fc_light::time_point::now(), params.blockchain_type, params.chainid ));
         json_response response(fc_light::variant(message), id);
         fc_light::variant res(response);
         return fc_light::json::to_string(res);
@@ -551,7 +549,7 @@ struct keychain_command<command_te::sign_hex> : keychain_command_base
         }
         trx += trx_footer;
 
-        return reply(trx);
+        return reply(trx, raw);
       }
       default:
         FC_LIGHT_THROW_EXCEPTION(fc_light::invalid_arg_exception,
@@ -561,7 +559,7 @@ struct keychain_command<command_te::sign_hex> : keychain_command_base
     if (!signature)
       FC_LIGHT_THROW_EXCEPTION(fc_light::internal_error_exception, "Resulting signature is null");
 
-    return reply(signature);
+    return reply(signature, raw);
   }
 };
 
@@ -631,11 +629,11 @@ struct keychain_command<command_te::sign_hash> : keychain_command_base
         break;
       }
     }
-
-    keyfiles.update(params.public_key, [](auto& keyfile)
-    {
-      keyfile.usage_time = fc_light::time_point::now();
-    });
+  
+    dev::bytes hash_vec;
+    std::copy(params.hash.begin(), params.hash.end(), std::back_inserter(hash_vec));
+    keyfiles.add_log_record(params.public_key,
+                            keyfile_format::log_record(hash_vec, fc_light::time_point::now(), blockchain_te::rawhash, ""));
     json_response response(fc_light::variant(signature), id);
     fc_light::variant res(response);
     return fc_light::json::to_string(res);

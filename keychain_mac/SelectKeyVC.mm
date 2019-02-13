@@ -61,7 +61,7 @@
     {
         //we have only one table in the screen and thus we are not checking the row count based on the target table view
         //    long recordCount = [self.dataArray count];
-        return keyfile_singleton::instance();
+        return 0;
     }
     
 - (void)runModal {

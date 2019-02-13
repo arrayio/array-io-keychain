@@ -38,6 +38,11 @@ const keyfile_singleton::third_index_type& keyfile_singleton::third_index() cons
   return m_keydata_map.get<keyfiles_map::third_date_tag>();
 }
 
+const keyfile_singleton::random_access_index_type& keyfile_singleton::random_access_index() const
+{
+  return m_keydata_map.get<keyfiles_map::random_access_tag>();
+}
+
 void keyfile_singleton::keydata_initialize()
 {
   auto curdir = bfs::current_path();

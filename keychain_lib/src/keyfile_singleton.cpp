@@ -38,9 +38,9 @@ const keyfile_singleton::third_index_type& keyfile_singleton::third_index() cons
   return m_keydata_map.get<keyfiles_map::third_date_tag>();
 }
 
-const keyfile_singleton::random_access_index_type& keyfile_singleton::random_access_index() const
+const keyfile_singleton::key_random_access_index_type& keyfile_singleton::random_access_index() const
 {
-  return m_keydata_map.get<keyfiles_map::random_access_tag>();
+  return m_keydata_map.get<keyfiles_map::key_random_access_tag>();
 }
 
 void keyfile_singleton::keydata_initialize()
@@ -129,6 +129,22 @@ keyfile_singleton::~keyfile_singleton()
   flush_all();
 }
 
+const keyfile_format::keyfile_t& keyfile_singleton::operator[](size_t index)
+{
+  bool stop = false;
+  do{
+    auto& ra_ind = random_access_index();
+    if( index >= ra_ind.size() )
+    {
+      if(stop == true)
+        FC_LIGHT_THROW_EXCEPTION(fc_light::out_of_range_exception, "index = ${ind_}", ("ind_", index));
+      keydata_initialize();
+      bool stop = false;
+    }
+    return ra_ind[index];
+  } while (true);
+}
+
 const keyfile_format::keyfile_t& keyfile_singleton::operator[](const keyfile_singleton::prim_key_type& key)
 {
   bool stop = false;
@@ -136,14 +152,13 @@ const keyfile_format::keyfile_t& keyfile_singleton::operator[](const keyfile_sin
     auto it = m_keydata_map.find(key);
     if (it == m_keydata_map.end())
     {
-      keydata_initialize();
       if(stop == true)
         FC_LIGHT_THROW_EXCEPTION(fc_light::key_not_found_exception, "Private key is not exist public = ${key_}", ("key_", key));
+      keydata_initialize();
       stop = true;
     }
     return *it;
   } while (true);
-  
 }
 
 const keyfile_format::keyfile_t& keyfile_singleton::operator[](const keyfile_singleton::second_key_type& key)
@@ -154,10 +169,10 @@ const keyfile_format::keyfile_t& keyfile_singleton::operator[](const keyfile_sin
     auto it = second_index.find(key);
     if (it == second_index.end())
     {
-      keydata_initialize();
       if(stop == true)
         FC_LIGHT_THROW_EXCEPTION(fc_light::key_not_found_exception, "Private key is not found by keyname = ${name_}",
-                               ("name_", key));
+                                 ("name_", key));
+      keydata_initialize();
       stop = true;
     }
     return *it;
@@ -250,14 +265,24 @@ void keyfile_singleton::flush_all() const
   });
 }
 
-const keyfile_singleton::log_index_type& keyfile_singleton::get_logs(const dev::Public& pkey)
+const keyfile_singleton::log_random_access_index_type& keyfile_singleton::get_logs(const dev::Public& pkey)
 {
   signlog_initialize();//NOTE: it may be slowly, using sqlite and triggers is more preferable
   auto it = m_signlog_map.find(pkey);
   if (it == m_signlog_map.end())
     FC_LIGHT_THROW_EXCEPTION(fc_light::file_not_found_exception, "Public_key: ${PKEY}", ("PKEY", pkey));
   auto& records = it->second;
-  return records.get<keyfiles_map::log_record_tag>();
+  return records.get<keyfiles_map::log_random_access_tag>();
+}
+
+const keyfile_singleton::log_date_index_type& keyfile_singleton::get_logs_date_ordered(const dev::Public& pkey)
+{
+  signlog_initialize();//NOTE: it may be slowly, using sqlite and triggers is more preferable
+  auto it = m_signlog_map.find(pkey);
+  if (it == m_signlog_map.end())
+    FC_LIGHT_THROW_EXCEPTION(fc_light::file_not_found_exception, "Public_key: ${PKEY}", ("PKEY", pkey));
+  auto& records = it->second;
+  return records.get<keyfiles_map::log_date_tag>();
 }
 
 void keyfile_singleton::add_log_record(const dev::Public& pkey, const keyfile_format::log_record& record)

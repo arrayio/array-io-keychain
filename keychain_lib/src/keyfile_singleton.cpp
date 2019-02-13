@@ -45,7 +45,18 @@ const keyfile_singleton::random_access_index_type& keyfile_singleton::random_acc
 
 void keyfile_singleton::keydata_initialize()
 {
-  auto curdir = bfs::current_path();
+//  auto curdir = bfs::current_path();
+
+  bfs::path key_dir(KEY_DEFAULT_PATH_);
+
+  if(!bfs::exists(key_dir))
+  {
+      auto res = bfs::create_directories(key_dir);
+      if(res == false)
+          FC_LIGHT_THROW_EXCEPTION(fc_light::internal_error_exception,
+                                     "Can not create key directory, path = ${directory}", ("directory", key_dir.string()));
+  }
+
   auto first = bfs::directory_iterator(bfs::path(KEY_DEFAULT_PATH_));
   std::for_each(first, bfs::directory_iterator(), [this](const auto& unit) {
     try {
@@ -64,7 +75,17 @@ void keyfile_singleton::keydata_initialize()
 
 void keyfile_singleton::signlog_initialize()
 {
-  auto curdir = bfs::current_path();
+//  auto curdir = bfs::current_path();
+  bfs::path dir(SIGN_LOGS_DEFAULT_PATH_);
+
+  if(!bfs::exists(dir))
+  {
+        auto res = bfs::create_directories(dir);
+        if(res == false)
+            FC_LIGHT_THROW_EXCEPTION(fc_light::internal_error_exception,
+                                     "Can not create sign_logs directory, path = ${directory}", ("directory", dir.string()));
+  }
+
   auto first = bfs::directory_iterator(bfs::path(SIGN_LOGS_DEFAULT_PATH_));
   std::for_each(first, bfs::directory_iterator(), [this](const auto& unit) {
     try {

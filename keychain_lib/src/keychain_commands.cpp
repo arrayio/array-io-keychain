@@ -203,7 +203,7 @@ dev::Secret keychain_base::get_private_key(const dev::Public& public_key, int un
   auto& keyfiles = keyfile_singleton::instance();
   auto& keyfile = keyfiles[public_key];
   
-  auto result = std::move(*(run_secmod_cmd(create_cmd_func(keyfile.keyname, keyfile.keyinfo.encrypted))));
+  auto result = std::move(*(run_secmod_cmd(create_cmd_func(keyfile.keyname, !keyfile.keyinfo.encrypted))));
   secmod_commands::secmod_result_parser_f parser;
   byte_seq_t password;
   switch (parser(result))

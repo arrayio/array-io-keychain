@@ -53,17 +53,18 @@ std::string keychain_app::sec_mod_dummy::exec_cmd(const std::string& json_cmd) c
     case true:
     {
       secmod_commands::secmod_response_common response;
-      response.etype = secmod_commands::response_te::password;
-      response.params = pass;
+      response.etype = secmod_commands::response_te::boolean;
+      response.params = true;
       return fc_light::json::to_pretty_string(response);
     }
     case false:
     {
       secmod_commands::secmod_response_common response;
-      response.etype = secmod_commands::response_te::boolean;
-      response.params = true;
+      response.etype = secmod_commands::response_te::password;
+      response.params = pass;
       return fc_light::json::to_pretty_string(response);
     }
+    
   }
   
   

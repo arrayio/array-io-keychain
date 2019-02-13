@@ -48,7 +48,7 @@ std::string to_expert_mode_string(const signhex_event& signhex_event)
 keychain_app::secmod_commands::response_te secmod_result_parser_f::operator()(const std::string& json)
 {
   auto variant = fc_light::json::from_string(json);
-  m_response = variant.as<secmod_resonse_common>();
+  m_response = variant.as<secmod_response_common>();
   return m_response.etype;
 }
 

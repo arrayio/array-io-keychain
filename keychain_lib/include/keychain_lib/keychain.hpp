@@ -17,13 +17,13 @@
 #include <boost/signals2.hpp>
 
 #include "keychain_commands.hpp"
+#include "private_keymap.hpp"
 
 namespace keychain_app
 {
 
 class keychain_base;
 namespace bfs = boost::filesystem;
-
 
 class secure_dlg_mod_base
 {

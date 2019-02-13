@@ -35,7 +35,7 @@ std::string keychain_app::sec_mod_dummy::exec_cmd(const std::string& json_cmd) c
     std::string str = "blank";
     keychain_app::byte_seq_t pass(str.begin(), str.end());
 
-    secmod_commands::secmod_resonse_common response;
+    secmod_commands::secmod_response_common response;
     response.etype = secmod_commands::response_te::boolean;
 //    response.etype = secmod_commands::response_te::password;
 //    response.params = pass;

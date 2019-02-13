@@ -135,6 +135,12 @@ public:
   const keyfile_format::keyfile_t& operator[](size_t index); //NOTE: random_access_index for key table
   void insert(keyfile_format::keyfile_t&& keyfile_data); //NOTE: keyfile_t (fc_light::variant) is not support move semantic
   
+  using create_f = std::function<keyfile_format::keyfile_t()>;
+  bool create(create_f&& creator);
+  
+  using unlock_f = std::function<bool(const keyfile_format::keyfile_t&)>;
+  bool remove(const dev::Public& pkey, unlock_f&& unlocker);
+  
   template <typename modifier_f>
   void update(const prim_key_type& key, modifier_f&& f)
   {
@@ -180,5 +186,17 @@ public:
   void flush_logrecords(const prim_key_type& key) const;
   void flush_all() const;
 };
+
+using get_password_f = std::function<byte_seq_t(const std::string&)>; //NOTE: may incapsulate call to sec module or just return password string
+
+keyfile_format::keyfile_t create_new_keyfile(
+  const std::string& keyname,
+  const std::string& description,
+  bool encrypted,
+  keyfile_format::cipher_etype cipher,
+  keyfile_format::curve_etype curve,
+  get_password_f&& get_passwd);
+
+
 
 }

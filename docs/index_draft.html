@@ -2,11 +2,21 @@
 <html lang="en">
   <head>
     <title>KeyChain test page</title>
-    <link rel="stylesheet" href="assets/spectre.min.css">
     <link rel="shortcut icon" href="assets/favicon.ico">
     <style>
       button {
         width: 100%;
+      }
+      a {
+        color: white;
+        font-weight: bold;
+      }
+
+      a:link {
+        text-decoration: none;
+      }
+      a:visited {
+        text-decoration: none;
       }
       .page {
         display: none;
@@ -17,12 +27,17 @@
 
       body {
         margin: 0;
+        font-family: -apple-system,system-ui,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",sans-serif;
+        font-size: .8rem;
+        overflow-x: hidden;
+        text-rendering: optimizeLegibility;
+        color: white;
       }
 
       .container {
         display: grid;
         grid-template-columns: 1fr 1fr 1fr;
-        grid-template-rows: 131px 139px auto 24px 6px;
+        grid-template-rows: 131px 89px auto 50px 24px 6px;
       }
       .header {
         background-image: -moz-linear-gradient( -96deg, rgb(32,135,184) 0%, rgb(16,120,169) 47%, rgb(0,104,153) 100%);
@@ -31,8 +46,33 @@
         grid-column: 1 / 4;
         grid-row: 1;
         z-index: 15;
-        display: flex;
+        display: grid;
+        grid-template-columns: 1fr 300px 1fr;
         justify-content: center;
+      }
+
+      .header-center-logo {
+        align-self: end;
+        justify-self: end;
+      }
+
+      .header-center {
+        display: grid;
+        grid-template-columns: 70px auto;
+        grid-template-rows: 85px 46px;
+      }
+
+      .header-center-name {
+        align-self: center;
+        justify-self: center;
+      }
+
+      .header-center-bottom {
+        align-self: center;
+        justify-self: start;
+        text-align: center;
+        grid-column: 1 / 3;
+        grid-row: 2;
       }
       .address {
         border-radius: 12px;
@@ -43,11 +83,57 @@
         grid-row: 2;
         margin-top: -80px;
         z-index: 10;
-        color: white;
         padding-left: 15px;
       }
       .middle {
         grid-row: 3;
+        grid-column: 1 / 4;
+        display: grid;
+        grid-template-columns: 250px 1fr 1fr 150px;
+        grid-template-rows: 200px 200px 50px auto;
+        grid-column-gap: 35px;
+      }
+
+      .menu {
+        grid-column: 1;
+        grid-row: 1 / 3;
+        display: grid;
+      }
+
+      .form {
+        grid-column: 2 / 4;
+        grid-row: 1;
+      }
+
+      .right_menu {
+        grid-column: 4;
+        grid-row: 1 / 3;
+        display: grid;
+      }
+
+      .run_request {
+        grid-column: 2;
+        grid-row: 3;
+        justify-self: end;
+      }
+
+      .btn {
+        border-radius: 2px;
+        background-image: -moz-linear-gradient( -90deg, rgb(32,135,184) 0%, rgb(16,120,169) 47%, rgb(0,104,153) 100%);
+        background-image: -webkit-linear-gradient( -90deg, rgb(32,135,184) 0%, rgb(16,120,169) 47%, rgb(0,104,153) 100%);
+        background-image: -ms-linear-gradient( -90deg, rgb(32,135,184) 0%, rgb(16,120,169) 47%, rgb(0,104,153) 100%);
+        color: white;
+        text-align: right;
+        display: block;
+        font-weight: normal;
+        padding: 4px 6px 4px 6px;
+      }
+
+      .btn_run_request {
+        text-align: center;
+      }
+
+      .gap {
         grid-column: 1 / 4;
       }
 
@@ -60,30 +146,39 @@
         align-items: center;
         color: white;
         grid-column: 1 / 4;
-        grid-row: 4;
       }
 
       .warning_bottom_divider {
         background-color: rgb(209, 18, 80);
         grid-column: 1 / 4;
-        grid-row: 5;
       }
+
+      label {
+        color: rgb(0, 104, 153);
+        line-height: 1.982;
+        text-align: left;
+        display: block
+      }
+
     </style>
   </head>
   <body>
     <div class="container">
       <div class="header">
-        <div class="columns">
-          <div class="column col-3">
-            <img src="assets/logo.png" alt="KeyChain logo">
-          </div>
-          <div class="column col-9">
-            <h1>KeyChain Demo</h1>
-            <p>Test the WebSocket commands of KeyChain <span id="version"></span><br>
+          <div></div>
+          <div class="header-center">
+            <div class="header-center-logo">
+              <img src="assets/logo.png" alt="KeyChain logo" width="70px">
+            </div>
+            <div class="header-center-name">
+              <span style="font-size: 1.8rem; font-weight: bold">KeyChain</span><span style="position: relative;top:-20px">Demo</span>
+            </div>
+            <div class="header-center-bottom">
+              Test the WebSocket commands of KeyChain <span id="version"></span> <br>
               Read more: <a href="https://avvrik.github.io/KeyChain/#keychain-documentation">KeyChain Documentation</a>
-            </p>
+            </div>
           </div>
-        </div>
+          <div></div>
       </div>
       <div class="address">
         <div style="margin-top: 85px"> <!-- todo fix the layout and avoid margin-top -->
@@ -92,20 +187,16 @@
         </div>
       </div>
       <div class="middle">
-        <div class="columns my-2">
-          <div class="column col-2">
-            <ul class="menu">
-              <li class="divider" data-content="COMMANDS"></li>
-              <li class="menu-item"><a href="#select_key">Select Key</a></li>
-              <li class="menu-item"><a href="#lock">Lock</a></li>
-              <li class="menu-item"><a href="#unlock">Unlock</a></li>
-              <li class="menu-item"><a href="#sign_hex">Sign hex</a></li>
-              <li class="menu-item"><a href="#sign_hash">Sign hash</a></li>
-              <li class="menu-item"><a href="#about">About</a></li>
-              <li class="menu-item"><a href="#version">Version</a></li>
-            </ul>
-          </div>
-
+        <div class="menu">
+          <div><a href="#select_key" class="btn">Select key</a></div>
+          <div><a href="#unlock" class="btn">Unlock</a></div>
+          <div><a href="#lock" class="btn">Lock</a></div>
+          <div><a href="#sign_hex" class="btn">Sign hex</a></div>
+          <div><a href="#sign_hash" class="btn">Sign hash</a></div>
+          <div><a href="#about" class="btn">About</a></div>
+          <div><a href="#version" class="btn">Version</a></div>
+        </div>
+        <div class="form">
           <div class="column col-8 page" id="page_select_key"></div>
           <div class="column col-8 page" id="page_lock"></div>
 
@@ -135,9 +226,9 @@
             <div class="form-group">
               <label class="form-label">unlock_time</label>
               <div class="input-group">
-                <label class="form-switch">
+                <!--<label class="form-switch">-->
                   <input type="checkbox" id="checkbox_SIGN_HEX"><i class="form-icon"></i>
-                </label>
+                <!--</label>-->
                 <input class="form-input param_field" type="number" name="unlock_time" placeholder="45" readonly id="unlock_time_SIGN_HEX">
               </div>
             </div>
@@ -160,27 +251,26 @@
           <div class="column col-8 page" id="page_about"></div>
           <div class="column col-8 page" id="page_version"></div>
         </div>
-
-        <div class="columns">
-          <div class="column col-6">
-            <label class="form-label" for="request">Request</label>
-            <textarea class="form-input" id="request" placeholder="{}" rows="9"></textarea>
-          </div>
-          <div class="column col-6">
-            <label class="form-label" for="response">Response</label>
-            <textarea class="form-input" id="response" placeholder="{}" rows="9"></textarea>
-          </div>
-          <div class="column col-4">
-          </div>
-          <div class="column col-2 mt-1">
-            <button class="btn btn-primary input-group-btn" id="btn_RUN_REQUEST">Run request</button>
-          </div>
-          <div class="column col-6">
-          </div>
+        <div class="right_menu">
+          <div><a href="#select_key" class="btn">&nbsp;</a></div>
+          <div><a href="#unlock" class="btn">&nbsp;</a></div>
+          <div><a href="#lock" class="btn">&nbsp;</a></div>
+          <div><a href="#sign_hex" class="btn">&nbsp;</a></div>
+          <div><a href="#sign_hash" class="btn">&nbsp;</a></div>
+          <div><a href="#about" class="btn">&nbsp;</a></div>
+          <div><a href="#version" class="btn">&nbsp;</a></div>
         </div>
-
-
+        <div class="request">
+          <textarea style="width: 100%; height: 90%" id="request" placeholder="{}"></textarea>
+        </div>
+        <div class="response">
+          <textarea style="width: 100%; height: 90%" id="response" placeholder="{}"></textarea>
+        </div>
+        <div class="run_request">
+          <a href="#" class="btn btn_run_request" id="btn_RUN_REQUEST">Run request</a>
+        </div>
       </div>
+      <div class="gap"></div>
       <div class="warning_bottom">Warning! unlock_time parameter is experimental and optional</div>
       <div class="warning_bottom_divider"></div>
     </div>
@@ -275,6 +365,7 @@
         });
         document.getElementById('btn_RUN_REQUEST').addEventListener('click', function() {
           runRequest();
+          return null;
         });
         onHash();
         const inputs = document.getElementsByClassName('param_field');

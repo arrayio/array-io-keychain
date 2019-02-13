@@ -92,11 +92,13 @@
         display: grid;
         grid-template-columns: 250px 1fr 1fr 150px;
         grid-template-rows: 200px 200px 50px auto;
+        grid-column-gap: 35px;
       }
 
       .menu {
         grid-column: 1;
         grid-row: 1 / 3;
+        display: grid;
       }
 
       .form {
@@ -107,6 +109,7 @@
       .right_menu {
         grid-column: 4;
         grid-row: 1 / 3;
+        display: grid;
       }
 
       .run_request {
@@ -121,6 +124,7 @@
         background-image: -webkit-linear-gradient( -90deg, rgb(32,135,184) 0%, rgb(16,120,169) 47%, rgb(0,104,153) 100%);
         background-image: -ms-linear-gradient( -90deg, rgb(32,135,184) 0%, rgb(16,120,169) 47%, rgb(0,104,153) 100%);
         color: white;
+        text-align: right;
       }
 
       .btn_run_request {
@@ -173,14 +177,30 @@
         </div>
       </div>
       <div class="middle">
-        <div class="menu" style="background: rebeccapurple">Menu</div>
+        <div class="menu">
+          <div><button class="btn">Select key</button></div>
+          <div><button class="btn">Unlock</button></div>
+          <div><button class="btn">Lock</button></div>
+          <div><button class="btn">Sign hex</button></div>
+          <div><button class="btn">Sign hash</button></div>
+          <div><button class="btn">About</button></div>
+          <div><button class="btn">Version</button></div>
+        </div>
         <div class="form" style="background: red">Form</div>
-        <div class="right_menu" style="background: blue">Right menu</div>
+        <div class="right_menu">
+          <div><button class="btn">&nbsp;</button></div>
+          <div><button class="btn">&nbsp;</button></div>
+          <div><button class="btn">&nbsp;</button></div>
+          <div><button class="btn">&nbsp;</button></div>
+          <div><button class="btn">&nbsp;</button></div>
+          <div><button class="btn">&nbsp;</button></div>
+          <div><button class="btn">&nbsp;</button></div>
+        </div>
         <div class="request">
-          <textarea style="width: 90%; height: 90%">sdfsdfsdf</textarea>
+          <textarea style="width: 100%; height: 90%">sdfsdfsdf</textarea>
         </div>
         <div class="response">
-          <textarea style="width: 90%; height: 90%">sdfsdfsdf</textarea>
+          <textarea style="width: 100%; height: 90%">sdfsdfsdf</textarea>
         </div>
         <div class="run_request">
           <button class="btn btn_run_request">Run request</button>

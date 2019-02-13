@@ -7,6 +7,7 @@
 #include <boost/multi_index_container.hpp>
 #include <boost/multi_index/ordered_index.hpp>
 #include <boost/multi_index/sequenced_index.hpp>
+#include <boost/multi_index/random_access_index.hpp>
 #include <boost/multi_index/member.hpp>
 #include <boost/multi_index/mem_fun.hpp>
 #include <boost/multi_index/tag.hpp>
@@ -24,6 +25,8 @@ struct prim_pubkey_tag {};
 struct second_keyname_tag {};
 struct third_date_tag {};
 struct log_record_tag {};
+struct random_access_tag {};
+
 
 using keyfile_map_t = boost::multi_index::multi_index_container<
   keychain_app::keyfile_format::keyfile_t,
@@ -39,6 +42,9 @@ using keyfile_map_t = boost::multi_index::multi_index_container<
     boost::multi_index::ordered_non_unique<
       boost::multi_index::tag <third_date_tag>,
       boost::multi_index::const_mem_fun<keyfile_format::keyfile_t, const fc_light::time_point&, &keyfile_format::keyfile_t::last_date>
+    >,
+    boost::multi_index::random_access<
+      boost::multi_index::tag<random_access_tag>
     >
   >
 >;
@@ -74,6 +80,7 @@ class keyfile_singleton
   using second_index_type = keyfile_map_t::index<keyfiles_map::second_keyname_tag>::type;
   using third_index_type = keyfile_map_t::index<keyfiles_map::third_date_tag>::type;
   using log_index_type = log_records_t::index<keyfiles_map::log_record_tag>::type;
+  using random_access_index_type = keyfile_map_t::index<keyfiles_map::random_access_tag>::type;
   
   using prim_key_type = keyfile_map_t::key_type;
   using second_key_type = second_index_type::key_type;
@@ -115,6 +122,7 @@ public:
   const prim_index_type& prim_index() const;
   const second_index_type& second_index() const;
   const third_index_type& third_index() const;
+  const random_access_index_type& random_access_index() const;
   
   const keyfile_format::keyfile_t& operator[](const prim_key_type& key); //NOTE: use for searching by public key
   const keyfile_format::keyfile_t& operator[](const second_key_type& key); //NOTE: use for searchin by keyname

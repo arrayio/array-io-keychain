@@ -345,7 +345,7 @@ keyfile_format::keyfile_t keychain_app::create_new_keyfile(
   bool encrypted,
   keyfile_format::cipher_etype cipher,
   keyfile_format::curve_etype curve,
-  get_password_f&& get_passwd)
+  get_password_create_f&& get_passwd)
 {
   keyfile_format::keyfile_t keyfile;
   dev::Secret priv_key;
@@ -394,4 +394,25 @@ keyfile_format::keyfile_t keychain_app::create_new_keyfile(
   keyfile.keychain_version = version_info::short_version();
   keyfile.filetype = keyfile_format::TYPE_KEY;
   keyfile.keyinfo.curve_type = curve;
+}
+
+bool keychain_app::remove_unlock(const keyfile_format::keyfile_t& keyfile, get_password_f&& get_passwd)
+{
+  try {
+    if(!keyfile.keyinfo.encrypted)
+      return get_passwd(keyfile.keyname, true).second; //Need user approve without password entry
+    auto passwd = get_passwd(keyfile.keyname, false).first;//operation canceled exception need to be thrown into get_password functor
+    if (passwd.empty())
+      FC_LIGHT_THROW_EXCEPTION(fc_light::password_input_exception, "");
+    auto encrypted_data = keyfile.keyinfo.priv_key_data.as<keyfile_format::encrypted_data>();
+    auto& encryptor = encryptor_singleton::instance();
+    encryptor.decrypt_private_key(passwd, encrypted_data); //unlock verifing incapsulated here
+    return true;
+  }
+  catch(fc_light::privkey_invalid_unlock& exc)
+  {
+    return false;
+  }
+  
+  
 }

@@ -2,11 +2,21 @@
 <html lang="en">
 <head>
   <title>KeyChain test page</title>
-  <link rel="stylesheet" href="../assets/spectre.min.css">
   <link rel="shortcut icon" href="../assets/favicon.ico">
   <style>
     button {
       width: 100%;
+    }
+    a {
+      color: white;
+      font-weight: bold;
+    }
+
+    a:link {
+      text-decoration: none;
+    }
+    a:visited {
+      text-decoration: none;
     }
     .page {
       display: none;
@@ -14,147 +24,257 @@
     .page-active {
       display: block;
     }
+
+    body {
+      margin: 0;
+      font-family: -apple-system,system-ui,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",sans-serif;
+      font-size: .8rem;
+      overflow-x: hidden;
+      text-rendering: optimizeLegibility;
+      color: white;
+    }
+
+    .container {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      grid-template-rows: 131px 89px auto 50px 24px 6px;
+    }
+    .header {
+      background-image: -moz-linear-gradient( -96deg, rgb(32,135,184) 0%, rgb(16,120,169) 47%, rgb(0,104,153) 100%);
+      background-image: -webkit-linear-gradient( -96deg, rgb(32,135,184) 0%, rgb(16,120,169) 47%, rgb(0,104,153) 100%);
+      background-image: -ms-linear-gradient( -96deg, rgb(32,135,184) 0%, rgb(16,120,169) 47%, rgb(0,104,153) 100%);
+      grid-column: 1 / 4;
+      grid-row: 1;
+      z-index: 15;
+      display: grid;
+      grid-template-columns: 1fr 300px 1fr;
+      justify-content: center;
+    }
+
+    .header-center-logo {
+      align-self: end;
+      justify-self: end;
+    }
+
+    .header-center {
+      display: grid;
+      grid-template-columns: 70px auto;
+      grid-template-rows: 85px 46px;
+    }
+
+    .header-center-name {
+      align-self: center;
+      justify-self: center;
+    }
+
+    .header-center-bottom {
+      align-self: center;
+      justify-self: start;
+      text-align: center;
+      grid-column: 1 / 3;
+      grid-row: 2;
+    }
+    .address {
+      border-radius: 12px;
+      background-color: rgb(38, 138, 186);
+      box-shadow: inset 0 53px 46px 0 rgba(0, 0, 0, 0.17);
+      height: 139px;
+      grid-column: 2;
+      grid-row: 2;
+      margin-top: -80px;
+      z-index: 10;
+      padding-left: 15px;
+    }
+    .middle {
+      grid-row: 3;
+      grid-column: 1 / 4;
+      display: grid;
+      grid-template-columns: 250px 1fr 1fr 150px;
+      grid-template-rows: 200px 200px 50px auto;
+      grid-column-gap: 35px;
+    }
+
+    .menu {
+      grid-column: 1;
+      grid-row: 1 / 3;
+      display: grid;
+    }
+
+    .form {
+      grid-column: 2 / 4;
+      grid-row: 1;
+    }
+
+    .right_menu {
+      grid-column: 4;
+      grid-row: 1 / 3;
+      display: grid;
+    }
+
+    .run_request {
+      grid-column: 2;
+      grid-row: 3;
+      justify-self: end;
+    }
+
+    .btn {
+      border-radius: 2px;
+      background-image: -moz-linear-gradient( -90deg, rgb(32,135,184) 0%, rgb(16,120,169) 47%, rgb(0,104,153) 100%);
+      background-image: -webkit-linear-gradient( -90deg, rgb(32,135,184) 0%, rgb(16,120,169) 47%, rgb(0,104,153) 100%);
+      background-image: -ms-linear-gradient( -90deg, rgb(32,135,184) 0%, rgb(16,120,169) 47%, rgb(0,104,153) 100%);
+      color: white;
+      text-align: right;
+      display: block;
+      font-weight: normal;
+      padding: 4px 6px 4px 6px;
+    }
+
+    .btn_run_request {
+      text-align: center;
+    }
+
+    .gap {
+      grid-column: 1 / 4;
+    }
+
+    .warning_bottom {
+      background-image: -moz-linear-gradient( -90deg, rgb(32,135,184) 0%, rgb(16,120,169) 47%, rgb(0,104,153) 100%);
+      background-image: -webkit-linear-gradient( -90deg, rgb(32,135,184) 0%, rgb(16,120,169) 47%, rgb(0,104,153) 100%);
+      background-image: -ms-linear-gradient( -90deg, rgb(32,135,184) 0%, rgb(16,120,169) 47%, rgb(0,104,153) 100%);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: white;
+      grid-column: 1 / 4;
+    }
+
+    .warning_bottom_divider {
+      background-color: rgb(209, 18, 80);
+      grid-column: 1 / 4;
+    }
+
+    label {
+      color: rgb(0, 104, 153);
+      line-height: 1.982;
+      text-align: left;
+      display: block
+    }
+
   </style>
 </head>
 <body>
 <div class="container">
-  <div class="columns" id="error" style="display: none">
-    <div class="column my-2">
-      <div class="toast toast-error">
-        WebSocket connection failed. Check if KeyChain is installed
+  <div class="header">
+    <div></div>
+    <div class="header-center">
+      <div class="header-center-logo">
+        <img src="../assets/logo.png" alt="KeyChain logo" width="70px">
+      </div>
+      <div class="header-center-name">
+        <span style="font-size: 1.8rem; font-weight: bold">KeyChain</span><span style="position: relative;top:-20px">Demo</span>
+      </div>
+      <div class="header-center-bottom">
+        Test the WebSocket commands of KeyChain <span id="version"></span> <br>
+        Read more: <a href="https://avvrik.github.io/KeyChain/#keychain-documentation">KeyChain Documentation</a>
       </div>
     </div>
+    <div></div>
   </div>
-  <div class="columns">
-    <div class="column">
-      <div class="hero hero-sm">
-        <div class="hero-body">
-          <div class="columns">
-            <div class="column col-2 text-right">
-              <img src="../assets/logo.png" alt="KeyChain logo">
-            </div>
-            <div class="column col-10">
-              <h1>KeyChain Demo</h1>
-              <p>Test the WebSocket commands of KeyChain <span id="version"></span><br>
-                Read more: <a href="https://avvrik.github.io/KeyChain/#keychain-documentation">KeyChain Documentation</a>
-              </p>
-            </div>
+  <div class="address">
+    <div style="margin-top: 90px"> <!-- todo fix the layout and avoid margin-top -->
+      <b>Your Ethereum address:</b> <span id="address"></span> <br>
+      <b>Your public key:</b> <span id="selectedKey"></span>
+    </div>
+  </div>
+  <div class="middle">
+    <div class="menu">
+      <div><a href="#select_key" class="btn">Select key</a></div>
+      <div><a href="#unlock" class="btn">Unlock</a></div>
+      <div><a href="#lock" class="btn">Lock</a></div>
+      <div><a href="#sign_hex" class="btn">Sign hex</a></div>
+      <div><a href="#sign_hash" class="btn">Sign hash</a></div>
+      <div><a href="#about" class="btn">About</a></div>
+      <div><a href="#version" class="btn">Version</a></div>
+    </div>
+    <div class="form">
+      <div class="column col-8 page" id="page_select_key"></div>
+      <div class="column col-8 page" id="page_lock"></div>
+
+      <div class="column col-8 page" id="page_unlock">
+        <div class="form-group">
+          <label class="form-label" for="public_key_UNLOCK">public_key</label>
+          <input class="form-input param_field" type="text" name="public_key" id="public_key_UNLOCK">
+        </div>
+        <div class="form-group">
+          <label class="form-label">unlock_time</label>
+          <input class="form-input param_field" type="number" placeholder="45" name="unlock_time">
+        </div>
+      </div>
+      <div class="column col-8 page" id="page_sign_hex">
+        <div class="form-group">
+          <label class="form-label">transaction</label>
+          <input class="form-input param_field" type="text" value="eb0885098bca5a00825208948ec6977b1255854169e5f9f8f163f371bcf1ffd287038d7ea4c6800080038080" placeholder="eb0885098bca5a00825208948ec6977b1255854169e5f9f8f163f371bcf1ffd287038d7ea4c6800080038080" name="transaction">
+        </div>
+        <div class="form-group">
+          <label class="form-label">blockchain_type</label>
+          <input class="form-input param_field" type="text" placeholder="ethereum" value="ethereum" name="blockchain_type">
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="public_key_SIGN_HEX">public_key</label>
+          <input class="form-input param_field" type="text" name="public_key" id="public_key_SIGN_HEX">
+        </div>
+        <div class="form-group">
+          <label class="form-label">unlock_time</label>
+          <div class="input-group">
+            <!--<label class="form-switch">-->
+            <input type="checkbox" id="checkbox_SIGN_HEX"><i class="form-icon"></i>
+            <!--</label>-->
+            <input class="form-input param_field" type="number" name="unlock_time" placeholder="45" readonly id="unlock_time_SIGN_HEX">
           </div>
         </div>
       </div>
-    </div>
-  </div>
-  <div class="columns">
-    <div class="column col-2">
-    </div>
-    <div class="column col-4">
-      <div class="input-group">
-        <span class="input-group-addon">selected key: </span>
-        <input type="text" class="form-input" readonly id="selectedKey" placeholder="Please select a key">
-      </div>
-    </div>
-    <div class="column col-4">
-      <div class="input-group">
-        <label class="form-switch">
-        </label>
-        <span class="input-group-addon">address: </span>
-        <input type="text" class="form-input" readonly id="address" placeholder="Please select a key">
-      </div>
-    </div>
-  </div>
 
-  <div class="columns my-2">
-    <div class="column col-2">
-      <ul class="menu">
-        <li class="divider" data-content="COMMANDS"></li>
-        <li class="menu-item"><a href="#select_key">Select Key</a></li>
-        <li class="menu-item"><a href="#lock">Lock</a></li>
-        <li class="menu-item"><a href="#unlock">Unlock</a></li>
-        <li class="menu-item"><a href="#sign_hex">Sign hex</a></li>
-        <li class="menu-item"><a href="#sign_hash">Sign hash</a></li>
-        <li class="menu-item"><a href="#about">About</a></li>
-        <li class="menu-item"><a href="#version">Version</a></li>
-      </ul>
-    </div>
-
-    <div class="column col-8 page" id="page_select_key"></div>
-    <div class="column col-8 page" id="page_lock"></div>
-
-    <div class="column col-8 page" id="page_unlock">
-      <div class="form-group">
-        <label class="form-label" for="public_key_UNLOCK">public_key</label>
-        <input class="form-input param_field" type="text" name="public_key" id="public_key_UNLOCK">
-      </div>
-      <div class="form-group">
-        <label class="form-label">unlock_time</label>
-        <input class="form-input param_field" type="number" placeholder="45" name="unlock_time">
-      </div>
-    </div>
-    <div class="column col-8 page" id="page_sign_hex">
-      <div class="form-group">
-        <label class="form-label">transaction</label>
-        <input class="form-input param_field" type="text" value="eb0885098bca5a00825208948ec6977b1255854169e5f9f8f163f371bcf1ffd287038d7ea4c6800080038080" placeholder="eb0885098bca5a00825208948ec6977b1255854169e5f9f8f163f371bcf1ffd287038d7ea4c6800080038080" name="transaction">
-      </div>
-      <div class="form-group">
-        <label class="form-label">blockchain_type</label>
-        <input class="form-input param_field" type="text" placeholder="ethereum" value="ethereum" name="blockchain_type">
-      </div>
-      <div class="form-group">
-        <label class="form-label" for="public_key_SIGN_HEX">public_key</label>
-        <input class="form-input param_field" type="text" name="public_key" id="public_key_SIGN_HEX">
-      </div>
-      <div class="form-group">
-        <label class="form-label">unlock_time</label>
-        <div class="input-group">
-          <label class="form-switch">
-            <input type="checkbox" id="checkbox_SIGN_HEX"><i class="form-icon"></i>
-          </label>
-          <input class="form-input param_field" type="number" name="unlock_time" placeholder="45" readonly id="unlock_time_SIGN_HEX">
+      <div class="column col-8 page" id="page_sign_hash">
+        <div class="form-group">
+          <label class="form-label">hash</label>
+          <input class="form-input param_field" type="text" value="fe5e4a8974715e20f47c8bb609547c9e66b0b9e31d521199b3d8d6af6da74cb1" placeholder="fe5e4a8974715e20f47c8bb609547c9e66b0b9e31d521199b3d8d6af6da74cb1" name="hash">
+        </div>
+        <div class="form-group">
+          <label class="form-label">sign_type</label>
+          <input class="form-input param_field" type="text" placeholder="VRS_canonical" value="VRS_canonical" name="sign_type">
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="public_key_SIGN_HASH">public_key</label>
+          <input class="form-input param_field" type="text" name="public_key" id="public_key_SIGN_HASH">
         </div>
       </div>
+      <div class="column col-8 page" id="page_about"></div>
+      <div class="column col-8 page" id="page_version"></div>
     </div>
-
-    <div class="column col-8 page" id="page_sign_hash">
-      <div class="form-group">
-        <label class="form-label">hash</label>
-        <input class="form-input param_field" type="text" value="fe5e4a8974715e20f47c8bb609547c9e66b0b9e31d521199b3d8d6af6da74cb1" placeholder="fe5e4a8974715e20f47c8bb609547c9e66b0b9e31d521199b3d8d6af6da74cb1" name="hash">
-      </div>
-      <div class="form-group">
-        <label class="form-label">sign_type</label>
-        <input class="form-input param_field" type="text" placeholder="VRS_canonical" value="VRS_canonical" name="sign_type">
-      </div>
-      <div class="form-group">
-        <label class="form-label" for="public_key_SIGN_HASH">public_key</label>
-        <input class="form-input param_field" type="text" name="public_key" id="public_key_SIGN_HASH">
-      </div>
+    <div class="right_menu">
+      <div><a href="#select_key" class="btn">&nbsp;</a></div>
+      <div><a href="#unlock" class="btn">&nbsp;</a></div>
+      <div><a href="#lock" class="btn">&nbsp;</a></div>
+      <div><a href="#sign_hex" class="btn">&nbsp;</a></div>
+      <div><a href="#sign_hash" class="btn">&nbsp;</a></div>
+      <div><a href="#about" class="btn">&nbsp;</a></div>
+      <div><a href="#version" class="btn">&nbsp;</a></div>
     </div>
-    <div class="column col-8 page" id="page_about"></div>
-    <div class="column col-8 page" id="page_version"></div>
-  </div>
-
-  <div class="columns">
-    <div class="column col-6">
-      <label class="form-label" for="request">Request</label>
-      <textarea class="form-input" id="request" placeholder="{}" rows="9"></textarea>
+    <div class="request">
+      <textarea style="width: 100%; height: 90%" id="request" placeholder="{}"></textarea>
     </div>
-    <div class="column col-6">
-      <label class="form-label" for="response">Response</label>
-      <textarea class="form-input" id="response" placeholder="{}" rows="9"></textarea>
+    <div class="response">
+      <textarea style="width: 100%; height: 90%" id="response" placeholder="{}"></textarea>
     </div>
-    <div class="column col-4">
-    </div>
-    <div class="column col-2 mt-1">
-      <button class="btn btn-primary input-group-btn" id="btn_RUN_REQUEST">Run request</button>
-    </div>
-    <div class="column col-6">
-    </div>
-    <div class="column my-2">
-      <div class="toast toast-warning text-center">
-        Warning! <code>unlock_time</code> parameter is experimental and optional
-      </div>
+    <div class="run_request">
+      <a href="#" class="btn btn_run_request" id="btn_RUN_REQUEST">Run request</a>
     </div>
   </div>
+  <div class="gap"></div>
+  <div class="warning_bottom">Warning! unlock_time parameter is experimental and optional</div>
+  <div class="warning_bottom_divider"></div>
 </div>
+
 
 <script src="../keychain.js"></script>
 <script src="https://cdn.jsdelivr.net/gh/ethereumjs/browser-builds/dist/ethereumjs-tx/ethereumjs-tx-1.3.3.min.js"></script>
@@ -162,14 +282,11 @@
   const keychain = new WS('ws://localhost:16384/');
 
   keychain.ws.onopen = function() {
-    document.body.style.backgroundColor = '#cfc';
-
     keychain.command({command: 'version'}, function(data) {
       document.getElementById('version').innerText = data.result ? data.result : '';
     })
   };
   keychain.ws.onclose = function() {
-    document.body.style.backgroundColor = null;
     document.getElementById('error').style.display = 'block';
   };
 
@@ -248,6 +365,7 @@
     });
     document.getElementById('btn_RUN_REQUEST').addEventListener('click', function() {
       runRequest();
+      return null;
     });
     onHash();
     const inputs = document.getElementsByClassName('param_field');
@@ -279,12 +397,11 @@
         document.getElementById('public_key_UNLOCK').value = data.result;
         document.getElementById('public_key_SIGN_HASH').value = data.result;
         document.getElementById('public_key_SIGN_HEX').value = data.result;
-        document.getElementById('selectedKey').value = '0x' + data.result;
-        document.getElementById('address').value = '0x' + ethereumjs.Util.publicToAddress('0x' + data.result).toString('hex');
+        document.getElementById('selectedKey').innerHTML = '0x' + data.result.substr(0, 35) + '<...>' + data.result.substr(-8, 8);
+        document.getElementById('address').innerHTML = '0x' + ethereumjs.Util.publicToAddress('0x' + data.result).toString('hex');
       }
     })
   }
 </script>
-
 </body>
 </html>

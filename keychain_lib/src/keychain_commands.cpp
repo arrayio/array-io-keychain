@@ -210,6 +210,7 @@ dev::Secret keychain_base::get_private_key(const dev::Public& public_key, int un
   {
     case secmod_commands::response_te::password:
     {
+      FC_LIGHT_ASSERT(keyfile.keyinfo.encrypted == true);
       password = std::move(parser.params<secmod_commands::response_te::password>());
       if (password.empty())
         FC_LIGHT_THROW_EXCEPTION(fc_light::password_input_exception, "");
@@ -223,6 +224,7 @@ dev::Secret keychain_base::get_private_key(const dev::Public& public_key, int un
       break;
     case secmod_commands::response_te::boolean:
     {
+      FC_LIGHT_ASSERT(keyfile.keyinfo.encrypted == false);
       auto confirm = std::move(parser.params<secmod_commands::response_te::boolean>());
       if (confirm)
       {

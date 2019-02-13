@@ -50,6 +50,8 @@
 #include "keyfile_singleton.hpp"
 #include "secmod_protocol.hpp"
 
+#include "secmod_parser_cmd.hpp"
+
 #include "version_info.hpp"
 #include <arpa/inet.h>
 
@@ -694,9 +696,37 @@ struct keychain_command<command_te::create>: keychain_command_base
         }
       }
 
+      auto secmod_cmd = [](const std::string& keyname){
+        secmod_commands::secmod_command cmd;
+        using params_t = secmod_commands::secmod_event<secmod_commands::events_te::create_key>::params_t;
+        params_t params;
+        params.keyname = keyname;
+        params.keyname = std::move(keyname);
+  
+        cmd.etype = secmod_commands::events_te::create_key;
+        cmd.params = params;
+  
+        return fc_light::variant(cmd);
+      };
+      
       if (params.encrypted)
       {
-        auto passwd = *keychain->get_passwd_on_create(keyname);
+        auto result = std::move(*(keychain->run_secmod_cmd(fc_light::json::to_string(secmod_cmd(params.keyname)))));
+        secmod_commands::secmod_result_parser_f parser;
+        byte_seq_t passwd;
+        switch (parser(result))
+        {
+          case secmod_commands::response_te::password:
+            passwd = std::move(parser.params<secmod_commands::response_te::password>());
+            if (passwd.empty())
+              FC_LIGHT_THROW_EXCEPTION(fc_light::password_input_exception, "");
+            break;
+          case secmod_commands::response_te::canceled:
+            FC_LIGHT_THROW_EXCEPTION(fc_light::operation_canceled, "");
+          default:
+            FC_LIGHT_THROW_EXCEPTION(fc_light::password_input_exception, "");
+        }
+        
         if (passwd.empty())
           FC_LIGHT_THROW_EXCEPTION(fc_light::password_input_exception, "");
         auto& encryptor = encryptor_singleton::instance();

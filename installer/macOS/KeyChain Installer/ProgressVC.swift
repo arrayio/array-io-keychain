@@ -84,7 +84,7 @@ class ProgressVC: NSViewController {
             print("OK untar")
             print(dataPath)
             self.jobWorker(dataPath: dataPath)
-            AppleScriptManager.runScriptWithBody("cp -a '" + dataPath + "/keys/.' /var/keychain/key_data", isAdminRequired: true, success: {
+            AppleScriptManager.runScriptWithBody("cp -a '" + dataPath + "/keys/.' /var/keychain/key_data && mkdir /var/keychain/signlogs_data", isAdminRequired: true, success: {
                 self.infoTextField.stringValue = "Installation complete!"
                 self.installText("Installation complete!")
             }, failure: { (error) in

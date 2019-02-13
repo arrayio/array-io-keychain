@@ -135,6 +135,12 @@ public:
   const keyfile_format::keyfile_t& operator[](size_t index); //NOTE: random_access_index for key table
   void insert(keyfile_format::keyfile_t&& keyfile_data); //NOTE: keyfile_t (fc_light::variant) is not support move semantic
   
+  using create_f = std::function<keyfile_format::keyfile_t()>;
+  bool create(create_f&& creator);
+  
+  using unlock_f = std::function<bool(const keyfile_format::keyfile_t&)>;
+  bool remove(const dev::Public& pkey, unlock_f&& unlocker);
+  
   template <typename modifier_f>
   void update(const prim_key_type& key, modifier_f&& f)
   {

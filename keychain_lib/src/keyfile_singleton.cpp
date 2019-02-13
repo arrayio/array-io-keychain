@@ -129,6 +129,47 @@ keyfile_singleton::~keyfile_singleton()
   flush_all();
 }
 
+bool keyfile_singleton::create(create_f&& creator)
+{
+  auto& log = logger_singleton::instance();
+  try {
+    insert(std::move(creator()));
+    return true;
+  }
+  catch (fc_light::exception& exc)
+  {
+    BOOST_LOG_SEV(log.lg, error) << "keyfile_singleton::create(), error = " << exc.to_detail_string();
+  }
+  catch (std::exception& exc)
+  {
+    BOOST_LOG_SEV(log.lg, error) << "keyfile_singleton::create(), error = " << exc.what();
+  }
+  return false;
+}
+
+bool keyfile_singleton::remove(const dev::Public& pkey, unlock_f&& unlock)
+{
+  auto& log = logger_singleton::instance();
+  try {
+    auto it = m_keydata_map.find(pkey);
+    if (it == m_keydata_map.end())
+      return false;
+    if(!unlock(*it))
+      return false;
+    m_keydata_map.erase(it);
+    return true;
+  }
+  catch (fc_light::exception& exc)
+  {
+    BOOST_LOG_SEV(log.lg, error) << "keyfile_singleton::create(), error = " << exc.to_detail_string();
+  }
+  catch (std::exception& exc)
+  {
+    BOOST_LOG_SEV(log.lg, error) << "keyfile_singleton::create(), error = " << exc.what();
+  }
+  return false;
+}
+
 const keyfile_format::keyfile_t& keyfile_singleton::operator[](size_t index)
 {
   bool stop = false;

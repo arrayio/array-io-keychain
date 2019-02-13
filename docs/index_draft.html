@@ -38,7 +38,7 @@
       .container {
         display: grid;
         grid-template-columns: 1fr 1fr 1fr;
-        grid-template-rows: 131px 139px auto 24px 6px;
+        grid-template-rows: 131px 89px auto 24px 6px;
       }
       .header {
         background-image: -moz-linear-gradient( -96deg, rgb(32,135,184) 0%, rgb(16,120,169) 47%, rgb(0,104,153) 100%);
@@ -89,7 +89,45 @@
       .middle {
         grid-row: 3;
         grid-column: 1 / 4;
+        display: grid;
+        grid-template-columns: 250px 1fr 1fr 150px;
+        grid-template-rows: 200px 200px 50px auto;
       }
+
+      .menu {
+        grid-column: 1;
+        grid-row: 1 / 3;
+      }
+
+      .form {
+        grid-column: 2 / 4;
+        grid-row: 1;
+      }
+
+      .right_menu {
+        grid-column: 4;
+        grid-row: 1 / 3;
+      }
+
+      .run_request {
+        grid-column: 2;
+        grid-row: 3;
+        justify-self: end;
+      }
+
+      .btn {
+        border-radius: 2px;
+        background-image: -moz-linear-gradient( -90deg, rgb(32,135,184) 0%, rgb(16,120,169) 47%, rgb(0,104,153) 100%);
+        background-image: -webkit-linear-gradient( -90deg, rgb(32,135,184) 0%, rgb(16,120,169) 47%, rgb(0,104,153) 100%);
+        background-image: -ms-linear-gradient( -90deg, rgb(32,135,184) 0%, rgb(16,120,169) 47%, rgb(0,104,153) 100%);
+        color: white;
+      }
+
+      .btn_run_request {
+        width: 101px;
+        height: 25px;
+      }
+
 
       .warning_bottom {
         background-image: -moz-linear-gradient( -90deg, rgb(32,135,184) 0%, rgb(16,120,169) 47%, rgb(0,104,153) 100%);
@@ -134,7 +172,20 @@
           <b>Your public key:</b> <span id="selectedKey"></span>
         </div>
       </div>
-      <div class="middle"></div>
+      <div class="middle">
+        <div class="menu" style="background: rebeccapurple">Menu</div>
+        <div class="form" style="background: red">Form</div>
+        <div class="right_menu" style="background: blue">Right menu</div>
+        <div class="request">
+          <textarea style="width: 90%; height: 90%">sdfsdfsdf</textarea>
+        </div>
+        <div class="response">
+          <textarea style="width: 90%; height: 90%">sdfsdfsdf</textarea>
+        </div>
+        <div class="run_request">
+          <button class="btn btn_run_request">Run request</button>
+        </div>
+      </div>
       <div class="warning_bottom">Warning! unlock_time parameter is experimental and optional</div>
       <div class="warning_bottom_divider"></div>
     </div>

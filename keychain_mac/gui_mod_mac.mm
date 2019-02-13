@@ -9,6 +9,7 @@
 #import "SelectKeyVC.h"
 #import <Foundation/Foundation.h>
 #import "ApplicationShared.h"
+#import "PassSyncStore.h"
 
 using namespace keychain_app;
 
@@ -21,15 +22,11 @@ gui_mod_mac::~gui_mod_mac()
 dev::Public gui_mod_mac::select_key() const
 {
     [ApplicationShared sharedInstance];
-    NSRect frame = NSMakeRect(0, 0, 500, 521);
-
-    auto& keyfiles = keyfile_singleton::instance();
-    auto it = keyfiles.begin();
-    if ( it==keyfiles.end() )
-    return dev::Public();
-    
-    SelectKeyVC *dialog = [[SelectKeyVC alloc] initWithFrame:frame];
+    SelectKeyVC *dialog = [[SelectKeyVC alloc] initWithFrame:NSMakeRect(0, 0, 700, 540)];
     [dialog runModal];
+    if ([[PassSyncStore sharedInstance] buttonClickType] == ButtonClickTypeOK) {
+        return [[PassSyncStore sharedInstance] public_key];
+    }
     
-    return it->keyinfo.public_key;
+    return  dev::Public();
 }

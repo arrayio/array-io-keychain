@@ -54,6 +54,7 @@ using keychain_app::secmod_commands::secmod_parser_f;
 }
 
 - (void) clickCloseButton {
+    [[PassSyncStore sharedInstance] setButtonClickType: ButtonClickTypeCancel];
     [self.window close];
 }
 
@@ -68,7 +69,9 @@ using keychain_app::secmod_commands::secmod_parser_f;
             NSLog(@"Success");
         }];
     } else {
-        [[PassSyncStore sharedInstance] setPass:pass.stringValue];
+        [[PassSyncStore sharedInstance] setButtonClickType: ButtonClickTypeOK];
+        if (self.isPasswordRequire)
+            [[PassSyncStore sharedInstance] setPass:pass.stringValue];
         [self.window close];
     }
 }
@@ -87,8 +90,10 @@ using keychain_app::secmod_commands::secmod_parser_f;
     NSLog(@"jsonString %@", _jsonString);
 //    NSLog(@"currentPath %@", _currentPath);
     [self setupLogoiew];
-    [self setupLabelPassphrase];
-    [self setupPassField];
+    if (self.isPasswordRequire) {
+        [self setupLabelPassphrase];
+        [self setupPassField];
+    }
     [self setupSignButton];
     [self setupCancelButton];
     if (!self.unlockOnly) {

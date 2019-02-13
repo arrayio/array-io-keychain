@@ -18,6 +18,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (readwrite) BOOL isSignTransaction;
 @property (readwrite) BOOL isJson;
 @property (readwrite) BOOL isRawhash;
+@property (readwrite) BOOL isPasswordRequire;
     @property (readwrite) keychain_app::secmod_commands::events_te etype;
     @property keychain_app::secmod_commands::secmod_parser_f parser;
 @property (readwrite) int unlockTime;

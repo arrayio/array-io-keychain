@@ -338,3 +338,60 @@ void keyfile_singleton::add_log_record(const dev::Public& pkey, const keyfile_fo
   it->second.insert(record);
   flush_logrecords(pkey);
 }
+
+keyfile_format::keyfile_t keychain_app::create_new_keyfile(
+  const std::string& keyname,
+  const std::string& description,
+  bool encrypted,
+  keyfile_format::cipher_etype cipher,
+  keyfile_format::curve_etype curve,
+  get_password_f&& get_passwd)
+{
+  keyfile_format::keyfile_t keyfile;
+  dev::Secret priv_key;
+  dev::Public pb_hex;
+  dev::h256 hash;
+  std::string filename;
+  switch (curve)
+  {
+    case keyfile_format::curve_etype::secp256k1:
+    {
+      auto keys = dev::KeyPair::create();
+      pb_hex = keys.pub();
+      hash = dev::ethash::sha3_ethash(keys.pub());
+      priv_key = keys.secret();
+      filename    = hash.hex().substr(0,16);
+      filename += ".json";
+    }
+      break;
+    default:
+    {
+      FC_LIGHT_THROW_EXCEPTION(fc_light::invalid_arg_exception,
+                               "Unsupported curve format, curve = ${type}", ("type", curve));
+    }
+  }
+  
+  if (encrypted)
+  {
+    auto passwd = get_passwd(keyname);//operation canceled exception need to be thrown into get_password functor
+    
+    if (passwd.empty())
+      FC_LIGHT_THROW_EXCEPTION(fc_light::password_input_exception, "");
+    auto& encryptor = encryptor_singleton::instance();
+    auto enc_data = encryptor.encrypt_private_key(cipher, passwd, priv_key);
+    keyfile.keyinfo.priv_key_data = fc_light::variant(enc_data);
+    keyfile.keyinfo.encrypted = true;
+  }
+  else{
+    keyfile.keyinfo.priv_key_data = fc_light::variant(priv_key);
+    keyfile.keyinfo.encrypted = false;
+  }
+  
+  keyfile.keyinfo.public_key = pb_hex;
+  keyfile.keyname = keyname;
+  keyfile.description = description;
+  keyfile.creation_time = fc_light::time_point::now();
+  keyfile.keychain_version = version_info::short_version();
+  keyfile.filetype = keyfile_format::TYPE_KEY;
+  keyfile.keyinfo.curve_type = curve;
+}

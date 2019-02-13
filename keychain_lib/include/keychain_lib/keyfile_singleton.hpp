@@ -187,4 +187,16 @@ public:
   void flush_all() const;
 };
 
+using get_password_f = std::function<byte_seq_t(const std::string&)>; //NOTE: may incapsulate call to sec module or just return password string
+
+keyfile_format::keyfile_t create_new_keyfile(
+  const std::string& keyname,
+  const std::string& description,
+  bool encrypted,
+  keyfile_format::cipher_etype cipher,
+  keyfile_format::curve_etype curve,
+  get_password_f&& get_passwd);
+
+
+
 }

@@ -131,8 +131,6 @@
 
       .btn_run_request {
         text-align: center;
-        width: 101px;
-        height: 25px;
       }
 
       .gap {
@@ -154,6 +152,14 @@
         background-color: rgb(209, 18, 80);
         grid-column: 1 / 4;
       }
+
+      label {
+        color: rgb(0, 104, 153);
+        line-height: 1.982;
+        text-align: left;
+        display: block
+      }
+
     </style>
   </head>
   <body>
@@ -220,9 +226,9 @@
             <div class="form-group">
               <label class="form-label">unlock_time</label>
               <div class="input-group">
-                <label class="form-switch">
+                <!--<label class="form-switch">-->
                   <input type="checkbox" id="checkbox_SIGN_HEX"><i class="form-icon"></i>
-                </label>
+                <!--</label>-->
                 <input class="form-input param_field" type="number" name="unlock_time" placeholder="45" readonly id="unlock_time_SIGN_HEX">
               </div>
             </div>
@@ -261,7 +267,7 @@
           <textarea style="width: 100%; height: 90%" id="response" placeholder="{}"></textarea>
         </div>
         <div class="run_request">
-          <button class="btn btn_run_request" id="btn_RUN_REQUEST">Run request</button>
+          <a href="#" class="btn btn_run_request" id="btn_RUN_REQUEST">Run request</a>
         </div>
       </div>
       <div class="gap"></div>
@@ -359,6 +365,7 @@
         });
         document.getElementById('btn_RUN_REQUEST').addEventListener('click', function() {
           runRequest();
+          return null;
         });
         onHash();
         const inputs = document.getElementsByClassName('param_field');

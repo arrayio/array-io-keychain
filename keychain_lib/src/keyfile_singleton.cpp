@@ -45,9 +45,12 @@ const keyfile_singleton::key_random_access_index_type& keyfile_singleton::random
 
 void keyfile_singleton::keydata_load()
 {
-//  auto curdir = bfs::current_path();
-
+#if defined(macintosh) || defined(__APPLE__) || defined(__APPLE_CC__)
+  auto key_dir = bfs::path(getenv("HOME"));
+  key_dir += bfs::path(KEY_DEFAULT_PATH_);
+#else
   bfs::path key_dir(KEY_DEFAULT_PATH_);
+#endif
 
   if(!bfs::exists(key_dir))
   {
@@ -75,8 +78,12 @@ void keyfile_singleton::keydata_load()
 
 void keyfile_singleton::signlog_load()
 {
-//  auto curdir = bfs::current_path();
+#if defined(macintosh) || defined(__APPLE__) || defined(__APPLE_CC__)
+  auto dir = bfs::path(getenv("HOME"));
+  key_dir += bfs::path(SIGN_LOGS_DEFAULT_PATH_);
+#else
   bfs::path dir(SIGN_LOGS_DEFAULT_PATH_);
+#endif
 
   if(!bfs::exists(dir))
   {
@@ -254,10 +261,16 @@ void keyfile_singleton::flush_keyfile(const keyfile_singleton::prim_key_type& ke
 
 void keyfile_singleton::flush_keyfile_impl(const value_t& keyfile_data) const
 {
+#if defined(macintosh) || defined(__APPLE__) || defined(__APPLE_CC__)
+  auto filepath = bfs::path(getenv("HOME"));
+  filepath += bfs::path(KEY_DEFAULT_PATH_"/");
+#else
+  bfs::path filepath(KEY_DEFAULT_PATH_"/");
+#endif
   auto hash = dev::openssl::sha3(keyfile_data.keyinfo.public_key);
   auto filename = hash.hex().substr(0, 16);
   filename += ".json";
-  bfs::path filepath(std::string(KEY_DEFAULT_PATH_"/") + std::string(filename));
+  filepath += bfs::path(std::string(filename));
   auto fout = std::ofstream(filepath.c_str());
   if (!fout.is_open())
     FC_LIGHT_THROW_EXCEPTION(fc_light::internal_error_exception, "Cannot open keyfile (${filename})", ("filename", filename));
@@ -274,13 +287,19 @@ void keyfile_singleton::flush_logrecords(const prim_key_type& key) const
 
 void keyfile_singleton::flush_logrecords_impl(const prim_key_type& key, const log_records_t& log_records) const
 {
+#if defined(macintosh) || defined(__APPLE__) || defined(__APPLE_CC__)
+  auto filepath = bfs::path(getenv("HOME"));
+  filepath += bfs::path(KEY_DEFAULT_PATH_"/");
+#else
+  bfs::path filepath(KEY_DEFAULT_PATH_"/");
+#endif
   keyfile_format::signlog_file_t logfile;
   logfile.public_key = key;
   std::copy(log_records.begin(), log_records.end(), std::back_inserter(logfile.sign_events));
   auto hash = dev::openssl::sha3(key);
   auto filename = hash.hex().substr(0, 16);
   filename += "_signlog.json";
-  bfs::path filepath(std::string(SIGN_LOGS_DEFAULT_PATH_"/") + std::string(filename));
+  filepath += std::string(filename);
   auto fout = std::ofstream(filepath.c_str());
   if (!fout.is_open())
     FC_LIGHT_THROW_EXCEPTION(fc_light::internal_error_exception, "Cannot open keyfile (${filename})", ("filename", filename));
@@ -289,8 +308,13 @@ void keyfile_singleton::flush_logrecords_impl(const prim_key_type& key, const lo
 
 void keyfile_singleton::flush_all() const
 {
-  auto curdir = bfs::current_path();
-  auto first = bfs::directory_iterator(bfs::path(KEY_DEFAULT_PATH_));
+#if defined(macintosh) || defined(__APPLE__) || defined(__APPLE_CC__)
+  auto keyfile_dir = bfs::path(getenv("HOME"));
+  keyfile_dir += bfs::path(KEY_DEFAULT_PATH_);
+#else
+  bfs::path keyfile_dir(KEY_DEFAULT_PATH_);
+#endif
+  auto first = bfs::directory_iterator(keyfile_dir);
   std::for_each(m_keydata_map.begin(), m_keydata_map.end(), [first](const auto& keyfile_data) {
     auto hash = dev::openssl::sha3(keyfile_data.keyinfo.public_key);
     auto filename = hash.hex().substr(0, 16);

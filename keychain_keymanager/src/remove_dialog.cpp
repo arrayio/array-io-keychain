@@ -70,8 +70,8 @@ void remove_dialog::show_dialog(const QString& keyName)
     subDialog->setLayout(frameLayout);
     subDialog->setFixedWidth(420);
 
-    QPoint newPoint = QPoint(0, 0) + QPoint(1.7*subDialog->width(), pHeight);
-    QPoint realPos = this->mapFromGlobal(newPoint);
+    const QPoint newPoint = QPoint(0, 0) + QPoint(1.7*subDialog->width(), pHeight);
+    const QPoint realPos = this->mapFromGlobal(newPoint);
     subDialog->move(realPos);
     subDialog->show();
 }

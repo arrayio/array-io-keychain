@@ -4,12 +4,12 @@ custom_menu::custom_menu(QPushButton* button, QWidget* parent) : QMenu(parent), 
 {
     QMetaObject::connectSlotsByName(this);
     setFixedStyle();
+    IS_POPUP = false;
 }
 
 void custom_menu::showEvent(QShowEvent* event)
 {
-    QPoint currentPos = pos();
-    QRect geo = primaryButton->geometry();
+    const QPoint currentPos = pos();
     move(currentPos.x(), currentPos.y());
 }
 
@@ -26,4 +26,16 @@ void const custom_menu::setFixedStyle()
     setStyleSheet(styleSheet() + "QMenu::item:selected {background-color:#e7e9ef;\
                                   border: 0px solid #e7e9ef;\
                                   border-radius:1.4px;}" + "QMenu::item {padding:4px;}");
+}
+
+void custom_menu::handleShowEvent()
+{
+    IS_POPUP = true;
+    emit showMenuHandle(true);
+}
+
+//get current flag value
+bool custom_menu::isActive()
+{
+    return IS_POPUP;
 }

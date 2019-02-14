@@ -17,6 +17,10 @@
     a:visited {
       text-decoration: none;
     }
+    .btn_transform {
+      transform: translateX(30px);
+      transition-duration: 0.5s;
+    }
     label {
       color: rgb(0, 104, 153);
       line-height: 1.982;
@@ -31,12 +35,14 @@
       text-rendering: optimizeLegibility;
       color: white;
     }
+
     .page {
       display: none;
     }
     .page-active {
       display: block;
     }
+
     .container {
       display: grid;
       grid-template-columns: 1fr 1fr 1fr;
@@ -88,15 +94,16 @@
       grid-row: 3;
       grid-column: 1 / 4;
       display: grid;
-      grid-template-columns: 250px 1fr 1fr 150px;
+      grid-template-columns: 200px 1fr 1fr 120px;
       grid-template-rows: 200px 200px 50px auto;
-      grid-column-gap: 35px;
+      grid-column-gap: 65px;
     }
 
     .menu {
       grid-column: 1;
       grid-row: 1 / 3;
       display: grid;
+      margin-left: -60px;
     }
 
     .form {
@@ -180,13 +187,13 @@
   </div>
   <div class="middle">
     <div class="menu">
-      <div><a href="#select_key" class="btn">Select key</a></div>
-      <div><a href="#unlock" class="btn">Unlock</a></div>
-      <div><a href="#lock" class="btn">Lock</a></div>
-      <div><a href="#sign_hex" class="btn">Sign hex</a></div>
-      <div><a href="#sign_hash" class="btn">Sign hash</a></div>
-      <div><a href="#about" class="btn">About</a></div>
-      <div><a href="#version" class="btn">Version</a></div>
+      <div><a href="#select_key" class="btn btn_command" id="btnSelectKey">Select key</a></div>
+      <div><a href="#unlock" class="btn btn_command" id="btnUnlock">Unlock</a></div>
+      <div><a href="#lock" class="btn btn_command" id="btnLock">Lock</a></div>
+      <div><a href="#sign_hex" class="btn btn_command" id="btnSignHex">Sign hex</a></div>
+      <div><a href="#sign_hash" class="btn btn_command" id="btnSignHash">Sign hash</a></div>
+      <div><a href="#about" class="btn btn_command" id="btnAbout">About</a></div>
+      <div><a href="#version" class="btn btn_command" id="btnVersion">Version</a></div>
     </div>
     <div class="form">
       <div class="column col-8 page" id="page_select_key"></div>
@@ -244,13 +251,13 @@
       <div class="column col-8 page" id="page_version"></div>
     </div>
     <div class="right_menu">
-      <div><a href="#select_key" class="btn">&nbsp;</a></div>
-      <div><a href="#unlock" class="btn">&nbsp;</a></div>
-      <div><a href="#lock" class="btn">&nbsp;</a></div>
-      <div><a href="#sign_hex" class="btn">&nbsp;</a></div>
-      <div><a href="#sign_hash" class="btn">&nbsp;</a></div>
-      <div><a href="#about" class="btn">&nbsp;</a></div>
-      <div><a href="#version" class="btn">&nbsp;</a></div>
+      <div><a href="#select_key" class="btn btn_command" id="btnSelectKeyRight">&nbsp;</a></div>
+      <div><a href="#unlock" class="btn btn_command" id="btnUnlockRight">&nbsp;</a></div>
+      <div><a href="#lock" class="btn btn_command" id="btnLockRight">&nbsp;</a></div>
+      <div><a href="#sign_hex" class="btn btn_command" id="btnSignHexRight">&nbsp;</a></div>
+      <div><a href="#sign_hash" class="btn btn_command" id="btnSignHashRight">&nbsp;</a></div>
+      <div><a href="#about" class="btn btn_command" id="btnAboutRight">&nbsp;</a></div>
+      <div><a href="#version" class="btn btn_command" id="btnVersionRight">&nbsp;</a></div>
     </div>
     <div class="request">
       <textarea style="width: 100%; height: 90%" id="request" placeholder="{}"></textarea>
@@ -367,8 +374,29 @@
     }
     document.getElementById('request').addEventListener('keyup', function () {
       jsonToFields();
-    })
+    });
+
+    const buttons = document.getElementsByClassName('btn_command');
+    for (let i=0; i<buttons.length; i++) {
+      buttons[i].addEventListener('mouseenter', function () {
+        buttons[i].classList.add('btn_transform');
+        const oppositeElementId = getOppositeElementId(buttons[i].id);
+        document.getElementById(oppositeElementId).classList.add('btn_transform');
+      });
+      buttons[i].addEventListener('mouseleave', function () {
+        buttons[i].classList.remove('btn_transform');
+        const oppositeElementId = getOppositeElementId(buttons[i].id);
+        document.getElementById(oppositeElementId).classList.remove('btn_transform');
+      });
+    }
   };
+
+  function getOppositeElementId(buttonId) {
+    if (buttonId.indexOf('Right') !== -1) {
+      return buttonId.slice(0, -'Right'.length);
+    }
+    return buttonId + 'Right';
+  }
 
   function getRequest() {
     try {

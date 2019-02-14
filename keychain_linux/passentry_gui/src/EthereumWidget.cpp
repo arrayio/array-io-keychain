@@ -1,5 +1,5 @@
 #include "EthereumWidget.h"
-
+#include "widget_singleton.h"
 
 EthereumWidget::EthereumWidget(Transaction &transaction, QWidget * parent)
 	:KeychainWidget(parent)
@@ -17,23 +17,8 @@ EthereumWidget::EthereumWidget(Transaction &transaction, QWidget * parent)
 	//QList<QString> fieldList({ "From","To","Amount" });
 
 	namespace sm_cmd = keychain_app::secmod_commands;
-	secmod_parser_f cmd_parse;
-	auto cmd_type = cmd_parse(transaction.getTransactionText().toStdString());
-	std::string rawtx;
-	int unlock_time;
-	std::string from_str;
-	sm_cmd::transaction_view<sm_cmd::blockchain_secmod_te::ethereum>::type eth_trx;
-	switch (cmd_type)
-	{
-		case sm_cmd::events_te::sign_hex:
-		{
-			auto cmd = cmd_parse.params<sm_cmd::events_te::sign_hex>();
-			rawtx = sm_cmd::to_expert_mode_string(cmd);
-			unlock_time = cmd.unlock_time;
-			eth_trx =	cmd.get_trx_view<sm_cmd::blockchain_secmod_te::ethereum>();
-			break;
-		}
-	}
+	using event_ptr = event_singleton<sm_cmd::secmod_event<sm_cmd::events_te::sign_hex>::params_t>;
+	auto eth_trx = event_ptr::shared.get()->get_trx_view<sm_cmd::blockchain_secmod_te::ethereum>();
 
 	from = new SecureWindowElement(this);
 	from->SetLabelAndValue("From", QString::fromStdString(eth_trx.from));
@@ -52,13 +37,15 @@ EthereumWidget::EthereumWidget(Transaction &transaction, QWidget * parent)
 	amount->SetLabelStyle(labelStyle);
 	amount->SetValueStyle(valueStyle);
 
-	if (unlock_time > 0) {
+	if (event_ptr::shared.get()->unlock_time > 0) {
 		unlockTime = new PrivateKeyInMemory(this);
-		unlockTime->SetTime(QString::number(unlock_time));
+		unlockTime->SetTime(QString::number(event_ptr::shared.get()->unlock_time));
 	}
 
 	expertModeElement = new ExpertModeElement(this);
-	expertModeElement->SetExpertModeText(QString::fromStdString(rawtx));
+	expertModeElement->SetExpertModeText(QString::fromStdString(
+			sm_cmd::to_expert_mode_string(*event_ptr::shared.get())
+			));
 
 
 }

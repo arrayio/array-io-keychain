@@ -33,6 +33,7 @@ public:
     FC_LIGHT_CAPTURE_TYPECHANGE_AND_RETHROW(fc_light::parse_error_exception, error, "cannot parse secmod command params")
   }
   events_te operator()(const std::string& json);
+  events_te operator()(const fc_light::variant& );
   secmod_command m_cmd;
 };
 

@@ -1,4 +1,6 @@
 #include "EthereumSwapWidget.h"
+#include "widget_singleton.h"
+
 
 EthereumSwapWidget::EthereumSwapWidget(Transaction &transaction, QWidget * parent)
 	:KeychainWidget(parent)
@@ -13,37 +15,35 @@ EthereumSwapWidget::EthereumSwapWidget(Transaction &transaction, QWidget * paren
 
 	//QList<QString> fieldList({ "From","To","Amount" });
 
-/*
-	secmod_parser_f cmd_parse;
-	auto cmd_type = cmd_parse(transaction.getTransactionText().toStdString());
-	auto swap_trx = cmd_parse.to_ethereum_swap();
-	auto swap_info = swap_trx.swap_info;
+	namespace sm_cmd = keychain_app::secmod_commands;
+	using event_ptr = event_singleton<sm_cmd::secmod_event<sm_cmd::events_te::sign_hex>::params_t>;
+	auto swap_trx = event_ptr::shared.get()->get_trx_view<sm_cmd::blockchain_secmod_te::ethereum_swap>();
 
 	action = new SecureWindowElement(this);
 	action->SetLabelStyle(labelStyle);
 	action->SetValueStyle(valueStyle);
-	switch (swap_info.action)
+	switch (swap_trx.swap_info.action)
 	{
 		
 		//TODO: need impleentation
 	}
 	action->SetLabelAndValue("Action", "(action)");
 
-	*/
+
 /*create_swap = 0,
 		refund,
-		withdraw*//*
+		withdraw*/
 
 
 	hash = new SecureWindowElement(this);
 	hash->SetLabelStyle(labelStyle);
 	hash->SetValueStyle(valueStyle);
-	hash->SetLabelAndValue("Hash", QString::fromStdString(swap_info.hash));
+	hash->SetLabelAndValue("Hash", QString::fromStdString(swap_trx.swap_info.hash));
 
 	address = new SecureWindowElement(this);
 	address->SetLabelStyle(labelStyle);
 	address->SetValueStyle(valueStyle);
-	address->SetLabelAndValue("Address", QString::fromStdString(swap_info.address));
+	address->SetLabelAndValue("Address", QString::fromStdString(swap_trx.swap_info.address));
 
 	cryptoType = new SecureWindowElement(this);
 	cryptoType->SetLabelStyle("background-image:url(:/keychain_gui_win/bg_ephir.png) no-repeat;");
@@ -56,9 +56,9 @@ EthereumSwapWidget::EthereumSwapWidget(Transaction &transaction, QWidget * paren
 	from->SetLabelStyle(labelStyle);
 	from->SetValueStyle(valueStyle);
 	from->SetLabelAndValue("From", QString::fromStdString(swap_trx.from));
-	
+
 	auto eth_data = swap_trx.trx_info;
-	
+
 	to = new SecureWindowElement(this);
 	to->SetLabelStyle(labelStyle);
 	to->SetValueStyle(valueStyle);
@@ -69,14 +69,16 @@ EthereumSwapWidget::EthereumSwapWidget(Transaction &transaction, QWidget * paren
 	amount->SetValueStyle(valueStyle);
 	amount->SetLabelAndValue("Amount", QString::fromStdString(eth_data.value));
 
-	if (cmd_parse.unlock_time() > 0) {
+	if (event_ptr::shared.get()->unlock_time  > 0) {
 		unlockTime = new PrivateKeyInMemory(this);
-		unlockTime->SetTime(QString::number(cmd_parse.unlock_time()));
+		unlockTime->SetTime(QString::number(event_ptr::shared.get()->unlock_time ));
 	}
 
 	expertModeElement = new ExpertModeElement(this);
-	expertModeElement->SetExpertModeText(QString::fromStdString(cmd_parse.to_expert_mode_string()));
-*/
+	expertModeElement->SetExpertModeText(QString::fromStdString(
+			sm_cmd::to_expert_mode_string(*event_ptr::shared.get())
+	));
+
 
 }
 

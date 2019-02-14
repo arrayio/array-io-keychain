@@ -48,6 +48,7 @@ public:
     void passentry (int, int);
     void closeExpertMode();
 	bool close_event;
+
 private:
 	QString mExpertValue;
 	QLabel * logoLabel;

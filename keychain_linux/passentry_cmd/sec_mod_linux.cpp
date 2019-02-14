@@ -42,10 +42,7 @@ std::string sec_mod_linux::exec_cmd(const std::string& json_cmd) const
         }
         case sm_cmd::events_te::sign_hex:
         {
-            auto cmd = parser.params<sm_cmd::events_te::sign_hex>();
-            unlock_time = cmd.unlock_time;
-
-            auto a = master::cmd<master::cmds::rawtrx>(fc_light::json::to_string(cmd.trx_view) );
+            auto a = master::cmd<master::cmds::rawtrx>(json_cmd );
             auto mes = fc_light::json::to_string(fc_light::variant(static_cast<const master::cmd_base&>(a)));
 
             auto pass_entry = pass_entry_term(false);

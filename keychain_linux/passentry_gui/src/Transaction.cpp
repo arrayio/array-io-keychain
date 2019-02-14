@@ -1,16 +1,9 @@
 #include "Transaction.h"
 
-Transaction::Transaction(QString &transaction)
-{
-	sourceTransaction = transaction;
-	unlock_time = -1;
-	key_name = Q_NULLPTR;
-}
+Transaction::Transaction(): unlock_time(-1), key_name(""), is_parsed(false),
+blockchain(keychain_app::secmod_commands::blockchain_secmod_te::unknown), rawtx(""),
+{};
 
-QString Transaction::getTransactionText()
-{
-	return sourceTransaction;
-}
 
 
 bool Transaction::isCreatePassword()

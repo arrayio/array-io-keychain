@@ -2,6 +2,7 @@
 // Created by user on 23.06.18.
 //
 #include "cmd.hpp"
+#include "widget_singleton.h"
 
 Q_DECLARE_METATYPE(std::string)
 
@@ -23,14 +24,37 @@ namespace slave
         cmd() : cmd_base(cmds::rawtrx) {};
 
         virtual ~cmd() {};
-        struct params {std::string rawtrx;};
-        using params_t = params;
         virtual void operator()(keychain_gui_win& w, const fc_light::variant& v) const override {
             try {
-                auto a = v.as<params_t>();
-                QString  trx(a.rawtrx.c_str());
-                Transaction trans(trx);
-                w.refresh(trans);
+                namespace sm_cmd = keychain_app::secmod_commands;
+                secmod_parser_f event_parser;
+                auto cmd = event_parser(v);
+                switch (cmd)
+                {
+                    case sm_cmd::events_te::sign_hex:
+                    {
+                        using singleton = event_singleton<sm_cmd::secmod_event<sm_cmd::events_te::sign_hex>::params_t>;
+                        auto event_param = event_parser.params<sm_cmd::events_te::sign_hex>();
+                        auto& event_ptr= singleton::instance(std::move(event_param));
+                        break;
+                    }
+                    case sm_cmd::events_te::sign_hash:
+                    {
+                        using singleton = event_singleton<sm_cmd::secmod_event<sm_cmd::events_te::sign_hash>::params_t>;
+                        auto event_param = event_parser.params<sm_cmd::events_te::sign_hash>();
+                        auto& event_ptr= singleton::instance(std::move(event_param));
+                        break;
+                    }
+                    case sm_cmd::events_te::unlock:
+                    {
+                        using singleton = event_singleton<sm_cmd::secmod_event<sm_cmd::events_te::sign_hash>::params_t>;
+                        auto event_param = event_parser.params<sm_cmd::events_te::sign_hash>();
+                        auto& event_ptr= singleton::instance(std::move(event_param));
+                        break;
+                    }
+                }
+                Transaction trx;
+                w.refresh(trx);
                 w.show();
             }
             catch (const std::exception &e) {throw std::runtime_error(e.what());}

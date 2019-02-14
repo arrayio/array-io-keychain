@@ -7,21 +7,20 @@
 #include <QJsonObject>
 #include <QVector>
 #include "TransactionParameter.h"
+#include "secmod_protocol.hpp"
 
 
 class Transaction {
 public:
-	Transaction(QString &transaction);
+    Transaction();
 	QString getTransactionText();
 	bool isCreatePassword();
 	int isUnlockKey();
 	QString unlockKeyName();
 	void setCreatePassword();
 	void setUnlockKey(QString &key_name, int unlock_time);
+
 private:
-	QString sourceTransaction;
-	int unlock_time =-1;
-	QString key_name = Q_NULLPTR;
 	bool createPassword = false;
 };
 

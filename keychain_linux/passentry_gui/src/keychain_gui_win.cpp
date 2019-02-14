@@ -9,7 +9,7 @@ keychain_gui_win::keychain_gui_win(Transaction &transaction, QWidget *parent)
     setFixedSize(600, 347);
 }
 
-void keychain_gui_win::refresh(Transaction& transaction)
+void keychain_gui_win::refresh(Transaction& trx)
 {
 
     KeychainWarningMessage warningMessage;
@@ -39,75 +39,43 @@ void keychain_gui_win::refresh(Transaction& transaction)
 
     int endControlPosition = START_POSITION;
 
-	if (transaction.isUnlockKey() != -1) {
+	if (trx.isUnlockKey() != -1) {
 		warningMessage.SetWarning(KeychainWarningMessage::WarningType::UnlockWarning);
 		/*element = new UnlockKeyWidget(transaction, this);
 		element->move(0, endControlPosition);
 		element->SetPosition(0, endControlPosition, FIELD_WIDTH);
 		endControlPosition += 10;
 		endControlPosition = endControlPosition + element->GetCurrentHeight();*/
-		descriptionLabel->setText("You are trying to unlock the key \"" + transaction.unlockKeyName() + "\" for \"" + QString::number(transaction.isUnlockKey()) +"\" seconds");
+		descriptionLabel->setText("You are trying to unlock the key \"" + trx.unlockKeyName() + "\" for \"" + QString::number(trx.isUnlockKey()) +"\" seconds");
 	}
-	if (transaction.isCreatePassword()) {
+	if (trx.isCreatePassword()) {
 		warningMessage.SetWarning(KeychainWarningMessage::WarningType::CreateWarning);
 		descriptionLabel->setText("Enter the password for the new key");
 	}
-	std::string keyname;
-	bool is_parsed = false;
-	int unlock_time;
-	namespace sm_cmd = keychain_app::secmod_commands;
-	sm_cmd::blockchain_secmod_te blockchain;
-	if (!transaction.isCreatePassword() && transaction.isUnlockKey() == -1)
+	if (!trx.isCreatePassword() && trx.isUnlockKey() == -1)
 	{
-		secmod_parser_f cmd_parse;
-		auto cmd_type = cmd_parse(transaction.getTransactionText().toStdString());
-		switch (cmd_type)
-		{
-			case sm_cmd::events_te::sign_hex:
-			{
-				auto cmd = cmd_parse.params<sm_cmd::events_te::sign_hex>();
-				keyname = cmd.keyname;
-				is_parsed = cmd.is_parsed;
-				unlock_time = cmd.unlock_time;
-				blockchain = cmd.blockchain;
-				break;
-			}
-			case sm_cmd::events_te::sign_hash:
-			{
-				auto cmd = cmd_parse.params<sm_cmd::events_te::sign_hash>();
-				keyname = cmd.keyname;
-				break;
-			}
-			case sm_cmd::events_te::unlock:
-			{
-				auto cmd = cmd_parse.params<sm_cmd::events_te::unlock>();
-                keyname = cmd.keyname;
-				unlock_time = cmd.unlock_time;
-				break;
-			}
-		}
-		QString descr("Are you sure you want to sign this transaction with key <b>''" + QString::fromStdString(keyname) + "''</b>?");
+		QString descr("Are you sure you want to sign this transaction with key <b>''" + trx.key_name + "''</b>?");
 		descriptionLabel->setText(descr);
-		if (!is_parsed) {
-			element = new UnparsedTransactionWidget(transaction, this);
+		if (!trx.is_parsed) {
+			element = new UnparsedTransactionWidget(trx, this);
 			warningMessage.SetWarning(KeychainWarningMessage::WarningType::FailedWarning);
-			if (unlock_time > 0) {
+			if (trx.unlock_time > 0) {
 				warningMessage.SetWarning(KeychainWarningMessage::WarningType::UnlockUseWarning);
 			}
 		}
 		else {
-			if (unlock_time > 0) {
+			if (trx.unlock_time > 0) {
 				warningMessage.SetWarning(KeychainWarningMessage::WarningType::UnlockUseWarning);
 			}
-			switch (blockchain)
+			switch (trx.blockchain)
 			{
 			case keychain_app::secmod_commands::blockchain_secmod_te::ethereum: {
-				element = new EthereumWidget(transaction, this);
+				element = new EthereumWidget(trx, this);
 				warningMessage.SetWarning(KeychainWarningMessage::WarningType::NoWarnig);
 				break;
 			}
 			case keychain_app::secmod_commands::blockchain_secmod_te::ethereum_swap: {
-				element = new EthereumSwapWidget(transaction, this);
+				element = new EthereumSwapWidget(trx, this);
 				warningMessage.SetWarning(KeychainWarningMessage::WarningType::NoWarnig);
 				languageLabel = new QLabel(this);
 				//connect(QGuiApplication::inputMethod(), &QInputMethod::localeChanged, this, &keychain_gui_win::changeLocale);
@@ -115,21 +83,21 @@ void keychain_gui_win::refresh(Transaction& transaction)
 			}
 			case keychain_app::secmod_commands::blockchain_secmod_te::bitcoin:
 			{
-				element = new BitcoinWidget(transaction, this);
+				element = new BitcoinWidget(trx, this);
 				warningMessage.SetWarning(KeychainWarningMessage::WarningType::NoWarnig);
 				break;
 			}
 /*			case keychain_app::secmod_commands::blockchain_secmod_te::rawhash:
 			{
 				warningMessage.SetWarning(KeychainWarningMessage::WarningType::HashWarnig);
-				element = new RawHashWidget(transaction, this);
+				element = new RawHashWidget(trx, this);
 				break;
 			}
 			case keychain_app::secmod_commands::blockchain_secmod_te::unknown:
 			case keychain_app::secmod_commands::blockchain_secmod_te::parse_error:
 			{
 				warningMessage.SetWarning(KeychainWarningMessage::WarningType::FailedWarning);
-				element = new UnparsedTransactionWidget(transaction, this);
+				element = new UnparsedTransactionWidget(trx, this);
 				break;
 			}
 			break;
@@ -142,7 +110,7 @@ void keychain_gui_win::refresh(Transaction& transaction)
 
 	}
 
-	password = new PasswordEnterElement(transaction.isCreatePassword(), this);
+	password = new PasswordEnterElement(trx.isCreatePassword(), this);
 	password->SetLabel("Passphrase");
 	password->SetPosition(0, endControlPosition, FIELD_WIDTH);
 	password->move(0, endControlPosition);
@@ -153,13 +121,13 @@ void keychain_gui_win::refresh(Transaction& transaction)
 		headerBlock->setFixedWidth(element->GetCurrentWidth() + 20);
 	else
 		headerBlock->setFixedWidth(width());
-	if (transaction.isCreatePassword()) {
+	if (trx.isCreatePassword()) {
 		OKButton = new QPushButton("CREATE", this);
 	}
-	if (transaction.isUnlockKey() != -1) {
+	if (trx.isUnlockKey() != -1) {
 		OKButton = new QPushButton("UNLOCK", this);
 	}
-	if (transaction.isCreatePassword() == false && transaction.isUnlockKey() == -1)
+	if (trx.isCreatePassword() == false && trx.isUnlockKey() == -1)
 	{
 		OKButton = new QPushButton("SIGN", this);
 	}
@@ -195,7 +163,7 @@ void keychain_gui_win::refresh(Transaction& transaction)
 		QString lang = QGuiApplication::inputMethod()->locale().languageToString(QGuiApplication::inputMethod()->locale().language());
 		languageLabel->setText(lang.mid(0, 2).toUpper());
 	}
-	//if (!transaction.isCreatePassword() && warningMessage.isWarn()) {
+	//if (!trx.isCreatePassword() && warningMessage.isWarn()) {
 		lockIcon = new LockIcon(warningMessage, this);
 		popupWindow = new PopupWindow(warningMessage, this);
 		popupWindow->setVisible(false);

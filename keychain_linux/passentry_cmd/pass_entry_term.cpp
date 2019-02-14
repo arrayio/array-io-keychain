@@ -218,7 +218,7 @@ std::string  pass_entry_term::input_password(const KeySym * map, int socket)
     bool first_key = true;
     auto gui = polling(socket);
     std::vector<int>  pass_len(2, 0);
-    ChangeKbProperty(dev_info, kbd_atom, device_enabled_prop, dev_cnt, 0);
+//    ChangeKbProperty(dev_info, kbd_atom, device_enabled_prop, dev_cnt, 0);
 
     capslock = keyState(XK_Caps_Lock);
     numlock = keyState(XK_Num_Lock);
@@ -261,7 +261,7 @@ std::string  pass_entry_term::input_password(const KeySym * map, int socket)
                             if ( ev[1].code <= 255)
                             {
                                 kbd_id = fd_list[id];
-                                if (ioctl(kbd_id, EVIOCGRAB, 1) != 0) throw std::runtime_error("cannot get exclusive access to keyboard");
+//                                if (ioctl(kbd_id, EVIOCGRAB, 1) != 0) throw std::runtime_error("cannot get exclusive access to keyboard");
                                 break;
                             }
                         }

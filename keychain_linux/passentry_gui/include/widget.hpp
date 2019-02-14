@@ -18,6 +18,7 @@ public:
     ~Widget();
 private:
     void parse(const std::string);
+    Polling *polling;
 
     keychain_gui_win& gui;
 signals:

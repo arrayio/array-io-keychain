@@ -15,26 +15,27 @@ Q_DECLARE_METATYPE(std::string)
 
 int id = qRegisterMetaType<std::string>();
 Widget::Widget(keychain_gui_win& gui_, QWidget *parent)
-    :QWidget(parent), gui(gui_)
+    :QWidget(parent), gui(gui_), polling(new Polling)
 {
-
-    Polling *polling = new Polling;
     polling->moveToThread(&pollingThread);
     connect(&pollingThread, &QThread::finished, polling, &QObject::deleteLater);
 
-    connect(this,    &Widget::poll,  polling, &Polling::Select, Qt::QueuedConnection);
+//    connect(this,    &Widget::poll,  polling, &Polling::Select, Qt::QueuedConnection);
     connect(polling, &Polling::poll, polling, &Polling::Select, Qt::QueuedConnection);
     connect(polling, &Polling::rx, this, &Widget::parse);
     connect(polling, &Polling::err, this, &Widget::close);
 
+    QMetaObject::invokeMethod(polling, &Polling::Select);
     pollingThread.start();
-        emit Widget::poll();
+
+    //    emit Widget::poll();
 }
 
 Widget::~Widget()
 {
-    pollingThread.quit();
     pollingThread.wait();
+    pollingThread.quit();
+    delete polling;
 }
 
 

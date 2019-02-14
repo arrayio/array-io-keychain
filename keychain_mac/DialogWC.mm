@@ -63,7 +63,7 @@ using keychain_app::secmod_commands::secmod_parser_f;
         NSAlert *alert = [NSAlert new];
         [alert setIcon:[NSImage new]];
         alert.messageText = @"Error";
-        alert.informativeText = @"Passphrases must match";
+        alert.informativeText = @"Pa";
         [alert addButtonWithTitle:@"OK"];
         [alert beginSheetModalForWindow:[self.window.contentView window] completionHandler:^(NSInteger result) {
             NSLog(@"Success");

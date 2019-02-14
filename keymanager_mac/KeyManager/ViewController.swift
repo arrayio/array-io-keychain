@@ -59,10 +59,11 @@ class ViewController: NSViewController, NSTableViewDelegate, NSTableViewDataSour
         var text: String = ""
         var cellIdentifier: String = ""
         
-        let item = KeyManager.shared.keys[row]
+//        let item = KeyManager.shared.keys[row]
+        let key = CPlusPlusBridger().getKeyById(row)
         
         if tableColumn == tableView.tableColumns[0] {
-            text = item.fullKeyName
+            text = key.name
             cellIdentifier = CellIdentifiers.LocationCell
         }
         

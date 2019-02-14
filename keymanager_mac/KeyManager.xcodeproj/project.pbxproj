@@ -22,6 +22,11 @@
 		A7910FFF22146DF7001C6761 /* libethash.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A7910FFE22146DF7001C6761 /* libethash.a */; };
 		A791100122146E04001C6761 /* libsecp256k1.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A791100022146E04001C6761 /* libsecp256k1.a */; };
 		A791100422147903001C6761 /* CPlusPlusBridger.mm in Sources */ = {isa = PBXBuildFile; fileRef = A791100322147903001C6761 /* CPlusPlusBridger.mm */; };
+		A79110182215A682001C6761 /* libkaitai_struct_cpp_stl_runtime.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A79110172215A682001C6761 /* libkaitai_struct_cpp_stl_runtime.a */; };
+		A791101B2215AB48001C6761 /* Key.m in Sources */ = {isa = PBXBuildFile; fileRef = A791101A2215AB48001C6761 /* Key.m */; };
+		A79523712215B05300078EE5 /* SYFlatButton.m in Sources */ = {isa = PBXBuildFile; fileRef = A79523702215B05300078EE5 /* SYFlatButton.m */; };
+		A79523772215B36600078EE5 /* WindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = A79523762215B36600078EE5 /* WindowController.m */; };
+		A79523792215B55100078EE5 /* CreateKeyVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = A79523782215B55100078EE5 /* CreateKeyVC.swift */; };
 		A79F78BA21F89D0400E2C184 /* HexToRgbColor.mm in Sources */ = {isa = PBXBuildFile; fileRef = A79F78B921F89D0400E2C184 /* HexToRgbColor.mm */; };
 		A79F78BC21F8A17900E2C184 /* TableRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A79F78BB21F8A17900E2C184 /* TableRowView.swift */; };
 		AD6703CBBAA6B5EB11907AA8 /* Pods_KeyManager.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 130888C1592515A58F013398 /* Pods_KeyManager.framework */; };
@@ -50,6 +55,14 @@
 		A791100022146E04001C6761 /* libsecp256k1.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libsecp256k1.a; sourceTree = "<group>"; };
 		A791100222147903001C6761 /* CPlusPlusBridger.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CPlusPlusBridger.h; sourceTree = "<group>"; };
 		A791100322147903001C6761 /* CPlusPlusBridger.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = CPlusPlusBridger.mm; sourceTree = "<group>"; };
+		A79110172215A682001C6761 /* libkaitai_struct_cpp_stl_runtime.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libkaitai_struct_cpp_stl_runtime.a; sourceTree = "<group>"; };
+		A79110192215AB48001C6761 /* Key.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Key.h; sourceTree = "<group>"; };
+		A791101A2215AB48001C6761 /* Key.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Key.m; sourceTree = "<group>"; };
+		A795236F2215B05300078EE5 /* SYFlatButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SYFlatButton.h; path = ../../keychain_mac/SYFlatButton.h; sourceTree = "<group>"; };
+		A79523702215B05300078EE5 /* SYFlatButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SYFlatButton.m; path = ../../keychain_mac/SYFlatButton.m; sourceTree = "<group>"; };
+		A79523752215B36600078EE5 /* WindowController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WindowController.h; sourceTree = "<group>"; };
+		A79523762215B36600078EE5 /* WindowController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = WindowController.m; sourceTree = "<group>"; };
+		A79523782215B55100078EE5 /* CreateKeyVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateKeyVC.swift; sourceTree = "<group>"; };
 		A79F78B721F89D0300E2C184 /* KeyManager-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "KeyManager-Bridging-Header.h"; sourceTree = "<group>"; };
 		A79F78B821F89D0400E2C184 /* HexToRgbColor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HexToRgbColor.h; sourceTree = "<group>"; };
 		A79F78B921F89D0400E2C184 /* HexToRgbColor.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = HexToRgbColor.mm; sourceTree = "<group>"; };
@@ -65,6 +78,7 @@
 				A7910FF922146DC7001C6761 /* libkeychain_common.a in Frameworks */,
 				A791100122146E04001C6761 /* libsecp256k1.a in Frameworks */,
 				AD6703CBBAA6B5EB11907AA8 /* Pods_KeyManager.framework in Frameworks */,
+				A79110182215A682001C6761 /* libkaitai_struct_cpp_stl_runtime.a in Frameworks */,
 				A7910FFF22146DF7001C6761 /* libethash.a in Frameworks */,
 				A7910FFB22146DDE001C6761 /* libfc_light.a in Frameworks */,
 			);
@@ -104,9 +118,12 @@
 			isa = PBXGroup;
 			children = (
 				A776F49F21D0DD95006736C9 /* AppDelegate.swift */,
+				A79523752215B36600078EE5 /* WindowController.h */,
+				A79523762215B36600078EE5 /* WindowController.m */,
 				A776F4A121D0DD95006736C9 /* ViewController.swift */,
 				A776F4BB21D3A7F8006736C9 /* WebsocketChecker.swift */,
 				A79F78BB21F8A17900E2C184 /* TableRowView.swift */,
+				A79523782215B55100078EE5 /* CreateKeyVC.swift */,
 				A776F4A321D0DD97006736C9 /* Assets.xcassets */,
 				A776F4A521D0DD97006736C9 /* Main.storyboard */,
 				A776F4A821D0DD97006736C9 /* Info.plist */,
@@ -115,8 +132,12 @@
 				A776F4B121D0E66B006736C9 /* KeyManager.swift */,
 				A776F4B721D39AB7006736C9 /* String+extension.swift */,
 				A776F4B921D3A78A006736C9 /* AppleScriptManager.swift */,
+				A795236F2215B05300078EE5 /* SYFlatButton.h */,
+				A79523702215B05300078EE5 /* SYFlatButton.m */,
 				A791100222147903001C6761 /* CPlusPlusBridger.h */,
 				A791100322147903001C6761 /* CPlusPlusBridger.mm */,
+				A79110192215AB48001C6761 /* Key.h */,
+				A791101A2215AB48001C6761 /* Key.m */,
 				A79F78B821F89D0400E2C184 /* HexToRgbColor.h */,
 				A79F78B921F89D0400E2C184 /* HexToRgbColor.mm */,
 				A79F78B721F89D0300E2C184 /* KeyManager-Bridging-Header.h */,
@@ -127,6 +148,7 @@
 		F73689D206923AF1FA7A3A0E /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				A79110172215A682001C6761 /* libkaitai_struct_cpp_stl_runtime.a */,
 				A791100022146E04001C6761 /* libsecp256k1.a */,
 				A7910FFE22146DF7001C6761 /* libethash.a */,
 				A7910FFC22146DE8001C6761 /* libeth-crypto.a */,
@@ -267,13 +289,17 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A791101B2215AB48001C6761 /* Key.m in Sources */,
+				A79523772215B36600078EE5 /* WindowController.m in Sources */,
 				A776F4A221D0DD95006736C9 /* ViewController.swift in Sources */,
 				A776F4BC21D3A7F8006736C9 /* WebsocketChecker.swift in Sources */,
 				A776F4B821D39AB7006736C9 /* String+extension.swift in Sources */,
 				A776F4A021D0DD95006736C9 /* AppDelegate.swift in Sources */,
 				A79F78BA21F89D0400E2C184 /* HexToRgbColor.mm in Sources */,
 				A776F4B021D0DF58006736C9 /* KeyFileModel.swift in Sources */,
+				A79523792215B55100078EE5 /* CreateKeyVC.swift in Sources */,
 				A776F4B221D0E66B006736C9 /* KeyManager.swift in Sources */,
+				A79523712215B05300078EE5 /* SYFlatButton.m in Sources */,
 				A776F4BA21D3A78A006736C9 /* AppleScriptManager.swift in Sources */,
 				A79F78BC21F8A17900E2C184 /* TableRowView.swift in Sources */,
 				A791100422147903001C6761 /* CPlusPlusBridger.mm in Sources */,
@@ -470,6 +496,7 @@
 					"/usr/local/lib/libboost_atomic-mt.a",
 					"/Users/mikhaillutskiy/openssl-install/lib/libssl.a",
 					/usr/lib/libc.dylib,
+					libkaitai_struct_cpp_stl_runtime.a,
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = ru.lwts.KeyManager;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -540,6 +567,7 @@
 					"/usr/local/lib/libboost_atomic-mt.a",
 					"/Users/mikhaillutskiy/openssl-install/lib/libssl.a",
 					/usr/lib/libc.dylib,
+					libkaitai_struct_cpp_stl_runtime.a,
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = ru.lwts.KeyManager;
 				PRODUCT_NAME = "$(TARGET_NAME)";

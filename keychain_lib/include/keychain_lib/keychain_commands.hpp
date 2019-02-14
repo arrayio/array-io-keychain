@@ -529,7 +529,10 @@ struct keychain_command<command_te::sign_hex> : keychain_command_base
         auto iter = [&it, &signatures]() { assert(it < signatures.end()); return *it++;};
         for (auto& a : trx_info.vins)
         {
-            auto sig = iter().hex();
+            auto sig_b = iter();
+            auto sig = sig_b.hex();
+            std::string r =sig.substr(0, 64), s = sig.substr(64, 64);
+
             trx += a.txid;
             ss.str("");
             ss << std::setw(8) << ntohl(a.output_id);
@@ -537,6 +540,22 @@ struct keychain_command<command_te::sign_hex> : keychain_command_base
             ss.str("");
             uint8_t script_len = 0x6a, pushdata_sig = 0x47, header=0x30, sig_length=0x44, integer=2, r_length=0x20,
                     s_length=0x20, sig_hash_code=1, pushdata_pubkey=0x21;
+            if (sig_b[0] & 0x80)
+            {
+                script_len++;
+                pushdata_sig++;
+                sig_length++;
+                r_length++;
+                r.insert(0, "00");
+            }
+            if (sig_b[32] & 0x80)
+            {
+                script_len++;
+                pushdata_sig++;
+                sig_length++;
+                s_length++;
+                s.insert(0, "00");
+            }
             // script_len + signature DER-encoded + pub_key
             ss  << std::setw(2) << ((int) script_len)
                 << std::setw(2) << ((int) pushdata_sig)
@@ -544,10 +563,10 @@ struct keychain_command<command_te::sign_hex> : keychain_command_base
                 << std::setw(2) << ((int) sig_length)
                 << std::setw(2) << ((int) integer)
                 << std::setw(2) << ((int) r_length)
-                << sig.substr(0, 64)
+                << r
                 << std::setw(2) << ((int) integer)
                 << std::setw(2) << ((int) s_length)
-                << sig.substr(64, 64)
+                << s
                 << std::setw(2) << ((int) sig_hash_code)
                 << std::setw(2) << ((int) pushdata_pubkey)
                 << "03"+ dev::toPublic(private_key).hex().substr(0,64);

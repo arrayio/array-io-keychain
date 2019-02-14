@@ -3,3 +3,5 @@
 //
 
 #import "HexToRgbColor.h"
+
+#import "CPlusPlusBridger.h"

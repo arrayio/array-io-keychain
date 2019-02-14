@@ -23,8 +23,6 @@ class ViewController: NSViewController, NSTableViewDelegate, NSTableViewDataSour
     
     fileprivate enum CellIdentifiers {
         static let LocationCell = "locationId"
-        static let KeyFormatCell = "keyFormatId"
-        static let EncryptionCell = "encryptionId"
     }
     
     override func viewDidLoad() {
@@ -66,12 +64,6 @@ class ViewController: NSViewController, NSTableViewDelegate, NSTableViewDataSour
         if tableColumn == tableView.tableColumns[0] {
             text = item.fullKeyName
             cellIdentifier = CellIdentifiers.LocationCell
-        } else if tableColumn == tableView.tableColumns[1] {
-            text = item.description
-            cellIdentifier = CellIdentifiers.KeyFormatCell
-        } else if tableColumn == tableView.tableColumns[2] {
-            text = item.creationDate
-            cellIdentifier = CellIdentifiers.EncryptionCell
         }
         
         // 3
@@ -84,7 +76,8 @@ class ViewController: NSViewController, NSTableViewDelegate, NSTableViewDataSour
     }
         
     func numberOfRows(in tableView: NSTableView) -> Int {
-        return KeyManager.shared.keys.count
+        return CPlusPlusBridger().getKeyfilesCount()
+//        return KeyManager.shared.keys.count
     }
     
     @objc func websocketStatus() {

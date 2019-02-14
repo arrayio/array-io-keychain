@@ -16,7 +16,13 @@
 		A776F4B821D39AB7006736C9 /* String+extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = A776F4B721D39AB7006736C9 /* String+extension.swift */; };
 		A776F4BA21D3A78A006736C9 /* AppleScriptManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A776F4B921D3A78A006736C9 /* AppleScriptManager.swift */; };
 		A776F4BC21D3A7F8006736C9 /* WebsocketChecker.swift in Sources */ = {isa = PBXBuildFile; fileRef = A776F4BB21D3A7F8006736C9 /* WebsocketChecker.swift */; };
-		A79F78BA21F89D0400E2C184 /* HexToRgbColor.m in Sources */ = {isa = PBXBuildFile; fileRef = A79F78B921F89D0400E2C184 /* HexToRgbColor.m */; };
+		A7910FF922146DC7001C6761 /* libkeychain_common.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A7910FF822146DC7001C6761 /* libkeychain_common.a */; };
+		A7910FFB22146DDE001C6761 /* libfc_light.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A7910FFA22146DDE001C6761 /* libfc_light.a */; };
+		A7910FFD22146DE8001C6761 /* libeth-crypto.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A7910FFC22146DE8001C6761 /* libeth-crypto.a */; };
+		A7910FFF22146DF7001C6761 /* libethash.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A7910FFE22146DF7001C6761 /* libethash.a */; };
+		A791100122146E04001C6761 /* libsecp256k1.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A791100022146E04001C6761 /* libsecp256k1.a */; };
+		A791100422147903001C6761 /* CPlusPlusBridger.mm in Sources */ = {isa = PBXBuildFile; fileRef = A791100322147903001C6761 /* CPlusPlusBridger.mm */; };
+		A79F78BA21F89D0400E2C184 /* HexToRgbColor.mm in Sources */ = {isa = PBXBuildFile; fileRef = A79F78B921F89D0400E2C184 /* HexToRgbColor.mm */; };
 		A79F78BC21F8A17900E2C184 /* TableRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A79F78BB21F8A17900E2C184 /* TableRowView.swift */; };
 		AD6703CBBAA6B5EB11907AA8 /* Pods_KeyManager.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 130888C1592515A58F013398 /* Pods_KeyManager.framework */; };
 /* End PBXBuildFile section */
@@ -37,9 +43,16 @@
 		A776F4B721D39AB7006736C9 /* String+extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+extension.swift"; sourceTree = "<group>"; };
 		A776F4B921D3A78A006736C9 /* AppleScriptManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppleScriptManager.swift; sourceTree = "<group>"; };
 		A776F4BB21D3A7F8006736C9 /* WebsocketChecker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebsocketChecker.swift; sourceTree = "<group>"; };
+		A7910FF822146DC7001C6761 /* libkeychain_common.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libkeychain_common.a; sourceTree = "<group>"; };
+		A7910FFA22146DDE001C6761 /* libfc_light.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libfc_light.a; sourceTree = "<group>"; };
+		A7910FFC22146DE8001C6761 /* libeth-crypto.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = "libeth-crypto.a"; sourceTree = "<group>"; };
+		A7910FFE22146DF7001C6761 /* libethash.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libethash.a; sourceTree = "<group>"; };
+		A791100022146E04001C6761 /* libsecp256k1.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libsecp256k1.a; sourceTree = "<group>"; };
+		A791100222147903001C6761 /* CPlusPlusBridger.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CPlusPlusBridger.h; sourceTree = "<group>"; };
+		A791100322147903001C6761 /* CPlusPlusBridger.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = CPlusPlusBridger.mm; sourceTree = "<group>"; };
 		A79F78B721F89D0300E2C184 /* KeyManager-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "KeyManager-Bridging-Header.h"; sourceTree = "<group>"; };
 		A79F78B821F89D0400E2C184 /* HexToRgbColor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HexToRgbColor.h; sourceTree = "<group>"; };
-		A79F78B921F89D0400E2C184 /* HexToRgbColor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HexToRgbColor.m; sourceTree = "<group>"; };
+		A79F78B921F89D0400E2C184 /* HexToRgbColor.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = HexToRgbColor.mm; sourceTree = "<group>"; };
 		A79F78BB21F8A17900E2C184 /* TableRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TableRowView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -48,7 +61,12 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A7910FFD22146DE8001C6761 /* libeth-crypto.a in Frameworks */,
+				A7910FF922146DC7001C6761 /* libkeychain_common.a in Frameworks */,
+				A791100122146E04001C6761 /* libsecp256k1.a in Frameworks */,
 				AD6703CBBAA6B5EB11907AA8 /* Pods_KeyManager.framework in Frameworks */,
+				A7910FFF22146DF7001C6761 /* libethash.a in Frameworks */,
+				A7910FFB22146DDE001C6761 /* libfc_light.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -97,8 +115,10 @@
 				A776F4B121D0E66B006736C9 /* KeyManager.swift */,
 				A776F4B721D39AB7006736C9 /* String+extension.swift */,
 				A776F4B921D3A78A006736C9 /* AppleScriptManager.swift */,
+				A791100222147903001C6761 /* CPlusPlusBridger.h */,
+				A791100322147903001C6761 /* CPlusPlusBridger.mm */,
 				A79F78B821F89D0400E2C184 /* HexToRgbColor.h */,
-				A79F78B921F89D0400E2C184 /* HexToRgbColor.m */,
+				A79F78B921F89D0400E2C184 /* HexToRgbColor.mm */,
 				A79F78B721F89D0300E2C184 /* KeyManager-Bridging-Header.h */,
 			);
 			path = KeyManager;
@@ -107,6 +127,11 @@
 		F73689D206923AF1FA7A3A0E /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				A791100022146E04001C6761 /* libsecp256k1.a */,
+				A7910FFE22146DF7001C6761 /* libethash.a */,
+				A7910FFC22146DE8001C6761 /* libeth-crypto.a */,
+				A7910FF822146DC7001C6761 /* libkeychain_common.a */,
+				A7910FFA22146DDE001C6761 /* libfc_light.a */,
 				130888C1592515A58F013398 /* Pods_KeyManager.framework */,
 			);
 			name = Frameworks;
@@ -124,6 +149,7 @@
 				A776F49921D0DD95006736C9 /* Frameworks */,
 				A776F49A21D0DD95006736C9 /* Resources */,
 				4E78683ECFE60E4C180EB408 /* [CP] Embed Pods Frameworks */,
+				A78BBE0B2209B2FC007A5BB4 /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -217,6 +243,23 @@
 			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-KeyManager/Pods-KeyManager-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
+		A78BBE0B2209B2FC007A5BB4 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\n";
+		};
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -228,11 +271,12 @@
 				A776F4BC21D3A7F8006736C9 /* WebsocketChecker.swift in Sources */,
 				A776F4B821D39AB7006736C9 /* String+extension.swift in Sources */,
 				A776F4A021D0DD95006736C9 /* AppDelegate.swift in Sources */,
-				A79F78BA21F89D0400E2C184 /* HexToRgbColor.m in Sources */,
+				A79F78BA21F89D0400E2C184 /* HexToRgbColor.mm in Sources */,
 				A776F4B021D0DF58006736C9 /* KeyFileModel.swift in Sources */,
 				A776F4B221D0E66B006736C9 /* KeyManager.swift in Sources */,
 				A776F4BA21D3A78A006736C9 /* AppleScriptManager.swift in Sources */,
 				A79F78BC21F8A17900E2C184 /* TableRowView.swift in Sources */,
+				A791100422147903001C6761 /* CPlusPlusBridger.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -370,16 +414,62 @@
 			baseConfigurationReference = 9E7F5FE43CEBFF8FE8BEDA2F /* Pods-KeyManager.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_CXX_LANGUAGE_STANDARD = "c++17";
+				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = KeyManager/KeyManager.entitlements;
 				CODE_SIGN_IDENTITY = "Mac Developer";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = 8YBKQD6YZD;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				HEADER_SEARCH_PATHS = (
+					../keychain_lib/include,
+					"../libraries/eth-crypto/include",
+					../libraries/fc_light/include,
+					../libraries/secp256k1/include,
+					/usr/local/include,
+					"/Users/mikhaillutskiy/openssl-install/include",
+					../libraries/secp256k1_ext/include,
+					../libraries/kaitai_struct_cpp_stl_runtime,
+				);
 				INFOPLIST_FILE = KeyManager/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+				);
+				OTHER_CPLUSPLUSFLAGS = (
+					"$(OTHER_CFLAGS)",
+					"-std=c++14",
+					"-v",
+				);
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-framework",
+					"\"ObjectMapper\"",
+					libsecp256k1.a,
+					"/usr/local/lib/libboost_log-mt.a",
+					"/usr/local/lib/libboost_date_time-mt.a",
+					"/usr/local/lib/libboost_system-mt.a",
+					"/usr/local/lib/libboost_filesystem-mt.a",
+					"/usr/local/lib/libboost_program_options-mt.a",
+					"/usr/local/lib/libboost_serialization-mt.a",
+					"/usr/local/lib/libboost_chrono-mt.a",
+					"/usr/local/lib/libboost_unit_test_framework-mt.a",
+					"/usr/local/lib/libboost_locale-mt.a",
+					"/usr/local/lib/libboost_thread-mt.a",
+					"/usr/local/lib/libboost_exception-mt.a",
+					"/Users/mikhaillutskiy/openssl-install/lib/libcrypto.a",
+					"/usr/local/lib/libboost_iostreams-mt.a",
+					"/usr/local/lib/libboost_log_setup-mt.a",
+					"/usr/local/lib/libboost_regex-mt.a",
+					"/usr/local/lib/libboost_atomic-mt.a",
+					"/Users/mikhaillutskiy/openssl-install/lib/libssl.a",
+					/usr/lib/libc.dylib,
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = ru.lwts.KeyManager;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -395,16 +485,61 @@
 			baseConfigurationReference = 188A215C60F625DB886DF7B7 /* Pods-KeyManager.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_CXX_LANGUAGE_STANDARD = "c++17";
+				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = KeyManager/KeyManager.entitlements;
 				CODE_SIGN_IDENTITY = "Mac Developer";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = 8YBKQD6YZD;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				HEADER_SEARCH_PATHS = (
+					../keychain_lib/include,
+					"../libraries/eth-crypto/include",
+					../libraries/fc_light/include,
+					../libraries/secp256k1/include,
+					/usr/local/include,
+					"/Users/mikhaillutskiy/openssl-install/include",
+					../libraries/secp256k1_ext/include,
+					../libraries/kaitai_struct_cpp_stl_runtime,
+				);
 				INFOPLIST_FILE = KeyManager/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+				);
+				OTHER_CPLUSPLUSFLAGS = (
+					"$(OTHER_CFLAGS)",
+					"-std=c++14",
+				);
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-framework",
+					"\"ObjectMapper\"",
+					libsecp256k1.a,
+					"/usr/local/lib/libboost_log-mt.a",
+					"/usr/local/lib/libboost_date_time-mt.a",
+					"/usr/local/lib/libboost_system-mt.a",
+					"/usr/local/lib/libboost_filesystem-mt.a",
+					"/usr/local/lib/libboost_program_options-mt.a",
+					"/usr/local/lib/libboost_serialization-mt.a",
+					"/usr/local/lib/libboost_chrono-mt.a",
+					"/usr/local/lib/libboost_unit_test_framework-mt.a",
+					"/usr/local/lib/libboost_locale-mt.a",
+					"/usr/local/lib/libboost_thread-mt.a",
+					"/usr/local/lib/libboost_exception-mt.a",
+					"/Users/mikhaillutskiy/openssl-install/lib/libcrypto.a",
+					"/usr/local/lib/libboost_iostreams-mt.a",
+					"/usr/local/lib/libboost_log_setup-mt.a",
+					"/usr/local/lib/libboost_regex-mt.a",
+					"/usr/local/lib/libboost_atomic-mt.a",
+					"/Users/mikhaillutskiy/openssl-install/lib/libssl.a",
+					/usr/lib/libc.dylib,
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = ru.lwts.KeyManager;
 				PRODUCT_NAME = "$(TARGET_NAME)";

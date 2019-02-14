@@ -46,7 +46,7 @@ class KeyManager {
                                          description: keyModel?.description ?? "",
                                          publicKey: keyModel?.keyInfo.publicKey ?? "",
                                          location: "/var/keychain/key_data/" + key,
-                                         cipherType: keyModel?.keyInfo.privKeyData.cipherType ?? "",
+                                         cipherType: keyModel?.keyInfo.privKeyData != nil ? keyModel?.keyInfo.privKeyData.cipherType ?? "" : "",
                                          creationDate: String(describing: fileAttr[FileAttributeKey.creationDate] as! Date),
                                          keychainVersion: keyModel?.keychainVersion ?? "",
                                          curveType: keyModel?.keyInfo.curveType ?? "")

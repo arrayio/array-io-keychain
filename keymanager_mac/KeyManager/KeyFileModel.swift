@@ -16,6 +16,8 @@ class KeyFileModel: Mappable {
     var description: String!
     var keychainVersion: String!
     var keyInfo: KeyInfoModel!
+    var creationTime: String!
+    var usageTime: String!
     
     required init?(map: Map) {
         
@@ -27,6 +29,8 @@ class KeyFileModel: Mappable {
         description <- map["description"]
         keychainVersion <- map["keychain_version"]
         keyInfo <- map["keyinfo"]
+        creationTime <- map["creation_time"]
+        usageTime <- map["usage_time"]
     }
 }
 

@@ -94,12 +94,12 @@ class keyfile_singleton
   void flush_keyfile_impl(const value_t& keyfile_data) const;
   void flush_logrecords_impl(const prim_key_type& key, const log_records_t& log_records) const;
   
-  void keydata_initialize();
-  void signlog_initialize();
-  
   void print_exception (const boost::filesystem::path& filename, fc_light::exception &er);
 public:
   static keyfile_singleton& instance();
+  
+  void keydata_load();
+  void signlog_load();
   
   using iterator = keyfile_map_t::iterator; //primary_index
   using const_iterator = keyfile_map_t::const_iterator; //primary_index

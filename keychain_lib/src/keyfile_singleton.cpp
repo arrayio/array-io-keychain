@@ -43,7 +43,7 @@ const keyfile_singleton::key_random_access_index_type& keyfile_singleton::random
   return m_keydata_map.get<keyfiles_map::key_random_access_tag>();
 }
 
-void keyfile_singleton::keydata_initialize()
+void keyfile_singleton::keydata_load()
 {
 //  auto curdir = bfs::current_path();
 
@@ -73,7 +73,7 @@ void keyfile_singleton::keydata_initialize()
   });
 }
 
-void keyfile_singleton::signlog_initialize()
+void keyfile_singleton::signlog_load()
 {
 //  auto curdir = bfs::current_path();
   bfs::path dir(SIGN_LOGS_DEFAULT_PATH_);
@@ -118,8 +118,8 @@ keyfile_singleton::keyfile_singleton()
   
   try
   {
-    keydata_initialize();
-    signlog_initialize();
+    keydata_load();
+    signlog_load();
   }
   FC_LIGHT_RETHROW_EXCEPTIONS(log_level::error, "Cannot create keyfiles map")
 }
@@ -179,7 +179,7 @@ const keyfile_format::keyfile_t& keyfile_singleton::operator[](size_t index)
     {
       if(stop == true)
         FC_LIGHT_THROW_EXCEPTION(fc_light::out_of_range_exception, "index = ${ind_}", ("ind_", index));
-      keydata_initialize();
+      keydata_load();
       bool stop = false;
     }
     return ra_ind[index];
@@ -195,7 +195,7 @@ const keyfile_format::keyfile_t& keyfile_singleton::operator[](const keyfile_sin
     {
       if(stop == true)
         FC_LIGHT_THROW_EXCEPTION(fc_light::key_not_found_exception, "Private key is not exist public = ${key_}", ("key_", key));
-      keydata_initialize();
+      keydata_load();
       stop = true;
     }
     return *it;
@@ -213,7 +213,7 @@ const keyfile_format::keyfile_t& keyfile_singleton::operator[](const keyfile_sin
       if(stop == true)
         FC_LIGHT_THROW_EXCEPTION(fc_light::key_not_found_exception, "Private key is not found by keyname = ${name_}",
                                  ("name_", key));
-      keydata_initialize();
+      keydata_load();
       stop = true;
     }
     return *it;
@@ -308,7 +308,7 @@ void keyfile_singleton::flush_all() const
 
 const keyfile_singleton::log_random_access_index_type& keyfile_singleton::get_logs(const dev::Public& pkey)
 {
-  signlog_initialize();//NOTE: it may be slowly, using sqlite and triggers is more preferable
+  signlog_load();//NOTE: it may be slowly, using sqlite and triggers is more preferable
   auto it = m_signlog_map.find(pkey);
   if (it == m_signlog_map.end())
     FC_LIGHT_THROW_EXCEPTION(fc_light::file_not_found_exception, "Public_key: ${PKEY}", ("PKEY", pkey));
@@ -318,7 +318,7 @@ const keyfile_singleton::log_random_access_index_type& keyfile_singleton::get_lo
 
 const keyfile_singleton::log_date_index_type& keyfile_singleton::get_logs_date_ordered(const dev::Public& pkey)
 {
-  signlog_initialize();//NOTE: it may be slowly, using sqlite and triggers is more preferable
+  signlog_load();//NOTE: it may be slowly, using sqlite and triggers is more preferable
   auto it = m_signlog_map.find(pkey);
   if (it == m_signlog_map.end())
     FC_LIGHT_THROW_EXCEPTION(fc_light::file_not_found_exception, "Public_key: ${PKEY}", ("PKEY", pkey));

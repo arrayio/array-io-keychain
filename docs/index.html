@@ -11,20 +11,18 @@
       color: white;
       font-weight: bold;
     }
-
     a:link {
       text-decoration: none;
     }
     a:visited {
       text-decoration: none;
     }
-    .page {
-      display: none;
+    label {
+      color: rgb(0, 104, 153);
+      line-height: 1.982;
+      text-align: left;
+      display: block
     }
-    .page-active {
-      display: block;
-    }
-
     body {
       margin: 0;
       font-family: -apple-system,system-ui,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",sans-serif;
@@ -33,7 +31,12 @@
       text-rendering: optimizeLegibility;
       color: white;
     }
-
+    .page {
+      display: none;
+    }
+    .page-active {
+      display: block;
+    }
     .container {
       display: grid;
       grid-template-columns: 1fr 1fr 1fr;
@@ -50,23 +53,19 @@
       grid-template-columns: 1fr 300px 1fr;
       justify-content: center;
     }
-
     .header-center-logo {
       align-self: end;
       justify-self: end;
     }
-
     .header-center {
       display: grid;
       grid-template-columns: 70px auto;
       grid-template-rows: 85px 46px;
     }
-
     .header-center-name {
       align-self: center;
       justify-self: center;
     }
-
     .header-center-bottom {
       align-self: center;
       justify-self: start;
@@ -151,13 +150,6 @@
     .warning_bottom_divider {
       background-color: rgb(209, 18, 80);
       grid-column: 1 / 4;
-    }
-
-    label {
-      color: rgb(0, 104, 153);
-      line-height: 1.982;
-      text-align: left;
-      display: block
     }
 
   </style>
@@ -284,13 +276,14 @@
   keychain.ws.onopen = function() {
     keychain.command({command: 'version'}, function(data) {
       document.getElementById('version').innerText = data.result ? data.result : '';
-    })
+    });
+    onHash(true);
   };
   keychain.ws.onclose = function() {
     document.getElementById('error').style.display = 'block';
   };
 
-  function onHash(e) {
+  function onHash(runRequestParam) {
     if(!window.location.hash) {
       return;
     }
@@ -306,7 +299,7 @@
 
       const request = fieldsToJson();
       document.getElementById('request').value = JSON.stringify(request, undefined, 2);
-      if (e) {
+      if (runRequestParam) {
         runRequest();
       }
     }
@@ -367,11 +360,10 @@
       runRequest();
       return null;
     });
-    onHash();
     const inputs = document.getElementsByClassName('param_field');
     for (let i=0; i<inputs.length; i++) {
-      inputs[i].addEventListener('keyup', function() { onHash() });
-      inputs[i].addEventListener('change', function() { onHash() });
+      inputs[i].addEventListener('keyup', function() { onHash(false) });
+      inputs[i].addEventListener('change', function() { onHash(false) });
     }
     document.getElementById('request').addEventListener('keyup', function () {
       jsonToFields();

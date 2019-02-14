@@ -394,6 +394,7 @@ keyfile_format::keyfile_t keychain_app::create_new_keyfile(
   keyfile.keychain_version = version_info::short_version();
   keyfile.filetype = keyfile_format::TYPE_KEY;
   keyfile.keyinfo.curve_type = curve;
+  return keyfile;
 }
 
 bool keychain_app::remove_unlock(const keyfile_format::keyfile_t& keyfile, get_password_f&& get_passwd)

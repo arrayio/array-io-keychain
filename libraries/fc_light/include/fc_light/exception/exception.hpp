@@ -106,6 +106,11 @@ namespace fc_light
           *   developers.
           */
          std::string to_detail_string( log_level ll = log_level::all )const;
+  
+         /**
+          *   Similar as to detail_string, just print output in json format
+          */
+         std::string to_detail_json_string( log_level ll = log_level::all )const;
 
          /**
           *   Generates a user-friendly error report.

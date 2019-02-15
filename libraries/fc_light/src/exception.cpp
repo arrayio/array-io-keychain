@@ -4,55 +4,59 @@
 #include <fc_light/log/logger.hpp>
 #include <fc_light/io/json.hpp>
 
+#include <fc_light/reflect/reflect.hpp>
+#include <fc_light/reflect/variant.hpp>
+
 #include <iostream>
 
-namespace fc_light
-{
-   FC_LIGHT_REGISTER_EXCEPTIONS(
-	   (json_parse_exception)
-     (rpc_command_parse_exception)
-     (command_not_implemented_exception)
-     (command_depreciated)
-     (password_input_exception)
-     (privkey_not_found_exception)
-     (privkey_invalid_unlock)
-     (internal_error_exception)
-     (timeout_exception)
-     (invalid_arg_exception)
-     (parse_error_exception)
-     (file_not_found_exception)
-     (key_not_found_exception)
-     (bad_cast_exception)
-     (assert_exception)
-     (encryption_exception)
-     (null_optional)
-     (overflow_exception)
-     (underflow_exception)
-     (divide_by_zero_exception)
-     (out_of_range_exception)
-     (eof_exception)
-  )
+namespace fc_light {
+FC_LIGHT_REGISTER_EXCEPTIONS(
+  (json_parse_exception)
+  (rpc_command_parse_exception)
+  (command_not_implemented_exception)
+  (command_depreciated)
+  (password_input_exception)
+  (privkey_not_found_exception)
+  (privkey_invalid_unlock)
+  (internal_error_exception)
+  (timeout_exception)
+  (invalid_arg_exception)
+  (parse_error_exception)
+  (file_not_found_exception)
+  (key_not_found_exception)
+  (bad_cast_exception)
+  (assert_exception)
+  (encryption_exception)
+  (null_optional)
+  (overflow_exception)
+  (underflow_exception)
+  (divide_by_zero_exception)
+  (out_of_range_exception)
+  (eof_exception)
+)
 
-   namespace detail
-   {
-      class exception_impl
-      {
-         public:
-            std::string     _name;
-            std::string     _what;
-            int64_t         _code;
-            log_messages    _elog;
-      };
-   }
+namespace detail {
+class exception_impl {
+public:
+  std::string name;
+  std::string what;
+  int64_t code;
+  log_messages elog;
+};
+}
+}
+FC_LIGHT_REFLECT(fc_light::detail::exception_impl, (name)(what)(code)(elog))
+
+namespace fc_light {
    exception::exception( log_messages&& msgs, int64_t code,
                                     const std::string& name_value,
                                     const std::string& what_value )
    :my( new detail::exception_impl() )
    {
-      my->_code = code;
-      my->_what = what_value;
-      my->_name = name_value;
-      my->_elog = fc_light::move(msgs);
+      my->code = code;
+      my->what = what_value;
+      my->name = name_value;
+      my->elog = fc_light::move(msgs);
    }
 
    exception::exception(
@@ -62,10 +66,10 @@ namespace fc_light
       const std::string& what_value )
    :my( new detail::exception_impl() )
    {
-      my->_code = code;
-      my->_what = what_value;
-      my->_name = name_value;
-      my->_elog = msgs;
+      my->code = code;
+      my->what = what_value;
+      my->name = name_value;
+      my->elog = msgs;
    }
 
    unhandled_exception::unhandled_exception( log_message&& m, std::exception_ptr e )
@@ -79,7 +83,7 @@ namespace fc_light
    }
    unhandled_exception::unhandled_exception( log_messages m )
    :exception()
-   { my->_elog = fc_light::move(m); }
+   { my->elog = fc_light::move(m); }
 
    std::exception_ptr unhandled_exception::get_inner_exception()const { return _inner; }
 
@@ -101,9 +105,9 @@ namespace fc_light
                          const std::string& what_value )
    :my( new detail::exception_impl() )
    {
-      my->_code = code;
-      my->_what = what_value;
-      my->_name = name_value;
+      my->code = code;
+      my->what = what_value;
+      my->name = name_value;
    }
 
    exception::exception( log_message&& msg,
@@ -112,10 +116,10 @@ namespace fc_light
                          const std::string& what_value )
    :my( new detail::exception_impl() )
    {
-      my->_code = code;
-      my->_what = what_value;
-      my->_name = name_value;
-      my->_elog.push_back( fc_light::move( msg ) );
+      my->code = code;
+      my->what = what_value;
+      my->name = name_value;
+      my->elog.push_back( fc_light::move( msg ) );
    }
    exception::exception( const exception& c )
    :my( new detail::exception_impl(*c.my) )
@@ -123,9 +127,9 @@ namespace fc_light
    exception::exception( exception&& c )
    :my( fc_light::move(c.my) ){}
 
-   const char*  exception::name()const throw() { return my->_name.c_str(); }
-   const char*  exception::what()const throw() { return my->_what.c_str(); }
-   int64_t      exception::code()const throw() { return my->_code;         }
+   const char*  exception::name()const throw() { return my->name.c_str(); }
+   const char*  exception::what()const throw() { return my->what.c_str(); }
+   int64_t      exception::code()const throw() { return my->code;         }
 
    exception::~exception(){}
 
@@ -141,19 +145,19 @@ namespace fc_light
    {
       auto obj = v.get_object();
       if( obj.contains( "stack" ) )
-         ll.my->_elog =  obj["stack"].as<log_messages>();
+         ll.my->elog =  obj["stack"].as<log_messages>();
       if( obj.contains( "code" ) )
-         ll.my->_code = obj["code"].as_int64();
+         ll.my->code = obj["code"].as_int64();
       if( obj.contains( "name" ) )
-         ll.my->_name = obj["name"].as_string();
+         ll.my->name = obj["name"].as_string();
       if( obj.contains( "message" ) )
-         ll.my->_what = obj["message"].as_string();
+         ll.my->what = obj["message"].as_string();
    }
 
-   const log_messages&   exception::get_log()const { return my->_elog; }
+   const log_messages&   exception::get_log()const { return my->elog; }
    void                  exception::append_log( log_message m )
    {
-      my->_elog.emplace_back( fc_light::move(m) );
+      my->elog.emplace_back( fc_light::move(m) );
    }
 
    /**
@@ -164,16 +168,21 @@ namespace fc_light
    string exception::to_detail_string( log_level ll )const
    {
       fc_light::stringstream ss;
-      ss << variant(my->_code).as_string() <<" " << my->_name << ": " <<my->_what<<"\n";
-      for( auto itr = my->_elog.begin(); itr != my->_elog.end();  )
+      ss << variant(my->code).as_string() <<" " << my->name << ": " <<my->what<<"\n";
+      for( auto itr = my->elog.begin(); itr != my->elog.end();  )
       {
          ss << itr->get_message() <<"\n"; //fc_light::format_string( itr->get_format(), itr->get_data() ) <<"\n";
          ss << "    " << json::to_string( itr->get_data() )<<"\n";
          ss << "    " << itr->get_context().to_string();
          ++itr;
-         if( itr != my->_elog.end() ) ss<<"\n";
+         if( itr != my->elog.end() ) ss<<"\n";
       }
       return ss.str();
+   }
+
+   std::string exception::to_detail_json_string( log_level ll )const
+   {
+     return fc_light::json::to_pretty_string(my);
    }
 
    /**
@@ -182,9 +191,9 @@ namespace fc_light
    string exception::to_string( log_level ll )const
    {
       fc_light::stringstream ss;
-      ss << what() << ":";
+      ss << exception::what() << ":";
       bool first_occur = true;
-      for( auto itr = my->_elog.begin(); itr != my->_elog.end(); ++itr )
+      for( auto itr = my->elog.begin(); itr != my->elog.end(); ++itr )
       {
         if (first_occur)
         {
@@ -278,3 +287,5 @@ namespace fc_light
    bool enable_record_assert_trip = false;
 
 } // fc
+
+

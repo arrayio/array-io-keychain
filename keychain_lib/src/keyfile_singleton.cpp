@@ -47,7 +47,7 @@ void keyfile_singleton::keydata_load()
 {
 #if defined(macintosh) || defined(__APPLE__) || defined(__APPLE_CC__)
   auto key_dir = bfs::path(getenv("HOME"));
-  key_dir += bfs::path(KEY_DEFAULT_PATH_);
+  key_dir += bfs::path("/"KEY_DEFAULT_PATH_);
 #else
   bfs::path key_dir(KEY_DEFAULT_PATH_);
 #endif
@@ -80,7 +80,7 @@ void keyfile_singleton::signlog_load()
 {
 #if defined(macintosh) || defined(__APPLE__) || defined(__APPLE_CC__)
   auto dir = bfs::path(getenv("HOME"));
-  dir += bfs::path(SIGN_LOGS_DEFAULT_PATH_);
+  dir += bfs::path("/"SIGN_LOGS_DEFAULT_PATH_);
 #else
   bfs::path dir(SIGN_LOGS_DEFAULT_PATH_);
 #endif
@@ -263,7 +263,7 @@ void keyfile_singleton::flush_keyfile_impl(const value_t& keyfile_data) const
 {
 #if defined(macintosh) || defined(__APPLE__) || defined(__APPLE_CC__)
   auto filepath = bfs::path(getenv("HOME"));
-  filepath += bfs::path(KEY_DEFAULT_PATH_"/");
+  filepath += bfs::path("/"KEY_DEFAULT_PATH_"/");
 #else
   bfs::path filepath(KEY_DEFAULT_PATH_"/");
 #endif
@@ -289,9 +289,9 @@ void keyfile_singleton::flush_logrecords_impl(const prim_key_type& key, const lo
 {
 #if defined(macintosh) || defined(__APPLE__) || defined(__APPLE_CC__)
   auto filepath = bfs::path(getenv("HOME"));
-  filepath += bfs::path(KEY_DEFAULT_PATH_"/");
+  filepath += bfs::path(SIGN_LOGS_DEFAULT_PATH_"/");
 #else
-  bfs::path filepath(KEY_DEFAULT_PATH_"/");
+  bfs::path filepath(SIGN_LOGS_DEFAULT_PATH_"/");
 #endif
   keyfile_format::signlog_file_t logfile;
   logfile.public_key = key;
@@ -310,7 +310,7 @@ void keyfile_singleton::flush_all() const
 {
 #if defined(macintosh) || defined(__APPLE__) || defined(__APPLE_CC__)
   auto keyfile_dir = bfs::path(getenv("HOME"));
-  keyfile_dir += bfs::path(KEY_DEFAULT_PATH_);
+  keyfile_dir += bfs::path("/"KEY_DEFAULT_PATH_);
 #else
   bfs::path keyfile_dir(KEY_DEFAULT_PATH_);
 #endif

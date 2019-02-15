@@ -1,4 +1,6 @@
 #include "RawHashWidget.h"
+#include "widget_singleton.h"
+
 
 RawHashWidget::RawHashWidget(Transaction &transaction, QWidget * parent)
 	:KeychainWidget(parent)
@@ -8,42 +10,28 @@ RawHashWidget::RawHashWidget(Transaction &transaction, QWidget * parent)
 	QString valueStyle("font:16px \"Segoe UI\";background:transparent;color:rgb(123,141,167);");
 	QString labelStyle("font:16px \"Segoe UI\";background:transparent;");
 
-	secmod_parser_f cmd_parse;
-	auto cmd_type = cmd_parse(transaction.getTransactionText().toStdString());
-
 	namespace sm_cmd = keychain_app::secmod_commands;
-	std::string tx_hash, tx_from;
-	sm_cmd::transaction_view<sm_cmd::blockchain_secmod_te::ethereum>::type eth_trx;
-	switch (cmd_type)
-	{
-		case sm_cmd::events_te::sign_hash:
-		{
-			auto cmd = cmd_parse.params<sm_cmd::events_te::sign_hash>();
-			tx_hash = cmd.hash;
-			tx_from = cmd.from;
-			break;
-		}
-	}
+	using event_ptr = event_singleton<sm_cmd::secmod_event<sm_cmd::events_te::sign_hash>::params_t>;
 
 	from = new SecureWindowElement(this);
-	from->SetLabelAndValue("From", QString::fromStdString(tx_from));
+	from->SetLabelAndValue("From", QString::fromStdString(event_ptr::shared.get()->from));
 	from->SetLabelStyle(labelStyle);
 	from->SetValueStyle(valueStyle);
 
 	QFont fromFont = from->font();
 	fromFont.setPixelSize(16);
 	fromFont.setFamily("Segoe UI");
-	QString fromStr = QString::fromStdString(tx_from);
+	QString fromStr = QString::fromStdString(event_ptr::shared.get()->from);
 
 	QFontMetrics fromFM(fromFont);
 	int fromWidth = fromFM.width(fromStr);
 
 	hash = new SecureWindowElement(this);
-	hash->SetLabelAndValue("Hash", QString::fromStdString(tx_hash));
+	hash->SetLabelAndValue("Hash", QString::fromStdString(event_ptr::shared.get()->hash));
 	hash->SetLabelStyle(labelStyle);
 	hash->SetValueStyle(valueStyle);
 	QFont hashFont = hash->font();
-	QString hashStr = QString::fromStdString(tx_hash);
+	QString hashStr = QString::fromStdString(event_ptr::shared.get()->hash);
 	QFontMetrics hashFM(fromFont);
 	int hashWidth = hashFM.width(hashStr);
 	if (hashWidth >= fromWidth)

@@ -1,4 +1,5 @@
 #include "UnparsedTransactionWidget.h"
+#include "widget_singleton.h"
 
 
 UnparsedTransactionWidget::UnparsedTransactionWidget(Transaction &transaction, QWidget * parent)
@@ -9,28 +10,17 @@ UnparsedTransactionWidget::UnparsedTransactionWidget(Transaction &transaction, Q
 	QString valueStyle("font:16px \"Segoe UI\";background:transparent;color:rgb(123,141,167);");
 	QString labelStyle("font:16px \"Segoe UI\";background:transparent;");
 
-    namespace sm_cmd = keychain_app::secmod_commands;
-    secmod_parser_f cmd_parse;
-    auto cmd_type = cmd_parse(transaction.getTransactionText().toStdString());
-    std::string rawtx;
-    int unlock_time;
-    switch (cmd_type)
-    {
-        case sm_cmd::events_te::sign_hex:
-        {
-            auto cmd = cmd_parse.params<sm_cmd::events_te::sign_hex>();
-            rawtx = sm_cmd::to_expert_mode_string(cmd);
-            unlock_time = cmd.unlock_time;
-            break;
-        }
-    }
+	namespace sm_cmd = keychain_app::secmod_commands;
+	using event_ptr = event_singleton<sm_cmd::secmod_event<sm_cmd::events_te::sign_hex>::params_t>;
 
 	expertModeElement = new ExpertModeElement(this);
-	expertModeElement->SetExpertModeText(QString::fromStdString(rawtx));
+	expertModeElement->SetExpertModeText(QString::fromStdString(
+			sm_cmd::to_expert_mode_string(*event_ptr::shared.get())
+	));
 
-	if (unlock_time > 0) {
+	if (event_ptr::shared.get()->unlock_time > 0) {
 		unlockTime = new PrivateKeyInMemory(this);
-		unlockTime->SetTime(QString::number(unlock_time));
+		unlockTime->SetTime(QString::number(event_ptr::shared.get()->unlock_time));
 	}
 }
 

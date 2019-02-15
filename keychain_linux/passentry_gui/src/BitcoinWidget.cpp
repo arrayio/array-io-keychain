@@ -1,4 +1,6 @@
 #include "BitcoinWidget.h"
+#include "widget_singleton.h"
+
 
 
 BitcoinWidget::BitcoinWidget(Transaction &transaction, QWidget * parent)
@@ -28,32 +30,29 @@ BitcoinWidget::BitcoinWidget(Transaction &transaction, QWidget * parent)
 	//	(*(from+i))->SetLabelAndValue("From", "fdsfsdfsdfsdfsdfdffafdafasdf");
 
 	//}
-	secmod_parser_f cmd_parse;
-	auto cmd_type = cmd_parse(transaction.getTransactionText().toStdString());
-/*
+	namespace sm_cmd = keychain_app::secmod_commands;
+	using event_ptr = event_singleton<sm_cmd::secmod_event<sm_cmd::events_te::sign_hex>::params_t>;
+	auto trx = event_ptr::shared.get()->get_trx_view<sm_cmd::blockchain_secmod_te::bitcoin>();
 
-	auto bitcoin_trx = cmd_parse.to_bitcoin();
-	auto bitcoin_data = bitcoin_trx.trx_info;
-	
-	num_vouts = bitcoin_data.num_vouts;//chech num of vouts
 	bool overflow = false;
+	num_vouts = trx.trx_info.num_vouts;
 	if (num_vouts > 15) {
 		num_vouts = 15;
 		overflow = true;
 	}
 
-	if (bitcoin_data.num_vouts >= 1) {
+	if (num_vouts >= 1) {
 		//auto vout1 = bitcoin_data.vouts[0];
 		from = new SecureWindowElement(this);
 		from->SetLabelStyle(labelStyle);
 		from->SetValueStyle(valueStyle);
-		from->SetLabelAndValue("From", QString::fromStdString(bitcoin_trx.from));
+		from->SetLabelAndValue("From", QString::fromStdString(trx.from));
 
 		to = new SecureWindowElement*[num_vouts];
 		amount = new SecureWindowElement*[num_vouts];
 		
 		for (int i = 0; i < num_vouts; i++) {
-			auto vout1 = bitcoin_data.vouts[i];
+			auto vout1 = trx.trx_info.vouts[i];
 			*(to + i) = new SecureWindowElement(this);
 			(*(to + i))->SetLabelStyle(labelStyle);
 			(*(to + i))->SetValueStyle(valueStyle);
@@ -66,10 +65,10 @@ BitcoinWidget::BitcoinWidget(Transaction &transaction, QWidget * parent)
 		}
 	}
 
-	if (cmd_parse.unlock_time() > 0) {
+	if (event_ptr::shared.get()->unlock_time > 0) {
 		unlockTime = new PrivateKeyInMemory(this);
 
-		unlockTime->SetTime(QString::number(cmd_parse.unlock_time()));
+		unlockTime->SetTime(QString::number(event_ptr::shared.get()->unlock_time));
 	}
 
 	if (overflow) {
@@ -82,8 +81,9 @@ BitcoinWidget::BitcoinWidget(Transaction &transaction, QWidget * parent)
 		connect(lookAll, &QPushButton::clicked, this, &BitcoinWidget::lookUpAll);
 	}
 	expertModeElement = new ExpertModeElement(this);
-	expertModeElement->SetExpertModeText(QString::fromStdString(cmd_parse.to_expert_mode_string()));
- */
+	expertModeElement->SetExpertModeText(QString::fromStdString(
+			sm_cmd::to_expert_mode_string(*event_ptr::shared.get())
+	));
 }
 
 void BitcoinWidget::SetPosition(int x, int y, int width)
@@ -94,7 +94,7 @@ void BitcoinWidget::SetPosition(int x, int y, int width)
 	from->SetPosition(0, currentHeight, 116, width);
 	from->move(0, currentHeight);
 	currentHeight += 26;
-	
+
 	for (int i = 0; i < num_vouts; i++) {
 		(*(to+i))->SetPosition(0, currentHeight, 116, width*0.75);
 		(*(to+i))->move(0, currentHeight);

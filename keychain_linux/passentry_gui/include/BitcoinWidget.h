@@ -36,7 +36,6 @@ private:
 	int currentWidth = 0;
 	int inElementCount = 0;
 	int outElementCount = 0;
-	int num_vins = 0;
 	int num_vouts = 0;
 
 public slots:

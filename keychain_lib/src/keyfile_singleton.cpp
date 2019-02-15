@@ -60,7 +60,7 @@ void keyfile_singleton::keydata_load()
                                      "Can not create key directory, path = ${directory}", ("directory", key_dir.string()));
   }
 
-  auto first = bfs::directory_iterator(bfs::path(KEY_DEFAULT_PATH_));
+  auto first = bfs::directory_iterator(key_dir);
   std::for_each(first, bfs::directory_iterator(), [this](const auto& unit) {
     try {
       fc_light::variant j_keyfile = open_keyfile(unit.path().c_str());
@@ -80,7 +80,7 @@ void keyfile_singleton::signlog_load()
 {
 #if defined(macintosh) || defined(__APPLE__) || defined(__APPLE_CC__)
   auto dir = bfs::path(getenv("HOME"));
-  key_dir += bfs::path(SIGN_LOGS_DEFAULT_PATH_);
+  dir += bfs::path(SIGN_LOGS_DEFAULT_PATH_);
 #else
   bfs::path dir(SIGN_LOGS_DEFAULT_PATH_);
 #endif
@@ -93,7 +93,7 @@ void keyfile_singleton::signlog_load()
                                      "Can not create sign_logs directory, path = ${directory}", ("directory", dir.string()));
   }
 
-  auto first = bfs::directory_iterator(bfs::path(SIGN_LOGS_DEFAULT_PATH_));
+  auto first = bfs::directory_iterator(dir);
   std::for_each(first, bfs::directory_iterator(), [this](const auto& unit) {
     try {
       fc_light::variant j_keyfile = open_keyfile(unit.path().c_str());
@@ -315,11 +315,11 @@ void keyfile_singleton::flush_all() const
   bfs::path keyfile_dir(KEY_DEFAULT_PATH_);
 #endif
   auto first = bfs::directory_iterator(keyfile_dir);
-  std::for_each(m_keydata_map.begin(), m_keydata_map.end(), [first](const auto& keyfile_data) {
+  std::for_each(m_keydata_map.begin(), m_keydata_map.end(), [first, &keyfile_dir](const auto& keyfile_data) {
     auto hash = dev::openssl::sha3(keyfile_data.keyinfo.public_key);
     auto filename = hash.hex().substr(0, 16);
     filename += ".json";
-    bfs::path filepath(std::string(KEY_DEFAULT_PATH_"/") + std::string(filename));
+    bfs::path filepath = keyfile_dir.c_str() + std::string(filename);
     auto fout = std::ofstream(filepath.c_str());
     if (!fout.is_open())
       FC_LIGHT_THROW_EXCEPTION(fc_light::internal_error_exception, "Cannot open keyfile (${filename})", ("filename", filename));

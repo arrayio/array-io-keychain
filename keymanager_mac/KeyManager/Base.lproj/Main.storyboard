@@ -691,10 +691,8 @@
                         <rect key="screenRect" x="0.0" y="0.0" width="1680" height="1027"/>
                         <toolbar key="toolbar" implicitIdentifier="747ED64E-C468-46A7-A942-11B418462F9D" autosavesConfiguration="NO" displayMode="iconAndLabel" sizeMode="regular" id="RCp-d5-Ugv">
                             <allowedToolbarItems>
-                                <toolbarItem implicitItemIdentifier="C5D97D6E-99B0-4894-BE4F-580CF072235F" label="Create Key" paletteLabel="Create Key" image="NSAddTemplate" id="OQ8-Pg-XIl">
+                                <toolbarItem implicitItemIdentifier="C5D97D6E-99B0-4894-BE4F-580CF072235F" label="Create Key" paletteLabel="Create Key" image="NSAddTemplate" sizingBehavior="auto" id="OQ8-Pg-XIl">
                                     <nil key="toolTip"/>
-                                    <size key="minSize" width="53" height="32"/>
-                                    <size key="maxSize" width="82" height="32"/>
                                     <button key="view" verticalHuggingPriority="750" id="20X-XO-4VU">
                                         <rect key="frame" x="6" y="14" width="53" height="32"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
@@ -707,9 +705,33 @@
                                         </connections>
                                     </button>
                                 </toolbarItem>
+                                <toolbarItem implicitItemIdentifier="979D5B77-CDB5-487D-A3DC-62C8968F0D96" label="Remove Key" paletteLabel="Custom View" image="NSRemoveTemplate" sizingBehavior="auto" id="Eh1-oq-Wgh">
+                                    <nil key="toolTip"/>
+                                    <button key="view" verticalHuggingPriority="750" id="dGj-Wp-Jhz">
+                                        <rect key="frame" x="12" y="14" width="52" height="32"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                        <buttonCell key="cell" type="push" bezelStyle="rounded" image="NSRemoveTemplate" imagePosition="overlaps" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="1ib-Hj-OM2">
+                                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                            <font key="font" metaFont="system"/>
+                                        </buttonCell>
+                                    </button>
+                                </toolbarItem>
+                                <toolbarItem implicitItemIdentifier="0855E614-B69C-4640-A57B-3995879551CB" label="Edit Key" paletteLabel="Edit Key" sizingBehavior="auto" id="N9c-MQ-GAs">
+                                    <nil key="toolTip"/>
+                                    <button key="view" verticalHuggingPriority="750" id="jYZ-xy-uQj">
+                                        <rect key="frame" x="0.0" y="14" width="82" height="32"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                        <buttonCell key="cell" type="push" title="Button" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="7fH-rS-voc">
+                                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                            <font key="font" metaFont="system"/>
+                                        </buttonCell>
+                                    </button>
+                                </toolbarItem>
                             </allowedToolbarItems>
                             <defaultToolbarItems>
                                 <toolbarItem reference="OQ8-Pg-XIl"/>
+                                <toolbarItem reference="Eh1-oq-Wgh"/>
+                                <toolbarItem reference="N9c-MQ-GAs"/>
                             </defaultToolbarItems>
                         </toolbar>
                         <connections>
@@ -754,14 +776,14 @@
                                     <rect key="frame" x="1" y="0.0" width="203" height="469"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
-                                        <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" alternatingRowBackgroundColors="YES" columnSelection="YES" multipleSelection="NO" autosaveColumns="NO" rowHeight="30" usesAutomaticRowHeights="YES" headerView="mKG-kb-OAP" viewBased="YES" id="uZx-Fa-dul">
+                                        <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" alternatingRowBackgroundColors="YES" columnSelection="YES" multipleSelection="NO" autosaveColumns="NO" rowHeight="30" usesAutomaticRowHeights="YES" headerView="mKG-kb-OAP" viewBased="YES" id="uZx-Fa-dul" customClass="TableView">
                                             <rect key="frame" x="0.0" y="0.0" width="203" height="444"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <size key="intercellSpacing" width="3" height="2"/>
                                             <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
                                             <color key="gridColor" red="0.90980392156862744" green="0.9137254901960784" blue="0.93333333333333335" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                             <tableColumns>
-                                                <tableColumn identifier="locationId" width="200" minWidth="40" maxWidth="1000" id="ftW-5U-37q">
+                                                <tableColumn identifier="locationId" editable="NO" width="200" minWidth="40" maxWidth="1000" id="ftW-5U-37q">
                                                     <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" title="Keyname">
                                                         <font key="font" metaFont="smallSystem"/>
                                                         <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
@@ -1181,6 +1203,7 @@
                         <outlet property="location" destination="CkN-or-KXF" id="IOc-ka-kxC"/>
                         <outlet property="publicKey" destination="m8L-7p-ktQ" id="A4E-Jj-EqT"/>
                         <outlet property="tableView" destination="uZx-Fa-dul" id="cyH-DZ-jFL"/>
+                        <outlet property="transactionTableView" destination="hWM-dR-Er0" id="RE2-b1-dDc"/>
                         <outlet property="websocketStatusLabel" destination="xB6-5F-DG9" id="Kkm-7Q-l4k"/>
                     </connections>
                 </viewController>
@@ -1295,14 +1318,14 @@
                             <popUpButton verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Ltw-ux-gs4">
                                 <rect key="frame" x="112" y="139" width="321" height="25"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                <popUpButtonCell key="cell" type="push" title="aes256" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="ZKG-gu-0ox" id="DvN-RN-qsx">
+                                <popUpButtonCell key="cell" type="push" title="aes256" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="ZKG-gu-0ox" id="DvN-RN-qsx">
                                     <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
                                     <font key="font" metaFont="menu"/>
                                     <menu key="menu" id="SiG-q3-2kN">
                                         <items>
-                                            <menuItem title="aes256" id="ZKG-gu-0ox"/>
+                                            <menuItem title="aes256" state="on" id="ZKG-gu-0ox"/>
                                             <menuItem title="aes192" id="UG6-KS-dUd"/>
-                                            <menuItem title="aes128" state="on" id="52d-kp-poM"/>
+                                            <menuItem title="aes128" id="52d-kp-poM"/>
                                         </items>
                                     </menu>
                                 </popUpButtonCell>
@@ -1403,5 +1426,6 @@ Gw
     </scenes>
     <resources>
         <image name="NSAddTemplate" width="11" height="11"/>
+        <image name="NSRemoveTemplate" width="11" height="11"/>
     </resources>
 </document>

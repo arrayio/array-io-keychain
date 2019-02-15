@@ -11,6 +11,7 @@ import Cocoa
 class ViewController: NSViewController, NSTableViewDelegate, NSTableViewDataSource {
 
     @IBOutlet weak var tableView: NSTableView!
+    @IBOutlet weak var transactionTableView: NSTableView!
     @IBOutlet weak var websocketStatusLabel: NSTextField!
     @IBOutlet weak var creationDate: NSTextFieldCell!
     @IBOutlet weak var keychainVersion: NSTextFieldCell!
@@ -35,12 +36,20 @@ class ViewController: NSViewController, NSTableViewDelegate, NSTableViewDataSour
         self.detailsView.wantsLayer = true
         self.detailsView.layer?.backgroundColor = NSColor(red: 213.0/255.0, green: 220.0/255.0, blue: 230.0/255.0, alpha: 1).cgColor
         
+        NotificationCenter.default.addObserver(self, selector: #selector(reloadTableView), name: NSNotification.Name("reloadData"), object: nil)
+        
 //        titleView.wantsLayer = true
 //        titleView.layer?.backgroundColor = NSColor.white.cgColor
         
         websocketStatus()
         Timer.scheduledTimer(timeInterval: 5, target: self, selector: #selector(websocketStatus), userInfo: nil, repeats: true)
         // Do any additional setup after loading the view.
+    }
+    
+    @objc func reloadTableView () {
+        CPlusPlusBridger().reloadData()
+        self.tableView.reloadData()
+        print("load")
     }
     
     func updateTableView () {
@@ -96,7 +105,7 @@ class ViewController: NSViewController, NSTableViewDelegate, NSTableViewDataSour
     }
 
     func tableViewSelectionDidChange(_ notification: Notification) {
-        print("select")
+        print(notification.object)
         let obj = notification.object as! NSTableView
         let item = KeyManager.shared.keys[obj.selectedRow]
         detailsView.isHidden = false

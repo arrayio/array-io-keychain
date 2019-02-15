@@ -80,7 +80,7 @@ void keyfile_singleton::signlog_load()
 {
 #if defined(macintosh) || defined(__APPLE__) || defined(__APPLE_CC__)
   auto dir = bfs::path(getenv("HOME"));
-  key_dir += bfs::path(SIGN_LOGS_DEFAULT_PATH_);
+  dir += bfs::path(SIGN_LOGS_DEFAULT_PATH_);
 #else
   bfs::path dir(SIGN_LOGS_DEFAULT_PATH_);
 #endif

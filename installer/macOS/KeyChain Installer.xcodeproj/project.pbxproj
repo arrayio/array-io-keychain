@@ -11,8 +11,8 @@
 		A776F48D21D0C696006736C9 /* Print.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7E7F75B21A6B4A60021ED5E /* Print.swift */; };
 		A776F48F21D0C92E006736C9 /* UninstallVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = A776F48E21D0C92E006736C9 /* UninstallVC.swift */; };
 		A776F49021D0D147006736C9 /* Alerts.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7E7F75721A6B4620021ED5E /* Alerts.swift */; };
-		A7910FF722146745001C6761 /* bin.tar.gz in Resources */ = {isa = PBXBuildFile; fileRef = A7910FF622146745001C6761 /* bin.tar.gz */; };
 		A793A32921C2672B0061249D /* LicenseVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = A793A32821C2672B0061249D /* LicenseVC.swift */; };
+		A795237E2215CCE400078EE5 /* bin.tar.gz in Resources */ = {isa = PBXBuildFile; fileRef = A795237D2215CCE400078EE5 /* bin.tar.gz */; };
 		A799115F21C41AD500CB13B7 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A799115E21C41AD500CB13B7 /* AppDelegate.swift */; };
 		A799116321C41AD500CB13B7 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A799116221C41AD500CB13B7 /* Assets.xcassets */; };
 		A799116621C41AD500CB13B7 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A799116421C41AD500CB13B7 /* Main.storyboard */; };
@@ -44,8 +44,8 @@
 		A0679F4132141184C33311C6 /* Pods-Keychain Installer.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Keychain Installer.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Keychain Installer/Pods-Keychain Installer.debug.xcconfig"; sourceTree = "<group>"; };
 		A1FECE3906833024E5D5394D /* Pods_Keychain_Uninstaller.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Keychain_Uninstaller.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		A776F48E21D0C92E006736C9 /* UninstallVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UninstallVC.swift; sourceTree = "<group>"; };
-		A7910FF622146745001C6761 /* bin.tar.gz */ = {isa = PBXFileReference; lastKnownFileType = archive.gzip; path = bin.tar.gz; sourceTree = "<group>"; };
 		A793A32821C2672B0061249D /* LicenseVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LicenseVC.swift; sourceTree = "<group>"; };
+		A795237D2215CCE400078EE5 /* bin.tar.gz */ = {isa = PBXFileReference; lastKnownFileType = archive.gzip; path = bin.tar.gz; sourceTree = "<group>"; };
 		A799115C21C41AD500CB13B7 /* Keychain Uninstaller.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Keychain Uninstaller.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		A799115E21C41AD500CB13B7 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		A799116221C41AD500CB13B7 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -168,7 +168,7 @@
 				A7E7F74321A6B0D10021ED5E /* Main.storyboard */,
 				A7E7F74621A6B0D10021ED5E /* Info.plist */,
 				A7E7F74721A6B0D10021ED5E /* Keychain_Installer.entitlements */,
-				A7910FF622146745001C6761 /* bin.tar.gz */,
+				A795237D2215CCE400078EE5 /* bin.tar.gz */,
 			);
 			path = "KeyChain Installer";
 			sourceTree = "<group>";
@@ -265,7 +265,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A7910FF722146745001C6761 /* bin.tar.gz in Resources */,
+				A795237E2215CCE400078EE5 /* bin.tar.gz in Resources */,
 				A7E7F74221A6B0D10021ED5E /* Assets.xcassets in Resources */,
 				A7E7F74521A6B0D10021ED5E /* Main.storyboard in Resources */,
 			);

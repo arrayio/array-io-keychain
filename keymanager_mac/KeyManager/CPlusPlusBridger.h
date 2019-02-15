@@ -15,6 +15,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (NSInteger) getKeyfilesCount;
 - (Key *) getKeyById:(NSInteger) indexRow;
 - (void) createKeyWithName:(NSString* )keyname description:(NSString*)keyDescription encrypted:(BOOL)encrypted password:(NSString *) password cipher:(NSString *) cipher;
+- (void) reloadData;
 
 @end
 

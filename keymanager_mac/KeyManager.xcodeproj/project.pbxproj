@@ -27,6 +27,7 @@
 		A79523712215B05300078EE5 /* SYFlatButton.m in Sources */ = {isa = PBXBuildFile; fileRef = A79523702215B05300078EE5 /* SYFlatButton.m */; };
 		A79523772215B36600078EE5 /* WindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = A79523762215B36600078EE5 /* WindowController.m */; };
 		A79523792215B55100078EE5 /* CreateKeyVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = A79523782215B55100078EE5 /* CreateKeyVC.swift */; };
+		A795237C2215C6E000078EE5 /* TableView.m in Sources */ = {isa = PBXBuildFile; fileRef = A795237A2215C6E000078EE5 /* TableView.m */; };
 		A79F78BA21F89D0400E2C184 /* HexToRgbColor.mm in Sources */ = {isa = PBXBuildFile; fileRef = A79F78B921F89D0400E2C184 /* HexToRgbColor.mm */; };
 		A79F78BC21F8A17900E2C184 /* TableRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A79F78BB21F8A17900E2C184 /* TableRowView.swift */; };
 		AD6703CBBAA6B5EB11907AA8 /* Pods_KeyManager.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 130888C1592515A58F013398 /* Pods_KeyManager.framework */; };
@@ -63,6 +64,8 @@
 		A79523752215B36600078EE5 /* WindowController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WindowController.h; sourceTree = "<group>"; };
 		A79523762215B36600078EE5 /* WindowController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = WindowController.m; sourceTree = "<group>"; };
 		A79523782215B55100078EE5 /* CreateKeyVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateKeyVC.swift; sourceTree = "<group>"; };
+		A795237A2215C6E000078EE5 /* TableView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TableView.m; path = ../../keychain_mac/TableView.m; sourceTree = "<group>"; };
+		A795237B2215C6E000078EE5 /* TableView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TableView.h; path = ../../keychain_mac/TableView.h; sourceTree = "<group>"; };
 		A79F78B721F89D0300E2C184 /* KeyManager-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "KeyManager-Bridging-Header.h"; sourceTree = "<group>"; };
 		A79F78B821F89D0400E2C184 /* HexToRgbColor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HexToRgbColor.h; sourceTree = "<group>"; };
 		A79F78B921F89D0400E2C184 /* HexToRgbColor.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = HexToRgbColor.mm; sourceTree = "<group>"; };
@@ -141,6 +144,8 @@
 				A79F78B821F89D0400E2C184 /* HexToRgbColor.h */,
 				A79F78B921F89D0400E2C184 /* HexToRgbColor.mm */,
 				A79F78B721F89D0300E2C184 /* KeyManager-Bridging-Header.h */,
+				A795237B2215C6E000078EE5 /* TableView.h */,
+				A795237A2215C6E000078EE5 /* TableView.m */,
 			);
 			path = KeyManager;
 			sourceTree = "<group>";
@@ -292,6 +297,7 @@
 				A791101B2215AB48001C6761 /* Key.m in Sources */,
 				A79523772215B36600078EE5 /* WindowController.m in Sources */,
 				A776F4A221D0DD95006736C9 /* ViewController.swift in Sources */,
+				A795237C2215C6E000078EE5 /* TableView.m in Sources */,
 				A776F4BC21D3A7F8006736C9 /* WebsocketChecker.swift in Sources */,
 				A776F4B821D39AB7006736C9 /* String+extension.swift in Sources */,
 				A776F4A021D0DD95006736C9 /* AppDelegate.swift in Sources */,

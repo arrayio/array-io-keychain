@@ -41,5 +41,15 @@ using namespace keychain_app;
     }));
 }
 
+- (void) reloadData {
+    auto& keyfiles = keyfile_singleton::instance();
+    keyfiles.keydata_load();
+}
+
+- (void) deleteKey:(NSString *)publicKey {
+    auto& keyfiles = keyfile_singleton::instance();
+    auto pkey = dev::Public([publicKey UTF8String]);
+//    keyfiles.remove(pkey, std::bind(&remove_unlock, my_unlock_functor));
+}
 
 @end

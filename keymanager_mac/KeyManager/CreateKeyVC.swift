@@ -34,6 +34,8 @@ class CreateKeyVC: NSViewController {
                 if passwordTextField.stringValue == rePasswordTextField.stringValue && passwordTextField.stringValue != "" {
                     CPlusPlusBridger().createKey(withName: nameTextField.stringValue, description: descriptionTextField.stringValue, encrypted: isEncrypted, password: passwordTextField.stringValue, cipher: "")
                     self.dismiss(self)
+                    NotificationCenter.default.post(name: Notification.Name(rawValue: "reloadData"), object: nil)
+                    print("send")
                 } else {
                     let alert = NSAlert()
                     alert.icon = NSImage()

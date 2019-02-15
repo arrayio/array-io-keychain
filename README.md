@@ -84,6 +84,10 @@ const Module = require('web3override');
 
 - [Swap Online](https://swap.online/)
 
+KeyChain and Swap.Online in action:
+
+![s5fgojvfff](https://user-images.githubusercontent.com/34011337/52853355-68516e80-312c-11e9-86da-0a2aeca504e8.gif)
+
 ## Contributing to the project
 
 The main purpose of this repository is to continue to evolve KeyChain core, making it faster and easier to use. Development of KeyChain happens in the open on GitHub, and we are grateful to the community for contributing bugfixes and improvements. 

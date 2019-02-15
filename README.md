@@ -34,13 +34,13 @@
 
 ## Installation
 
-Download and install KeyChain for [macOS](https://github.com/arrayio/array-io-keychain/releases/download/0.15/KeyChain.Installer.zip) and [Windows](https://github.com/arrayio/array-io-keychain/releases/download/0.13/keychain.msi). Linux installer is coming soon.
+Download and install KeyChain for [macOS](https://github.com/arrayio/array-io-keychain/releases/download/0.18/KeyChain.Installer.v18.zip) and [Windows](https://github.com/arrayio/array-io-keychain/releases/download/0.13/keychain.msi). Linux installer is coming soon.
 
 *Try out KeyChain on the [demo page](https://arrayio.github.io/array-io-keychain/demo/).*
 
-After installation, connect to the demo-page: http://localhost:16384/ to check if the installation was successful and to test the KeyChain commands. In case everything went well, you will see the following page and you will be able to see responses to the commands in the "Response" box when you click on them.
+After installation, connect to the demo-page: http://localhost:16384/ to check if the installation was successful and to test the KeyChain commands. In case everything went well, you will see the following page and you will be able to see responses to the commands in the response box when you click on them.
 
-![image_2019-02-01_18-12-11](https://user-images.githubusercontent.com/34011337/52132689-c40df900-2650-11e9-94cf-90b151d0c3e8.png)
+![image_2019-02-15_13-24-52](https://user-images.githubusercontent.com/34011337/52852054-a6e52a00-3128-11e9-91aa-6eb8cfc64b1f.png)png)
 
 If you are having trouble connecting to the page, [contact us](#contact) and we will do our best to help you.
 
@@ -48,7 +48,7 @@ You can find comprehensive installation guides for [macOS](https://github.com/ar
 
 ## Getting started
 
-After you have installed KeyChain for [macOS](https://github.com/arrayio/array-io-keychain/releases/download/0.14/KeyChain.Installer.macOS.zip) or for [Windows](https://github.com/arrayio/array-io-keychain/releases/download/0.13/keychain.msi), you can start using it with web3. Just follow these simple steps.
+After you have installed KeyChain for [macOS](https://github.com/arrayio/array-io-keychain/releases/download/0.18/KeyChain.Installer.v18.zip) or for [Windows](https://github.com/arrayio/array-io-keychain/releases/download/0.13/keychain.msi), you can start using it with web3. Just follow these simple steps.
 
 NB: If you launch KeyChain for the first time, you need to get a public key with the "select_key" command. You can save the public key to local storage. Then you will not need to use "select_key" command again.
 

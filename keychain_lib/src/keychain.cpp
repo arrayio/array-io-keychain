@@ -46,7 +46,12 @@ keychain::keychain()
   : keychain_base(),
     m_init_path(bfs::current_path())
 {
+#if defined(macintosh) || defined(__APPLE__) || defined(__APPLE_CC__)
+  auto key_dir = bfs::path(getenv("HOME"));
+  key_dir += bfs::path(KEY_DEFAULT_PATH_);
+#else
   bfs::path key_dir(KEY_DEFAULT_PATH_);
+#endif
 
   if(!bfs::exists(key_dir))
   {

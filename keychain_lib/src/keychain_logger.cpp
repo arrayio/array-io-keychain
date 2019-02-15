@@ -20,8 +20,7 @@ logger_singleton::logger_singleton(std::string postfix)
 {
 #if defined(macintosh) || defined(__APPLE__) || defined(__APPLE_CC__)
     auto dir = bfs::path(getenv("HOME"));
-    dir += "/";
-    dir += bfs::path(LOG_DEFAULT_PATH);
+    dir += bfs::path("/"LOG_DEFAULT_PATH);
 #else
   bfs::path dir(LOG_DEFAULT_PATH);
 #endif

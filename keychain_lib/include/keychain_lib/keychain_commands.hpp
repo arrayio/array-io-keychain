@@ -62,8 +62,8 @@
 #else
 
 #if defined(macintosh) || defined(__APPLE__) || defined(__APPLE_CC__)
-        #define KEY_DEFAULT_PATH  "/Library/Application Support/keychain"
-        #define LOG_DEFAULT_PATH  "/Library/Application Support/keychain/logs"
+        #define KEY_DEFAULT_PATH  "Library/Application Support/keychain"
+        #define LOG_DEFAULT_PATH  "Library/Application Support/keychain/logs"
 #else
 
 #ifdef _WIN32

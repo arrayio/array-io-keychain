@@ -14,12 +14,20 @@
 
 #include <keychain.hpp>
 
+namespace bfs = boost::filesystem;
 
 logger_singleton::logger_singleton(std::string postfix)
 {
+#if defined(macintosh) || defined(__APPLE__) || defined(__APPLE_CC__)
+    auto dir = bfs::path(getenv("HOME"));
+    dir += "/";
+    dir += bfs::path(LOG_DEFAULT_PATH);
+#else
+  bfs::path dir(LOG_DEFAULT_PATH);
+#endif
 
     typedef sinks::synchronous_sink< sinks::text_file_backend > file_sink;
-	std::string def_log_path = std::string(LOG_DEFAULT_PATH);
+	std::string def_log_path = dir.c_str();
     // Create a text file sink
 #ifdef _WIN32
 	if (getenv("USERPROFILE") != NULL) {

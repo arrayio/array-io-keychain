@@ -56,6 +56,7 @@ using namespace keychain_app;
 - (void) deleteKey:(NSString *)publicKey {
     auto& keyfiles = keyfile_singleton::instance();
     auto pkey = dev::Public([publicKey UTF8String]);
+//    keyfiles.remove(pkey, std::bind(&remove_unlock))
 //    keyfiles.remove(pkey, std::bind(&remove_unlock, my_unlock_functor));
 }
 
@@ -65,6 +66,7 @@ using namespace keychain_app;
     NSLog(@"publicKey %@", publicKey);
     printf("%s", [publicKey UTF8String]);
     auto pkey = dev::Public([publicKey UTF8String]);
+    try {
     auto& logs = keyfiles.get_logs(pkey);
     for (NSUInteger i = 0; i < std::distance(logs.begin(), logs.end()); i++) {
         auto& log = logs[i];
@@ -95,6 +97,9 @@ using namespace keychain_app;
         logItem.signTime = signTime;
 //        logItem.transaction = log.transaction;
         [logsArray addObject:logItem];
+    }
+    } catch (fc_light::exception& e) {
+        NSLog(@"%@", [NSString stringWithUTF8String: e.to_detail_json_string().c_str()]);
     }
     return logsArray;
 }

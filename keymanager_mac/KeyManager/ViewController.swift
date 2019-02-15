@@ -86,6 +86,7 @@ class ViewController: NSViewController, NSTableViewDelegate, NSTableViewDataSour
             }
         } else if tableView == self.transactionTableView {
             if selectedPublicKey != "" {
+                print("self.transactionTableView")
                 let log = CPlusPlusBridger().getTransactionLog(forPublicKey: selectedPublicKey)
             }
         }
@@ -98,6 +99,7 @@ class ViewController: NSViewController, NSTableViewDelegate, NSTableViewDataSour
             return CPlusPlusBridger().getKeyfilesCount()
         } else {
             if selectedPublicKey != "" {
+                print("numberOfRows")
                 return CPlusPlusBridger().getTransactionLog(forPublicKey: selectedPublicKey).count
             } else {
                 return 0

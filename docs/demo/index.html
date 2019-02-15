@@ -287,7 +287,8 @@
     onHash(true);
   };
   keychain.ws.onclose = function() {
-    document.getElementById('error').style.display = 'block';
+    // document.getElementById('error').style.display = 'block';
+    alert('WebSocket connection failed. Check if KeyChain is installed.');
   };
 
   function onHash(runRequestParam) {

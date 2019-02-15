@@ -13,6 +13,11 @@ NS_ASSUME_NONNULL_BEGIN
 @interface Key : NSObject
 
 @property (nonatomic, strong) NSString *name;
+@property (nonatomic, strong) NSString *descriptionKey;
+@property (nonatomic, strong) NSString *publicKey;
+@property (nonatomic, strong) NSDate *createTime;
+@property (nonatomic, strong) NSString *keychainVersion;
+@property (nonatomic, strong) NSString *cipherType;
 
 @end
 

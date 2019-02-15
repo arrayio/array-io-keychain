@@ -8,6 +8,8 @@
 
 #import <Foundation/Foundation.h>
 #import "Key.h"
+#import "Log.h"
+
 NS_ASSUME_NONNULL_BEGIN
 
 @interface CPlusPlusBridger : NSObject
@@ -16,6 +18,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (Key *) getKeyById:(NSInteger) indexRow;
 - (void) createKeyWithName:(NSString* )keyname description:(NSString*)keyDescription encrypted:(BOOL)encrypted password:(NSString *) password cipher:(NSString *) cipher;
 - (void) reloadData;
+- (NSMutableArray <Log *>*) getTransactionLogForPublicKey:(NSString *) publicKey;
 
 @end
 

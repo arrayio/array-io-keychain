@@ -25,4 +25,8 @@
     CreateKeyVC *vc = [self.storyboard instantiateControllerWithIdentifier:@"CreateKeyVC"];
     [self.contentViewController presentViewControllerAsSheet:vc];
 }
+- (IBAction)removeKeyAction:(id)sender {
+    DeleteKeyVC *vc = [self.storyboard instantiateControllerWithIdentifier:@"DeleteKeyVC"];
+    [self.contentViewController presentViewControllerAsSheet:vc];
+}
 @end

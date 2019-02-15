@@ -7,12 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		A71840942216D8C9009A8D49 /* Log.m in Sources */ = {isa = PBXBuildFile; fileRef = A71840932216D8C9009A8D49 /* Log.m */; };
+		A71840962216E10A009A8D49 /* DeleteKeyVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = A71840952216E10A009A8D49 /* DeleteKeyVC.swift */; };
 		A776F4A021D0DD95006736C9 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A776F49F21D0DD95006736C9 /* AppDelegate.swift */; };
 		A776F4A221D0DD95006736C9 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A776F4A121D0DD95006736C9 /* ViewController.swift */; };
 		A776F4A421D0DD97006736C9 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A776F4A321D0DD97006736C9 /* Assets.xcassets */; };
 		A776F4A721D0DD97006736C9 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A776F4A521D0DD97006736C9 /* Main.storyboard */; };
-		A776F4B021D0DF58006736C9 /* KeyFileModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A776F4AF21D0DF58006736C9 /* KeyFileModel.swift */; };
-		A776F4B221D0E66B006736C9 /* KeyManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A776F4B121D0E66B006736C9 /* KeyManager.swift */; };
 		A776F4B821D39AB7006736C9 /* String+extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = A776F4B721D39AB7006736C9 /* String+extension.swift */; };
 		A776F4BA21D3A78A006736C9 /* AppleScriptManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A776F4B921D3A78A006736C9 /* AppleScriptManager.swift */; };
 		A776F4BC21D3A7F8006736C9 /* WebsocketChecker.swift in Sources */ = {isa = PBXBuildFile; fileRef = A776F4BB21D3A7F8006736C9 /* WebsocketChecker.swift */; };
@@ -37,6 +37,9 @@
 		130888C1592515A58F013398 /* Pods_KeyManager.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_KeyManager.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		188A215C60F625DB886DF7B7 /* Pods-KeyManager.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-KeyManager.release.xcconfig"; path = "Pods/Target Support Files/Pods-KeyManager/Pods-KeyManager.release.xcconfig"; sourceTree = "<group>"; };
 		9E7F5FE43CEBFF8FE8BEDA2F /* Pods-KeyManager.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-KeyManager.debug.xcconfig"; path = "Pods/Target Support Files/Pods-KeyManager/Pods-KeyManager.debug.xcconfig"; sourceTree = "<group>"; };
+		A71840922216D8C9009A8D49 /* Log.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Log.h; sourceTree = "<group>"; };
+		A71840932216D8C9009A8D49 /* Log.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Log.m; sourceTree = "<group>"; };
+		A71840952216E10A009A8D49 /* DeleteKeyVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeleteKeyVC.swift; sourceTree = "<group>"; };
 		A776F49C21D0DD95006736C9 /* KeyManager.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = KeyManager.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A776F49F21D0DD95006736C9 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		A776F4A121D0DD95006736C9 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -44,8 +47,6 @@
 		A776F4A621D0DD97006736C9 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		A776F4A821D0DD97006736C9 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		A776F4A921D0DD97006736C9 /* KeyManager.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = KeyManager.entitlements; sourceTree = "<group>"; };
-		A776F4AF21D0DF58006736C9 /* KeyFileModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyFileModel.swift; sourceTree = "<group>"; };
-		A776F4B121D0E66B006736C9 /* KeyManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyManager.swift; sourceTree = "<group>"; };
 		A776F4B721D39AB7006736C9 /* String+extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+extension.swift"; sourceTree = "<group>"; };
 		A776F4B921D3A78A006736C9 /* AppleScriptManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppleScriptManager.swift; sourceTree = "<group>"; };
 		A776F4BB21D3A7F8006736C9 /* WebsocketChecker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebsocketChecker.swift; sourceTree = "<group>"; };
@@ -127,12 +128,11 @@
 				A776F4BB21D3A7F8006736C9 /* WebsocketChecker.swift */,
 				A79F78BB21F8A17900E2C184 /* TableRowView.swift */,
 				A79523782215B55100078EE5 /* CreateKeyVC.swift */,
+				A71840952216E10A009A8D49 /* DeleteKeyVC.swift */,
 				A776F4A321D0DD97006736C9 /* Assets.xcassets */,
 				A776F4A521D0DD97006736C9 /* Main.storyboard */,
 				A776F4A821D0DD97006736C9 /* Info.plist */,
 				A776F4A921D0DD97006736C9 /* KeyManager.entitlements */,
-				A776F4AF21D0DF58006736C9 /* KeyFileModel.swift */,
-				A776F4B121D0E66B006736C9 /* KeyManager.swift */,
 				A776F4B721D39AB7006736C9 /* String+extension.swift */,
 				A776F4B921D3A78A006736C9 /* AppleScriptManager.swift */,
 				A795236F2215B05300078EE5 /* SYFlatButton.h */,
@@ -141,6 +141,8 @@
 				A791100322147903001C6761 /* CPlusPlusBridger.mm */,
 				A79110192215AB48001C6761 /* Key.h */,
 				A791101A2215AB48001C6761 /* Key.m */,
+				A71840922216D8C9009A8D49 /* Log.h */,
+				A71840932216D8C9009A8D49 /* Log.m */,
 				A79F78B821F89D0400E2C184 /* HexToRgbColor.h */,
 				A79F78B921F89D0400E2C184 /* HexToRgbColor.mm */,
 				A79F78B721F89D0300E2C184 /* KeyManager-Bridging-Header.h */,
@@ -296,15 +298,15 @@
 			files = (
 				A791101B2215AB48001C6761 /* Key.m in Sources */,
 				A79523772215B36600078EE5 /* WindowController.m in Sources */,
+				A71840942216D8C9009A8D49 /* Log.m in Sources */,
 				A776F4A221D0DD95006736C9 /* ViewController.swift in Sources */,
+				A71840962216E10A009A8D49 /* DeleteKeyVC.swift in Sources */,
 				A795237C2215C6E000078EE5 /* TableView.m in Sources */,
 				A776F4BC21D3A7F8006736C9 /* WebsocketChecker.swift in Sources */,
 				A776F4B821D39AB7006736C9 /* String+extension.swift in Sources */,
 				A776F4A021D0DD95006736C9 /* AppDelegate.swift in Sources */,
 				A79F78BA21F89D0400E2C184 /* HexToRgbColor.mm in Sources */,
-				A776F4B021D0DF58006736C9 /* KeyFileModel.swift in Sources */,
 				A79523792215B55100078EE5 /* CreateKeyVC.swift in Sources */,
-				A776F4B221D0E66B006736C9 /* KeyManager.swift in Sources */,
 				A79523712215B05300078EE5 /* SYFlatButton.m in Sources */,
 				A776F4BA21D3A78A006736C9 /* AppleScriptManager.swift in Sources */,
 				A79F78BC21F8A17900E2C184 /* TableRowView.swift in Sources */,

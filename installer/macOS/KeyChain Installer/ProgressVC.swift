@@ -31,7 +31,7 @@ class ProgressVC: NSViewController {
     fileprivate func jobWorker(dataPath: String) {
         self.infoTextField.stringValue = "Searching old versions..."
         self.stopJobs()
-        self.deleteFileAtPath("/Library/LaunchDaemons/" + Consts.JOB_PLIST)
+//        self.deleteFileAtPath("/Library/LaunchDaemons/" + Consts.JOB_PLIST)
         self.addRpathToBinary(path: dataPath)
         if LocalStorage.shared.isAutoStart {
             self.infoTextField.stringValue = "Creating autoload daemon..."
@@ -50,7 +50,7 @@ class ProgressVC: NSViewController {
             job.runAtLoad = true
             job.keepAlive = true
             do {
-                try ahLaunchCtl.add(job, to: .globalLaunchDaemon)
+                try ahLaunchCtl.add(job, to: .userLaunchAgent)
             } catch {
                 print(error.localizedDescription)
             }
@@ -84,13 +84,13 @@ class ProgressVC: NSViewController {
             print("OK untar")
             print(dataPath)
             self.jobWorker(dataPath: dataPath)
-            AppleScriptManager.runScriptWithBody("cp -a '" + dataPath + "/keys/.' /var/keychain/key_data && mkdir /var/keychain/signlogs_data", isAdminRequired: true, success: {
+//            AppleScriptManager.runScriptWithBody("cp -a '" + dataPath + "/keys/.' /var/keychain/key_data && mkdir /var/keychain/signlogs_data", isAdminRequired: true, success: {
                 self.infoTextField.stringValue = "Installation complete!"
                 self.installText("Installation complete!")
-            }, failure: { (error) in
-                print("ERROR: \(error)")
-                self.installText(error.description)
-            })
+//            }, failure: { (error) in
+//                print("ERROR: \(error)")
+//                self.installText(error.description)
+//            })
 
         }) { (error) in
             print("ERROR: \(error)")
@@ -101,17 +101,17 @@ class ProgressVC: NSViewController {
     /// Function stop launchd job
     func stopJobs() {
         do {
-            try ahLaunchCtl.stop(Consts.LABEL_JOB, in: .globalLaunchDaemon)
+            try ahLaunchCtl.stop(Consts.LABEL_JOB, in: .userLaunchAgent)
         } catch {
             print(error.localizedDescription)
         }
         do {
-            try ahLaunchCtl.unload(Consts.LABEL_JOB, in: .globalLaunchDaemon)
+            try ahLaunchCtl.unload(Consts.LABEL_JOB, in: .userLaunchAgent)
         } catch {
             print(error.localizedDescription)
         }
         do {
-            try ahLaunchCtl.remove(Consts.LABEL_JOB, from: .globalLaunchDaemon)
+            try ahLaunchCtl.remove(Consts.LABEL_JOB, from: .userLaunchAgent)
         } catch {
             print(error.localizedDescription)
         }

@@ -12,6 +12,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface WindowController : NSWindowController
 - (IBAction)createKeyAction:(id)sender;
+@property (weak) IBOutlet NSToolbarItem *removeKeyItem;
+- (IBAction)removeKeyAction:(id)sender;
 
 @end
 

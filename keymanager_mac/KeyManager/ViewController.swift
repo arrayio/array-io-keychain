@@ -20,6 +20,8 @@ class ViewController: NSViewController, NSTableViewDelegate, NSTableViewDataSour
     @IBOutlet weak var descriptionKey: NSTextFieldCell!
     @IBOutlet weak var publicKey: NSTextFieldCell!
     @IBOutlet weak var detailsView: NSView!
+    
+    var selectedPublicKey = ""
 //    @IBOutlet weak var titleView: NSView!
     
     fileprivate enum CellIdentifiers {
@@ -30,7 +32,8 @@ class ViewController: NSViewController, NSTableViewDelegate, NSTableViewDataSour
         super.viewDidLoad()
         self.tableView.delegate = self
         self.tableView.dataSource = self
-        KeyManager.shared.start()
+        self.transactionTableView.delegate = self
+        self.transactionTableView.dataSource = self
         tableView.reloadData()
         self.view.layer?.backgroundColor = NSColor(red: 242.0/255.0, green: 243.0/255.0, blue: 247.0/255.0, alpha: 1).cgColor
         self.detailsView.wantsLayer = true
@@ -64,30 +67,42 @@ class ViewController: NSViewController, NSTableViewDelegate, NSTableViewDataSour
     
     
     func tableView(_ tableView: NSTableView, viewFor tableColumn: NSTableColumn?, row: Int) -> NSView? {
-        
-        var text: String = ""
-        var cellIdentifier: String = ""
-        
-//        let item = KeyManager.shared.keys[row]
-        let key = CPlusPlusBridger().getKeyById(row)
-        
-        if tableColumn == tableView.tableColumns[0] {
-            text = key.name
-            cellIdentifier = CellIdentifiers.LocationCell
-        }
-        
-        // 3
-        if let cell = tableView.makeView(withIdentifier: NSUserInterfaceItemIdentifier(rawValue: cellIdentifier), owner: nil) as? NSTableCellView {
-            cell.textField?.stringValue = text
-            return cell
+        if tableView == self.tableView {
+            var text: String = ""
+            var cellIdentifier: String = ""
+            
+    //        let item = KeyManager.shared.keys[row]
+            let key = CPlusPlusBridger().getKeyById(row)
+            
+            if tableColumn == tableView.tableColumns[0] {
+                text = key.name
+                cellIdentifier = CellIdentifiers.LocationCell
+            }
+            
+            // 3
+            if let cell = tableView.makeView(withIdentifier: NSUserInterfaceItemIdentifier(rawValue: cellIdentifier), owner: nil) as? NSTableCellView {
+                cell.textField?.stringValue = text
+                return cell
+            }
+        } else if tableView == self.transactionTableView {
+            if selectedPublicKey != "" {
+                let log = CPlusPlusBridger().getTransactionLog(forPublicKey: selectedPublicKey)
+            }
         }
         return nil
         
     }
         
     func numberOfRows(in tableView: NSTableView) -> Int {
-        return CPlusPlusBridger().getKeyfilesCount()
-//        return KeyManager.shared.keys.count
+        if tableView == self.tableView {
+            return CPlusPlusBridger().getKeyfilesCount()
+        } else {
+            if selectedPublicKey != "" {
+                return CPlusPlusBridger().getTransactionLog(forPublicKey: selectedPublicKey).count
+            } else {
+                return 0
+            }
+        }
     }
     
     @objc func websocketStatus() {
@@ -105,17 +120,22 @@ class ViewController: NSViewController, NSTableViewDelegate, NSTableViewDataSour
     }
 
     func tableViewSelectionDidChange(_ notification: Notification) {
-        print(notification.object)
         let obj = notification.object as! NSTableView
-        let item = KeyManager.shared.keys[obj.selectedRow]
-        detailsView.isHidden = false
-        creationDate.stringValue = item.creationDate
-        keychainVersion.stringValue = item.keychainVersion
-        cipherType.stringValue = item.cipherType
-        location.stringValue = item.location
-        descriptionKey.stringValue = item.description
-        publicKey.stringValue = item.publicKey
-        print(obj.selectedRow)
+            if obj == self.tableView {
+            let item = CPlusPlusBridger().getKeyById(obj.selectedRow)
+            detailsView.isHidden = false
+            let formatter = DateFormatter()
+            formatter.dateFormat = "MMM dd, YYYY, HH:mm:ss"
+            creationDate.stringValue = formatter.string(from: item.createTime)
+            keychainVersion.stringValue = item.keychainVersion
+            cipherType.stringValue = item.cipherType
+            location.stringValue = ""
+            descriptionKey.stringValue = item.descriptionKey
+            publicKey.stringValue = item.publicKey
+            selectedPublicKey = item.publicKey
+            transactionTableView.reloadData()
+            print(obj.selectedRow)
+        }
     }
     
 }

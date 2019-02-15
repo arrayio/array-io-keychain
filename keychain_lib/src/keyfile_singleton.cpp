@@ -64,7 +64,13 @@ void keyfile_singleton::keydata_load()
   std::for_each(first, bfs::directory_iterator(), [this](const auto& unit) {
     try {
       fc_light::variant j_keyfile = open_keyfile(unit.path().c_str());
-      m_keydata_map.insert(j_keyfile.as<keyfile_format::keyfile_t>());
+      auto keyfile = j_keyfile.as<keyfile_format::keyfile_t>();
+      auto& ind = prim_index();
+      auto it = ind.find(keyfile.public_key());
+      if(it == ind.end())
+        m_keydata_map.insert(keyfile);
+      else
+        m_keydata_map.replace(it, keyfile);
     }
     catch (fc_light::parse_error_exception& er) {
       return print_exception(unit.path(), er);
@@ -98,9 +104,18 @@ void keyfile_singleton::signlog_load()
     try {
       fc_light::variant j_keyfile = open_keyfile(unit.path().c_str());
       auto file = j_keyfile.as<keyfile_format::signlog_file_t>();
-      auto res = m_signlog_map.insert(signlog_map_t::value_type(file.public_key,log_records_t()));
-      FC_LIGHT_ASSERT(res.second);
-      auto it = res.first;
+      auto found_it = m_signlog_map.find(file.public_key);
+      auto it = m_signlog_map.end();
+      if(found_it == m_signlog_map.end())
+      {
+        auto res = m_signlog_map.insert(signlog_map_t::value_type(file.public_key,log_records_t()));
+        FC_LIGHT_ASSERT(res.second);
+        it = res.first;
+      } else
+      {
+        found_it->second.clear();
+        it = found_it;
+      }
       auto& logmap = it->second;
       std::copy(file.sign_events.begin(), file.sign_events.end(), std::inserter(logmap, logmap.begin()));
     }

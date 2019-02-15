@@ -36,6 +36,11 @@
       color: white;
     }
 
+    .page_title {
+      color: rgb(85, 85, 85);
+      font-weight: bold;
+    }
+
     .page {
       display: none;
     }
@@ -225,10 +230,14 @@
       <div><a href="#version" class="btn btn_command" id="btnVersion">Version</a></div>
     </div>
     <div class="form">
-      <div class="column col-8 page" id="page_select_key"></div>
-      <div class="column col-8 page" id="page_lock"></div>
-
-      <div class="column col-8 page" id="page_unlock">
+      <div class="page" id="page_select_key">
+        <div class="page_title">Select key</div>
+      </div>
+      <div class="page" id="page_lock">
+        <div class="page_title">Lock</div>
+      </div>
+      <div class="page" id="page_unlock">
+        <div class="page_title">Unlock</div>
         <div class="form-group">
           <label class="form-label" for="public_key_UNLOCK">public_key</label>
           <input class="form-input param_field" type="text" name="public_key" id="public_key_UNLOCK">
@@ -238,7 +247,8 @@
           <input class="form-input param_field" type="number" placeholder="45" name="unlock_time">
         </div>
       </div>
-      <div class="column col-8 page" id="page_sign_hex">
+      <div class="page" id="page_sign_hex">
+        <div class="page_title">Sign hex</div>
         <div class="form-group">
           <label class="form-label">transaction</label>
           <input class="form-input param_field" type="text" value="eb0885098bca5a00825208948ec6977b1255854169e5f9f8f163f371bcf1ffd287038d7ea4c6800080038080" placeholder="eb0885098bca5a00825208948ec6977b1255854169e5f9f8f163f371bcf1ffd287038d7ea4c6800080038080" name="transaction">
@@ -254,15 +264,14 @@
         <div class="form-group">
           <label class="form-label">unlock_time</label>
           <div class="input-group">
-            <!--<label class="form-switch">-->
             <input type="checkbox" id="checkbox_SIGN_HEX"><i class="form-icon"></i>
-            <!--</label>-->
             <input class="form-input param_field" type="number" name="unlock_time" placeholder="45" readonly id="unlock_time_SIGN_HEX">
           </div>
         </div>
       </div>
 
-      <div class="column col-8 page" id="page_sign_hash">
+      <div class="page" id="page_sign_hash">
+        <div class="page_title">Sign hash</div>
         <div class="form-group">
           <label class="form-label">hash</label>
           <input class="form-input param_field" type="text" value="fe5e4a8974715e20f47c8bb609547c9e66b0b9e31d521199b3d8d6af6da74cb1" placeholder="fe5e4a8974715e20f47c8bb609547c9e66b0b9e31d521199b3d8d6af6da74cb1" name="hash">
@@ -276,8 +285,12 @@
           <input class="form-input param_field" type="text" name="public_key" id="public_key_SIGN_HASH">
         </div>
       </div>
-      <div class="column col-8 page" id="page_about"></div>
-      <div class="column col-8 page" id="page_version"></div>
+      <div class="page" id="page_about">
+        <div class="page_title">About</div>
+      </div>
+      <div class="page" id="page_version">
+        <div class="page_title">Version</div>
+      </div>
     </div>
     <div class="right_menu">
       <div><a href="#select_key" class="btn btn_command" id="btnSelectKeyRight">&nbsp;</a></div>

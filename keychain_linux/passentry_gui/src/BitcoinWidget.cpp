@@ -3,7 +3,7 @@
 
 
 
-BitcoinWidget::BitcoinWidget(Transaction &transaction, QWidget * parent)
+BitcoinWidget::BitcoinWidget( QWidget * parent)
 	:KeychainWidget(parent)
 {
 	QMetaObject::connectSlotsByName(this);
@@ -31,8 +31,8 @@ BitcoinWidget::BitcoinWidget(Transaction &transaction, QWidget * parent)
 
 	//}
 	namespace sm_cmd = keychain_app::secmod_commands;
-	using event_ptr = event_singleton<sm_cmd::secmod_event<sm_cmd::events_te::sign_hex>::params_t>;
-	auto trx = event_ptr::shared.get()->get_trx_view<sm_cmd::blockchain_secmod_te::bitcoin>();
+	auto event = shared_event::ptr<sm_cmd::events_te::sign_hex>();
+	auto trx = event.get()->get_trx_view<sm_cmd::blockchain_secmod_te::bitcoin>();
 
 	bool overflow = false;
 	num_vouts = trx.trx_info.num_vouts;
@@ -65,10 +65,10 @@ BitcoinWidget::BitcoinWidget(Transaction &transaction, QWidget * parent)
 		}
 	}
 
-	if (event_ptr::shared.get()->unlock_time > 0) {
+	if (event.get()->unlock_time > 0) {
 		unlockTime = new PrivateKeyInMemory(this);
 
-		unlockTime->SetTime(QString::number(event_ptr::shared.get()->unlock_time));
+		unlockTime->SetTime(QString::number(event.get()->unlock_time));
 	}
 
 	if (overflow) {
@@ -82,7 +82,7 @@ BitcoinWidget::BitcoinWidget(Transaction &transaction, QWidget * parent)
 	}
 	expertModeElement = new ExpertModeElement(this);
 	expertModeElement->SetExpertModeText(QString::fromStdString(
-			sm_cmd::to_expert_mode_string(*event_ptr::shared.get())
+			sm_cmd::to_expert_mode_string(*event.get())
 	));
 }
 

@@ -121,6 +121,7 @@ template<>
 struct secmod_event<events_te::create_key>
 {
   struct params {
+    params(): keyname(""){}
     params(params&& a): keyname(a.keyname){}
     std::string keyname;
   };
@@ -157,6 +158,7 @@ template<>
 struct secmod_event<events_te::sign_hash>
 {
   struct params {
+    params(): no_password(false), keyname(""), from(""), hash(""){};
     params(params&& a): no_password(a.no_password), keyname(a.keyname), from(a.from), hash(a.hash){}
     bool no_password = false;
     std::string keyname;

@@ -2,7 +2,6 @@
 #define RAWHASHWIDGET_H
 
 #include <QWidget>
-#include "Transaction.h"
 #include "SecureWindowElement.h"
 #include "ExpertModeElement.h"
 #include "PrivateKeyInMemoryWidget.h"
@@ -12,7 +11,7 @@ class RawHashWidget : public KeychainWidget
 {
 	Q_OBJECT
 public:
-	RawHashWidget(Transaction &transaction, QWidget * parent = Q_NULLPTR);
+	RawHashWidget( QWidget * parent = Q_NULLPTR);
 	void SetPosition(int x, int y, int width) override;
 	int GetCurrentHeight() override;
 	int GetCurrentWidth() override;

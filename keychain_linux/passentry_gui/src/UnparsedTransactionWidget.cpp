@@ -2,7 +2,7 @@
 #include "widget_singleton.h"
 
 
-UnparsedTransactionWidget::UnparsedTransactionWidget(Transaction &transaction, QWidget * parent)
+UnparsedTransactionWidget::UnparsedTransactionWidget(QWidget * parent)
 	:KeychainWidget(parent)
 {
 	QMetaObject::connectSlotsByName(this);
@@ -11,16 +11,16 @@ UnparsedTransactionWidget::UnparsedTransactionWidget(Transaction &transaction, Q
 	QString labelStyle("font:16px \"Segoe UI\";background:transparent;");
 
 	namespace sm_cmd = keychain_app::secmod_commands;
-	using event_ptr = event_singleton<sm_cmd::secmod_event<sm_cmd::events_te::sign_hex>::params_t>;
+	auto event = shared_event::ptr<sm_cmd::events_te::sign_hex>();
 
 	expertModeElement = new ExpertModeElement(this);
 	expertModeElement->SetExpertModeText(QString::fromStdString(
-			sm_cmd::to_expert_mode_string(*event_ptr::shared.get())
+			sm_cmd::to_expert_mode_string(*event.get())
 	));
 
-	if (event_ptr::shared.get()->unlock_time > 0) {
+	if (event.get()->unlock_time > 0) {
 		unlockTime = new PrivateKeyInMemory(this);
-		unlockTime->SetTime(QString::number(event_ptr::shared.get()->unlock_time));
+		unlockTime->SetTime(QString::number(event.get()->unlock_time));
 	}
 }
 
@@ -28,7 +28,7 @@ void UnparsedTransactionWidget::SetPosition(int x, int y, int width)
 {
 	expertModeElement->SetPosition(0, currentHeight, 116, width);
 	expertModeElement->move(0, currentHeight);
-	currentHeight += 60; 
+	currentHeight += 60;
 	if (unlockTime != Q_NULLPTR) {
 		unlockTime->SetPosition(0, currentHeight, 116, width);
 		unlockTime->move(0, currentHeight);

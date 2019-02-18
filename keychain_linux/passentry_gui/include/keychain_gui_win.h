@@ -13,7 +13,6 @@
 #include "SecureWindowElement.h"
 #include "ExpertModeElement.h"
 #include "KeychainServiceExchange.h"
-#include "Transaction.h"
 #include "ui_keychain_gui_win.h"
 #include "EthereumWidget.h"
 #include "EthereumSwapWidget.h"
@@ -39,9 +38,9 @@ private:
 
 public:
 
-	keychain_gui_win(Transaction &transaction, QWidget *parent = Q_NULLPTR);
+	keychain_gui_win(QWidget *parent = Q_NULLPTR);
 	PopupWindow * popupWindow;
-    void refresh(Transaction&);
+    void refresh();
     PasswordEnterElement * password;
 	void setFocusByMouse(int);
     void setFocusByTabKey(int);

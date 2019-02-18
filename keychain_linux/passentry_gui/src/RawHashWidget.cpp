@@ -2,7 +2,7 @@
 #include "widget_singleton.h"
 
 
-RawHashWidget::RawHashWidget(Transaction &transaction, QWidget * parent)
+RawHashWidget::RawHashWidget(QWidget * parent)
 	:KeychainWidget(parent)
 {
 	QMetaObject::connectSlotsByName(this);
@@ -11,27 +11,27 @@ RawHashWidget::RawHashWidget(Transaction &transaction, QWidget * parent)
 	QString labelStyle("font:16px \"Segoe UI\";background:transparent;");
 
 	namespace sm_cmd = keychain_app::secmod_commands;
-	using event_ptr = event_singleton<sm_cmd::secmod_event<sm_cmd::events_te::sign_hash>::params_t>;
+	auto event = shared_event::ptr<sm_cmd::events_te::sign_hash>();
 
 	from = new SecureWindowElement(this);
-	from->SetLabelAndValue("From", QString::fromStdString(event_ptr::shared.get()->from));
+	from->SetLabelAndValue("From", QString::fromStdString(event.get()->from));
 	from->SetLabelStyle(labelStyle);
 	from->SetValueStyle(valueStyle);
 
 	QFont fromFont = from->font();
 	fromFont.setPixelSize(16);
 	fromFont.setFamily("Segoe UI");
-	QString fromStr = QString::fromStdString(event_ptr::shared.get()->from);
+	QString fromStr = QString::fromStdString(event.get()->from);
 
 	QFontMetrics fromFM(fromFont);
 	int fromWidth = fromFM.width(fromStr);
 
 	hash = new SecureWindowElement(this);
-	hash->SetLabelAndValue("Hash", QString::fromStdString(event_ptr::shared.get()->hash));
+	hash->SetLabelAndValue("Hash", QString::fromStdString(event.get()->hash));
 	hash->SetLabelStyle(labelStyle);
 	hash->SetValueStyle(valueStyle);
 	QFont hashFont = hash->font();
-	QString hashStr = QString::fromStdString(event_ptr::shared.get()->hash);
+	QString hashStr = QString::fromStdString(event.get()->hash);
 	QFontMetrics hashFM(fromFont);
 	int hashWidth = hashFM.width(hashStr);
 	if (hashWidth >= fromWidth)

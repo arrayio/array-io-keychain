@@ -38,88 +38,29 @@ const keyfile_singleton::third_index_type& keyfile_singleton::third_index() cons
   return m_keydata_map.get<keyfiles_map::third_date_tag>();
 }
 
-const keyfile_singleton::random_access_index_type& keyfile_singleton::random_access_index() const
-{
-  return m_keydata_map.get<keyfiles_map::random_access_tag>();
-}
-
-void keyfile_singleton::keydata_initialize()
-{
-//  auto curdir = bfs::current_path();
-
-  bfs::path key_dir(KEY_DEFAULT_PATH_);
-
-  if(!bfs::exists(key_dir))
-  {
-      auto res = bfs::create_directories(key_dir);
-      if(res == false)
-          FC_LIGHT_THROW_EXCEPTION(fc_light::internal_error_exception,
-                                     "Can not create key directory, path = ${directory}", ("directory", key_dir.string()));
-  }
-
-  auto first = bfs::directory_iterator(bfs::path(KEY_DEFAULT_PATH_));
-  std::for_each(first, bfs::directory_iterator(), [this](const auto& unit) {
-    try {
-      fc_light::variant j_keyfile = open_keyfile(unit.path().c_str());
-      m_keydata_map.insert(j_keyfile.as<keyfile_format::keyfile_t>());
-    }
-    catch (fc_light::parse_error_exception& er) {
-      return print_exception(unit.path(), er);
-    }
-    catch (fc_light::bad_cast_exception& er) {
-      return print_exception(unit.path(), er);
-    }
-    FC_LIGHT_RETHROW_EXCEPTIONS(log_level::error, "Cannot parse key file \"${KEYFILE}\"", ("KEYFILE", unit.path().c_str()))
-  });
-}
-
-void keyfile_singleton::signlog_initialize()
-{
-//  auto curdir = bfs::current_path();
-  bfs::path dir(SIGN_LOGS_DEFAULT_PATH_);
-
-  if(!bfs::exists(dir))
-  {
-        auto res = bfs::create_directories(dir);
-        if(res == false)
-            FC_LIGHT_THROW_EXCEPTION(fc_light::internal_error_exception,
-                                     "Can not create sign_logs directory, path = ${directory}", ("directory", dir.string()));
-  }
-
-  auto first = bfs::directory_iterator(bfs::path(SIGN_LOGS_DEFAULT_PATH_));
-  std::for_each(first, bfs::directory_iterator(), [this](const auto& unit) {
-    try {
-      fc_light::variant j_keyfile = open_keyfile(unit.path().c_str());
-      auto file = j_keyfile.as<keyfile_format::signlog_file_t>();
-      auto res = m_signlog_map.insert(signlog_map_t::value_type(file.public_key,log_records_t()));
-      FC_LIGHT_ASSERT(res.second);
-      auto it = res.first;
-      auto& logmap = it->second;
-      std::copy(file.sign_events.begin(), file.sign_events.end(), std::inserter(logmap, logmap.begin()));
-    }
-    catch (fc_light::parse_error_exception& er) {
-      return print_exception(unit.path(), er);
-    }
-    catch (fc_light::bad_cast_exception& er) {
-      return print_exception(unit.path(), er);
-    }
-    FC_LIGHT_RETHROW_EXCEPTIONS(log_level::error, "Cannot parse key file \"${KEYFILE}\"", ("KEYFILE", unit.path().c_str()))
-  });
-}
-
-void keyfile_singleton::print_exception (const boost::filesystem::path& filename, fc_light::exception &er)
-{
-  auto& log = logger_singleton::instance();
-  BOOST_LOG_SEV(log.lg, warning) << "Cannot read key file \"" << filename.c_str() << "\"" << er.to_detail_string();
-};
-
 keyfile_singleton::keyfile_singleton()
 {
-  
+  auto print_exception = [](const auto& filename, fc_light::exception &er) {
+    auto& log = logger_singleton::instance();
+    BOOST_LOG_SEV(log.lg, warning) << "Cannot read key file \"" << filename.c_str() << "\"" << er.to_detail_string();
+  };
   try
   {
-    keydata_initialize();
-    signlog_initialize();
+    auto curdir = bfs::current_path();
+    auto first = bfs::directory_iterator(bfs::path(KEY_DEFAULT_PATH_));
+    std::for_each(first, bfs::directory_iterator(), [&print_exception, this](const auto& unit) {
+      try {
+        fc_light::variant j_keyfile = open_keyfile(unit.path().c_str());
+        m_keydata_map.insert(j_keyfile.as<keyfile_format::keyfile_t>());
+      }
+      catch (fc_light::parse_error_exception& er) {
+        return print_exception(unit.path(), er);
+      }
+      catch (fc_light::bad_cast_exception& er) {
+        return print_exception(unit.path(), er);
+      }
+      FC_LIGHT_RETHROW_EXCEPTIONS(log_level::error, "Cannot parse key file \"${KEYFILE}\"", ("KEYFILE", unit.path().c_str()))
+    });
   }
   FC_LIGHT_RETHROW_EXCEPTIONS(log_level::error, "Cannot create keyfiles map")
 }

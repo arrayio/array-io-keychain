@@ -1,6 +1,7 @@
 #include "PasswordEnterElement.h"
+#include "widget_singleton.h"
 
-PasswordEnterElement::PasswordEnterElement(bool passwordCreate, QWidget * parent)
+PasswordEnterElement::PasswordEnterElement(QWidget * parent)
 	:QWidget(parent)
 {
 	QMetaObject::connectSlotsByName(this); 
@@ -18,7 +19,10 @@ PasswordEnterElement::PasswordEnterElement(bool passwordCreate, QWidget * parent
 	value->setAlignment(Qt::AlignVCenter | Qt::AlignLeft);
 	value->setFocus();
 	pCreatePassword = false;
-	if (passwordCreate) {
+	namespace sm_cmd = keychain_app::secmod_commands;
+	auto event_num = shared_event::event_num();
+
+	if (event_num == sm_cmd::events_te::create_key) {
 		pCreatePassword = true;
 		description = new QLabel(this);
 		description->setWordWrap(true);

@@ -14,7 +14,7 @@ class PasswordEnterElement : public QWidget
 {
 	Q_OBJECT
 public:
-	PasswordEnterElement(bool passwordCreate = false, QWidget * parent=Q_NULLPTR);
+	PasswordEnterElement( QWidget * parent=Q_NULLPTR);
 	~PasswordEnterElement();
 	void SetPosition(int x, int y, int valueWidth);
 	void SetLabel(QString label);

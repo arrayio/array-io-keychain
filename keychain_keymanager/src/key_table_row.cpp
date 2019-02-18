@@ -6,7 +6,7 @@ key_table_row::key_table_row(QWidget *parent)
 	QMetaObject::connectSlotsByName(parent);
 }
 
-void key_table_row::setShortKeyInfo(QString key_name_str, QString description_str, QString date_str, int row_index)
+void key_table_row::setShortKeyInfo(keylist_row_model row_data, int row_index)
 {
 	key_name_frame = new QFrame(this);
 	description_frame = new QFrame(this);
@@ -34,6 +34,8 @@ void key_table_row::setShortKeyInfo(QString key_name_str, QString description_st
 	//more_area initialization
 	more = new more_details(this);
 
+	more->set_details_value(row_data);
+
     //process remove key event while row expanded
     QObject::connect(more, SIGNAL(RemoveKeySelected(QString)), this, SLOT(ProcessRemoveKey(QString)));
 
@@ -48,10 +50,17 @@ void key_table_row::setShortKeyInfo(QString key_name_str, QString description_st
 	key_name->setAlignment(Qt::AlignVCenter);
 	description->setAlignment(Qt::AlignVCenter);
 	date->setAlignment(Qt::AlignVCenter);
-	key_name->setText(key_name_str);
-	description->setText(description_str);
-	date->setText(date_str);
+	key_name->setText(row_data.key_name);
+	description->setText(get_pretty_string(row_data.public_key));
+	date->setText(row_data.last_date);
 	mp_row_index = row_index;
+}
+
+QString key_table_row::get_pretty_string(QString str)
+{
+	QString beg = str.mid(0, 32);
+	QString end = str.mid(str.length() - 8, 8);
+	return QString(beg + QString("<...>") + end);
 }
 
 //process remove key signal call
@@ -100,7 +109,6 @@ void key_table_row::show_more()
 		return;
 	p_row_expanded = !p_row_expanded;
 	setFixedHeight(get_row_height());
-	more->set_details_value();
 	set_selected();
 }
 

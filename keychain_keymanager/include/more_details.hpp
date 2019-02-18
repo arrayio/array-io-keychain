@@ -6,6 +6,7 @@
 #include <QLabel>
 #include <QPushButton>
 #include "custom_qlabel.hpp"
+#include "keylist_row_model.hpp"
 #include <more_button.hpp>
 
 class more_button;
@@ -15,7 +16,7 @@ class more_details : public QWidget
 	Q_OBJECT
 public:
 	more_details(QWidget *parent = Q_NULLPTR);
-	void set_details_value();
+	void set_details_value(keylist_row_model keylist_row_data);
 	int get_total_height();
 
 private slots:

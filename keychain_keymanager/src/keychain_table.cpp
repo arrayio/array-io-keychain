@@ -1,9 +1,6 @@
 #include <keychain_table.hpp>
 
-using namespace keychain_app;
-using namespace std;
-using namespace keyfile_format;
-using keyfiles_map::keyfile_map_t;
+
 
 keychain_table::keychain_table(QWidget *parent)
 	:QWidget(parent)
@@ -28,11 +25,6 @@ void keychain_table::init()
 
 void keychain_table::load_records()
 {
-	auto it = keyfile_singleton::instance().prim_index().begin();
-	for (; it != keyfile_singleton::instance().prim_index().end(); ++it)
-	{
-		keyfile_t key_file = *it;
-		std:string desc = key_file.description;
-	}
+	
 	key_list->load_records();
 }

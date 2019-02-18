@@ -15,6 +15,7 @@
 #include "menu_toolbar.hpp"
 #include "hints_toolbar.hpp"
 #include "key_scroll_area.hpp"
+#include "export_dialog.hpp"
 
 class keymanager_dialog : public QDialog
 {

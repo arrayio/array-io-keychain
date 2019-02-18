@@ -7,6 +7,7 @@
 #include <QString>
 #include <memory>
 #include "more_details.hpp"
+#include "keylist_row_model.hpp"
 #include "remove_dialog.hpp"
 
 class key_table_row : public QWidget
@@ -14,7 +15,7 @@ class key_table_row : public QWidget
 	Q_OBJECT
 public:
 	key_table_row(QWidget *parent = Q_NULLPTR);
-	void setShortKeyInfo(QString keyName, QString description, QString date, int row_index);
+	void setShortKeyInfo(keylist_row_model row_data, int row_index);
 	void set_row_style_sheet(QString style_sheet);
 	void show_more();
 	void hide_more();
@@ -49,6 +50,9 @@ private:
 	const int KEY_NAME_WIDTH= 314;
 	const int P_KEY_WIDTH = 460;
 	const int DATE_WIDTH = 259;
+
+private:
+	QString get_pretty_string(QString str);
 
 private:
 	void set_selected();

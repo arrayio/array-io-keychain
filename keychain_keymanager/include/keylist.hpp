@@ -6,6 +6,10 @@
 #include <QWidget>
 #include "key_table_row.hpp"
 #include "table_header.hpp"
+#include "keylist_row_model.hpp"
+#include <keychain_lib/keyfile_singleton.hpp>
+#include <keychain_lib/version_info.hpp>
+#include <keychain_lib/secmod_parser_cmd.hpp>
 
 class keylist : public QWidget
 {

@@ -6,12 +6,13 @@ keymanager_dialog::keymanager_dialog(QWidget * parent)
     //define common dialog properties
     QMetaObject::connectSlotsByName(this);
     setWindowTitle(QApplication::translate("keychain_gui_winClass", "keychain_gui_win", nullptr));
+	setWindowFlags(Qt::FramelessWindowHint);
     resize(1100, 760);
-    setWindowFlags(Qt::FramelessWindowHint);
     setStyleSheet("background-color:rgb(242,243,246);");
 	//QFontDatabase
 
 	QFontDatabase::addApplicationFont(":/fonts/Cartograph Mono CF/Cartograph Mono CF Regular.ttf");
+	QFontDatabase::addApplicationFont(":/fonts/Cartograph Mono CF/Cartograph Sans CF Regular.ttf");
 }
 
 void keymanager_dialog::init()
@@ -75,6 +76,8 @@ void keymanager_dialog::ProcessCreate(const QString &text)
 //process export dialog signal call
 void keymanager_dialog::ProcessExport(const QString &text)
 {
+	export_dialog dlg(this);
+	dlg.exec();
     textEditform->setText("Process Export!");
 }
 

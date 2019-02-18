@@ -5,18 +5,18 @@ more_details::more_details(QWidget *parent)
 	:QWidget(parent)
 {
 	QMetaObject::connectSlotsByName(this);
-	QFont font("Cartograph Sans CF");
+	QFont font("Cartograph Sans CF Regular");
 	font.setPixelSize(14);
 	setStyleSheet("background-color:rgb(214,220,229);");
 	//initialize gui items
 	int start_position = 0;
 	int height = 30;
-	edit_button = new more_button(this);
-	edit_button->set_edit_mode();
-	edit_button->move(980, 8);
-	rem_button = new more_button(this);
-	rem_button->set_remove_mode();
-	rem_button->move(980, 45);
+	//edit_button = new more_button(this);
+	//edit_button->set_edit_mode();
+	//edit_button->move(980, 10);
+	//rem_button = new more_button(this);
+	//rem_button->set_remove_mode();
+	//rem_button->move(980, 55);
 
 	creation_date = new QLabel(this);
 	creation_date->setFixedSize(1030, height-5);
@@ -57,28 +57,28 @@ more_details::more_details(QWidget *parent)
     //create edit button
     QPushButton *EditButton = new QPushButton(this);
     EditButton->setObjectName("editbtn");
-    EditButton->setStyleSheet("QPushButton#editbtn:focus{border:none;outline:none;}");
+    //EditButton->setStyleSheet("QPushButton#editbtn:focus{border:none;outline:none;}");
 
     //create edit button text label
     custom_qlabel *EditButtonLabel = new custom_qlabel(EditButton);
     const int rowWidth = this->size().width() - 50;
-    start_position += 5;
+    
     EditButtonLabel->move(rowWidth, start_position);
 
     //set styles for edit button and label elements
-    EditButtonLabel->setFixedSize(35, 50);
-    QPixmap editBtnLogo(":/keymanager/edit_btn_icon.png");
-    editBtnLogo = editBtnLogo.scaled(35, 50, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+    EditButtonLabel->setFixedSize(30, 50);
+    QPixmap editBtnLogo(":/keymanager/edit_icon.png");
+    editBtnLogo = editBtnLogo.scaled(18, 25, Qt::KeepAspectRatio, Qt::SmoothTransformation);
     EditButton->setIcon(editBtnLogo);
     EditButton->setFlat(true);
-    EditButton->setIconSize(QSize(35, 50));
-    EditButton->setFixedSize(35, 50);
+    EditButton->setIconSize(QSize(18, 25));
+    EditButton->setFixedSize(22, 27);
     EditButton->move(rowWidth, start_position);
 
     //create delete button
     QPushButton *DeleteButton = new QPushButton(this);
     DeleteButton->setObjectName("deletebtn");
-    DeleteButton->setStyleSheet("QPushButton#deletebtn:focus{border:none;outline:none;}");
+    //DeleteButton->setStyleSheet("QPushButton#deletebtn:focus{border:none;outline:none;}");
 
     //create delete button text label
     custom_qlabel *DeleteButtonLabel = new custom_qlabel(DeleteButton);
@@ -87,26 +87,26 @@ more_details::more_details(QWidget *parent)
     DeleteButtonLabel->move(rowWidth, heightStep);
 
     //set styles for delete button and label elements
-    DeleteButtonLabel->setFixedSize(35, 50);
-    QPixmap deleteBtnLogo(":/keymanager/delete_btn_icon.png");
+    DeleteButtonLabel->setFixedSize(18, 25);
+    QPixmap deleteBtnLogo(":/keymanager/trash_icon.png");
     deleteBtnLogo = deleteBtnLogo.scaled(35, 50, Qt::KeepAspectRatio, Qt::SmoothTransformation);
     DeleteButton->setIcon(deleteBtnLogo);
     DeleteButton->setFlat(true);
-    DeleteButton->setIconSize(QSize(35, 50));
-    DeleteButton->setFixedSize(35, 50);
+    DeleteButton->setIconSize(QSize(18, 25));
+    DeleteButton->setFixedSize(22, 27);
     DeleteButton->move(rowWidth, heightStep);
 
     //connect clicked trigger for delete keys button via qt signals with remove dialog
     QObject::connect(DeleteButton, SIGNAL(clicked()), this, SLOT(RemoveKey()));
 }
 
-void more_details::set_details_value() {
-	creation_date->setText("Creation date : 12.01.18 16; 44");
-	keychain_version->setText("Keychain version : 1.1.256");
-	cipher_type->setText("Cipher type : aes 256");
-	location->setText("location : keychain storage");
-	description->setText("Description : My light wallet key 5");
-	public_key->setText("Public key : 4f190a432dcfda0e4ac09dba217eabbe5fdab4a746f2b90c205bb3�bef734d10<br>4f190a432dcfda0e4ac09dba217eabbe5fdab4a746f2b90c205bb3�bef734d10");
+void more_details::set_details_value(keylist_row_model keylist_row_data) {
+	creation_date->setText("Creation date : "+ keylist_row_data.creation_date);
+	keychain_version->setText("Keychain version : "+keylist_row_data.keychain_version);
+	cipher_type->setText("Cipher type : aes256");
+	location->setText("Location : "+keylist_row_data.location);
+	description->setText("Description : " + keylist_row_data.description);
+	public_key->setText("Public key : " + keylist_row_data.public_key);
 }
 
 int more_details::get_total_height()

@@ -9,7 +9,6 @@
 using namespace keychain_app;
 
 #include <pass_entry_term.hpp>
-#include <cmd.hpp>
 
 namespace sm_cmd = keychain_app::secmod_commands;
 
@@ -25,59 +24,10 @@ std::string sec_mod_linux::exec_cmd(const std::string& json_cmd) const
     keychain_app::byte_seq_t result_pass;
     result_pass.reserve(512);
 
-
-    switch (etype)
-    {
-        case sm_cmd::events_te::create_key:
-        {
-            auto cmd = parser.params<sm_cmd::events_te::create_key>();
-
-            auto a = master::cmd<master::cmds::create>(fc_light::json::to_string(cmd.keyname ));
-            auto mes = fc_light::json::to_string(fc_light::variant(static_cast<const master::cmd_base&>(a)));
-
-            auto pass_entry = pass_entry_term(true);
-            auto map_instance = map_translate_singleton::instance(pass_entry._display);
-            result_pass = pass_entry.fork_gui(map_instance.map, mes);
-            break;
-        }
-        case sm_cmd::events_te::sign_hex:
-        {
-            auto a = master::cmd<master::cmds::rawtrx>(json_cmd );
-            auto mes = fc_light::json::to_string(fc_light::variant(static_cast<const master::cmd_base&>(a)));
-
-            auto pass_entry = pass_entry_term(false);
-            auto map_instance = map_translate_singleton::instance(pass_entry._display);
-            result_pass = pass_entry.fork_gui(map_instance.map, mes);
-            break;
-        }
-        case sm_cmd::events_te::sign_hash:
-        {
-            auto cmd = parser.params<sm_cmd::events_te::sign_hash>();
-
-            auto a = master::cmd<master::cmds::rawtrx>(cmd.hash );
-            auto mes = fc_light::json::to_string(fc_light::variant(static_cast<const master::cmd_base&>(a)));
-
-            auto pass_entry = pass_entry_term(false);
-            auto map_instance = map_translate_singleton::instance(pass_entry._display);
-            result_pass = pass_entry.fork_gui(map_instance.map, mes);
-            break;
-        }
-        case sm_cmd::events_te::remove_key:
-        case sm_cmd::events_te::export_keys:
-        case sm_cmd::events_te::import_keys:
-        case sm_cmd::events_te::unlock:
-        {
-            auto cmd = parser.params<sm_cmd::events_te::unlock>();
-
-            auto a = master::cmd<master::cmds::unlock>(cmd.keyname, cmd.unlock_time);
-            auto mes = fc_light::json::to_string(fc_light::variant(static_cast<const master::cmd_base&>(a)));
-
-            auto pass_entry = pass_entry_term(false);
-            auto map_instance = map_translate_singleton::instance(pass_entry._display);
-            result_pass = pass_entry.fork_gui(map_instance.map, mes);
-            break;
-        }
-    }
+    auto pass_entry = pass_entry_term();
+    pass_entry.confirm = (etype==sm_cmd::events_te::create_key) ? true: false;
+    auto map_instance = map_translate_singleton::instance(pass_entry._display);
+    result_pass = pass_entry.fork_gui(map_instance.map, json_cmd);
 
     std::string result;
     sm_cmd::secmod_resonse_common response;

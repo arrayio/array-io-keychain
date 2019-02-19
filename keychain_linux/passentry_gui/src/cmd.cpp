@@ -21,10 +21,10 @@ namespace slave
 
 
     template<>
-    struct cmd<cmds::rawtrx> : cmd_base {
-        cmd() : cmd_base(cmds::rawtrx) {};
+    struct cmd<cmds::event> : cmd_base {
+        cmd() : cmd_base(cmds::event) {};
 
-        struct params {std::string rawtrx;};
+        struct params {std::string event;};
         using params_t = params;
 
         virtual ~cmd() {};
@@ -242,7 +242,7 @@ void send(std::string a)
 
 
 
-FC_LIGHT_REFLECT(slave::cmd<slave::cmds::rawtrx>::params_t, (rawtrx))
+FC_LIGHT_REFLECT(slave::cmd<slave::cmds::event>::params_t, (event))
 FC_LIGHT_REFLECT(slave::cmd<slave::cmds::modify>::params_t, (caps)(num)(shift))
 FC_LIGHT_REFLECT(slave::cmd<slave::cmds::length>::params_t, (len)(line_edit))
 FC_LIGHT_REFLECT(slave::cmd<slave::cmds::check>::params_t, (res))

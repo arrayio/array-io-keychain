@@ -75,9 +75,15 @@ void keychain_gui_win::refresh()
 		{
 			auto event = shared_event::ptr<sm_cmd::events_te::sign_hex>();
 	        if (event.get()->unlock_time)
-                info_unlock(event.get()->keyname, event.get()->unlock_time);
+			{
+				OKButton = new QPushButton("UNLOCK", this);
+				info_unlock(event.get()->keyname, event.get()->unlock_time);
+			}
 	        else
-                info(event.get()->keyname);
+			{
+				OKButton = new QPushButton("SIGN", this);
+				info(event.get()->keyname);
+			}
 
 			if (event.get()->is_parsed) {
 				switch (event.get()->blockchain) {
@@ -107,7 +113,6 @@ void keychain_gui_win::refresh()
                 element_move();
                 warningMessage.SetWarning(KeychainWarningMessage::WarningType::FailedWarning);
 			}
-			OKButton = new QPushButton("SIGN", this);
 			break;
 		}
 		case(sm_cmd::events_te::sign_hash):
@@ -117,6 +122,7 @@ void keychain_gui_win::refresh()
             element = new UnparsedTransactionWidget(this);
             warningMessage.SetWarning(KeychainWarningMessage::WarningType::FailedWarning);
             element_move();
+			OKButton = new QPushButton("SIGN", this);
             break;
 		}
 		case(sm_cmd::events_te::unlock):
@@ -125,6 +131,10 @@ void keychain_gui_win::refresh()
             info_unlock(event.get()->keyname, event.get()->unlock_time);
 			OKButton = new QPushButton("UNLOCK", this);
 			break;
+		}
+		default:
+		{
+			throw (std::runtime_error("unknown command"));
 		}
 	}
 

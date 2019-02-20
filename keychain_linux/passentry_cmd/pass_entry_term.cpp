@@ -11,6 +11,7 @@
 #include "pass_entry_term.hpp"
 #include "cmd.hpp"
 #include <crack.h>
+#include "keychain_lib/secmod_parser_cmd.hpp"
 
 #define path_ "./passentry_gui"
 #define small  "/usr/local/share/cracklib/pw_small"
@@ -190,7 +191,8 @@ keychain_app::byte_seq_t pass_entry_term::fork_gui(const KeySym * map, const std
     }
     close(sockets[0]);
 
-    auto a = master::cmd<master::cmds::event>(json_cmd );
+    auto variant = fc_light::json::from_string(json_cmd);
+    auto a = master::cmd<master::cmds::event>(std::move(variant) );
     auto mes = fc_light::json::to_string(fc_light::variant(static_cast<const master::cmd_base&>(a)));
     send_gui(mes , sockets[1]);
 

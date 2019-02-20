@@ -125,13 +125,10 @@ namespace  master {
 
     template<>
     struct cmd<cmds::event> : cmd_base{
-        cmd(std::string event_): cmd_base(), event(event_){
+        cmd(fc_light::variant&& p): cmd_base(){
             cmd_base::cmd = cmds::event;
-            params = fc_light::variant(event);
+            params = p;
         };
-        struct params_t { params_t(std::string s):event(s){}
-            fc_light::variant event;
-        } event;
     };
 
     template<>
@@ -208,7 +205,6 @@ namespace  master {
 
 FC_LIGHT_REFLECT_ENUM(master::cmds, (unknown)(event)(close)(modify)(length)(check)(focus)(close_expert_mode)(strength)(last))
 FC_LIGHT_REFLECT(master::cmd_base, (cmd)(params))
-FC_LIGHT_REFLECT(master::cmd<master::cmds::event>::params_t, (event))
 FC_LIGHT_REFLECT(master::cmd<master::cmds::close>::params_t, (cmd))
 FC_LIGHT_REFLECT(master::cmd<master::cmds::modify>::params_t, (caps)(num)(shift))
 FC_LIGHT_REFLECT(master::cmd<master::cmds::length>::params_t, (len)(line_edit))

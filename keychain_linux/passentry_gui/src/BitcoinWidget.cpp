@@ -12,7 +12,8 @@ BitcoinWidget::BitcoinWidget( QWidget * parent)
 	QString valueStyle("font:16px \"Segoe UI\";background:transparent;color:rgb(123,141,167)");
 
 	cryptoType = new SecureWindowElement(this);
-	cryptoType->SetLabelStyle("background-image:url(:/keychain_gui_win/btc_logo.png) no-repeat;background-size:contain;");
+//	cryptoType->SetLabelStyle("background-image:url(:/keychain_gui_win/btc_logo.png) no-repeat;background-size:contain;");
+
 	cryptoType->SetValueStyle("font:16px \"Segoe UI\";background:transparent;color:rgb(123,141,167);");
 	cryptoType->SetLabelAndValue("empty=Bitcoin");
 

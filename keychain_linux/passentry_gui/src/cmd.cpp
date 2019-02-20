@@ -31,6 +31,7 @@ namespace slave
 
         virtual void operator()(keychain_gui_win& w, const fc_light::variant& v) const override {
             try {
+                auto m_cmd = fc_light::json::to_string(v);
                 secmod_parser_f event_parser;
                 auto cmd = event_parser(v);
 
@@ -38,41 +39,41 @@ namespace slave
                 {
                     case sm_cmd::events_te::create_key:
                     {
-                        auto event = shared_event::ptr<sm_cmd::events_te::create_key>();
+                        auto& event = shared_event::ptr<sm_cmd::events_te::create_key>();
                         event.reset(new  sm_cmd::secmod_event<sm_cmd::events_te::create_key>::params_t (
                                 std::move(event_parser.params<sm_cmd::events_te::create_key>())
                         ));
-                        auto event_num = shared_event::event_num();
+                        auto& event_num = shared_event::event_num();
                         event_num = sm_cmd::events_te::create_key;
                         break;
                     }
                     case sm_cmd::events_te::sign_hex:
                     {
-                        auto event = shared_event::ptr<sm_cmd::events_te::sign_hex>();
+                        auto& event = shared_event::ptr<sm_cmd::events_te::sign_hex>();
                         event.reset(new  sm_cmd::secmod_event<sm_cmd::events_te::sign_hex>::params_t (
                                 std::move(event_parser.params<sm_cmd::events_te::sign_hex>())
                                         ));
-                        auto event_num = shared_event::event_num();
+                        auto& event_num = shared_event::event_num();
                         event_num = sm_cmd::events_te::sign_hex;
                         break;
                     }
                     case sm_cmd::events_te::sign_hash:
                     {
-                        auto event = shared_event::ptr<sm_cmd::events_te::sign_hash>();
+                        auto& event = shared_event::ptr<sm_cmd::events_te::sign_hash>();
                         event.reset(new  sm_cmd::secmod_event<sm_cmd::events_te::sign_hash>::params_t (
                                 std::move(event_parser.params<sm_cmd::events_te::sign_hash>())
                         ));
-                        auto event_num = shared_event::event_num();
+                        auto& event_num = shared_event::event_num();
                         event_num = sm_cmd::events_te::sign_hash;
                         break;
                     }
                     case sm_cmd::events_te::unlock:
                     {
-                        auto event = shared_event::ptr<sm_cmd::events_te::unlock>();
+                        auto& event = shared_event::ptr<sm_cmd::events_te::unlock>();
                         event.reset(new  sm_cmd::secmod_event<sm_cmd::events_te::unlock>::params_t (
                                 std::move(event_parser.params<sm_cmd::events_te::unlock>())
                         ));
-                        auto event_num = shared_event::event_num();
+                        auto& event_num = shared_event::event_num();
                         event_num = sm_cmd::events_te::unlock;
                         break;
                     }

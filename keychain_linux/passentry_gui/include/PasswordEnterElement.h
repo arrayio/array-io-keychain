@@ -43,10 +43,7 @@ private:
 	QLabel *labelConfirm = Q_NULLPTR;
 	QLabel *confirmDescription;
 
-	bool pCreatePassword;
 	int _height = 0;
-	int pValidChecks = 0;
-	bool pStrong = false;
 	bool isSame = false;
 
 public slots:

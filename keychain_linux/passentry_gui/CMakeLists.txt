@@ -77,7 +77,7 @@ file(GLOB GUI_INCLUDE "${CMAKE_SOURCE_DIR}/keychain_linux/passentry_gui/include/
 file(GLOB GUI_RESOURCES "./Resources/*.qrc")
 file(GLOB GUI_UIS "./src/*.ui")
 
-add_executable(passentry_gui ${GUI_SOURCES} ${GUI_INCLUDE} ${GUI_RESOURCES} ${GUI_UIS} include/widget_singleton.h src/widget_singleton.cpp)
+add_executable(passentry_gui ${GUI_SOURCES} ${GUI_INCLUDE} ${GUI_RESOURCES} ${GUI_UIS})
 
 # Use the Widgets module from Qt 5
 #target_link_libraries(passentry_gui Qt5::Widgets Qt5::Core Qt5::Qml Qt5::Svg keychain_common secmodlib kaitai_struct_cpp_stl_runtime fc_light ${LIB_PTHREAD} ${LIB_OPENSSL} ${Boost_LIBRARIES} )

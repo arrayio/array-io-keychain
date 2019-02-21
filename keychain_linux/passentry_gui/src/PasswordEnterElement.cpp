@@ -18,12 +18,10 @@ PasswordEnterElement::PasswordEnterElement(QWidget * parent)
 	value->setEchoMode(QLineEdit::Password);
 	value->setAlignment(Qt::AlignVCenter | Qt::AlignLeft);
 	value->setFocus();
-	pCreatePassword = false;
 	namespace sm_cmd = keychain_app::secmod_commands;
 	auto event_num = shared_event::event_num();
 
 	if (event_num == sm_cmd::events_te::create_key) {
-		pCreatePassword = true;
 		description = new QLabel(this);
 		description->setWordWrap(true);
 		description->setStyleSheet("font:10px \"Segoe UI\";background:transparent;color:rgb(147,148,151);");
@@ -79,7 +77,10 @@ void PasswordEnterElement::SetPosition(int x, int y, int valueWidth)
 	value->setFixedSize(valueWidth, 25);
 	value->move(116 + 16, 0);
 	_height = 25;
-	if (pCreatePassword) {
+    namespace sm_cmd = keychain_app::secmod_commands;
+    auto event_num = shared_event::event_num();
+
+    if (event_num == sm_cmd::events_te::create_key) {
 		description->move(value->x(), _height);
 		description->setFixedSize(value->width(), 35);
 		_height+= 40; 
@@ -147,7 +148,10 @@ int PasswordEnterElement::GetElementHeigth()
 
 void PasswordEnterElement::checkConfirm(const bool confirm)
 {
-	if(pCreatePassword)
+    namespace sm_cmd = keychain_app::secmod_commands;
+    auto event_num = shared_event::event_num();
+
+    if (event_num == sm_cmd::events_te::create_key)
 	{
 		isSame = confirm;
 		if (confirm) {

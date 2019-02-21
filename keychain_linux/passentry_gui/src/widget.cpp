@@ -20,21 +20,19 @@ Widget::Widget(keychain_gui_win& gui_, QWidget *parent)
     polling->moveToThread(&pollingThread);
     connect(&pollingThread, &QThread::finished, polling, &QObject::deleteLater);
 
-//    connect(this,    &Widget::poll,  polling, &Polling::Select, Qt::QueuedConnection);
+    connect(this,    &Widget::poll,  polling, &Polling::Select, Qt::QueuedConnection);
     connect(polling, &Polling::poll, polling, &Polling::Select, Qt::QueuedConnection);
     connect(polling, &Polling::rx, this, &Widget::parse);
     connect(polling, &Polling::err, this, &Widget::close);
 
-    QMetaObject::invokeMethod(polling, &Polling::Select);
     pollingThread.start();
-
-    //    emit Widget::poll();
+        emit Widget::poll();
 }
 
 Widget::~Widget()
 {
-    pollingThread.wait();
     pollingThread.quit();
+    pollingThread.wait();
     delete polling;
 }
 
@@ -43,8 +41,7 @@ Widget::~Widget()
 void Widget::parse(const std::string s)
 {
     auto a = fc_light::json::from_string(s);
-    try
-    {
+    try {
         auto cmd = a.as<slave::cmd_common>();
         auto cmd_map = slave::cmd_list_singleton::instance();
         auto p_func = cmd_map[cmd.cmd];

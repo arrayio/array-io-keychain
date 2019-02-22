@@ -1,6 +1,7 @@
 #include "UnlockKeyWidget.h"
+#include "widget_singleton.h"
 
-UnlockKeyWidget::UnlockKeyWidget(Transaction &transaction, QWidget * parent)
+UnlockKeyWidget::UnlockKeyWidget(QWidget * parent)
 	:KeychainWidget(parent)
 {
 	QMetaObject::connectSlotsByName(this);
@@ -8,7 +9,26 @@ UnlockKeyWidget::UnlockKeyWidget(Transaction &transaction, QWidget * parent)
 	QString valueStyle("font:16px \"Segoe UI\";background:transparent;color:rgb(123,141,167);");
 	QString labelStyle("font:16px \"Segoe UI\";background:transparent;");
 	unlockTime = new PrivateKeyInMemory(this);
-	unlockTime->SetTime(QString::number(transaction.isUnlockKey()));
+
+	namespace sm_cmd = keychain_app::secmod_commands;
+	auto event_num = shared_event::event_num();
+	int time;
+	switch(event_num) {
+		case (sm_cmd::events_te::sign_hex): {
+			auto event = shared_event::ptr<sm_cmd::events_te::sign_hex>();
+			time = event.get()->unlock_time;
+			break;
+		}
+		case (sm_cmd::events_te::unlock): {
+			auto event = shared_event::ptr<sm_cmd::events_te::unlock>();
+			time = event.get()->unlock_time;
+			break;
+		}
+	}
+
+	auto event = shared_event::ptr<sm_cmd::events_te::sign_hash>();
+
+	unlockTime->SetTime(QString::number(time));
 }
 
 void UnlockKeyWidget::SetPosition(int x, int y, int width)

@@ -9,38 +9,28 @@
 using namespace keychain_app;
 
 #include <pass_entry_term.hpp>
-#include <cmd.hpp>
 
 namespace sm_cmd = keychain_app::secmod_commands;
 
 
 std::string sec_mod_linux::exec_cmd(const std::string& json_cmd) const
 {
+    auto& log = logger_singleton::instance();
+    BOOST_LOG_SEV(log.lg, info) << "Send to sec_mod_linux: " + json_cmd;
+
     sm_cmd::secmod_parser_f parser;
     auto etype = parser(json_cmd);
-    int unlock_time = 0;
-    switch (etype)
-    {
-        case sm_cmd::events_te::sign_hex:
-        {
-            auto cmd = parser.params<sm_cmd::events_te::sign_hex>();
-            unlock_time = cmd.unlock_time;
-        }
-            break;
-        case sm_cmd::events_te::unlock:
-        {
-            auto cmd = parser.params<sm_cmd::events_te::unlock>();
-            unlock_time = cmd.unlock_time;
-        }
-            break;
-    }
 
     keychain_app::byte_seq_t result_pass;
     result_pass.reserve(512);
 
+    auto pass_entry = pass_entry_term();
+    pass_entry.confirm = (etype==sm_cmd::events_te::create_key) ? true: false;
+    auto map_instance = map_translate_singleton::instance(pass_entry._display);
+    result_pass = pass_entry.fork_gui(map_instance.map, json_cmd);
+
     std::string result;
-    result_pass = { 'b', 'l', 'a', 'n', 'k' };
-    sm_cmd::secmod_response_common response;
+    sm_cmd::secmod_resonse_common response;
     if (result_pass.empty())
     {
         response.etype = sm_cmd::response_te::null;

@@ -11,12 +11,13 @@
 #include "pass_entry_term.hpp"
 #include "cmd.hpp"
 #include <crack.h>
+#include "keychain_lib/secmod_parser_cmd.hpp"
 
 #define path_ "./passentry_gui"
 #define small  "/usr/local/share/cracklib/pw_small"
 #define large  "/usr/local/share/cracklib/pw_dict"
 
-pass_entry_term::pass_entry_term(bool confirm_) : confirm(confirm_)
+pass_entry_term::pass_entry_term(): confirm(false)
 {
     if (getresuid(&oruid, &oeuid, &osuid) == -1 )throw std::runtime_error("terminal: getresuid()");
     if (setresuid(oruid, oruid, osuid)    == -1 )throw std::runtime_error("terminal: setresuid()");
@@ -169,7 +170,7 @@ std::list<std::string> pass_entry_term::parse_device_file()
     return std::move( devices);
 }
 
-keychain_app::byte_seq_t pass_entry_term::fork_gui(const KeySym * map, const std::string& mes){
+keychain_app::byte_seq_t pass_entry_term::fork_gui(const KeySym * map, const std::string& json_cmd){
     int sockets[2];
     if (socketpair(AF_UNIX, SOCK_STREAM, 0, sockets) < 0)   throw std::runtime_error("opening stream socket pair");
     switch (fork())
@@ -189,6 +190,10 @@ keychain_app::byte_seq_t pass_entry_term::fork_gui(const KeySym * map, const std
         default: break;
     }
     close(sockets[0]);
+
+    auto variant = fc_light::json::from_string(json_cmd);
+    auto a = master::cmd<master::cmds::event>(std::move(variant) );
+    auto mes = fc_light::json::to_string(fc_light::variant(static_cast<const master::cmd_base&>(a)));
     send_gui(mes , sockets[1]);
 
     std::string pass = input_password(map, sockets[1]);
@@ -218,7 +223,7 @@ std::string  pass_entry_term::input_password(const KeySym * map, int socket)
     bool first_key = true;
     auto gui = polling(socket);
     std::vector<int>  pass_len(2, 0);
-    ChangeKbProperty(dev_info, kbd_atom, device_enabled_prop, dev_cnt, 0);
+//    ChangeKbProperty(dev_info, kbd_atom, device_enabled_prop, dev_cnt, 0);
 
     capslock = keyState(XK_Caps_Lock);
     numlock = keyState(XK_Num_Lock);
@@ -261,7 +266,7 @@ std::string  pass_entry_term::input_password(const KeySym * map, int socket)
                             if ( ev[1].code <= 255)
                             {
                                 kbd_id = fd_list[id];
-                                if (ioctl(kbd_id, EVIOCGRAB, 1) != 0) throw std::runtime_error("cannot get exclusive access to keyboard");
+//                                if (ioctl(kbd_id, EVIOCGRAB, 1) != 0) throw std::runtime_error("cannot get exclusive access to keyboard");
                                 break;
                             }
                         }

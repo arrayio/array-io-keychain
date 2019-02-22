@@ -17,7 +17,7 @@
 #include "password_strength.h"
 
 namespace  slave {
-    enum struct cmds {unknown = 0, rawtrx, close, modify, length, create, unlock, check, focus, close_expert_mode, strength, last }; // to gui
+    enum struct cmds {unknown = 0, event, close, modify, length, check, focus, close_expert_mode, strength, last }; // to gui
 
     struct cmd_common {
         cmd_common(cmds cmd_ = cmds::unknown): cmd(cmd_){};
@@ -84,7 +84,7 @@ namespace master
 
 void send(std::string );
 
-FC_LIGHT_REFLECT_ENUM(slave::cmds, (unknown)(rawtrx)(close)(modify)(length)(create)(unlock)(check)(focus)(close_expert_mode)(strength)(last))
+FC_LIGHT_REFLECT_ENUM(slave::cmds, (unknown)(event)(close)(modify)(length)(check)(focus)(close_expert_mode)(strength)(last))
 FC_LIGHT_REFLECT_ENUM(strength_te, (unknown)(weak)(middle)(strong)(last))
 FC_LIGHT_REFLECT(slave::cmd_common, (cmd)(params))
 

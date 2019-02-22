@@ -14,7 +14,7 @@ class PasswordEnterElement : public QWidget
 {
 	Q_OBJECT
 public:
-	PasswordEnterElement(bool passwordCreate = false, QWidget * parent=Q_NULLPTR);
+	PasswordEnterElement( QWidget * parent=Q_NULLPTR);
 	~PasswordEnterElement();
 	void SetPosition(int x, int y, int valueWidth);
 	void SetLabel(QString label);
@@ -43,10 +43,7 @@ private:
 	QLabel *labelConfirm = Q_NULLPTR;
 	QLabel *confirmDescription;
 
-	bool pCreatePassword;
 	int _height = 0;
-	int pValidChecks = 0;
-	bool pStrong = false;
 	bool isSame = false;
 
 public slots:

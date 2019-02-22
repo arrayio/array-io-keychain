@@ -1,52 +1,52 @@
 #include "RawHashWidget.h"
+#include "widget_singleton.h"
 
-RawHashWidget::RawHashWidget(Transaction &transaction, QWidget * parent)
+
+RawHashWidget::RawHashWidget(QWidget * parent)
 	:KeychainWidget(parent)
 {
 	QMetaObject::connectSlotsByName(this);
 
 	QString valueStyle("font:16px \"Segoe UI\";background:transparent;color:rgb(123,141,167);");
 	QString labelStyle("font:16px \"Segoe UI\";background:transparent;");
-/*
-	secmod_parser_f cmd_parse;
-	auto cmd_type = cmd_parse(transaction.getTransactionText().toStdString());
-	auto raw_hash = cmd_parse.to_rawhash();
 
+	namespace sm_cmd = keychain_app::secmod_commands;
+	auto event = shared_event::ptr<sm_cmd::events_te::sign_hash>();
 
 	from = new SecureWindowElement(this);
-	from->SetLabelAndValue("From", QString::fromStdString(raw_hash.from));
+	from->SetLabelAndValue("From", QString::fromStdString(event.get()->from));
 	from->SetLabelStyle(labelStyle);
 	from->SetValueStyle(valueStyle);
 
 	QFont fromFont = from->font();
 	fromFont.setPixelSize(16);
 	fromFont.setFamily("Segoe UI");
-	QString fromStr = QString::fromStdString(raw_hash.from);
+	QString fromStr = QString::fromStdString(event.get()->from);
 
 	QFontMetrics fromFM(fromFont);
 	int fromWidth = fromFM.width(fromStr);
 
 	hash = new SecureWindowElement(this);
-	hash->SetLabelAndValue("Hash", QString::fromStdString(raw_hash.hash));
+	hash->SetLabelAndValue("Hash", QString::fromStdString(event.get()->hash));
 	hash->SetLabelStyle(labelStyle);
 	hash->SetValueStyle(valueStyle);
 	QFont hashFont = hash->font();
-	QString hashStr = QString::fromStdString(raw_hash.hash);
+	QString hashStr = QString::fromStdString(event.get()->hash);
 	QFontMetrics hashFM(fromFont);
 	int hashWidth = hashFM.width(hashStr);
 	if (hashWidth >= fromWidth)
 		max_width = hashWidth;
 	else
 		max_width = fromWidth;
-
+/*
 	if (cmd_parse.unlock_time() > 0) {
 		unlockTime = new PrivateKeyInMemory(this);
 		unlockTime->SetTime(QString::number(cmd_parse.unlock_time()));
 	}
-
+*/
 	//expertModeElement = new ExpertModeElement(this);
 	//expertModeElement->SetExpertModeText(QString::fromStdString(cmd_parse.to_expert_mode_string()), false);
-*/
+
 }
 
 void RawHashWidget::SetPosition(int x, int y, int width)

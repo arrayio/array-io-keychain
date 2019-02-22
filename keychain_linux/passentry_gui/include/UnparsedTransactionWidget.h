@@ -4,13 +4,12 @@
 #include <QWidget>
 #include "KeychainWidget.h"
 #include "ExpertModeElement.h"
-#include "Transaction.h"
 #include "PrivateKeyInMemoryWidget.h"
 
 class UnparsedTransactionWidget : public KeychainWidget {
 	Q_OBJECT
 public:
-	UnparsedTransactionWidget(Transaction &transaction, QWidget * parent = Q_NULLPTR);
+	UnparsedTransactionWidget(QWidget * parent = Q_NULLPTR);
 	void SetPosition(int x, int y, int width) override;
 	int GetCurrentHeight() override;
 	int GetCurrentWidth() override;

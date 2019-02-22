@@ -121,6 +121,8 @@ template<>
 struct secmod_event<events_te::create_key>
 {
   struct params {
+    params(): keyname(""){}
+    params(params&& a): keyname(a.keyname){}
     std::string keyname;
   };
   using params_t = params;
@@ -131,7 +133,9 @@ struct secmod_event<events_te::sign_hex>
 {
   struct params {
     params() : is_parsed(false), no_password(false), unlock_time(0) {}
-  
+    params(params&& a ):is_parsed(a.is_parsed), no_password(a.no_password), keyname(a.keyname),
+        blockchain(a.blockchain), unlock_time(a.unlock_time), trx_view(a.trx_view) {}
+
     bool is_parsed;
     bool no_password;
     std::string keyname;
@@ -154,6 +158,8 @@ template<>
 struct secmod_event<events_te::sign_hash>
 {
   struct params {
+    params(): no_password(false), keyname(""), from(""), hash(""){};
+    params(params&& a): no_password(a.no_password), keyname(a.keyname), from(a.from), hash(a.hash){}
     bool no_password = false;
     std::string keyname;
     std::string from;
@@ -168,6 +174,7 @@ struct secmod_event<events_te::unlock>
   struct params
   {
     params(): no_password(false), unlock_time(0){}
+    params(params&& a): no_password(a.no_password), keyname(a.keyname), unlock_time(a.unlock_time){}
     bool no_password;
     std::string keyname;
     int unlock_time;
@@ -182,6 +189,7 @@ struct secmod_event<events_te::edit_key>
   struct params
   {
     params() : unlock_time(0) {}
+    params(params&& a): keyname(a.keyname), unlock_time(a.unlock_time){}
     std::string keyname;
     int unlock_time;
   };
@@ -193,6 +201,7 @@ template<>
 struct secmod_event<events_te::remove_key>
 {
   struct params {
+    params(params &&a): keyname(a.keyname){}
     std::string keyname;
   };
   using params_t = params;

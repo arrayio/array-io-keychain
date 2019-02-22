@@ -5,7 +5,6 @@
 #include <QLabel>
 #include "KeychainWidget.h"
 #include "SecureWindowElement.h"
-#include "Transaction.h"
 #include "ExpertModeElement.h"
 #include "PrivateKeyInMemoryWidget.h"
 #include <QVBoxLayout>
@@ -15,7 +14,7 @@ class BitcoinWidget : public KeychainWidget
 {
 	Q_OBJECT
 public:
-	BitcoinWidget(Transaction& trnsaction, QWidget *parent = Q_NULLPTR);
+	BitcoinWidget(QWidget *parent = Q_NULLPTR);
 		void SetPosition(int x, int y, int width) override;
 	int GetCurrentHeight() override;
 	int GetCurrentWidth() override;
@@ -36,7 +35,6 @@ private:
 	int currentWidth = 0;
 	int inElementCount = 0;
 	int outElementCount = 0;
-	int num_vins = 0;
 	int num_vouts = 0;
 
 public slots:

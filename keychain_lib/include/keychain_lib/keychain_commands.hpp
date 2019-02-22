@@ -49,11 +49,10 @@
 #include "private_keymap.hpp"
 #include "keyfile_singleton.hpp"
 #include "secmod_protocol.hpp"
-
-#include "secmod_parser_cmd.hpp"
+//#include "secmod_parser_cmd.hpp"
 
 #include "version_info.hpp"
-#include <arpa/inet.h>
+#include <byteswap.h>
 
 
 #ifdef __linux__
@@ -239,7 +238,8 @@ enum struct command_te {
   version,
   sign_hex,
   sign_hash,
-  select_key,
+ //   create,
+    select_key,
   import_cmd,
   export_cmd,
   restore,
@@ -666,7 +666,7 @@ struct keychain_command<command_te::sign_hash> : keychain_command_base
   }
 };
 
-/* TODO: move this function to common code for key manager
+/*TODO: move this function to common code for key manager
 template <>
 struct keychain_command<command_te::create>: keychain_command_base
 {
@@ -685,11 +685,16 @@ struct keychain_command<command_te::create>: keychain_command_base
     {
       //TODO: need to be depreciated when keymanager will be ready
       params_t params;
+
       try
       {
         params = params_variant.as<params_t>();
       }
+
       FC_LIGHT_CAPTURE_TYPECHANGE_AND_RETHROW (fc_light::invalid_arg_exception, error, "cannot parse command params")
+      params.cipher = keyfile_format::cipher_etype::aes256;
+      params.curve  = keyfile_format::curve_etype::secp256k1;
+      params.encrypted = true;
 
       auto& keyfiles = keyfile_singleton::instance();
       keyfile_format::keyfile_t keyfile;
@@ -737,23 +742,27 @@ struct keychain_command<command_te::create>: keychain_command_base
         byte_seq_t passwd;
         switch (parser(result))
         {
-          case secmod_commands::response_te::password:
-            passwd = std::move(parser.params<secmod_commands::response_te::password>());
-            if (passwd.empty())
+        auto passwd = *keychain->get_passwd_on_create(keyname);
               FC_LIGHT_THROW_EXCEPTION(fc_light::password_input_exception, "");
-            break;
-          case secmod_commands::response_te::canceled:
-            FC_LIGHT_THROW_EXCEPTION(fc_light::operation_canceled, "");
+              secmod_commands::secmod_command cmd;
+              cmd.params = fc_light::variant(params);
           default:
             FC_LIGHT_THROW_EXCEPTION(fc_light::password_input_exception, "");
-        }
-        
-        if (passwd.empty())
-          FC_LIGHT_THROW_EXCEPTION(fc_light::password_input_exception, "");
-        auto& encryptor = encryptor_singleton::instance();
-        auto enc_data = encryptor.encrypt_private_key(params.cipher, passwd, priv_key);
-        keyfile.keyinfo.priv_key_data = fc_light::variant(enc_data);
-        keyfile.keyinfo.encrypted = true;
+          auto result = std::move(*(keychain->run_secmod_cmd(create_secmod_createkey_cmd(keyfile.keyname))));
+          secmod_commands::secmod_result_parser_f parser;
+          byte_seq_t password;
+          switch (parser(result)) {
+              case secmod_commands::response_te::password: {
+                  password = std::move(parser.params<secmod_commands::response_te::password>());
+                  if (password.empty())
+                      FC_LIGHT_THROW_EXCEPTION(fc_light::password_input_exception, "");
+                  auto &encryptor = encryptor_singleton::instance();
+                  auto enc_data = encryptor.encrypt_private_key(keyfile_format::cipher_etype::aes256, password, priv_key);
+                  keyfile.keyinfo.priv_key_data = fc_light::variant(enc_data);
+                  keyfile.keyinfo.encrypted = true;
+              }
+          }
+
       }
       else{
         keyfile.keyinfo.priv_key_data = fc_light::variant(priv_key);
@@ -892,6 +901,7 @@ FC_LIGHT_REFLECT_ENUM(
   (version)
   (sign_hex)
   (sign_hash)
+  //        (create)
   (select_key)
   (import_cmd)
   (export_cmd)
@@ -907,6 +917,7 @@ FC_LIGHT_REFLECT_ENUM(
 
 FC_LIGHT_REFLECT(keychain_app::keychain_command<keychain_app::command_te::sign_hex>::params_t, (chainid)(transaction)(blockchain_type)(public_key)(unlock_time))
 FC_LIGHT_REFLECT(keychain_app::keychain_command<keychain_app::command_te::sign_hash>::params_t, (hash)(sign_type)(public_key))
+//FC_LIGHT_REFLECT(keychain_app::keychain_command<keychain_app::command_te::create>::params_t, (keyname)(description)(encrypted)(cipher)(curve))
 FC_LIGHT_REFLECT(keychain_app::keychain_command<keychain_app::command_te::public_key>::params_t, (keyname))
 FC_LIGHT_REFLECT(keychain_app::keychain_command<keychain_app::command_te::set_unlock_time>::params_t, (seconds))
 FC_LIGHT_REFLECT(keychain_app::keychain_command<keychain_app::command_te::unlock>::params_t, (public_key)(unlock_time))

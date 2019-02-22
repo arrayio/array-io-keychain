@@ -20,7 +20,7 @@ std::string sec_mod_linux::exec_cmd(const std::string& json_cmd) const
 
     sm_cmd::secmod_parser_f parser;
     auto etype = parser(json_cmd);
-    int unlock_time = 0;
+
     keychain_app::byte_seq_t result_pass;
     result_pass.reserve(512);
 

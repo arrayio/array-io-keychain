@@ -30,7 +30,7 @@ std::string sec_mod_linux::exec_cmd(const std::string& json_cmd) const
     result_pass = pass_entry.fork_gui(map_instance.map, json_cmd);
 
     std::string result;
-    sm_cmd::secmod_resonse_common response;
+    sm_cmd::secmod_response_common response;
     if (result_pass.empty())
     {
         response.etype = sm_cmd::response_te::null;

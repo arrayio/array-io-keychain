@@ -52,7 +52,7 @@
 //#include "secmod_parser_cmd.hpp"
 
 #include "version_info.hpp"
-#include <byteswap.h>
+#include <arpa/inet.h>
 
 
 #ifdef __linux__

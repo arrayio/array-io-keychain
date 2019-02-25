@@ -11,7 +11,7 @@
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[![Tweet](https://img.shields.io/twitter/url/http/shields.io.svg?style=social)](https://twitter.com/intent/tweet?text=A%20good,%20solid%20app%20to%20keep%20your%20keys%20safe.&url=https://keychain.array.io/&via=ProjectArray&hashtags=cybersecurity,private,cryptography,blockchain,app) [![Contributions welcome](https://img.shields.io/badge/contributions-welcome-orange.svg)](https://github.com/arrayio/array-io-keychain#contributing-to-the-project)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/arrayio/array-io-keychain/blob/master/LICENSE.md) [![npm version](https://badge.fury.io/js/web3override.svg)](https://badge.fury.io/js/web3override) 
 
-<p align="center"><strong><a href="https://github.com/arrayio/array-io-keychain/releases/download/0.15/KeyChain.Installer.zip">» Download for macOS</a> <a href="https://github.com/arrayio/array-io-keychain/releases/download/0.13/keychain.msi">|  Download for Windows «</a></strong></p>
+<p align="center"><strong><a href="https://github.com/arrayio/array-io-keychain/releases/download/0.18/KeyChain.Installer.v18.zip">» Download for macOS</a> </strong></p>
 
 <p align="center"><strong><a href="https://avvrik.github.io/KeyChain/">» Documentation «</a></strong></p>
 
@@ -20,7 +20,7 @@
 ## Overview
 
 **KeyChain** is a standalone app for signing transactions and generating key pairs. It stores private keys in an isolated environment where no logger, debugger or spyware can intercept them because of the [three-layer security](https://github.com/arrayio/array-io-keychain/wiki/KeyChain-security#three-security-layers-of-keychain) protecting each action of the system.
-**KeyChain** supports transactions from and to various blockchains, including Ethereum and Ethereum classic, Litecoin, Bitcoin, Bitcoin Cash, and Bitshares.
+**KeyChain** supports transactions from and to various blockchains, including Ethereum and Bitcoin in the current release, but working on Ethereum classic, Litecoin, Bitcoin Cash, and Bitshares.
 
 ## Table of contents
 
@@ -34,7 +34,7 @@
 
 ## Installation
 
-Download and install KeyChain for [macOS](https://github.com/arrayio/array-io-keychain/releases/download/0.18/KeyChain.Installer.v18.zip) and [Windows](https://github.com/arrayio/array-io-keychain/releases/download/0.13/keychain.msi). Linux installer is coming soon.
+Download and install KeyChain for [macOS](https://github.com/arrayio/array-io-keychain/releases/download/0.18/KeyChain.Installer.v18.zip). Windows and Linux installers are coming soon.
 
 *Try out KeyChain on the [demo page](https://arrayio.github.io/array-io-keychain/demo/).*
 
@@ -44,11 +44,11 @@ After installation, connect to the demo-page: http://localhost:16384/ to check i
 
 If you are having trouble connecting to the page, [contact us](#contact) and we will do our best to help you.
 
-You can find comprehensive installation guides for [macOS](https://github.com/arrayio/array-io-keychain/wiki/Installation-guide-for-macOS), [Windows](https://github.com/arrayio/array-io-keychain/wiki/Installation-guide-for-Windows), and [Linux](https://github.com/arrayio/array-io-keychain/wiki/Installation-guide-for-Linux) in our Wiki. 
+You can find a comprehensive installation guide for [macOS](https://github.com/arrayio/array-io-keychain/wiki/Installation-guide-for-macOS). 
 
 ## Getting started
 
-After you have installed KeyChain for [macOS](https://github.com/arrayio/array-io-keychain/releases/download/0.18/KeyChain.Installer.v18.zip) or for [Windows](https://github.com/arrayio/array-io-keychain/releases/download/0.13/keychain.msi), you can start using it with web3. Just follow these simple steps.
+After you have installed [KeyChain](https://github.com/arrayio/array-io-keychain/releases/download/0.18/KeyChain.Installer.v18.zip), you can start using it with web3. Just follow these simple steps.
 
 NB: If you launch KeyChain for the first time, you need to get a public key with the "select_key" command. You can save the public key to local storage. Then you will not need to use "select_key" command again.
 
@@ -106,7 +106,7 @@ There you will find:
 
 - [Home](https://github.com/arrayio/array-io-keychain/wiki): how to navigate in our Wiki. 
 - [How to sign an Ethereum transaction](https://github.com/arrayio/array-io-keychain/wiki/How-to-sign-Ethereum-transaction-via-KeyChain): a simple and precise tutorial.
-- Installation guides for [macOS](https://github.com/arrayio/array-io-keychain/wiki/Installation-guide-for-macOS), [Windows](https://github.com/arrayio/array-io-keychain/wiki/Installation-guide-for-Windows), [Linux](https://github.com/arrayio/array-io-keychain/wiki/Installation-guide-for-Linux).
+- An installation guide for [macOS](https://github.com/arrayio/array-io-keychain/wiki/Installation-guide-for-macOS).
 - [KeyChain Protocol](https://github.com/arrayio/array-io-keychain/wiki/KeyChain-Protocol): full comprehensive descriptions of the KeyChain commands.
 - [KeyChain sample commands](https://github.com/arrayio/array-io-keychain/wiki/KeyChain-sample-commands): shortcut to using the commands.
 - [Pipe API](https://github.com/arrayio/array-io-keychain/wiki/Pipe-API): integrating KeyChain through pipe.

@@ -35,15 +35,15 @@ struct EventHandler< sm_cmd::events_te::create_key> : EventHandlerBase
 };
 
 template <>
-struct EventHandler < sm_cmd::events_te::sign_hex > : EventHandlerBase
+struct EventHandler < sm_cmd::events_te::sign_trx > : EventHandlerBase
 {
-  EventHandler() :EventHandlerBase(static_cast<sm_cmd::events_te>(sm_cmd::events_te::sign_hex)) {}
+  EventHandler() :EventHandlerBase(static_cast<sm_cmd::events_te>(sm_cmd::events_te::sign_trx)) {}
   virtual ~EventHandler() {}
   virtual void operator()(const sm_cmd::secmod_parser_f& parser) const override
   {
     try
     {
-      auto cmd = parser.params< sm_cmd::events_te::sign_hex >();
+      auto cmd = parser.params< sm_cmd::events_te::sign_trx >();
       FC_LIGHT_THROW_EXCEPTION(fc_light::internal_error_exception, "Secmod command is not implemented, etype = %{ETYPE}", ("ETYPE", e_type));
       //TODO: need to implement
     }

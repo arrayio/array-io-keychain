@@ -30,8 +30,8 @@ std::string keychain_app::sec_mod_dummy::exec_cmd(const std::string& json_cmd) c
   case secmod_commands::events_te::export_keys:
   case secmod_commands::events_te::import_keys:
     break;
-  case secmod_commands::events_te::sign_hex:
-    no_password = parser.params<secmod_commands::events_te::sign_hex>().no_password;
+  case secmod_commands::events_te::sign_trx:
+    no_password = parser.params<secmod_commands::events_te::sign_trx>().no_password;
     break;
   case secmod_commands::events_te::sign_hash:
     no_password = parser.params<secmod_commands::events_te::sign_hash>().no_password;

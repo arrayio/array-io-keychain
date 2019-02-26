@@ -236,7 +236,7 @@ enum struct command_te {
   null = 0,
   about,
   version,
-  sign_hex,
+  sign_trx,
   sign_hash,
  //   create,
     select_key,
@@ -328,14 +328,13 @@ struct keychain_command<command_te::select_key>: keychain_command_base
 };
 
 template<>
-struct keychain_command<command_te::sign_hex> : keychain_command_base
+struct keychain_command<command_te::sign_trx> : keychain_command_base
 {
-  keychain_command():keychain_command_base(command_te::sign_hex) {}
+  keychain_command():keychain_command_base(command_te::sign_trx) {}
   virtual ~keychain_command(){}
   struct params
   {
     params():unlock_time(0){};
-    std::string chainid;
     std::string transaction;
     blockchain_te blockchain_type;
     dev::Public public_key;
@@ -354,14 +353,10 @@ struct keychain_command<command_te::sign_hex> : keychain_command_base
     
     unit_list_t unit_list;
     dev::Signature signature;
-    std::vector<unsigned char> chain(32);
     std::vector<unsigned char> raw(params.transaction.length());
     fc_light::variant json;
     dev::Secret private_key;
     auto& keyfiles = keyfile_singleton::instance();
-  
-    if (!params.chainid.empty())
-        auto chain_len = keychain_app::from_hex(params.chainid, chain.data(), chain.size());
   
     //NOTE: using vector instead array because move semantic is implemented in the vector
     auto trans_len = keychain_app::from_hex(params.transaction, raw.data(), raw.size());
@@ -410,7 +405,7 @@ struct keychain_command<command_te::sign_hex> : keychain_command_base
 
     auto reply = [&keyfiles, &params, &id](auto& message, const dev::bytes& transaction){
         keyfiles.add_log_record(params.public_key,
-                                keyfile_format::log_record(transaction, fc_light::time_point::now(), params.blockchain_type, params.chainid ));
+                                keyfile_format::log_record(transaction, fc_light::time_point::now(), params.blockchain_type ));
         json_response response(fc_light::variant(message), id);
         fc_light::variant res(response);
         return fc_light::json::to_string(res);
@@ -420,8 +415,6 @@ struct keychain_command<command_te::sign_hex> : keychain_command_base
     {
       case blockchain_te::bitshares:
       {
-        if (chain.size())
-          unit_list.push_back(chain);
         unit_list.push_back(raw);
   
         std::array<unsigned char, 65> signature_;
@@ -432,8 +425,6 @@ struct keychain_command<command_te::sign_hex> : keychain_command_base
       }
       case blockchain_te::array:
       {
-        if (chain.size())
-          unit_list.push_back(chain);
         unit_list.push_back(raw);
 
         signature = dev::sign(private_key,dev::FixedHash<32>(((byte const*) get_hash(unit_list, dev::openssl::sha3_256_encoder()).data()),
@@ -659,7 +650,7 @@ struct keychain_command<command_te::sign_hash> : keychain_command_base
     dev::bytes hash_vec;
     std::copy(params.hash.begin(), params.hash.end(), std::back_inserter(hash_vec));
     keyfiles.add_log_record(params.public_key,
-                            keyfile_format::log_record(hash_vec, fc_light::time_point::now(), blockchain_te::rawhash, ""));
+                            keyfile_format::log_record(hash_vec, fc_light::time_point::now(), blockchain_te::rawhash));
     json_response response(fc_light::variant(signature), id);
     fc_light::variant res(response);
     return fc_light::json::to_string(res);
@@ -899,7 +890,7 @@ FC_LIGHT_REFLECT_ENUM(
   (null)
   (about)
   (version)
-  (sign_hex)
+  (sign_trx)
   (sign_hash)
   //        (create)
   (select_key)
@@ -915,7 +906,7 @@ FC_LIGHT_REFLECT_ENUM(
   (last)
 )
 
-FC_LIGHT_REFLECT(keychain_app::keychain_command<keychain_app::command_te::sign_hex>::params_t, (chainid)(transaction)(blockchain_type)(public_key)(unlock_time))
+FC_LIGHT_REFLECT(keychain_app::keychain_command<keychain_app::command_te::sign_trx>::params_t, (transaction)(blockchain_type)(public_key)(unlock_time))
 FC_LIGHT_REFLECT(keychain_app::keychain_command<keychain_app::command_te::sign_hash>::params_t, (hash)(sign_type)(public_key))
 //FC_LIGHT_REFLECT(keychain_app::keychain_command<keychain_app::command_te::create>::params_t, (keyname)(description)(encrypted)(cipher)(curve))
 FC_LIGHT_REFLECT(keychain_app::keychain_command<keychain_app::command_te::public_key>::params_t, (keyname))

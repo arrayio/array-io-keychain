@@ -11,7 +11,7 @@ UnparsedTransactionWidget::UnparsedTransactionWidget(QWidget * parent)
 	QString labelStyle("font:16px \"Segoe UI\";background:transparent;");
 
 	namespace sm_cmd = keychain_app::secmod_commands;
-	auto event = shared_event::ptr<sm_cmd::events_te::sign_hex>();
+	auto event = shared_event::ptr<sm_cmd::events_te::sign_trx>();
 
 	expertModeElement = new ExpertModeElement(this);
 	expertModeElement->SetExpertModeText(QString::fromStdString(

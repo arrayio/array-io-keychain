@@ -14,8 +14,8 @@ UnlockKeyWidget::UnlockKeyWidget(QWidget * parent)
 	auto event_num = shared_event::event_num();
 	int time;
 	switch(event_num) {
-		case (sm_cmd::events_te::sign_hex): {
-			auto event = shared_event::ptr<sm_cmd::events_te::sign_hex>();
+		case (sm_cmd::events_te::sign_trx): {
+			auto event = shared_event::ptr<sm_cmd::events_te::sign_trx>();
 			time = event.get()->unlock_time;
 			break;
 		}

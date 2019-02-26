@@ -47,14 +47,14 @@ namespace slave
                         event_num = sm_cmd::events_te::create_key;
                         break;
                     }
-                    case sm_cmd::events_te::sign_hex:
+                    case sm_cmd::events_te::sign_trx:
                     {
-                        auto& event = shared_event::ptr<sm_cmd::events_te::sign_hex>();
-                        event.reset(new  sm_cmd::secmod_event<sm_cmd::events_te::sign_hex>::params_t (
-                                std::move(event_parser.params<sm_cmd::events_te::sign_hex>())
+                        auto& event = shared_event::ptr<sm_cmd::events_te::sign_trx>();
+                        event.reset(new  sm_cmd::secmod_event<sm_cmd::events_te::sign_trx>::params_t (
+                                std::move(event_parser.params<sm_cmd::events_te::sign_trx>())
                                         ));
                         auto& event_num = shared_event::event_num();
-                        event_num = sm_cmd::events_te::sign_hex;
+                        event_num = sm_cmd::events_te::sign_trx;
                         break;
                     }
                     case sm_cmd::events_te::sign_hash:

@@ -15,7 +15,7 @@ namespace keychain_app
 namespace secmod_commands
 {
 
-using signhex_event = secmod_event<events_te::sign_hex>::params_t;
+using signhex_event = secmod_event<events_te::sign_trx>::params_t;
 
 std::string to_expert_mode_string(const signhex_event& signhex_event);
 

@@ -71,9 +71,9 @@ void keychain_gui_win::refresh()
             OKButton = new QPushButton("CREATE", this);
 			break;
 		}
-		case(sm_cmd::events_te::sign_hex):
+		case(sm_cmd::events_te::sign_trx):
 		{
-			auto event = shared_event::ptr<sm_cmd::events_te::sign_hex>();
+			auto event = shared_event::ptr<sm_cmd::events_te::sign_trx>();
 	        if (event.get()->unlock_time)
 			{
 				OKButton = new QPushButton("UNLOCK", this);

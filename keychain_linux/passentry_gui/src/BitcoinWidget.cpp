@@ -32,7 +32,7 @@ BitcoinWidget::BitcoinWidget( QWidget * parent)
 
 	//}
 	namespace sm_cmd = keychain_app::secmod_commands;
-	auto event = shared_event::ptr<sm_cmd::events_te::sign_hex>();
+	auto event = shared_event::ptr<sm_cmd::events_te::sign_trx>();
 	auto trx = event.get()->get_trx_view<sm_cmd::blockchain_secmod_te::bitcoin>();
 
 	bool overflow = false;

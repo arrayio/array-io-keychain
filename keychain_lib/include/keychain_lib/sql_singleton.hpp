@@ -16,6 +16,8 @@ struct sql_singleton
 private:
     sql_singleton();
     ~sql_singleton();
+
+    sqlite3 * db;
 };
 
 #endif //KEYCHAINAPP_SQL_SINGLETON_HPP

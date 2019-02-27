@@ -49,6 +49,7 @@
 #include "private_keymap.hpp"
 #include "keyfile_singleton.hpp"
 #include "secmod_protocol.hpp"
+#include "sql_singleton.hpp"
 //#include "secmod_parser_cmd.hpp"
 
 #include "version_info.hpp"
@@ -350,7 +351,8 @@ struct keychain_command<command_te::sign_trx> : keychain_command_base
       params = params_variant.as<params_t>();
     }
     FC_LIGHT_CAPTURE_TYPECHANGE_AND_RETHROW (fc_light::invalid_arg_exception, error, "cannot parse command params")
-    
+
+    auto& sql = sql_singleton::instance();
     unit_list_t unit_list;
     dev::Signature signature;
     std::vector<unsigned char> raw(params.transaction.length());

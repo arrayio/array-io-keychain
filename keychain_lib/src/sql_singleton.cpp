@@ -2,10 +2,49 @@
 // Created by user on 2/26/19.
 //
 #include <sql_singleton.hpp>
+#include "keychain_commands.hpp"
+#include <boost/filesystem.hpp>
+#define SQL_DB_DEFAULT_PATH KEY_DEFAULT_PATH "/sql"
 
-sql_singleton::sql_singleton(){};
+namespace bfs = boost::filesystem;
 
-sql_singleton::~sql_singleton(){};
+sql_singleton::sql_singleton()
+{
+#if defined(macintosh) || defined(__APPLE__) || defined(__APPLE_CC__)
+  auto sql_dir = bfs::path(getenv("HOME"));
+  sql_dir += bfs::path("/"SQL_DB_DEFAULT_PATH);
+#else
+  bfs::path sql_dir(SQL_DB_DEFAULT_PATH);
+#endif
+
+    bfs::path key_dir(sql_dir);
+    if(!bfs::exists(sql_dir))
+    {
+        auto res = bfs::create_directories(sql_dir);
+        if(res == false)
+            FC_LIGHT_THROW_EXCEPTION(fc_light::internal_error_exception,
+                                     "Can not create sql directory, path = ${directory}", ("directory", sql_dir.string()));
+    }
+    sqlite3_stmt * stmt;
+        const char * statement =   "create table if not exists log (public_key text not null, "
+                                   "trx text not null)";
+    sql_dir += "/data.db";
+    if  (sqlite3_open(sql_dir.c_str(), &db) != SQLITE_OK )
+        FC_LIGHT_THROW_EXCEPTION(fc_light::internal_error_exception, "sqlite3_open");
+
+    auto res = sqlite3_prepare_v2(db, statement, -1, &stmt, NULL);
+    if  ( res != SQLITE_OK )
+        FC_LIGHT_THROW_EXCEPTION(fc_light::internal_error_exception, "sqlite3_prepare_v2");
+
+    sqlite3_step(stmt);
+    if  (sqlite3_finalize(stmt) != SQLITE_OK )
+        FC_LIGHT_THROW_EXCEPTION(fc_light::internal_error_exception, "sqlite3_finalize");
+};
+
+sql_singleton::~sql_singleton()
+{
+    sqlite3_close_v2(db);
+};
 
 sql_singleton& sql_singleton::instance()
 {
@@ -15,14 +54,33 @@ sql_singleton& sql_singleton::instance()
 
 std::vector<std::string> sql_singleton::select(std::string public_key)
 {
- //TODO: need implemantation
- std::vector<std::string> v;
- v.push_back("{\"command\": \"sign_trx\", \"params\": { \"transaction\": \"0100000004bd4f1f39f277201a225d7a197b55ab1412ecd7d6f241f4af3b8b279696b0ae1410000000171600140901ed3d5ce2819be61f98260ebb81436f825eaeffffffff0f17888ae45681a2e806be991b0423a3fec9ce572dec20e107977ad6d18e832f00000000171600144df62b18b614eb0e9678c9156d8cdb41f668d8b6ffffffff870712e48ce6c8d67eb7515b14b97dbe10b06fbe91eb803705feb349a4104d580000000017160014e1d2b15d2bd7175c8bbbf5dd0dc82d481a32bc26ffffffffe5a7c71693f01503f4b241af9d90c52bab6981d63019a32b1f8b0de8fd7f83b40000000017160014a0134fa4fad47c1aa8f9c9d05c0df160dcd4a621ffffffff024d8372010000000017a914a772b3ff281ece609a356f7319fd71217c95c00b870084d717000000001976a914e98d9f78f97003d1d99873c81187657d78dfc46288ac00000000\",  \"blockchain_type\": \"bitcoin\",  \"public_key\": \"512B996635F56C82B9D0387A5CFDDD69B7CDB18868828BA8FF4E2780E521879C117C83098CEF0461077140D84D570F99F3E717299F2BA504562D5B4BE5CDD708\" }}");
- return v;
+
+    sqlite3_stmt * stmt;
+    std::vector<std::string> set;
+    const char * statement =   "select trx from log where public_key=?";
+
+    auto res = sqlite3_prepare_v2(db, statement, -1, &stmt, NULL);
+    if  ( res != SQLITE_OK )
+        FC_LIGHT_THROW_EXCEPTION(fc_light::internal_error_exception, "sqlite3_prepare_v2");
+
+    sqlite3_bind_text(stmt, 1, public_key.c_str(), -1, 0);
+
+
+    while(true)
+    {
+        res = sqlite3_step(stmt);
+        if (res == SQLITE_ROW)
+          set.push_back(std::string ((const char *) sqlite3_column_text(stmt, 0)) );
+        else break;
+    }
+
+    if  (sqlite3_finalize(stmt) != SQLITE_OK )
+        FC_LIGHT_THROW_EXCEPTION(fc_light::internal_error_exception, "sqlite3_finalize");
+    return set;
 }
 
 int insert(std::string event)
 {
-//TODO: need implemantation
+//TODO: need implementation
     return 0;
 }

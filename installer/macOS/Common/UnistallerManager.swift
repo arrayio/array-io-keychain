@@ -98,6 +98,21 @@ class UninstallerManager {
         } catch {
             print(error.localizedDescription)
         }
+        do {
+            try ahLaunchCtl.stop(Consts.LABEL_JOB, in: .userLaunchAgent)
+        } catch {
+            print(error.localizedDescription)
+        }
+        do {
+            try ahLaunchCtl.unload(Consts.LABEL_JOB, in: .userLaunchAgent)
+        } catch {
+            print(error.localizedDescription)
+        }
+        do {
+            try ahLaunchCtl.remove(Consts.LABEL_JOB, from: .userLaunchAgent)
+        } catch {
+            print(error.localizedDescription)
+        }
     }
     
     func deleteWebSocketBinary (path: String) {

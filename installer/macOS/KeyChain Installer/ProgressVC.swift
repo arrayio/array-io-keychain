@@ -31,7 +31,7 @@ class ProgressVC: NSViewController {
     fileprivate func jobWorker(dataPath: String) {
         self.infoTextField.stringValue = "Searching old versions..."
         self.stopJobs()
-        self.deleteFileAtPath("/Library/LaunchDaemons/" + Consts.JOB_PLIST)
+//        self.deleteFileAtPath("/Library/LaunchDaemons/" + Consts.JOB_PLIST)
         self.addRpathToBinary(path: dataPath)
         if LocalStorage.shared.isAutoStart {
             self.infoTextField.stringValue = "Creating autoload daemon..."
@@ -40,6 +40,7 @@ class ProgressVC: NSViewController {
             job.programArguments = [
                 dataPath + "/websocketd",
                 "--port=16384",
+                "--passenv=HOME",
                 "--staticdir=" + dataPath + "/examples",
                 dataPath+"/keychain"
             ]
@@ -50,7 +51,7 @@ class ProgressVC: NSViewController {
             job.runAtLoad = true
             job.keepAlive = true
             do {
-                try ahLaunchCtl.add(job, to: .globalLaunchDaemon)
+                try ahLaunchCtl.add(job, to: .userLaunchAgent)
             } catch {
                 print(error.localizedDescription)
             }
@@ -84,8 +85,14 @@ class ProgressVC: NSViewController {
             print("OK untar")
             print(dataPath)
             self.jobWorker(dataPath: dataPath)
-            self.infoTextField.stringValue = "Installation complete!"
-            self.installText("Installation complete!")
+//            AppleScriptManager.runScriptWithBody("cp -a '" + dataPath + "/keys/.' /var/keychain/key_data && mkdir /var/keychain/signlogs_data", isAdminRequired: true, success: {
+                self.infoTextField.stringValue = "Installation complete!"
+                self.installText("Installation complete!")
+//            }, failure: { (error) in
+//                print("ERROR: \(error)")
+//                self.installText(error.description)
+//            })
+
         }) { (error) in
             print("ERROR: \(error)")
             self.installText(error.description)
@@ -106,6 +113,21 @@ class ProgressVC: NSViewController {
         }
         do {
             try ahLaunchCtl.remove(Consts.LABEL_JOB, from: .globalLaunchDaemon)
+        } catch {
+            print(error.localizedDescription)
+        }
+        do {
+            try ahLaunchCtl.stop(Consts.LABEL_JOB, in: .userLaunchAgent)
+        } catch {
+            print(error.localizedDescription)
+        }
+        do {
+            try ahLaunchCtl.unload(Consts.LABEL_JOB, in: .userLaunchAgent)
+        } catch {
+            print(error.localizedDescription)
+        }
+        do {
+            try ahLaunchCtl.remove(Consts.LABEL_JOB, from: .userLaunchAgent)
         } catch {
             print(error.localizedDescription)
         }

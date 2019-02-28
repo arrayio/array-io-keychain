@@ -3,14 +3,13 @@
 
 #include <QWidget>
 #include "KeychainWidget.h"
-#include "Transaction.h"
 #include "PrivateKeyInMemoryWidget.h"
 
 class UnlockKeyWidget : public KeychainWidget
 {
 	Q_OBJECT
 public:
-	UnlockKeyWidget(Transaction& transaction, QWidget *parent = Q_NULLPTR);
+	UnlockKeyWidget( QWidget *parent = Q_NULLPTR);
 	void SetPosition(int x, int y, int width) override;
 	int GetCurrentHeight() override;
 	int GetCurrentWidth() override;

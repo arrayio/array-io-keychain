@@ -41,9 +41,9 @@ std::string keychain_app::sec_mod_mac::exec_cmd(const std::string& json_cmd) con
     std::string blockhain_type;
     switch (etype)
     {
-        case secmod_commands::events_te::sign_hex: {
+        case secmod_commands::events_te::sign_trx: {
             NSLog(@"sign_hex");
-            auto cmd = parser.params<secmod_commands::events_te::sign_hex>();
+            auto cmd = parser.params<secmod_commands::events_te::sign_trx>();
             is_json = cmd.is_parsed;
             switch (cmd.blockchain) {
                 case secmod_commands::blockchain_secmod_te::unknown: {

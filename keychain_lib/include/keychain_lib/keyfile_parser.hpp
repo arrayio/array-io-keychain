@@ -67,15 +67,13 @@ struct keyfile_t {
 struct log_record
 {
   log_record(): blockchain_type(blockchain_te::unknown){}
-  log_record(const dev::bytes& transaction_, const fc_light::time_point& sign_time_, blockchain_te blockchain_type_, const std::string& chainid_)
+  log_record(const dev::bytes& transaction_, const fc_light::time_point& sign_time_, blockchain_te blockchain_type_)
     : transaction(transaction_)
     , sign_time(sign_time_)
-    , blockchain_type(blockchain_type_)
-    , chainid(chainid_) {}
+    , blockchain_type(blockchain_type_) {}
   dev::bytes transaction;
   fc_light::time_point sign_time;
   blockchain_te blockchain_type;
-  std::string chainid;
 };
 
 struct signlog_file_t
@@ -92,7 +90,7 @@ struct signlog_file_t
 FC_LIGHT_REFLECT_ENUM(keychain_app::keyfile_format::cipher_etype, (unknown)(aes128)(aes192)(aes256))
 FC_LIGHT_REFLECT_ENUM(keychain_app::keyfile_format::file_type, (TYPE_UNKNOWN)(TYPE_KEY)(TYPE_LOG))
 FC_LIGHT_REFLECT_ENUM(keychain_app::keyfile_format::curve_etype, (unknown)(secp256k1))
-FC_LIGHT_REFLECT(keychain_app::keyfile_format::log_record, (transaction)(sign_time)(blockchain_type)(chainid))
+FC_LIGHT_REFLECT(keychain_app::keyfile_format::log_record, (transaction)(sign_time)(blockchain_type))
 FC_LIGHT_REFLECT(keychain_app::keyfile_format::signlog_file_t, (filetype)(public_key)(sign_events))
 FC_LIGHT_REFLECT(keychain_app::keyfile_format::encrypted_data, (cipher_type)(iv)(enc_data))
 FC_LIGHT_REFLECT(keychain_app::keyfile_format::keyfile_t::keyinfo_t, (encrypted)(curve_type)(priv_key_data)(public_key))

@@ -100,7 +100,7 @@ struct transaction_view<blockchain_secmod_te::bitcoin> {
 enum struct events_te {
   unknown = 0,
   create_key,
-  sign_hex,
+  sign_trx,
   sign_hash,
   unlock,
   edit_key,
@@ -121,17 +121,21 @@ template<>
 struct secmod_event<events_te::create_key>
 {
   struct params {
+    params(): keyname(""){}
+    params(params&& a): keyname(a.keyname){}
     std::string keyname;
   };
   using params_t = params;
 };
 
 template<>
-struct secmod_event<events_te::sign_hex>
+struct secmod_event<events_te::sign_trx>
 {
   struct params {
     params() : is_parsed(false), no_password(false), unlock_time(0) {}
-  
+    params(params&& a ):is_parsed(a.is_parsed), no_password(a.no_password), keyname(a.keyname),
+        blockchain(a.blockchain), unlock_time(a.unlock_time), trx_view(a.trx_view) {}
+
     bool is_parsed;
     bool no_password;
     std::string keyname;
@@ -154,6 +158,8 @@ template<>
 struct secmod_event<events_te::sign_hash>
 {
   struct params {
+    params(): no_password(false), keyname(""), from(""), hash(""){};
+    params(params&& a): no_password(a.no_password), keyname(a.keyname), from(a.from), hash(a.hash){}
     bool no_password = false;
     std::string keyname;
     std::string from;
@@ -168,6 +174,7 @@ struct secmod_event<events_te::unlock>
   struct params
   {
     params(): no_password(false), unlock_time(0){}
+    params(params&& a): no_password(a.no_password), keyname(a.keyname), unlock_time(a.unlock_time){}
     bool no_password;
     std::string keyname;
     int unlock_time;
@@ -182,6 +189,7 @@ struct secmod_event<events_te::edit_key>
   struct params
   {
     params() : unlock_time(0) {}
+    params(params&& a): keyname(a.keyname), unlock_time(a.unlock_time){}
     std::string keyname;
     int unlock_time;
   };
@@ -193,6 +201,7 @@ template<>
 struct secmod_event<events_te::remove_key>
 {
   struct params {
+    params(params &&a): keyname(a.keyname){}
     std::string keyname;
   };
   using params_t = params;
@@ -262,12 +271,12 @@ struct secmod_response_common
 
 FC_LIGHT_REFLECT_ENUM(keychain_app::secmod_commands::blockchain_secmod_te, (unknown)(ethereum)(bitcoin)(ethereum_swap))
 FC_LIGHT_REFLECT_ENUM(keychain_app::secmod_commands::events_te,
-                      (unknown)(create_key)(sign_hex)(sign_hash)(unlock)(edit_key)(remove_key)(export_keys)(import_keys)(print_mnemonic))
+                      (unknown)(create_key)(sign_trx)(sign_hash)(unlock)(edit_key)(remove_key)(export_keys)(import_keys)(print_mnemonic))
 FC_LIGHT_REFLECT_ENUM(keychain_app::secmod_commands::response_te, (null)(password)(boolean)(canceled))
 
 
 FC_LIGHT_REFLECT(keychain_app::secmod_commands::secmod_event<keychain_app::secmod_commands::events_te::create_key>::params_t, (keyname))
-FC_LIGHT_REFLECT(keychain_app::secmod_commands::secmod_event<keychain_app::secmod_commands::events_te::sign_hex>::params_t, (is_parsed)(no_password)(keyname)(blockchain)(unlock_time)(trx_view))
+FC_LIGHT_REFLECT(keychain_app::secmod_commands::secmod_event<keychain_app::secmod_commands::events_te::sign_trx>::params_t, (is_parsed)(no_password)(keyname)(blockchain)(unlock_time)(trx_view))
 FC_LIGHT_REFLECT(keychain_app::secmod_commands::secmod_event<keychain_app::secmod_commands::events_te::sign_hash>::params_t, (no_password)(keyname)(from)(hash))
 FC_LIGHT_REFLECT(keychain_app::secmod_commands::secmod_event<keychain_app::secmod_commands::events_te::unlock>::params_t, (no_password)(keyname)(unlock_time))
 FC_LIGHT_REFLECT(keychain_app::secmod_commands::secmod_event<keychain_app::secmod_commands::events_te::edit_key>::params_t, (keyname)(unlock_time))

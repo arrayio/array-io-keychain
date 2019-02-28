@@ -2,7 +2,6 @@
 #define ETHEREUMSWAPWIDGET_H
 
 #include <QWidget>
-#include <Transaction.h>
 #include "KeychainWidget.h"
 #include "SecureWindowElement.h"
 #include "PrivateKeyInMemoryWidget.h"
@@ -12,7 +11,7 @@ class EthereumSwapWidget : public KeychainWidget
 {
 	Q_OBJECT
 public:
-	EthereumSwapWidget(Transaction &transaction, QWidget * parent = Q_NULLPTR);
+	EthereumSwapWidget(QWidget * parent = Q_NULLPTR);
 	void SetPosition(int x, int y, int width) override;
 	int GetCurrentHeight() override;
 	int GetCurrentWidth() override;

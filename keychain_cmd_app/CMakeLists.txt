@@ -53,7 +53,8 @@ if ( ${CMAKE_HOST_SYSTEM_NAME} MATCHES "Linux")
             "${OPENSSL_ROOT_DIR}/include"
             "/usr/include/libcxxabi"
             ${Boost_INCLUDE_DIR}
-			"../libraries/cracklib")
+			"../libraries/cracklib"
+			)
 
 
     file(GLOB KEYCHAIN_SOURCES "./*.cpp" "../keychain_linux/passentry_cmd/*.cpp" )

@@ -109,8 +109,8 @@ using keychain_app::secmod_commands::secmod_parser_f;
                 [self setupTextBottomLabel:[NSString stringWithUTF8String:cmd.hash.c_str()]];
                 [self setupFrom];
                 [self setupTextFrom:[NSString stringWithUTF8String:cmd.from.c_str()]];
-            } else if (self.etype == secmod_commands::events_te::sign_hex) {
-                auto cmd = self.parser.params<secmod_commands::events_te::sign_hex>();
+            } else if (self.etype == secmod_commands::events_te::sign_trx) {
+                auto cmd = self.parser.params<secmod_commands::events_te::sign_trx>();
                 switch (cmd.blockchain) {
                     case secmod_commands::blockchain_secmod_te::unknown: {
                         NSLog(@"unknown");

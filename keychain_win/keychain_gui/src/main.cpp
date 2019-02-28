@@ -65,7 +65,7 @@ int main(int argc, char *argv[])
 #endif
 	BOOST_LOG_SEV(log.lg, info) << "Got from pipe: " << buffer;
 
-//  std::string input = "{\"etype\":\"sign_hex\",\"params\":{\"keyname\":\"test1\",\"is_parsed\":false,\"blockchain\":\"unknown\",\"unlock_time\":45,\"trx_view\":\"871689d060721b5cec5a010080841e00000000000011130065cd1d0000000000000000\"}}";
+//  std::string input = "{\"etype\":\"sign_trx\",\"params\":{\"keyname\":\"test1\",\"is_parsed\":false,\"blockchain\":\"unknown\",\"unlock_time\":45,\"trx_view\":\"871689d060721b5cec5a010080841e00000000000011130065cd1d0000000000000000\"}}";
 
   QApplication a(argc, argv);
   parseSecmodEvents(std::string(buffer));

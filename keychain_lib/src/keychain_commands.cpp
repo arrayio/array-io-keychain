@@ -58,7 +58,7 @@ fc_light::variant create_secmod_signhex_cmd(const std::vector<unsigned char>& ra
   std::string json;
   auto& log = logger_singleton::instance();
   secmod_commands::secmod_command cmd;
-  using params_t = secmod_commands::secmod_event<secmod_commands::events_te::sign_hex>::params_t;
+  using params_t = secmod_commands::secmod_event<secmod_commands::events_te::sign_trx>::params_t;
   params_t params;
   params.is_parsed = true;
   params.keyname = keyname;
@@ -138,7 +138,7 @@ fc_light::variant create_secmod_signhex_cmd(const std::vector<unsigned char>& ra
     }
   }
   params.unlock_time = unlock_time;
-  cmd.etype = secmod_commands::events_te::sign_hex;
+  cmd.etype = secmod_commands::events_te::sign_trx;
   cmd.params = params;
   return fc_light::variant(cmd);
 }

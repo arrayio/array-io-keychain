@@ -23,9 +23,9 @@ std::string SecureModuleWrapper::exec_cmd(const std::string& json_cmd) const
   int unlock_time = 0;
   switch (etype)
   {
-    case sm_cmd::events_te::sign_hex:
+    case sm_cmd::events_te::sign_trx:
     {
-      auto cmd = parser.params<sm_cmd::events_te::sign_hex>();
+      auto cmd = parser.params<sm_cmd::events_te::sign_trx>();
       unlock_time = cmd.unlock_time;
     }
     break;

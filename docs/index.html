@@ -415,8 +415,8 @@
       }
     });
     document.getElementById('btn_RUN_REQUEST').addEventListener('click', function() {
+      event.preventDefault();
       runRequest();
-      return null;
     });
     const inputs = document.getElementsByClassName('param_field');
     for (let i=0; i<inputs.length; i++) {

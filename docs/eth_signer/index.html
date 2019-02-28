@@ -88,7 +88,7 @@
         let web3;
         const valueTx = 100;
         let keychain;
-        web3override.Keychain.create()
+        keychainjs.Keychain.create()
                 .then(data => keychain = data)
                 .then(() => {
                   keychain.wsp.onClose.addListener(() => {
@@ -118,7 +118,7 @@
           }).then (tx => {
             log(`Transaction to sign: ${JSON.stringify(tx)}`);
             log(`Signing it with KeyChain`);
-            return web3override.web3Override(web3).signTransaction(tx, publicKey);
+            return keychainjs.web3Override(web3).signTransaction(tx, publicKey);
           }).then( result => {
             log(`Result: ${JSON.stringify(result)}`);
             const rawHex = result.rawTransaction;

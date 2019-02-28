@@ -52,19 +52,17 @@ sql_singleton& sql_singleton::instance()
     return instance;
 }
 
-std::vector<std::string> sql_singleton::select(std::string public_key)
+std::vector<std::string> sql_singleton::select(std::string& public_key)
 {
-
     sqlite3_stmt * stmt;
     std::vector<std::string> set;
     const char * statement =   "select trx from log where public_key=?";
-
+""
     auto res = sqlite3_prepare_v2(db, statement, -1, &stmt, NULL);
     if  ( res != SQLITE_OK )
         FC_LIGHT_THROW_EXCEPTION(fc_light::internal_error_exception, "sqlite3_prepare_v2");
 
     sqlite3_bind_text(stmt, 1, public_key.c_str(), -1, 0);
-
 
     while(true)
     {
@@ -79,8 +77,21 @@ std::vector<std::string> sql_singleton::select(std::string public_key)
     return set;
 }
 
-int insert(std::string event)
+int sql_singleton::insert(std::string& key, std::string& val)
 {
-//TODO: need implementation
+    sqlite3_stmt * stmt;
+    std::string statement = "insert into log (public_key, trx) values('"+ key + "', '"+val+"')";
+
+    auto res = sqlite3_prepare_v2(db, statement.c_str(), -1, &stmt, NULL);
+    if  ( res != SQLITE_OK )
+        FC_LIGHT_THROW_EXCEPTION(fc_light::internal_error_exception, "sqlite3_prepare_v2");
+
+    res = sqlite3_step(stmt);
+    if (res != SQLITE_DONE)
+        FC_LIGHT_THROW_EXCEPTION(fc_light::internal_error_exception, "sqlite3_step");
+
+    if  (sqlite3_finalize(stmt) != SQLITE_OK )
+        FC_LIGHT_THROW_EXCEPTION(fc_light::internal_error_exception, "sqlite3_finalize");
+
     return 0;
 }

@@ -29,7 +29,8 @@ sql_singleton::sql_singleton()
         const char * statement =   "create table if not exists log (public_key text not null, "
                                    "trx text not null)";
     sql_dir += "/data.db";
-    if  (sqlite3_open(sql_dir.c_str(), &db) != SQLITE_OK )
+    if  (sqlite3_open_v2(sql_dir.c_str(), &db, SQLITE_OPEN_FULLMUTEX|SQLITE_OPEN_READWRITE|SQLITE_OPEN_CREATE, 0)
+            != SQLITE_OK )
         FC_LIGHT_THROW_EXCEPTION(fc_light::internal_error_exception, "sqlite3_open");
 
     auto res = sqlite3_prepare_v2(db, statement, -1, &stmt, NULL);
@@ -57,7 +58,7 @@ std::vector<std::string> sql_singleton::select(std::string& public_key)
     sqlite3_stmt * stmt;
     std::vector<std::string> set;
     const char * statement =   "select trx from log where public_key=?";
-""
+
     auto res = sqlite3_prepare_v2(db, statement, -1, &stmt, NULL);
     if  ( res != SQLITE_OK )
         FC_LIGHT_THROW_EXCEPTION(fc_light::internal_error_exception, "sqlite3_prepare_v2");

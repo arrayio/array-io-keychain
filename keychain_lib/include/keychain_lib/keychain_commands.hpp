@@ -352,7 +352,6 @@ struct keychain_command<command_te::sign_trx> : keychain_command_base
     }
     FC_LIGHT_CAPTURE_TYPECHANGE_AND_RETHROW (fc_light::invalid_arg_exception, error, "cannot parse command params")
 
-    auto& sql = sql_singleton::instance();
     unit_list_t unit_list;
     dev::Signature signature;
     std::vector<unsigned char> raw(params.transaction.length());

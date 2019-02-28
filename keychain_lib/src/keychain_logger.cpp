@@ -19,14 +19,22 @@ namespace bfs = boost::filesystem;
 logger_singleton::logger_singleton(std::string postfix)
 {
 #if defined(macintosh) || defined(__APPLE__) || defined(__APPLE_CC__)
+//    std::cout << "apple" << std::endl;
+//    std::cin.get();
+//    auto dir = bfs::path(getenv("HOME"));
     auto dir = bfs::path(getenv("HOME"));
+//    std::cout << "dir" << dir.c_str() << std::endl;
     dir += bfs::path("/" LOG_DEFAULT_PATH);
+//    std::cout << "dir1234" << dir.c_str() << std::endl;
+
 #else
   bfs::path dir(LOG_DEFAULT_PATH);
 #endif
 
     typedef sinks::synchronous_sink< sinks::text_file_backend > file_sink;
 	std::string def_log_path = dir.c_str();
+//    std::cout << "def_log_path" << def_log_path << std::endl;
+
     // Create a text file sink
 #ifdef _WIN32
 	if (getenv("USERPROFILE") != NULL) {
@@ -48,12 +56,15 @@ logger_singleton::logger_singleton(std::string postfix)
 		}
 	}
 #endif //_WIN32
+//    std::cout << "d" << std::endl;
 
     boost::shared_ptr< file_sink > sink(new file_sink(
             keywords::file_name = def_log_path +  "/%Y%m%d_%H%M%S_"+postfix+".log",
             keywords::rotation_size = 16384,
             keywords::auto_flush = true
     ));
+//    std::cout << "shared_ptr" << std::endl;
+
 
     sink->set_formatter
             (
@@ -67,6 +78,7 @@ logger_singleton::logger_singleton(std::string postfix)
     logging::add_common_attributes();
 
     logging::core::get()->add_sink(sink);
+//    std::cout << "core" << std::endl;
 
 }
 

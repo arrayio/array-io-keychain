@@ -40,6 +40,7 @@ class ProgressVC: NSViewController {
             job.programArguments = [
                 dataPath + "/websocketd",
                 "--port=16384",
+                "--passenv=HOME",
                 "--staticdir=" + dataPath + "/examples",
                 dataPath+"/keychain"
             ]
@@ -100,6 +101,21 @@ class ProgressVC: NSViewController {
     
     /// Function stop launchd job
     func stopJobs() {
+        do {
+            try ahLaunchCtl.stop(Consts.LABEL_JOB, in: .globalLaunchDaemon)
+        } catch {
+            print(error.localizedDescription)
+        }
+        do {
+            try ahLaunchCtl.unload(Consts.LABEL_JOB, in: .globalLaunchDaemon)
+        } catch {
+            print(error.localizedDescription)
+        }
+        do {
+            try ahLaunchCtl.remove(Consts.LABEL_JOB, from: .globalLaunchDaemon)
+        } catch {
+            print(error.localizedDescription)
+        }
         do {
             try ahLaunchCtl.stop(Consts.LABEL_JOB, in: .userLaunchAgent)
         } catch {

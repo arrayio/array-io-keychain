@@ -26,6 +26,7 @@ class ViewController: NSViewController, NSTableViewDelegate, NSTableViewDataSour
     
     fileprivate enum CellIdentifiers {
         static let LocationCell = "locationId"
+        static let key1 = "key1"
     }
     
     override func viewDidLoad() {
@@ -87,7 +88,8 @@ class ViewController: NSViewController, NSTableViewDelegate, NSTableViewDataSour
         } else if tableView == self.transactionTableView {
             if selectedPublicKey != "" {
                 print("self.transactionTableView")
-                let log = CPlusPlusBridger().getTransactionLog(forPublicKey: selectedPublicKey)
+                let logs = CPlusPlusBridger().getTransactionLog(forPublicKey: selectedPublicKey)
+                
             }
         }
         return nil

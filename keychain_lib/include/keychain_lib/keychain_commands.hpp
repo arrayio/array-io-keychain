@@ -409,8 +409,8 @@ struct keychain_command<command_te::sign_hex> : keychain_command_base
     });
 
     auto reply = [&keyfiles, &params, &id](auto& message, const dev::bytes& transaction){
-        keyfiles.add_log_record(params.public_key,
-                                keyfile_format::log_record(transaction, fc_light::time_point::now(), params.blockchain_type, params.chainid ));
+//        keyfiles.add_log_record(params.public_key,
+//                                keyfile_format::log_record(transaction, fc_light::time_point::now(), params.blockchain_type, params.chainid ));
         json_response response(fc_light::variant(message), id);
         fc_light::variant res(response);
         return fc_light::json::to_string(res);
@@ -658,8 +658,8 @@ struct keychain_command<command_te::sign_hash> : keychain_command_base
   
     dev::bytes hash_vec;
     std::copy(params.hash.begin(), params.hash.end(), std::back_inserter(hash_vec));
-    keyfiles.add_log_record(params.public_key,
-                            keyfile_format::log_record(hash_vec, fc_light::time_point::now(), blockchain_te::rawhash, ""));
+//    keyfiles.add_log_record(params.public_key,
+//                            keyfile_format::log_record(hash_vec, fc_light::time_point::now(), blockchain_te::rawhash, ""));
     json_response response(fc_light::variant(signature), id);
     fc_light::variant res(response);
     return fc_light::json::to_string(res);

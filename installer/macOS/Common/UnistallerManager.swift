@@ -84,6 +84,21 @@ class UninstallerManager {
     
     func disableAutoRunProcess () {
         do {
+            try ahLaunchCtl.stop(Consts.LABEL_JOB, in: .globalLaunchDaemon)
+        } catch {
+            print(error.localizedDescription)
+        }
+        do {
+            try ahLaunchCtl.unload(Consts.LABEL_JOB, in: .globalLaunchDaemon)
+        } catch {
+            print(error.localizedDescription)
+        }
+        do {
+            try ahLaunchCtl.remove(Consts.LABEL_JOB, from: .globalLaunchDaemon)
+        } catch {
+            print(error.localizedDescription)
+        }
+        do {
             try ahLaunchCtl.stop(Consts.LABEL_JOB, in: .userLaunchAgent)
         } catch {
             print(error.localizedDescription)

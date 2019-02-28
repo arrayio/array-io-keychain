@@ -179,9 +179,11 @@ void keychain_base::lock_all_priv_keys()
   key_map.clear();
 }
 
-dev::Secret keychain_base::get_private_key(const dev::Public& public_key, int unlock_time, keychain_base::create_secmod_cmd_f&& create_cmd_func)
+dev::Secret keychain_base::get_private_key(const dev::Public& public_key, int unlock_time,
+        keychain_base::create_secmod_cmd_f&& create_cmd_func, std::string& cmd)
 {
   dev::Secret result_secret;
+  bool unlocked = false;
   do
   {
     if(unlock_time == 0)
@@ -196,21 +198,24 @@ dev::Secret keychain_base::get_private_key(const dev::Public& public_key, int un
         key_map.erase(it);
         break;
       }
-      return it->secret;
+      unlocked = true;
+      result_secret =  it->secret;
     }
   } while (false);
-  
+
   auto& keyfiles = keyfile_singleton::instance();
   auto& keyfile = keyfiles[public_key];
-  
-  auto result = std::move(*(run_secmod_cmd(create_cmd_func(keyfile.keyname, !keyfile.keyinfo.encrypted))));
+  bool no_password = unlocked || !keyfile.keyinfo.encrypted;
+
+  cmd = create_cmd_func(keyfile.keyname, no_password);
+  auto result = std::move(*(run_secmod_cmd(cmd)));
   secmod_commands::secmod_result_parser_f parser;
   byte_seq_t password;
   switch (parser(result))
   {
     case secmod_commands::response_te::password:
     {
-      FC_LIGHT_ASSERT(keyfile.keyinfo.encrypted == true);
+      FC_LIGHT_ASSERT(no_password == false);
       password = std::move(parser.params<secmod_commands::response_te::password>());
       if (password.empty())
         FC_LIGHT_THROW_EXCEPTION(fc_light::password_input_exception, "");
@@ -219,16 +224,16 @@ dev::Secret keychain_base::get_private_key(const dev::Public& public_key, int un
       result_secret = encryptor.decrypt_private_key(password, encrypted_data);
       if(unlock_time > 0)
         key_map.insert(private_key_item(result_secret, unlock_time));
-  
     }
       break;
     case secmod_commands::response_te::boolean:
     {
-      FC_LIGHT_ASSERT(keyfile.keyinfo.encrypted == false);
+      FC_LIGHT_ASSERT(no_password == true);
       auto confirm = std::move(parser.params<secmod_commands::response_te::boolean>());
       if (confirm)
       {
-        result_secret = keyfile.keyinfo.priv_key_data.as<dev::Secret>();
+        if (!unlocked)
+          result_secret = keyfile.keyinfo.priv_key_data.as<dev::Secret>();
         if(unlock_time > 0)
           key_map.insert(private_key_item(result_secret, unlock_time));
       }

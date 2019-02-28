@@ -11,11 +11,13 @@
 struct sql_singleton
 {
     static sql_singleton& instance();
-    std::vector<std::string> select(std::string public_key);
-    int insert(std::string);
+    std::vector<std::string> select(std::string& );
+    int insert(std::string&, std::string&);
 private:
     sql_singleton();
     ~sql_singleton();
+
+    sqlite3 * db;
 };
 
 #endif //KEYCHAINAPP_SQL_SINGLETON_HPP

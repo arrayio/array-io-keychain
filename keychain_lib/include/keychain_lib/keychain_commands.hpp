@@ -49,6 +49,7 @@
 #include "private_keymap.hpp"
 #include "keyfile_singleton.hpp"
 #include "secmod_protocol.hpp"
+#include "sql_singleton.hpp"
 //#include "secmod_parser_cmd.hpp"
 
 #include "version_info.hpp"
@@ -161,7 +162,7 @@ public:
   boost::signals2::signal<std::string(const std::string&)> run_secmod_cmd;
   boost::signals2::signal<dev::Public(void)> select_key;
   
-  dev::Secret get_private_key(const dev::Public& public_key, int unlock_time, create_secmod_cmd_f&& f);
+  dev::Secret get_private_key(const dev::Public& public_key, int unlock_time, create_secmod_cmd_f&& f, std::string& cmd);
   void lock_all_priv_keys();
 protected:
   keychain_base();
@@ -350,7 +351,8 @@ struct keychain_command<command_te::sign_trx> : keychain_command_base
       params = params_variant.as<params_t>();
     }
     FC_LIGHT_CAPTURE_TYPECHANGE_AND_RETHROW (fc_light::invalid_arg_exception, error, "cannot parse command params")
-    
+
+    auto& sql = sql_singleton::instance();
     unit_list_t unit_list;
     dev::Signature signature;
     std::vector<unsigned char> raw(params.transaction.length());
@@ -396,16 +398,20 @@ struct keychain_command<command_te::sign_trx> : keychain_command_base
           return std::string();
       }
     };
-    
+
+    std::string secmod_signhex_cmd;
     private_key = keychain->get_private_key(params.public_key, params.unlock_time, [&evaluate_from, &raw, &params](const std::string& keyname, bool no_password)
     {
       return fc_light::json::to_string(
         create_secmod_signhex_cmd(raw, params.blockchain_type, evaluate_from(), params.unlock_time, keyname, no_password));
-    });
+    }, secmod_signhex_cmd);
 
-    auto reply = [&keyfiles, &params, &id](auto& message, const dev::bytes& transaction){
+    auto reply = [&keyfiles, &params, &id, &secmod_signhex_cmd](auto& message, const dev::bytes& transaction){
         keyfiles.add_log_record(params.public_key,
                                 keyfile_format::log_record(transaction, fc_light::time_point::now(), params.blockchain_type ));
+        auto& sql = sql_singleton::instance();
+        std::string key = params.public_key.hex();
+        sql.insert(key, secmod_signhex_cmd);
         json_response response(fc_light::variant(message), id);
         fc_light::variant res(response);
         return fc_light::json::to_string(res);
@@ -616,12 +622,13 @@ struct keychain_command<command_te::sign_hash> : keychain_command_base
       return to_hex(params.public_key.data(), params.public_key.size);
     };
 
-    //TODO: it is more preferable to use move semantic instead copy for json argument
+      std::string secmod_signhash_cmd;
+      //TODO: it is more preferable to use move semantic instead copy for json argument
     auto private_key = keychain->get_private_key(params.public_key, 0, [&evaluate_from, &params](const std::string& keyname, bool no_password)
     {
       return fc_light::json::to_string(
         create_secmod_signhash_cmd(params.hash, evaluate_from(), keyname, no_password));
-    });
+    }, secmod_signhash_cmd);
 
     //NOTE: using vector instead array because move semantic is implemented in the vector
     std::vector<unsigned char> hash(params.hash.length());
@@ -850,11 +857,12 @@ struct keychain_command<command_te::unlock>: keychain_command_base
     if (!params.public_key)
       FC_LIGHT_THROW_EXCEPTION(fc_light::invalid_arg_exception, "public_key is not specified");
 
+    std::string secmod_unlock_cmd;
     auto private_key = keychain->get_private_key(params.public_key, params.unlock_time, [&params](const std::string& keyname, bool no_password)
     {
       return fc_light::json::to_string(
         create_secmod_unlock_cmd(keyname, params.unlock_time, no_password));
-    });
+    }, secmod_unlock_cmd);
 
     json_response response(true, id);
     return fc_light::json::to_string(fc_light::variant(response));

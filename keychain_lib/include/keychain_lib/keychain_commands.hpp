@@ -408,9 +408,6 @@ struct keychain_command<command_te::sign_trx> : keychain_command_base
     auto reply = [&keyfiles, &params, &id, &secmod_signhex_cmd](auto& message, const dev::bytes& transaction){
         keyfiles.add_log_record(params.public_key,
                                 keyfile_format::log_record(transaction, fc_light::time_point::now(), params.blockchain_type ));
-        auto& sql = sql_singleton::instance();
-        std::string key = params.public_key.hex();
-        sql.insert(key, secmod_signhex_cmd);
         json_response response(fc_light::variant(message), id);
         fc_light::variant res(response);
         return fc_light::json::to_string(res);

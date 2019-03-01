@@ -304,7 +304,7 @@ void keyfile_singleton::flush_logrecords_impl(const prim_key_type& key, const lo
 {
 #if defined(macintosh) || defined(__APPLE__) || defined(__APPLE_CC__)
   auto filepath = bfs::path(getenv("HOME"));
-  filepath += bfs::path(SIGN_LOGS_DEFAULT_PATH_"/");
+  filepath += bfs::path("/" SIGN_LOGS_DEFAULT_PATH_"/");
 #else
   bfs::path filepath(SIGN_LOGS_DEFAULT_PATH_"/");
 #endif
@@ -347,12 +347,17 @@ void keyfile_singleton::flush_all() const
 
 const keyfile_singleton::log_random_access_index_type& keyfile_singleton::get_logs(const dev::Public& pkey)
 {
+/*
   signlog_load();//NOTE: it may be slowly, using sqlite and triggers is more preferable
   auto it = m_signlog_map.find(pkey);
   if (it == m_signlog_map.end())
     FC_LIGHT_THROW_EXCEPTION(fc_light::file_not_found_exception, "Public_key: ${PKEY}", ("PKEY", pkey));
   auto& records = it->second;
   return records.get<keyfiles_map::log_random_access_tag>();
+*/
+    auto& sql = sql_singleton::instance();
+    auto records = sql.select(pkey);
+    return records.get<keyfiles_map::log_random_access_tag>();
 }
 
 const keyfile_singleton::log_date_index_type& keyfile_singleton::get_logs_date_ordered(const dev::Public& pkey)
@@ -367,6 +372,9 @@ const keyfile_singleton::log_date_index_type& keyfile_singleton::get_logs_date_o
 
 void keyfile_singleton::add_log_record(const dev::Public& pkey, const keyfile_format::log_record& record)
 {
+    auto& sql = sql_singleton::instance();
+    sql.insert(pkey, record);
+  /*
   auto it = m_signlog_map.find(pkey);
   if (it == m_signlog_map.end())
   {
@@ -376,6 +384,7 @@ void keyfile_singleton::add_log_record(const dev::Public& pkey, const keyfile_fo
   }
   it->second.insert(record);
   flush_logrecords(pkey);
+   */
 }
 
 keyfile_format::keyfile_t keychain_app::create_new_keyfile(

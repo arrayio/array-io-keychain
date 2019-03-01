@@ -2,7 +2,6 @@
 // Created by user on 2/26/19.
 //
 #include <sql_singleton.hpp>
-#include "keychain_commands.hpp"
 #include <boost/filesystem.hpp>
 #define SQL_DB_DEFAULT_PATH KEY_DEFAULT_PATH "/sql"
 
@@ -12,7 +11,7 @@ sql_singleton::sql_singleton()
 {
 #if defined(macintosh) || defined(__APPLE__) || defined(__APPLE_CC__)
   auto sql_dir = bfs::path(getenv("HOME"));
-  sql_dir += bfs::path("/"SQL_DB_DEFAULT_PATH);
+  sql_dir += bfs::path("/" SQL_DB_DEFAULT_PATH);
 #else
   bfs::path sql_dir(SQL_DB_DEFAULT_PATH);
 #endif
@@ -26,8 +25,8 @@ sql_singleton::sql_singleton()
                                      "Can not create sql directory, path = ${directory}", ("directory", sql_dir.string()));
     }
     sqlite3_stmt * stmt;
-        const char * statement =   "create table if not exists log (public_key text not null, "
-                                   "trx text not null)";
+        const char * statement =   "create table if not exists signlog (public_key text not null, "
+                                   "trx text not null, sign_time text not null, blockchain_type text not null)";
     sql_dir += "/data.db";
     if  (sqlite3_open_v2(sql_dir.c_str(), &db, SQLITE_OPEN_FULLMUTEX|SQLITE_OPEN_READWRITE|SQLITE_OPEN_CREATE, 0)
             != SQLITE_OK )
@@ -53,35 +52,65 @@ sql_singleton& sql_singleton::instance()
     return instance;
 }
 
-std::vector<std::string> sql_singleton::select(std::string& public_key)
+const keychain_app::keyfiles_map::log_records_t sql_singleton::select(const dev::Public& pkey)
 {
     sqlite3_stmt * stmt;
-    std::vector<std::string> set;
-    const char * statement =   "select trx from log where public_key=?";
+    std::vector<keychain_app::keyfile_format::log_record> set;
+    const char * statement =   "select trx, sign_time, blockchain_type from signlog where public_key=?";
 
     auto res = sqlite3_prepare_v2(db, statement, -1, &stmt, NULL);
     if  ( res != SQLITE_OK )
         FC_LIGHT_THROW_EXCEPTION(fc_light::internal_error_exception, "sqlite3_prepare_v2");
 
-    sqlite3_bind_text(stmt, 1, public_key.c_str(), -1, 0);
+    std::string hex = pkey.hex();
+    sqlite3_bind_text(stmt, 1, hex.c_str(), -1, 0);
 
     while(true)
     {
         res = sqlite3_step(stmt);
         if (res == SQLITE_ROW)
-          set.push_back(std::string ((const char *) sqlite3_column_text(stmt, 0)) );
+        {
+            std::string trx((const char *) sqlite3_column_text(stmt, 0));
+            std::string time((const char *) sqlite3_column_text(stmt, 1));
+            std::string chain((const char *) sqlite3_column_text(stmt, 2));
+
+            dev::bytes trx_(trx.length());
+            auto len = keychain_app::from_hex(trx, trx_.data(), trx_.size() );
+            trx_.resize(len);
+
+            fc_light::variant v_time (time);
+            auto time_ = v_time.as<fc_light::time_point>();
+
+            fc_light::variant v_chain (chain);
+            auto chain_ = v_chain.as<keychain_app::blockchain_te>();
+
+            set.push_back(keychain_app::keyfile_format::log_record(trx_, time_, chain_));
+        }
         else break;
     }
 
     if  (sqlite3_finalize(stmt) != SQLITE_OK )
         FC_LIGHT_THROW_EXCEPTION(fc_light::internal_error_exception, "sqlite3_finalize");
-    return set;
+
+    auto log_rec_t = keychain_app::keyfiles_map::log_records_t();
+    for (auto& s: set)
+        log_rec_t.insert(s);
+
+    return  log_rec_t;
 }
 
-int sql_singleton::insert(std::string& key, std::string& val)
+int sql_singleton::insert(const dev::Public& pkey, const keychain_app::keyfile_format::log_record& record)
 {
     sqlite3_stmt * stmt;
-    std::string statement = "insert into log (public_key, trx) values('"+ key + "', '"+val+"')";
+    fc_light::variant vtime(record.sign_time);
+    auto time  = vtime.as_string();
+    fc_light::variant vtype(record.blockchain_type);
+    auto type  = vtype.as_string();
+
+    std::string statement = "insert into signlog (public_key, trx, sign_time, blockchain_type)"
+                            " values('"+pkey.hex()+"', '"+
+                            keychain_app::to_hex(record.transaction.data(), record.transaction.size())+"', '"+
+                            time+"', '"+type+ "')";
 
     auto res = sqlite3_prepare_v2(db, statement.c_str(), -1, &stmt, NULL);
     if  ( res != SQLITE_OK )

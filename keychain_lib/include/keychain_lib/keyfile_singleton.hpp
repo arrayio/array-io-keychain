@@ -78,7 +78,7 @@ class keyfile_singleton
   
   using value_t = keyfile_map_t::value_type;
   keyfile_map_t m_keydata_map;
-  signlog_map_t m_signlog_map;
+//  signlog_map_t m_signlog_map;
   
   using prim_index_type = keyfile_map_t::index<keyfiles_map::prim_pubkey_tag>::type;
   using second_index_type = keyfile_map_t::index<keyfiles_map::second_keyname_tag>::type;
@@ -92,20 +92,20 @@ class keyfile_singleton
   using third_key_type = third_index_type::key_type;
   
   void flush_keyfile_impl(const value_t& keyfile_data) const;
-  void flush_logrecords_impl(const prim_key_type& key, const log_records_t& log_records) const;
+//  void flush_logrecords_impl(const prim_key_type& key, const log_records_t& log_records) const;
   
   void print_exception (const boost::filesystem::path& filename, fc_light::exception &er);
 public:
   static keyfile_singleton& instance();
   
   void keydata_load();
-  void signlog_load();
+//  void signlog_load();
   
   using iterator = keyfile_map_t::iterator; //primary_index
   using const_iterator = keyfile_map_t::const_iterator; //primary_index
   
   const log_random_access_index_type& get_logs(const dev::Public& pkey);
-  const log_date_index_type& get_logs_date_ordered(const dev::Public& pkey);
+//  const log_date_index_type& get_logs_date_ordered(const dev::Public& pkey);
   void add_log_record(const dev::Public& pkey, const keyfile_format::log_record& record);
   
   const_iterator begin() const; //primary_index
@@ -183,7 +183,7 @@ public:
   bool is_exist(const prim_key_type& key) const;
   void flush_keyfile(const prim_key_type& key) const;
   void flush_keyfile(const second_key_type& key) const;
-  void flush_logrecords(const prim_key_type& key) const;
+//  void flush_logrecords(const prim_key_type& key) const;
   void flush_all() const;
 };
 

@@ -52,7 +52,8 @@ sql_singleton& sql_singleton::instance()
     return instance;
 }
 
-const keychain_app::keyfiles_map::log_records_t sql_singleton::select(const dev::Public& pkey)
+//const keychain_app::keyfiles_map::log_records_t sql_singleton::select(const dev::Public& pkey)
+std::vector<keychain_app::keyfile_format::log_record> sql_singleton::select(const dev::Public& pkey)
 {
     sqlite3_stmt * stmt;
     std::vector<keychain_app::keyfile_format::log_record> set;
@@ -92,11 +93,22 @@ const keychain_app::keyfiles_map::log_records_t sql_singleton::select(const dev:
     if  (sqlite3_finalize(stmt) != SQLITE_OK )
         FC_LIGHT_THROW_EXCEPTION(fc_light::internal_error_exception, "sqlite3_finalize");
 
-    auto log_rec_t = keychain_app::keyfiles_map::log_records_t();
-    for (auto& s: set)
-        log_rec_t.insert(s);
+    return  set;
+//    auto log_rec_t = keychain_app::keyfiles_map::log_records_t();
+//    for (auto& s: set)
+//        log_rec_t.insert(s);
 
-    return  log_rec_t;
+//    return  log_rec_t;
+
+//    keychain_app::keyfiles_map::signlog_map_t m_signlog_map;
+//    auto res1 = m_signlog_map.insert(keychain_app::keyfiles_map::signlog_map_t::value_type(pkey,
+//            keychain_app::keyfiles_map::log_records_t() ));
+//    auto it = m_signlog_map.begin();
+//
+//    auto& logmap = it->second;
+////    std::copy(set.begin(), set.end(), std::inserter(logmap, logmap.begin()));
+//
+//    return logmap.get<keychain_app::keyfiles_map::log_random_access_tag>();
 }
 
 int sql_singleton::insert(const dev::Public& pkey, const keychain_app::keyfile_format::log_record& record)

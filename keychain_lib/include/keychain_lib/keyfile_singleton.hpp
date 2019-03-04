@@ -83,10 +83,10 @@ class keyfile_singleton
   using prim_index_type = keyfile_map_t::index<keyfiles_map::prim_pubkey_tag>::type;
   using second_index_type = keyfile_map_t::index<keyfiles_map::second_keyname_tag>::type;
   using third_index_type = keyfile_map_t::index<keyfiles_map::third_date_tag>::type;
-  using log_random_access_index_type = log_records_t::index<keyfiles_map::log_random_access_tag>::type;
   using log_date_index_type = log_records_t::index<keyfiles_map::log_date_tag>::type;
   using key_random_access_index_type = keyfile_map_t::index<keyfiles_map::key_random_access_tag>::type;
-  
+  using log_random_access_index_type = log_records_t::index<keyfiles_map::log_random_access_tag>::type;
+
   using prim_key_type = keyfile_map_t::key_type;
   using second_key_type = second_index_type::key_type;
   using third_key_type = third_index_type::key_type;
@@ -96,6 +96,7 @@ class keyfile_singleton
   
   void print_exception (const boost::filesystem::path& filename, fc_light::exception &er);
 public:
+
   static keyfile_singleton& instance();
   
   void keydata_load();
@@ -103,8 +104,10 @@ public:
   
   using iterator = keyfile_map_t::iterator; //primary_index
   using const_iterator = keyfile_map_t::const_iterator; //primary_index
-  
-  const log_random_access_index_type& get_logs(const dev::Public& pkey);
+
+  std::vector<keychain_app::keyfile_format::log_record> get_logs(const dev::Public& );
+
+//  const log_random_access_index_type& get_logs(const dev::Public& pkey);
 //  const log_date_index_type& get_logs_date_ordered(const dev::Public& pkey);
   void add_log_record(const dev::Public& pkey, const keyfile_format::log_record& record);
   

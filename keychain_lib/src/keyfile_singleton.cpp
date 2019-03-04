@@ -351,7 +351,8 @@ void keyfile_singleton::flush_all() const
   });*/
 }
 
-const keyfile_singleton::log_random_access_index_type& keyfile_singleton::get_logs(const dev::Public& pkey)
+std::vector<keychain_app::keyfile_format::log_record> keyfile_singleton::get_logs(const dev::Public& pkey)
+//const keyfile_singleton::log_random_access_index_type& keyfile_singleton::get_logs(const dev::Public& pkey)
 {
 /*
   signlog_load();//NOTE: it may be slowly, using sqlite and triggers is more preferable
@@ -362,8 +363,9 @@ const keyfile_singleton::log_random_access_index_type& keyfile_singleton::get_lo
   return records.get<keyfiles_map::log_random_access_tag>();
 */
     auto& sql = sql_singleton::instance();
-    auto records = sql.select(pkey);
-    return records.get<keyfiles_map::log_random_access_tag>();
+    return sql.select(pkey);
+//    auto records = sql.select(pkey);
+//    return records.get<keyfiles_map::log_random_access_tag>();
 }
 
 /*

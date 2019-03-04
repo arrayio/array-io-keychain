@@ -358,7 +358,15 @@ struct keychain_command<command_te::sign_trx> : keychain_command_base
     fc_light::variant json;
     dev::Secret private_key;
     auto& keyfiles = keyfile_singleton::instance();
-  
+
+//    auto logs = keyfiles.get_logs(params.public_key);
+//    int n = std::distance(logs.begin(), logs.end());
+//    for (int i = 0 ; i < n ; i++)
+//    {
+//        auto &a  = logs[i];
+//        auto b = a.blockchain_type;
+//    }
+
     //NOTE: using vector instead array because move semantic is implemented in the vector
     auto trans_len = keychain_app::from_hex(params.transaction, raw.data(), raw.size());
     raw.resize(trans_len);

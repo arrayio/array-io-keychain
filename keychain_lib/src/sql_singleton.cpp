@@ -12,7 +12,7 @@ sql_singleton::sql_singleton()
 {
 #if defined(macintosh) || defined(__APPLE__) || defined(__APPLE_CC__)
   auto sql_dir = bfs::path(getenv("HOME"));
-  sql_dir += bfs::path("/"SQL_DB_DEFAULT_PATH);
+  sql_dir += bfs::path("/" SQL_DB_DEFAULT_PATH);
 #else
   bfs::path sql_dir(SQL_DB_DEFAULT_PATH);
 #endif

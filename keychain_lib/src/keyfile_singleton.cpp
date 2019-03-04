@@ -304,7 +304,7 @@ void keyfile_singleton::flush_logrecords_impl(const prim_key_type& key, const lo
 {
 #if defined(macintosh) || defined(__APPLE__) || defined(__APPLE_CC__)
   auto filepath = bfs::path(getenv("HOME"));
-  filepath += bfs::path(SIGN_LOGS_DEFAULT_PATH_"/");
+  filepath += bfs::path("/" SIGN_LOGS_DEFAULT_PATH_"/");
 #else
   bfs::path filepath(SIGN_LOGS_DEFAULT_PATH_"/");
 #endif

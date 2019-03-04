@@ -91,7 +91,7 @@ using namespace keychain_app;
                 logItem.blockchainType = BlockchainTypeRawhash;
                 break;
         }
-        logItem.chainId = [NSString stringWithUTF8String:log.chainid.c_str()];
+//        logItem.chainId = [NSString stringWithUTF8String:log.chainid.c_str()];
         auto seconds = log.sign_time.time_since_epoch().to_seconds();
         NSDate *signTime = [NSDate dateWithTimeIntervalSince1970:seconds];
         logItem.signTime = signTime;

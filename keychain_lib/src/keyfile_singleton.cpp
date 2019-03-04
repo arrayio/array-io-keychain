@@ -82,6 +82,7 @@ void keyfile_singleton::keydata_load()
   });
 }
 
+/*
 void keyfile_singleton::signlog_load()
 {
 #if defined(macintosh) || defined(__APPLE__) || defined(__APPLE_CC__)
@@ -128,6 +129,7 @@ void keyfile_singleton::signlog_load()
     FC_LIGHT_RETHROW_EXCEPTIONS(log_level::error, "Cannot parse key file \"${KEYFILE}\"", ("KEYFILE", unit.path().c_str()))
   });
 }
+*/
 
 void keyfile_singleton::print_exception (const boost::filesystem::path& filename, fc_light::exception &er)
 {
@@ -141,7 +143,7 @@ keyfile_singleton::keyfile_singleton()
   try
   {
     keydata_load();
-    signlog_load();
+//    signlog_load();
   }
   FC_LIGHT_RETHROW_EXCEPTIONS(log_level::error, "Cannot create keyfiles map")
 }
@@ -292,6 +294,7 @@ void keyfile_singleton::flush_keyfile_impl(const value_t& keyfile_data) const
   fout << fc_light::json::to_pretty_string(keyfile_data) << std::endl;
 }
 
+/*
 void keyfile_singleton::flush_logrecords(const prim_key_type& key) const
 {
   auto it = m_signlog_map.find(key);
@@ -299,7 +302,9 @@ void keyfile_singleton::flush_logrecords(const prim_key_type& key) const
     return;
   flush_logrecords_impl(key, it->second);
 }
+*/
 
+/*
 void keyfile_singleton::flush_logrecords_impl(const prim_key_type& key, const log_records_t& log_records) const
 {
 #if defined(macintosh) || defined(__APPLE__) || defined(__APPLE_CC__)
@@ -320,6 +325,7 @@ void keyfile_singleton::flush_logrecords_impl(const prim_key_type& key, const lo
     FC_LIGHT_THROW_EXCEPTION(fc_light::internal_error_exception, "Cannot open keyfile (${filename})", ("filename", filename));
   fout << fc_light::json::to_pretty_string(logfile) << std::endl;
 }
+*/
 
 void keyfile_singleton::flush_all() const
 {
@@ -340,21 +346,27 @@ void keyfile_singleton::flush_all() const
       FC_LIGHT_THROW_EXCEPTION(fc_light::internal_error_exception, "Cannot open keyfile (${filename})", ("filename", filename));
     fout << fc_light::json::to_pretty_string(keyfile_data) << std::endl;
   });
-  std::for_each(m_signlog_map.begin(), m_signlog_map.end(), [this](const auto& val){
+/*  std::for_each(m_signlog_map.begin(), m_signlog_map.end(), [this](const auto& val){
     flush_logrecords(val.first);
-  });
+  });*/
 }
 
 const keyfile_singleton::log_random_access_index_type& keyfile_singleton::get_logs(const dev::Public& pkey)
 {
+/*
   signlog_load();//NOTE: it may be slowly, using sqlite and triggers is more preferable
   auto it = m_signlog_map.find(pkey);
   if (it == m_signlog_map.end())
     FC_LIGHT_THROW_EXCEPTION(fc_light::file_not_found_exception, "Public_key: ${PKEY}", ("PKEY", pkey));
   auto& records = it->second;
   return records.get<keyfiles_map::log_random_access_tag>();
+*/
+    auto& sql = sql_singleton::instance();
+    auto records = sql.select(pkey);
+    return records.get<keyfiles_map::log_random_access_tag>();
 }
 
+/*
 const keyfile_singleton::log_date_index_type& keyfile_singleton::get_logs_date_ordered(const dev::Public& pkey)
 {
   signlog_load();//NOTE: it may be slowly, using sqlite and triggers is more preferable
@@ -364,9 +376,13 @@ const keyfile_singleton::log_date_index_type& keyfile_singleton::get_logs_date_o
   auto& records = it->second;
   return records.get<keyfiles_map::log_date_tag>();
 }
+*/
 
 void keyfile_singleton::add_log_record(const dev::Public& pkey, const keyfile_format::log_record& record)
 {
+    auto& sql = sql_singleton::instance();
+    sql.insert(pkey, record);
+  /*
   auto it = m_signlog_map.find(pkey);
   if (it == m_signlog_map.end())
   {
@@ -376,6 +392,7 @@ void keyfile_singleton::add_log_record(const dev::Public& pkey, const keyfile_fo
   }
   it->second.insert(record);
   flush_logrecords(pkey);
+   */
 }
 
 keyfile_format::keyfile_t keychain_app::create_new_keyfile(

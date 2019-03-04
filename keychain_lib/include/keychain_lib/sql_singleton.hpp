@@ -6,11 +6,14 @@
 
 #include <sqlite3.h>
 #include "keychain_commands.hpp"
+#include "keyfile_singleton.hpp"
 
 struct sql_singleton
 {
     static sql_singleton& instance();
-    const keychain_app::keyfiles_map::log_records_t select(const dev::Public& );
+    std::vector<keychain_app::keyfile_format::log_record> select(const dev::Public& );
+
+//    const keychain_app::keyfiles_map::log_records_t select(const dev::Public& );
     int insert(const dev::Public&, const keychain_app::keyfile_format::log_record& );
 
 private:

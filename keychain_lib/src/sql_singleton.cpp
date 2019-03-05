@@ -52,11 +52,10 @@ sql_singleton& sql_singleton::instance()
     return instance;
 }
 
-//const keychain_app::keyfiles_map::log_records_t sql_singleton::select(const dev::Public& pkey)
-std::vector<keychain_app::keyfile_format::log_record> sql_singleton::select(const dev::Public& pkey)
+const std::vector<keychain_app::keyfile_format::log_record> sql_singleton::select_log(const dev::Public& pkey)
 {
     sqlite3_stmt * stmt;
-    std::vector<keychain_app::keyfile_format::log_record> set;
+    std::vector<keychain_app::keyfile_format::log_record> records;
     const char * statement =   "select trx, sign_time, blockchain_type from signlog where public_key=?";
 
     auto res = sqlite3_prepare_v2(db, statement, -1, &stmt, NULL);
@@ -75,17 +74,13 @@ std::vector<keychain_app::keyfile_format::log_record> sql_singleton::select(cons
             std::string time((const char *) sqlite3_column_text(stmt, 1));
             std::string chain((const char *) sqlite3_column_text(stmt, 2));
 
-            dev::bytes trx_(trx.length());
-            auto len = keychain_app::from_hex(trx, trx_.data(), trx_.size() );
-            trx_.resize(len);
-
-            fc_light::variant v_time (time);
-            auto time_ = v_time.as<fc_light::time_point>();
-
-            fc_light::variant v_chain (chain);
-            auto chain_ = v_chain.as<keychain_app::blockchain_te>();
-
-            set.push_back(keychain_app::keyfile_format::log_record(trx_, time_, chain_));
+            keychain_app::keyfile_format::log_record rec;
+            rec.transaction.resize(trx.length());
+            auto len = keychain_app::from_hex(trx, rec.transaction.data(), rec.transaction.size() );
+            rec.transaction.resize(len);
+            rec.sign_time = fc_light::variant(time).as<fc_light::time_point>();
+            rec.blockchain_type = fc_light::variant(chain).as<keychain_app::blockchain_te>();
+            records.push_back(rec);
         }
         else break;
     }
@@ -93,25 +88,10 @@ std::vector<keychain_app::keyfile_format::log_record> sql_singleton::select(cons
     if  (sqlite3_finalize(stmt) != SQLITE_OK )
         FC_LIGHT_THROW_EXCEPTION(fc_light::internal_error_exception, "sqlite3_finalize");
 
-    return  set;
-//    auto log_rec_t = keychain_app::keyfiles_map::log_records_t();
-//    for (auto& s: set)
-//        log_rec_t.insert(s);
-
-//    return  log_rec_t;
-
-//    keychain_app::keyfiles_map::signlog_map_t m_signlog_map;
-//    auto res1 = m_signlog_map.insert(keychain_app::keyfiles_map::signlog_map_t::value_type(pkey,
-//            keychain_app::keyfiles_map::log_records_t() ));
-//    auto it = m_signlog_map.begin();
-//
-//    auto& logmap = it->second;
-////    std::copy(set.begin(), set.end(), std::inserter(logmap, logmap.begin()));
-//
-//    return logmap.get<keychain_app::keyfiles_map::log_random_access_tag>();
+    return  records;
 }
 
-int sql_singleton::insert(const dev::Public& pkey, const keychain_app::keyfile_format::log_record& record)
+int sql_singleton::insert_log(const dev::Public& pkey, const keychain_app::keyfile_format::log_record& record)
 {
     sqlite3_stmt * stmt;
     fc_light::variant vtime(record.sign_time);

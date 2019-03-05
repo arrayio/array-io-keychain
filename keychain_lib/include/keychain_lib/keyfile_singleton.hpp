@@ -78,7 +78,7 @@ class keyfile_singleton
   
   using value_t = keyfile_map_t::value_type;
   keyfile_map_t m_keydata_map;
-//  signlog_map_t m_signlog_map;
+  signlog_map_t m_signlog_map;
   
   using prim_index_type = keyfile_map_t::index<keyfiles_map::prim_pubkey_tag>::type;
   using second_index_type = keyfile_map_t::index<keyfiles_map::second_keyname_tag>::type;
@@ -105,9 +105,7 @@ public:
   using iterator = keyfile_map_t::iterator; //primary_index
   using const_iterator = keyfile_map_t::const_iterator; //primary_index
 
-  std::vector<keychain_app::keyfile_format::log_record> get_logs(const dev::Public& );
-
-//  const log_random_access_index_type& get_logs(const dev::Public& pkey);
+  const log_random_access_index_type& get_logs(const dev::Public& pkey);
 //  const log_date_index_type& get_logs_date_ordered(const dev::Public& pkey);
   void add_log_record(const dev::Public& pkey, const keyfile_format::log_record& record);
   

@@ -351,21 +351,20 @@ void keyfile_singleton::flush_all() const
   });*/
 }
 
-std::vector<keychain_app::keyfile_format::log_record> keyfile_singleton::get_logs(const dev::Public& pkey)
-//const keyfile_singleton::log_random_access_index_type& keyfile_singleton::get_logs(const dev::Public& pkey)
+const keyfile_singleton::log_random_access_index_type& keyfile_singleton::get_logs(const dev::Public& pkey)
 {
-/*
-  signlog_load();//NOTE: it may be slowly, using sqlite and triggers is more preferable
-  auto it = m_signlog_map.find(pkey);
-  if (it == m_signlog_map.end())
-    FC_LIGHT_THROW_EXCEPTION(fc_light::file_not_found_exception, "Public_key: ${PKEY}", ("PKEY", pkey));
-  auto& records = it->second;
-  return records.get<keyfiles_map::log_random_access_tag>();
-*/
     auto& sql = sql_singleton::instance();
-    return sql.select(pkey);
-//    auto records = sql.select(pkey);
-//    return records.get<keyfiles_map::log_random_access_tag>();
+    auto records =  sql.select_log(pkey);
+
+    if (records.size() == 0)
+        FC_LIGHT_THROW_EXCEPTION(fc_light::file_not_found_exception, "Public_key: ${PKEY}", ("PKEY", pkey));
+
+    m_signlog_map.clear();
+    m_signlog_map.insert(signlog_map_t::value_type(pkey, log_records_t()));
+    auto it = m_signlog_map.begin();
+    auto& logmap = it->second;
+    std::copy(records.begin(), records.end(), std::inserter(logmap, logmap.begin()));
+    return logmap.get<keyfiles_map::log_random_access_tag>();
 }
 
 /*
@@ -383,7 +382,7 @@ const keyfile_singleton::log_date_index_type& keyfile_singleton::get_logs_date_o
 void keyfile_singleton::add_log_record(const dev::Public& pkey, const keyfile_format::log_record& record)
 {
     auto& sql = sql_singleton::instance();
-    sql.insert(pkey, record);
+    sql.insert_log(pkey, record);
   /*
   auto it = m_signlog_map.find(pkey);
   if (it == m_signlog_map.end())

@@ -67,7 +67,7 @@ using namespace keychain_app;
     printf("%s", [publicKey UTF8String]);
     auto pkey = dev::Public([publicKey UTF8String]);
     try {
-        auto logs = keyfiles.get_logs(pkey);
+        auto& logs = keyfiles.get_logs(pkey);
         for (NSUInteger i = 0; i < std::distance(logs.begin(), logs.end()); i++) {
             auto& log = logs[i];
             Log *logItem = [[Log alloc] init];

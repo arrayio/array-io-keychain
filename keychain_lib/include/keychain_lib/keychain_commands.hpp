@@ -817,6 +817,46 @@ struct keychain_command<command_te::public_key>: keychain_command_base
 };
 
 template<>
+struct keychain_command<command_te::seed>: keychain_command_base
+{
+    keychain_command(): keychain_command_base(command_te::seed){}
+    virtual ~keychain_command(){}
+    struct params {std::string entropy;};
+    using  params_t = params;
+    virtual std::string operator()(keychain_base* keychain, const fc_light::variant& params_variant, int id) const override
+    {
+        auto param = params_variant.as<params_t>();
+        std::vector<unsigned char> entropy;
+        entropy.resize(param.entropy.length());
+        auto res = from_hex(param.entropy, entropy.data(), entropy.size());
+        entropy.resize(res);
+        //TODO: need to impl
+        std::string seed_phrase  = "witch collapse practice feed shame open despair creek road again ice least";
+        json_response response(seed_phrase, id);
+        return fc_light::json::to_string(fc_light::variant(response));
+    }
+};
+
+
+template<>
+struct keychain_command<command_te::restore>: keychain_command_base
+{
+    keychain_command(): keychain_command_base(command_te::restore){}
+    virtual ~keychain_command(){}
+    struct params {std::string seed;};
+    using  params_t = params;
+    virtual std::string operator()(keychain_base* keychain, const fc_light::variant& params_variant, int id) const override
+    {
+        auto param = params_variant.as<params_t>();
+        //TODO: need to impl
+        std::string private_key  = "5fda7b741910b05738c5e0ca8961cf7a9c2f3afe8dfcae8d57df5f01690f2a02";
+        json_response response(private_key, id);
+        return fc_light::json::to_string(fc_light::variant(response));
+    }
+};
+
+
+template<>
 struct keychain_command<command_te::lock>: keychain_command_base
 {
   keychain_command(): keychain_command_base(command_te::lock){}
@@ -922,6 +962,8 @@ FC_LIGHT_REFLECT(keychain_app::keychain_command<keychain_app::command_te::sign_h
 FC_LIGHT_REFLECT(keychain_app::keychain_command<keychain_app::command_te::public_key>::params_t, (keyname))
 FC_LIGHT_REFLECT(keychain_app::keychain_command<keychain_app::command_te::set_unlock_time>::params_t, (seconds))
 FC_LIGHT_REFLECT(keychain_app::keychain_command<keychain_app::command_te::unlock>::params_t, (public_key)(unlock_time))
+FC_LIGHT_REFLECT(keychain_app::keychain_command<keychain_app::command_te::seed>::params_t, (entropy))
+FC_LIGHT_REFLECT(keychain_app::keychain_command<keychain_app::command_te::restore>::params_t, (seed))
 FC_LIGHT_REFLECT(keychain_app::keychain_command_common, (command)(id)(params))
 FC_LIGHT_REFLECT(keychain_app::json_response, (id)(result))
 FC_LIGHT_REFLECT(keychain_app::json_error::error_t, (code)(name)(message)(trace))

@@ -67,37 +67,38 @@ using namespace keychain_app;
     printf("%s", [publicKey UTF8String]);
     auto pkey = dev::Public([publicKey UTF8String]);
     try {
-    auto& logs = keyfiles.get_logs(pkey);
-    for (NSUInteger i = 0; i < std::distance(logs.begin(), logs.end()); i++) {
-        auto& log = logs[i];
-        Log *logItem = [[Log alloc] init];
-        switch (log.blockchain_type) {
-            case keychain_app::blockchain_te::array:
-                logItem.blockchainType = BlockchainTypeArray;
-                break;
-            case keychain_app::blockchain_te::unknown:
-                logItem.blockchainType = BlockchainTypeUnknown;
-                break;
-            case keychain_app::blockchain_te::bitshares:
-                logItem.blockchainType = BlockchainTypeBitshares;
-                break;
-            case keychain_app::blockchain_te::ethereum:
-                logItem.blockchainType = BlockchainTypeEthereum;
-                break;
-            case keychain_app::blockchain_te::bitcoin:
-                logItem.blockchainType = BlockchainTypeBitcoin;
-                break;
-            case keychain_app::blockchain_te::rawhash:
-                logItem.blockchainType = BlockchainTypeRawhash;
-                break;
+        auto logs = keyfiles.get_logs(pkey);
+        for (NSUInteger i = 0; i < std::distance(logs.begin(), logs.end()); i++) {
+            auto& log = logs[i];
+            Log *logItem = [[Log alloc] init];
+            switch (log.blockchain_type) {
+                case keychain_app::blockchain_te::array:
+                    logItem.blockchainType = BlockchainTypeArray;
+                    break;
+                case keychain_app::blockchain_te::unknown:
+                    logItem.blockchainType = BlockchainTypeUnknown;
+                    break;
+                case keychain_app::blockchain_te::bitshares:
+                    logItem.blockchainType = BlockchainTypeBitshares;
+                    break;
+                case keychain_app::blockchain_te::ethereum:
+                    logItem.blockchainType = BlockchainTypeEthereum;
+                    break;
+                case keychain_app::blockchain_te::bitcoin:
+                    logItem.blockchainType = BlockchainTypeBitcoin;
+                    break;
+                case keychain_app::blockchain_te::rawhash:
+                    logItem.blockchainType = BlockchainTypeRawhash;
+                    break;
+            }
+    //        logItem.chainId = [NSString stringWithUTF8String:log.chainid.c_str()];
+            auto seconds = log.sign_time.time_since_epoch().to_seconds();
+            NSDate *signTime = [NSDate dateWithTimeIntervalSince1970:seconds];
+            logItem.signTime = signTime;
+            std::string transaction = keychain_app::to_hex(log.transaction.data(), log.transaction.size());
+            logItem.transaction = [NSString stringWithUTF8String:transaction.c_str()];
+            [logsArray addObject:logItem];
         }
-//        logItem.chainId = [NSString stringWithUTF8String:log.chainid.c_str()];
-        auto seconds = log.sign_time.time_since_epoch().to_seconds();
-        NSDate *signTime = [NSDate dateWithTimeIntervalSince1970:seconds];
-        logItem.signTime = signTime;
-//        logItem.transaction = log.transaction;
-        [logsArray addObject:logItem];
-    }
     } catch (fc_light::exception& e) {
         NSLog(@"%@", [NSString stringWithUTF8String: e.to_detail_json_string().c_str()]);
     }

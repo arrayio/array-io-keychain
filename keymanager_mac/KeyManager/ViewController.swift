@@ -16,10 +16,13 @@ class ViewController: NSViewController, NSTableViewDelegate, NSTableViewDataSour
     @IBOutlet weak var creationDate: NSTextFieldCell!
     @IBOutlet weak var keychainVersion: NSTextFieldCell!
     @IBOutlet weak var cipherType: NSTextFieldCell!
-    @IBOutlet weak var location: NSTextFieldCell!
+//    @IBOutlet weak var location: NSTextFieldCell!
     @IBOutlet weak var descriptionKey: NSTextFieldCell!
     @IBOutlet weak var publicKey: NSTextFieldCell!
     @IBOutlet weak var detailsView: NSView!
+    @IBOutlet weak var statusView: NSView!
+    @IBOutlet weak var websocketStatusImage: NSImageView!
+    @IBOutlet weak var gravatarImage: NSImageView!
     
     var selectedPublicKey = ""
 //    @IBOutlet weak var titleView: NSView!
@@ -27,6 +30,8 @@ class ViewController: NSViewController, NSTableViewDelegate, NSTableViewDataSour
     fileprivate enum CellIdentifiers {
         static let LocationCell = "locationId"
         static let key1 = "key1"
+        static let dateId = "dateId"
+        static let blockchainKey = "blockchainKey"
     }
     
     override func viewDidLoad() {
@@ -38,12 +43,11 @@ class ViewController: NSViewController, NSTableViewDelegate, NSTableViewDataSour
         tableView.reloadData()
         self.view.layer?.backgroundColor = NSColor(red: 242.0/255.0, green: 243.0/255.0, blue: 247.0/255.0, alpha: 1).cgColor
         self.detailsView.wantsLayer = true
-        self.detailsView.layer?.backgroundColor = NSColor(red: 213.0/255.0, green: 220.0/255.0, blue: 230.0/255.0, alpha: 1).cgColor
+        self.detailsView.layer?.backgroundColor = NSColor(red: 248.0/255.0, green: 248.0/255.0, blue: 250.0/255.0, alpha: 1).cgColor
+        self.statusView.wantsLayer = true
+        self.statusView.layer?.backgroundColor = NSColor.white.cgColor
         
         NotificationCenter.default.addObserver(self, selector: #selector(reloadTableView), name: NSNotification.Name("reloadData"), object: nil)
-        
-//        titleView.wantsLayer = true
-//        titleView.layer?.backgroundColor = NSColor.white.cgColor
         
         websocketStatus()
         Timer.scheduledTimer(timeInterval: 5, target: self, selector: #selector(websocketStatus), userInfo: nil, repeats: true)
@@ -89,7 +93,42 @@ class ViewController: NSViewController, NSTableViewDelegate, NSTableViewDataSour
             if selectedPublicKey != "" {
                 print("self.transactionTableView")
                 let logs = CPlusPlusBridger().getTransactionLog(forPublicKey: selectedPublicKey)
+                let log = logs[row] as! Log
+
+                var text: String = ""
+
+                var cellIdentifier: String = ""
+                if tableColumn == tableView.tableColumns[0] {
+                    switch (log.blockchainType) {
+                    case .array:
+                        text = "Array"
+                    case .unknown:
+                        text = "Unknown"
+                    case .bitshares:
+                        text = "Bitshares"
+                    case .ethereum:
+                        text = "Ethereum"
+                    case .bitcoin:
+                        text = "Bitcoin"
+                    case .rawhash:
+                        text = "Rawhash"
+                    }
+                    cellIdentifier = CellIdentifiers.blockchainKey
+                }
+                if tableColumn == tableView.tableColumns[1] {
+                    text = getSubstrStr(str: log.transaction)
+                    cellIdentifier = CellIdentifiers.key1
+                }
+                if tableColumn == tableView.tableColumns[2] {
+                    text = "\(log.signTime)"
+                    cellIdentifier = CellIdentifiers.dateId
+                }
                 
+                // 3
+                if let cell = tableView.makeView(withIdentifier: NSUserInterfaceItemIdentifier(rawValue: cellIdentifier), owner: nil) as? NSTableCellView {
+                    cell.textField?.stringValue = text
+                    return cell
+                }
             }
         }
         return nil
@@ -112,6 +151,7 @@ class ViewController: NSViewController, NSTableViewDelegate, NSTableViewDataSour
     @objc func websocketStatus() {
         WebsocketChecker.checkForRunningWebsocketd { (isRunning) in
             self.websocketStatusLabel.stringValue = isRunning ? "Running" : "Not started"
+            self.websocketStatusImage.image = isRunning ? #imageLiteral(resourceName: "working") : #imageLiteral(resourceName: "stoped")
         }
     }
     
@@ -133,13 +173,23 @@ class ViewController: NSViewController, NSTableViewDelegate, NSTableViewDataSour
             creationDate.stringValue = formatter.string(from: item.createTime)
             keychainVersion.stringValue = item.keychainVersion
             cipherType.stringValue = item.cipherType
-            location.stringValue = ""
+//            location.stringValue = ""
             descriptionKey.stringValue = item.descriptionKey
-            publicKey.stringValue = item.publicKey
+            publicKey.stringValue = getSubstrStr(str: item.publicKey)
             selectedPublicKey = item.publicKey
+            gravatarImage.image = Identicon().icon(from: item.publicKey, size: CGSize(width: 122, height: 122), scale: 2.0)
             transactionTableView.reloadData()
             print(obj.selectedRow)
         }
+    }
+    
+    func getSubstrStr(str: String) -> String{
+        let index = str.index(str.startIndex, offsetBy: 32)
+        let substring = str[..<index] // Hello
+        
+        let indexLast = str.index(str.endIndex, offsetBy: -8)
+        let substringLast = str[indexLast...] // playground
+        return substring + "<...>" + substringLast
     }
     
 }

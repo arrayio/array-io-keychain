@@ -30,6 +30,12 @@
 		A795237C2215C6E000078EE5 /* TableView.m in Sources */ = {isa = PBXBuildFile; fileRef = A795237A2215C6E000078EE5 /* TableView.m */; };
 		A79F78BA21F89D0400E2C184 /* HexToRgbColor.mm in Sources */ = {isa = PBXBuildFile; fileRef = A79F78B921F89D0400E2C184 /* HexToRgbColor.mm */; };
 		A79F78BC21F8A17900E2C184 /* TableRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A79F78BB21F8A17900E2C184 /* TableRowView.swift */; };
+		A7F0E424222E81E1003F0B8D /* JenkinsHash.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7F0E41D222E81E0003F0B8D /* JenkinsHash.swift */; };
+		A7F0E425222E81E1003F0B8D /* Identicon.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7F0E41E222E81E0003F0B8D /* Identicon.swift */; };
+		A7F0E426222E81E1003F0B8D /* CGColorExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7F0E41F222E81E0003F0B8D /* CGColorExtension.swift */; };
+		A7F0E427222E81E1003F0B8D /* CGImageExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7F0E421222E81E1003F0B8D /* CGImageExtension.swift */; };
+		A7F0E428222E81E1003F0B8D /* GitHubIdenticon.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7F0E422222E81E1003F0B8D /* GitHubIdenticon.swift */; };
+		A7F0E429222E81E1003F0B8D /* IconGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7F0E423222E81E1003F0B8D /* IconGenerator.swift */; };
 		AD6703CBBAA6B5EB11907AA8 /* Pods_KeyManager.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 130888C1592515A58F013398 /* Pods_KeyManager.framework */; };
 /* End PBXBuildFile section */
 
@@ -71,6 +77,13 @@
 		A79F78B821F89D0400E2C184 /* HexToRgbColor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HexToRgbColor.h; sourceTree = "<group>"; };
 		A79F78B921F89D0400E2C184 /* HexToRgbColor.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = HexToRgbColor.mm; sourceTree = "<group>"; };
 		A79F78BB21F8A17900E2C184 /* TableRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TableRowView.swift; sourceTree = "<group>"; };
+		A7F0E41D222E81E0003F0B8D /* JenkinsHash.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JenkinsHash.swift; sourceTree = "<group>"; };
+		A7F0E41E222E81E0003F0B8D /* Identicon.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Identicon.swift; sourceTree = "<group>"; };
+		A7F0E41F222E81E0003F0B8D /* CGColorExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CGColorExtension.swift; sourceTree = "<group>"; };
+		A7F0E420222E81E0003F0B8D /* Identicon.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Identicon.h; sourceTree = "<group>"; };
+		A7F0E421222E81E1003F0B8D /* CGImageExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CGImageExtension.swift; sourceTree = "<group>"; };
+		A7F0E422222E81E1003F0B8D /* GitHubIdenticon.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GitHubIdenticon.swift; sourceTree = "<group>"; };
+		A7F0E423222E81E1003F0B8D /* IconGenerator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IconGenerator.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -121,6 +134,7 @@
 		A776F49E21D0DD95006736C9 /* KeyManager */ = {
 			isa = PBXGroup;
 			children = (
+				A7F0E41C222E81D6003F0B8D /* Identicon */,
 				A776F49F21D0DD95006736C9 /* AppDelegate.swift */,
 				A79523752215B36600078EE5 /* WindowController.h */,
 				A79523762215B36600078EE5 /* WindowController.m */,
@@ -150,6 +164,20 @@
 				A795237A2215C6E000078EE5 /* TableView.m */,
 			);
 			path = KeyManager;
+			sourceTree = "<group>";
+		};
+		A7F0E41C222E81D6003F0B8D /* Identicon */ = {
+			isa = PBXGroup;
+			children = (
+				A7F0E41F222E81E0003F0B8D /* CGColorExtension.swift */,
+				A7F0E421222E81E1003F0B8D /* CGImageExtension.swift */,
+				A7F0E422222E81E1003F0B8D /* GitHubIdenticon.swift */,
+				A7F0E423222E81E1003F0B8D /* IconGenerator.swift */,
+				A7F0E420222E81E0003F0B8D /* Identicon.h */,
+				A7F0E41E222E81E0003F0B8D /* Identicon.swift */,
+				A7F0E41D222E81E0003F0B8D /* JenkinsHash.swift */,
+			);
+			path = Identicon;
 			sourceTree = "<group>";
 		};
 		F73689D206923AF1FA7A3A0E /* Frameworks */ = {
@@ -296,20 +324,26 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A7F0E428222E81E1003F0B8D /* GitHubIdenticon.swift in Sources */,
 				A791101B2215AB48001C6761 /* Key.m in Sources */,
 				A79523772215B36600078EE5 /* WindowController.m in Sources */,
+				A7F0E424222E81E1003F0B8D /* JenkinsHash.swift in Sources */,
 				A71840942216D8C9009A8D49 /* Log.m in Sources */,
 				A776F4A221D0DD95006736C9 /* ViewController.swift in Sources */,
+				A7F0E425222E81E1003F0B8D /* Identicon.swift in Sources */,
 				A71840962216E10A009A8D49 /* DeleteKeyVC.swift in Sources */,
 				A795237C2215C6E000078EE5 /* TableView.m in Sources */,
 				A776F4BC21D3A7F8006736C9 /* WebsocketChecker.swift in Sources */,
+				A7F0E427222E81E1003F0B8D /* CGImageExtension.swift in Sources */,
 				A776F4B821D39AB7006736C9 /* String+extension.swift in Sources */,
 				A776F4A021D0DD95006736C9 /* AppDelegate.swift in Sources */,
 				A79F78BA21F89D0400E2C184 /* HexToRgbColor.mm in Sources */,
 				A79523792215B55100078EE5 /* CreateKeyVC.swift in Sources */,
+				A7F0E426222E81E1003F0B8D /* CGColorExtension.swift in Sources */,
 				A79523712215B05300078EE5 /* SYFlatButton.m in Sources */,
 				A776F4BA21D3A78A006736C9 /* AppleScriptManager.swift in Sources */,
 				A79F78BC21F8A17900E2C184 /* TableRowView.swift in Sources */,
+				A7F0E429222E81E1003F0B8D /* IconGenerator.swift in Sources */,
 				A791100422147903001C6761 /* CPlusPlusBridger.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -506,6 +540,7 @@
 					"/Users/mikhaillutskiy/openssl-install/lib/libssl.a",
 					/usr/lib/libc.dylib,
 					libkaitai_struct_cpp_stl_runtime.a,
+					"-lsqlite3",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = ru.lwts.KeyManager;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -578,6 +613,7 @@
 					"/Users/mikhaillutskiy/openssl-install/lib/libssl.a",
 					/usr/lib/libc.dylib,
 					libkaitai_struct_cpp_stl_runtime.a,
+					"-lsqlite3",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = ru.lwts.KeyManager;
 				PRODUCT_NAME = "$(TARGET_NAME)";

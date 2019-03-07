@@ -48,7 +48,7 @@ You can find a comprehensive installation guide for [macOS](https://github.com/a
 
 ## Getting started
 
-After you have installed [KeyChain](https://github.com/arrayio/array-io-keychain/releases/download/0.18/KeyChain.Installer.v18.zip), you can start using it with web3. Just follow these simple steps.
+After you have installed [KeyChain](https://github.com/arrayio/array-io-keychain/releases/download/0.20/KeyChain.Installer.zip), you can start using it with web3. Just follow these simple steps.
 
 NB: If you launch KeyChain for the first time, you need to get a public key with the "select_key" command. You can save the public key to local storage. Then you will not need to use "select_key" command again.
 

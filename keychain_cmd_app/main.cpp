@@ -24,6 +24,8 @@ int main(int argc, char* argv[])
   BOOST_LOG_SEV(log.lg, info) << "OS: Linux";
 #elif defined(_MSC_VER)
   BOOST_LOG_SEV(log.lg, info) << "OS: Win";
+#elif defined(macintosh) || defined(__APPLE__) || defined(__APPLE_CC__)
+  BOOST_LOG_SEV(log.lg, info) << "OS: Mac";
 #else
   BOOST_LOG_SEV(log.lg, info) << "OS: unknown";
 #endif

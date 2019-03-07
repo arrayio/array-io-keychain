@@ -113,6 +113,25 @@ int cmd_parser::run(int argc, const char* const argv[])
   auto& keychain_ref = keychain::instance();
   sec_mod->connect(keychain_ref);
   gui_mod->connect(keychain_ref);
+
+  auto& keyfiles = keyfile_singleton::instance();
+  auto it = keyfiles.begin();
+  if ( it==keyfiles.end() )
+  {
+    auto user_entropy = keychain_ref.entropy();
+    std::string keyname = "master_key";
+    std::string pass = "blank";
+    keyfiles.create(std::bind(create_new_keyfile,
+            keyname, keyname, true, keyfile_format::cipher_etype::aes256,
+            keyfile_format::curve_etype::secp256k1,
+            [&pass](const std::string& keyname)->byte_seq_t{
+      byte_seq_t res;
+      std::copy(pass.begin(), pass.end(), std::back_inserter(res));
+      return res;
+      })
+      );
+  }
+
   keychain_invoke_f f = std::bind(&keychain_base::operator(), &keychain_ref, std::placeholders::_1);
   pipeline_parser pipe_line_parser_(std::move(f), fileno(stdin), fileno(stdout));
   return pipe_line_parser_.run();

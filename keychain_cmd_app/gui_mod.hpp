@@ -15,6 +15,7 @@ public:
   gui_mod_dummy();
   virtual ~gui_mod_dummy();
   virtual dev::Public select_key() const override;
+  virtual dev::bytes entropy() const override;
 };
 
 }

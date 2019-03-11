@@ -15,6 +15,7 @@
 #import "FileManager.h"
 #import "keychain-Swift.h"
 #import "MiddleAlignedTextFieldCell.h"
+#import "LogoView.h"
 
 using namespace keychain_app;
 
@@ -81,15 +82,16 @@ using keychain_app::secmod_commands::secmod_parser_f;
 }
 
 - (void)runModal {
-    NSVisualEffectView *cover = [[NSVisualEffectView alloc] initWithFrame:NSMakeRect(0, 0, self.window.frame.size.width, self.window.frame.size.height - 91)];
-    cover.blendingMode = NSVisualEffectBlendingModeBehindWindow;
-    cover.material = NSVisualEffectMaterialAppearanceBased;
-    cover.state = NSVisualEffectStateFollowsWindowActiveState;
-    [cover setAppearance:[NSAppearance appearanceNamed:NSAppearanceNameVibrantLight]];
-    [self.window.contentView addSubview:cover];
+    [LogoView setLogoViewForWindow:self.window];
+//    NSVisualEffectView *cover = [[NSVisualEffectView alloc] initWithFrame:NSMakeRect(0, 0, self.window.frame.size.width, self.window.frame.size.height - 91)];
+//    cover.blendingMode = NSVisualEffectBlendingModeBehindWindow;
+//    cover.material = NSVisualEffectMaterialAppearanceBased;
+//    cover.state = NSVisualEffectStateFollowsWindowActiveState;
+//    [cover setAppearance:[NSAppearance appearanceNamed:NSAppearanceNameVibrantLight]];
+//    [self.window.contentView addSubview:cover];
     NSLog(@"jsonString %@", _jsonString);
 //    NSLog(@"currentPath %@", _currentPath);
-    [self setupLogoiew];
+//    [self setupLogoiew];
     if (self.isPasswordRequire) {
         [self setupLabelPassphrase];
         [self setupPassField];
@@ -362,21 +364,6 @@ using keychain_app::secmod_commands::secmod_parser_f;
     [self.window.contentView addSubview:label];
 }
 
-- (void) setupLogoiew {
-    NSImageView *imageView = [[NSImageView alloc] initWithFrame:NSMakeRect(22, self.window.frame.size.height - 81, 64, 54)];
-    NSImage *image = [[NSImage alloc] initWithContentsOfFile:[NSString stringWithFormat:@"%@/%@", FileManager.getWorkDirectoryPath, @"resources/logo.png"]];
-    imageView.image = image;
-    [self.window.contentView addSubview:imageView];
-    
-    NSTextField *label = [NSTextField labelWithString:@"KeyChain"];
-    label.appearance = [NSAppearance appearanceNamed:NSAppearanceNameAqua];
-    label.textColor = [HexToRgbColor colorWithHexColorString:@"4f4e4e"];
-    label.font = [NSFont systemFontOfSize:18];
-    label.frame = NSMakeRect(90, self.window.frame.size.height - 96, 100, 54);
-    
-    [self.window.contentView addSubview:label];
-}
-
 - (void) setupLabelConfirmPassphrase {
     NSTextField *label = [NSTextField labelWithString:@"Passphrase"];
     label.appearance = [NSAppearance appearanceNamed:NSAppearanceNameAqua];
@@ -592,9 +579,7 @@ using keychain_app::secmod_commands::secmod_parser_f;
 
 - (id)tableView:(NSTableView *)aTableView objectValueForTableColumn:(NSTableColumn *)aTableColumn row:(NSInteger)rowIndex
 {
-    // NSString *aString = [NSString stringWithFormat:@"%@, Row %ld",[aTableColumn identifier],(long)rowIndex];
-    NSString *aString;
-    aString = [[dataForBitcoin objectAtIndex:rowIndex] objectForKey:[aTableColumn identifier]];
+    NSString *aString = [[dataForBitcoin objectAtIndex:rowIndex] objectForKey:[aTableColumn identifier]];
     return aString;
 }
 
@@ -604,10 +589,6 @@ using keychain_app::secmod_commands::secmod_parser_f;
     //we have only one table in the screen and thus we are not checking the row count based on the target table view
 //    long recordCount = [self.dataArray count];
     return dataForBitcoin.count;
-}
-
-- (NSString *)getCurrentKeyboardLanguage {
-    
 }
 
 @end

@@ -12,6 +12,7 @@
 #import "SYFlatButton.h"
 #import "PassSyncStore.h"
 #import "TableView.h"
+#import "LogoView.h"
 
 using namespace keychain_app;
 
@@ -91,13 +92,7 @@ using namespace keychain_app;
     }
     
 - (void)runModal {
-    NSVisualEffectView *cover = [[NSVisualEffectView alloc] initWithFrame:NSMakeRect(0, 0, self.window.frame.size.width, self.window.frame.size.height - 91)];
-    cover.blendingMode = NSVisualEffectBlendingModeBehindWindow;
-    cover.material = NSVisualEffectMaterialAppearanceBased;
-    cover.state = NSVisualEffectStateFollowsWindowActiveState;
-    [cover setAppearance:[NSAppearance appearanceNamed:NSAppearanceNameVibrantLight]];
-    [self.window.contentView addSubview:cover];
-    [self setupLogoView];
+    [LogoView setLogoViewForWindow:self.window];
     [self createTableView];
     [self setupCancelButton];
     [self setupOkButton];
@@ -163,21 +158,6 @@ using namespace keychain_app;
     [scrollView setScrollerStyle:NSScrollerStyleLegacy];
     [scrollView setDocumentView:tableView];
     [self.window.contentView addSubview:scrollView];
-}
-
-- (void) setupLogoView {
-    NSImageView *imageView = [[NSImageView alloc] initWithFrame:NSMakeRect(22, self.window.frame.size.height - 81, 64, 54)];
-    NSImage *image = [[NSImage alloc] initWithContentsOfFile:[NSString stringWithFormat:@"%@/%@", FileManager.getWorkDirectoryPath, @"resources/logo.png"]];
-    imageView.image = image;
-    [self.window.contentView addSubview:imageView];
-    
-    NSTextField *label = [NSTextField labelWithString:@"KeyChain"];
-    label.appearance = [NSAppearance appearanceNamed:NSAppearanceNameAqua];
-    label.textColor = [HexToRgbColor colorWithHexColorString:@"4f4e4e"];
-    label.font = [NSFont systemFontOfSize:18];
-    label.frame = NSMakeRect(90, self.window.frame.size.height - 96, 100, 54);
-    
-    [self.window.contentView addSubview:label];
 }
 
 - (void) setupCancelButton {

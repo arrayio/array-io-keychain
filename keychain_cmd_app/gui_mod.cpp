@@ -20,3 +20,9 @@ dev::Public gui_mod_dummy::select_key() const
     return dev::Public();
   return it->keyinfo.public_key;
 }
+
+dev::bytes gui_mod_dummy::entropy() const
+{
+  dev::bytes value;
+  return value;
+}

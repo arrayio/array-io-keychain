@@ -235,7 +235,7 @@
       <div><a href="#select_key" class="btn btn_command" id="btnSelectKey">Select key</a></div>
       <div><a href="#unlock" class="btn btn_command" id="btnUnlock">Unlock</a></div>
       <div><a href="#lock" class="btn btn_command" id="btnLock">Lock</a></div>
-      <div><a href="#sign_hex" class="btn btn_command" id="btnSignHex">Sign hex</a></div>
+      <div><a href="#sign_trx" class="btn btn_command" id="btnSignTrx">Sign transaction</a></div>
       <div><a href="#sign_hash" class="btn btn_command" id="btnSignHash">Sign hash</a></div>
       <div><a href="#about" class="btn btn_command" id="btnAbout">About</a></div>
       <div><a href="#version" class="btn btn_command" id="btnVersion">Version</a></div>
@@ -258,8 +258,8 @@
           <input class="form-input param_field" type="number" placeholder="45" name="unlock_time">
         </div>
       </div>
-      <div class="page" id="page_sign_hex">
-        <div class="page_title">Sign hex</div>
+      <div class="page" id="page_sign_trx">
+        <div class="page_title">Sign transaction</div>
         <div class="form-group">
           <label class="form-label">Transaction:</label>
           <input class="form-input param_field" type="text" value="eb0885098bca5a00825208948ec6977b1255854169e5f9f8f163f371bcf1ffd287038d7ea4c6800080038080" placeholder="eb0885098bca5a00825208948ec6977b1255854169e5f9f8f163f371bcf1ffd287038d7ea4c6800080038080" name="transaction">
@@ -269,13 +269,13 @@
           <input class="form-input param_field" type="text" placeholder="ethereum" value="ethereum" name="blockchain_type">
         </div>
         <div class="form-group">
-          <label class="form-label" for="public_key_SIGN_HEX">Public key:</label>
-          <input class="form-input param_field" type="text" name="public_key" id="public_key_SIGN_HEX">
+          <label class="form-label" for="public_key_SIGN_TRX">Public key:</label>
+          <input class="form-input param_field" type="text" name="public_key" id="public_key_SIGN_TRX">
         </div>
         <div class="form-group">
           <label class="form-label">Unlock time:</label>
-          <input class="form-input param_field" type="number" name="unlock_time" placeholder="45" readonly id="unlock_time_SIGN_HEX">
-          <input type="checkbox" id="checkbox_SIGN_HEX">
+          <input class="form-input param_field" type="number" name="unlock_time" placeholder="45" readonly id="unlock_time_SIGN_TRX">
+          <input type="checkbox" id="checkbox_SIGN_TRX">
         </div>
       </div>
 
@@ -305,7 +305,7 @@
       <div><a href="#select_key" class="btn btn_command" id="btnSelectKeyRight">&nbsp;</a></div>
       <div><a href="#unlock" class="btn btn_command" id="btnUnlockRight">&nbsp;</a></div>
       <div><a href="#lock" class="btn btn_command" id="btnLockRight">&nbsp;</a></div>
-      <div><a href="#sign_hex" class="btn btn_command" id="btnSignHexRight">&nbsp;</a></div>
+      <div><a href="#sign_trx" class="btn btn_command" id="btnSignTrxRight">&nbsp;</a></div>
       <div><a href="#sign_hash" class="btn btn_command" id="btnSignHashRight">&nbsp;</a></div>
       <div><a href="#about" class="btn btn_command" id="btnAboutRight">&nbsp;</a></div>
       <div><a href="#version" class="btn btn_command" id="btnVersionRight">&nbsp;</a></div>
@@ -402,14 +402,14 @@
   window.onhashchange = onHash;
 
   window.onload = function () {
-    document.getElementById('checkbox_SIGN_HEX').addEventListener('click', function(e) {
-      document.getElementById('unlock_time_SIGN_HEX').readOnly = !e.target.checked;
+    document.getElementById('checkbox_SIGN_TRX').addEventListener('click', function(e) {
+      document.getElementById('unlock_time_SIGN_TRX').readOnly = !e.target.checked;
       const request = getRequest();
       if (request) {
         if (!e.target.checked) {
           delete request.params['unlock_time'];
         } else {
-          request.params['unlock_time'] = document.getElementById('unlock_time_SIGN_HEX').value;
+          request.params['unlock_time'] = document.getElementById('unlock_time_SIGN_TRX').value;
         }
         document.getElementById('request').value = JSON.stringify(request, undefined, 2)
       }
@@ -467,7 +467,7 @@
       if (request.command === 'select_key' && data.result) {
         document.getElementById('public_key_UNLOCK').value = data.result;
         document.getElementById('public_key_SIGN_HASH').value = data.result;
-        document.getElementById('public_key_SIGN_HEX').value = data.result;
+        document.getElementById('public_key_SIGN_TRX').value = data.result;
         document.getElementById('selectedKey').innerHTML = '0x' + data.result.substr(0, 35) + '<...>' + data.result.substr(-8, 8);
         document.getElementById('address').innerHTML = '0x' + ethereumjs.Util.publicToAddress('0x' + data.result).toString('hex');
       }

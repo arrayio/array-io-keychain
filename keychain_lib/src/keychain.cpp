@@ -141,4 +141,5 @@ void keychain_app::secure_dlg_mod_base::connect(keychain_app::keychain_base &key
 void keychain_app::gui_mod_base::connect(keychain_app::keychain_base &keychain_) const
 {
   keychain_.select_key.connect(std::bind(&gui_mod_base::select_key, this));
+  keychain_.entropy.connect(std::bind(&gui_mod_base::entropy, this));
 }

@@ -204,7 +204,7 @@ const keyfile_format::keyfile_t& keyfile_singleton::operator[](size_t index)
       if(stop == true)
         FC_LIGHT_THROW_EXCEPTION(fc_light::out_of_range_exception, "index = ${ind_}", ("ind_", index));
       keydata_load();
-      bool stop = false;
+      bool stop = true;
     }
     return ra_ind[index];
   } while (true);

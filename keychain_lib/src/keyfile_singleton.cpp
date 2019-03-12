@@ -4,6 +4,8 @@
 
 #include "keychain_commands.hpp"
 #include "keyfile_singleton.hpp"
+#include <cryptopp/osrng.h>
+#include <cryptopp/hex.h>
 
 using namespace keychain_app;
 
@@ -453,6 +455,26 @@ keyfile_format::keyfile_t keychain_app::create_new_keyfile(
   keyfile.keyinfo.curve_type = curve;
   return keyfile;
 }
+
+dev::bytes keyfile_singleton::seed(dev::bytes& user_entropy)
+{
+    using namespace CryptoPP;
+    SecByteBlock key(32);
+    std::string k;
+
+    OS_GenerateRandomBlock(false, key, k.size());
+
+    HexEncoder hex(new StringSink(k));
+    hex.Put(key, key.size());
+    hex.MessageEnd();
+
+    dev::bytes seed(32);
+    auto res = from_hex(k, seed.data(), seed.size());
+    seed.resize(res);
+
+    return seed;
+}
+
 
 bool keychain_app::remove_unlock(const keyfile_format::keyfile_t& keyfile, get_password_f&& get_passwd)
 {

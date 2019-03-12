@@ -186,6 +186,7 @@ public:
   void flush_keyfile(const second_key_type& key) const;
 //  void flush_logrecords(const prim_key_type& key) const;
   void flush_all() const;
+  dev::bytes seed(dev::bytes& );
 };
 
 using get_password_create_f = std::function<byte_seq_t(const std::string&)>; //NOTE: may incapsulate call to sec module or just return password string

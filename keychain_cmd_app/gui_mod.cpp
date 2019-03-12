@@ -21,8 +21,7 @@ dev::Public gui_mod_dummy::select_key() const
   return it->keyinfo.public_key;
 }
 
-dev::bytes gui_mod_dummy::entropy() const
+bool gui_mod_dummy::entropy() const
 {
-  dev::bytes value;
-  return value;
+  return true;
 }

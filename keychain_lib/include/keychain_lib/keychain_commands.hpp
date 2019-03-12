@@ -161,7 +161,7 @@ public:
   virtual std::string operator()(const fc_light::variant& command) = 0;
   boost::signals2::signal<std::string(const std::string&)> run_secmod_cmd;
   boost::signals2::signal<dev::Public(void)> select_key;
-  boost::signals2::signal<dev::bytes(void)> entropy;
+  boost::signals2::signal<bool(void)> entropy;
 
   dev::Secret get_private_key(const dev::Public& public_key, int unlock_time, create_secmod_cmd_f&& f, std::string& cmd);
   void lock_all_priv_keys();

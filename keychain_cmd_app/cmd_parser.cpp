@@ -118,8 +118,8 @@ int cmd_parser::run(int argc, const char* const argv[])
   auto it = keyfiles.begin();
   if ( it==keyfiles.end() )
   {
-    auto user_entropy = keychain_ref.entropy();
-    std::string keyname = "master_key";
+    auto res = keychain_ref.entropy();
+    /*std::string keyname = "master_key";
     std::string pass = "blank";
     keyfiles.create(std::bind(create_new_keyfile,
             keyname, keyname, true, keyfile_format::cipher_etype::aes256,
@@ -129,7 +129,7 @@ int cmd_parser::run(int argc, const char* const argv[])
       std::copy(pass.begin(), pass.end(), std::back_inserter(res));
       return res;
       })
-      );
+      );*/
   }
 
   keychain_invoke_f f = std::bind(&keychain_base::operator(), &keychain_ref, std::placeholders::_1);

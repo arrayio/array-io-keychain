@@ -39,7 +39,7 @@ public:
   virtual ~gui_mod_base(){}
   
   virtual dev::Public select_key() const = 0;
-  virtual dev::bytes entropy() const = 0;
+  virtual bool entropy() const = 0;
   virtual void connect(keychain_base& keychain_) const;
 };
 

@@ -458,7 +458,7 @@ std::string keyfile_singleton::seed_phrase(dev::bytes& entropy)
 {
     std::string phrase  = "witch collapse practice feed shame open despair creek road again ice least";
 
-    return seed_phrase;
+    return phrase;
 }
 
 bool keychain_app::remove_unlock(const keyfile_format::keyfile_t& keyfile, get_password_f&& get_passwd)

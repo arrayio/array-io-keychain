@@ -10,6 +10,7 @@
 #import <Foundation/Foundation.h>
 #import "ApplicationShared.h"
 #import "PassSyncStore.h"
+#import "EntropyCreatingVC.h"
 
 using namespace keychain_app;
 
@@ -29,4 +30,14 @@ dev::Public gui_mod_mac::select_key() const
     }
     
     return  dev::Public();
+}
+
+dev::bytes gui_mod_mac::entropy() const
+{
+    [ApplicationShared sharedInstance];
+    EntropyCreatingVC *dialog = [[EntropyCreatingVC alloc] initWithFrame:NSMakeRect(0, 0, 700, 540)];
+    [dialog runModal];
+    
+    dev::bytes value;
+    return value;
 }

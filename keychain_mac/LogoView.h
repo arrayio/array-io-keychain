@@ -12,6 +12,7 @@ NS_ASSUME_NONNULL_BEGIN
 @interface LogoView : NSObject
 
 + (void)setLogoViewForWindow:(NSWindow*)window;
++ (void)setLogoViewForWindow:(NSWindow *)window withTitle:(NSString *) title;
 
 @end
 

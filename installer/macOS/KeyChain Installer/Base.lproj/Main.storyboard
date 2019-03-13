@@ -983,15 +983,15 @@
                             <scrollView appearanceType="aqua" borderType="none" horizontalLineScroll="10" horizontalPageScroll="10" verticalLineScroll="10" verticalPageScroll="10" hasHorizontalScroller="NO" translatesAutoresizingMaskIntoConstraints="NO" id="wDY-pX-uZw">
                                 <rect key="frame" x="20" y="85" width="410" height="195"/>
                                 <clipView key="contentView" drawsBackground="NO" copiesOnScroll="NO" id="4hi-xQ-vp4">
-                                    <rect key="frame" x="0.0" y="0.0" width="410" height="195"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="395" height="195"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <textView importsGraphics="NO" richText="NO" verticallyResizable="YES" baseWritingDirection="leftToRight" findStyle="bar" smartInsertDelete="YES" id="g3g-3i-3YG">
-                                            <rect key="frame" x="0.0" y="-32" width="410" height="425"/>
+                                            <rect key="frame" x="0.0" y="-33" width="395" height="457.5"/>
                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                             <color key="textColor" red="0.14118" green="0.16078000000000001" blue="0.18038999999999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
-                                            <size key="minSize" width="410" height="195"/>
+                                            <size key="minSize" width="395" height="195"/>
                                             <size key="maxSize" width="410" height="10000000"/>
                                             <attributedString key="textStorage">
                                                 <fragment>
@@ -1125,7 +1125,7 @@ Cg
                                     </subviews>
                                 </clipView>
                                 <scroller key="verticalScroller" wantsLayer="YES" verticalHuggingPriority="750" horizontal="NO" id="oFn-Wd-lk4">
-                                    <rect key="frame" x="394" y="0.0" width="16" height="195"/>
+                                    <rect key="frame" x="395" y="0.0" width="15" height="195"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                 </scroller>
                             </scrollView>

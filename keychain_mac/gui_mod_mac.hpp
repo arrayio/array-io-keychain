@@ -19,7 +19,7 @@ namespace keychain_app
         gui_mod_mac();
         virtual ~gui_mod_mac();
         virtual dev::Public select_key() const override;
-        virtual dev::bytes entropy() const override;
+        virtual bool entropy() const override;
     };
     
 }

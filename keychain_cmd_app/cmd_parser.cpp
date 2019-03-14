@@ -118,8 +118,19 @@ int cmd_parser::run(int argc, const char* const argv[])
   auto it = keyfiles.begin();
   if ( it==keyfiles.end() )
   {
-    auto user_entropy = std::move(*(keychain_ref.entropy()));
-    auto seed_hex = std::move(keyfiles.seed(user_entropy));
+    auto res = keychain_ref.entropy();
+    dev::bytes ue;
+    auto mnemonics = std::move(keyfiles.seed(ue));
+    std::string mnemonic_join;
+    for (auto& a : mnemonics)
+        mnemonic_join += a;
+
+    dev::bytes salt;
+    auto key = std::move(keyfiles.pbkdf2(mnemonic_join, salt, 2048, 64 ));
+
+    dev::Secret master_key(dev::FixedHash<32>((byte * const)key.data(),    dev::FixedHash<32>::ConstructFromPointerType::ConstructFromPointer));
+    dev::Secret chain_code(dev::FixedHash<32>((byte * const)key.data()+32, dev::FixedHash<32>::ConstructFromPointerType::ConstructFromPointer));
+    /*
     std::string keyname = "master_key";
     std::string pass = "blank";
     keyfiles.create(std::bind(create_new_keyfile,
@@ -131,6 +142,7 @@ int cmd_parser::run(int argc, const char* const argv[])
                                   return res;
                               })
 );
+*/
     }
 
   keychain_invoke_f f = std::bind(&keychain_base::operator(), &keychain_ref, std::placeholders::_1);

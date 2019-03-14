@@ -187,6 +187,8 @@ public:
 //  void flush_logrecords(const prim_key_type& key) const;
   void flush_all() const;
   std::vector<std::string> seed(dev::bytes& );
+  std::vector<char> pbkdf2(std::string const& _pass, dev::bytes const& _salt, unsigned _iterations, unsigned _dkLen);
+
 };
 
 using get_password_create_f = std::function<byte_seq_t(const std::string&)>; //NOTE: may incapsulate call to sec module or just return password string

@@ -6,6 +6,7 @@
 #include "keyfile_singleton.hpp"
 #include <cryptopp/osrng.h>
 #include <cryptopp/hex.h>
+#include <cryptopp/pwdbased.h>
 #include "hdkeys.h"
 #include "wordlist.hpp"
 
@@ -500,6 +501,23 @@ std::vector<std::string> keyfile_singleton::seed(dev::bytes& user_entropy)
     return mnemonics;
 }
 
+std::vector<char> keyfile_singleton::pbkdf2(std::string const& _pass, dev::bytes const& _salt, unsigned _iterations, unsigned _dkLen)
+{
+    std::vector<char> ret(_dkLen);
+    if (CryptoPP::PKCS5_PBKDF2_HMAC<CryptoPP::SHA256>().DeriveKey(
+            (unsigned char *) ret.data(),
+            _dkLen,
+            0,
+            reinterpret_cast<byte const*>(_pass.data()),
+            _pass.size(),
+            _salt.data(),
+            _salt.size(),
+            _iterations
+    ) != _iterations)
+        FC_LIGHT_THROW_EXCEPTION(fc_light::internal_error_exception, "Key derivation failed.");
+
+    return ret;
+}
 
 
 bool keychain_app::remove_unlock(const keyfile_format::keyfile_t& keyfile, get_password_f&& get_passwd)

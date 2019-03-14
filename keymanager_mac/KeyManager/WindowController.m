@@ -17,7 +17,7 @@
 
 - (void)windowDidLoad {
     [super windowDidLoad];
-    self.window.titlebarAppearsTransparent = true;
+//    self.window.titlebarAppearsTransparent = true;
     // Implement this method to handle any initialization after your window controller's window has been loaded from its nib file.
 }
 

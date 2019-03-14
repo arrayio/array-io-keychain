@@ -17,10 +17,11 @@
 
 + (void)setLogoViewForWindow:(NSWindow *)window withTitle:(NSString *) title {
     NSTextField *label = [NSTextField labelWithString:title];
-    label.appearance = [NSAppearance appearanceNamed:NSAppearanceNameAqua];
-    label.textColor = [HexToRgbColor colorWithHexColorString:@"4f4e4e"];
+//    label.appearance = [NSAppearance appearanceNamed:NSAppearanceNameAqua];
+//    label.textColor = [HexToRgbColor colorWithHexColorString:@"4f4e4e"];
     label.font = [NSFont systemFontOfSize:14];
-    label.frame = NSMakeRect(440, window.frame.size.height - 98, window.frame.size.width - 231, 54);
+    label.frame = NSMakeRect(106, window.frame.size.height - 62, window.frame.size.width - 126, 18);
+    label.alignment = NSTextAlignmentRight;
     label.lineBreakMode = NSLineBreakByWordWrapping;
     [label setContentCompressionResistancePriority:250 forOrientation:NSLayoutConstraintOrientationHorizontal];
     
@@ -30,7 +31,8 @@
     cover.blendingMode = NSVisualEffectBlendingModeBehindWindow;
     cover.material = NSVisualEffectMaterialAppearanceBased;
     cover.state = NSVisualEffectStateFollowsWindowActiveState;
-    [cover setAppearance:[NSAppearance appearanceNamed:NSAppearanceNameVibrantLight]];
+    
+//    [cover setAppearance:[NSAppearance appearanceNamed:NSAppearanceNameVibrantLight]];
     [window.contentView addSubview:cover];
     
     NSImageView *imageView = [[NSImageView alloc] initWithFrame:NSMakeRect(22, window.frame.size.height - 81, 64, 54)];
@@ -39,9 +41,9 @@
     [window.contentView addSubview:imageView];
     
     NSTextField *labelLogo = [NSTextField labelWithString:@"KeyChain"];
-    labelLogo.appearance = [NSAppearance appearanceNamed:NSAppearanceNameAqua];
-    labelLogo.textColor = [HexToRgbColor colorWithHexColorString:@"4f4e4e"];
-    labelLogo.font = [NSFont systemFontOfSize:18];
+//    labelLogo.appearance = [NSAppearance appearanceNamed:NSAppearanceNameAqua];
+//    labelLogo.textColor = [HexToRgbColor colorWithHexColorString:@"4f4e4e"];
+    labelLogo.font = [NSFont boldSystemFontOfSize:18];
     labelLogo.frame = NSMakeRect(90, window.frame.size.height - 96, 100, 54);
     
     [window.contentView addSubview:labelLogo];

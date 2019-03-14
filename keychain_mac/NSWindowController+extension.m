@@ -16,7 +16,8 @@
     alert.informativeText = text;
     [alert addButtonWithTitle:@"OK"];
     [alert beginSheetModalForWindow:self.window completionHandler:^(NSModalResponse returnCode) {
-        completion();
+        if (completion != nil)
+            completion();
     }];
 }
 

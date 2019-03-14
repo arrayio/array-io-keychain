@@ -684,7 +684,7 @@
         <scene sceneID="R2V-B0-nI4">
             <objects>
                 <windowController id="B8D-0N-5wS" customClass="WindowController" sceneMemberID="viewController">
-                    <window key="window" title="KeyManager" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" animationBehavior="default" titlebarAppearsTransparent="YES" id="IQv-IB-iLA">
+                    <window key="window" title="KeyManager" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" animationBehavior="default" id="IQv-IB-iLA">
                         <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
                         <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
                         <rect key="contentRect" x="196" y="240" width="480" height="270"/>
@@ -719,22 +719,10 @@
                                         <action selector="removeKeyAction:" target="B8D-0N-5wS" id="40j-kY-gAd"/>
                                     </connections>
                                 </toolbarItem>
-                                <toolbarItem implicitItemIdentifier="0855E614-B69C-4640-A57B-3995879551CB" label="Edit Key" paletteLabel="Edit Key" sizingBehavior="auto" id="N9c-MQ-GAs">
-                                    <nil key="toolTip"/>
-                                    <button key="view" verticalHuggingPriority="750" id="jYZ-xy-uQj">
-                                        <rect key="frame" x="0.0" y="14" width="82" height="32"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                        <buttonCell key="cell" type="push" title="Button" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="7fH-rS-voc">
-                                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                            <font key="font" metaFont="system"/>
-                                        </buttonCell>
-                                    </button>
-                                </toolbarItem>
                             </allowedToolbarItems>
                             <defaultToolbarItems>
                                 <toolbarItem reference="OQ8-Pg-XIl"/>
                                 <toolbarItem reference="Eh1-oq-Wgh"/>
-                                <toolbarItem reference="N9c-MQ-GAs"/>
                             </defaultToolbarItems>
                         </toolbar>
                         <connections>
@@ -850,19 +838,19 @@
                                     <stackView distribution="equalSpacing" orientation="vertical" alignment="leading" spacing="4" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="jgB-3J-H0O">
                                         <rect key="frame" x="156" y="8" width="230" height="101"/>
                                         <subviews>
-                                            <stackView distribution="fill" orientation="horizontal" alignment="top" spacing="4" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="BB4-pX-EX8">
-                                                <rect key="frame" x="0.0" y="84" width="176" height="17"/>
+                                            <stackView distribution="fill" orientation="horizontal" alignment="top" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="BB4-pX-EX8">
+                                                <rect key="frame" x="0.0" y="84" width="186" height="17"/>
                                                 <subviews>
                                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="wpL-No-tZC">
-                                                        <rect key="frame" x="-2" y="0.0" width="90" height="17"/>
+                                                        <rect key="frame" x="-2" y="0.0" width="96" height="17"/>
                                                         <textFieldCell key="cell" lineBreakMode="clipping" title="Creation date:" id="8MT-g5-W6B">
-                                                            <font key="font" usesAppearanceFont="YES"/>
-                                                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                                            <font key="font" metaFont="systemBold"/>
+                                                            <color key="textColor" name="secondaryLabelColor" catalog="System" colorSpace="catalog"/>
                                                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                                         </textFieldCell>
                                                     </textField>
                                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="xxU-vo-sBu">
-                                                        <rect key="frame" x="88" y="0.0" width="90" height="17"/>
+                                                        <rect key="frame" x="98" y="0.0" width="90" height="17"/>
                                                         <textFieldCell key="cell" lineBreakMode="clipping" alignment="left" title="Creation date:" id="ApX-Ie-Iu4">
                                                             <font key="font" usesAppearanceFont="YES"/>
                                                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -879,19 +867,19 @@
                                                     <real value="3.4028234663852886e+38"/>
                                                 </customSpacing>
                                             </stackView>
-                                            <stackView distribution="fill" orientation="horizontal" alignment="top" spacing="4" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="LF9-pO-NKc">
-                                                <rect key="frame" x="0.0" y="63" width="196" height="17"/>
+                                            <stackView distribution="fill" orientation="horizontal" alignment="top" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="LF9-pO-NKc">
+                                                <rect key="frame" x="0.0" y="63" width="208" height="17"/>
                                                 <subviews>
                                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Jip-MV-nxK">
-                                                        <rect key="frame" x="-2" y="0.0" width="110" height="17"/>
+                                                        <rect key="frame" x="-2" y="0.0" width="118" height="17"/>
                                                         <textFieldCell key="cell" lineBreakMode="clipping" title="Keychain version:" id="oCg-22-fCw">
-                                                            <font key="font" usesAppearanceFont="YES"/>
-                                                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                                            <font key="font" metaFont="systemBold"/>
+                                                            <color key="textColor" name="secondaryLabelColor" catalog="System" colorSpace="catalog"/>
                                                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                                         </textFieldCell>
                                                     </textField>
                                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="IkN-f6-jY1">
-                                                        <rect key="frame" x="108" y="0.0" width="90" height="17"/>
+                                                        <rect key="frame" x="120" y="0.0" width="90" height="17"/>
                                                         <textFieldCell key="cell" lineBreakMode="clipping" alignment="left" title="Creation date:" id="S13-hS-lpm">
                                                             <font key="font" usesAppearanceFont="YES"/>
                                                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -908,19 +896,19 @@
                                                     <real value="3.4028234663852886e+38"/>
                                                 </customSpacing>
                                             </stackView>
-                                            <stackView distribution="fill" orientation="horizontal" alignment="top" spacing="4" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="IwE-os-DDU">
-                                                <rect key="frame" x="0.0" y="42" width="165" height="17"/>
+                                            <stackView distribution="fill" orientation="horizontal" alignment="top" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="IwE-os-DDU">
+                                                <rect key="frame" x="0.0" y="42" width="174" height="17"/>
                                                 <subviews>
                                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Efy-8J-g5X">
-                                                        <rect key="frame" x="-2" y="0.0" width="79" height="17"/>
+                                                        <rect key="frame" x="-2" y="0.0" width="84" height="17"/>
                                                         <textFieldCell key="cell" lineBreakMode="clipping" title="Cipher type:" id="azV-qp-p5K">
-                                                            <font key="font" usesAppearanceFont="YES"/>
-                                                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                                            <font key="font" metaFont="systemBold"/>
+                                                            <color key="textColor" name="secondaryLabelColor" catalog="System" colorSpace="catalog"/>
                                                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                                         </textFieldCell>
                                                     </textField>
                                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="qWX-0F-joQ">
-                                                        <rect key="frame" x="77" y="0.0" width="90" height="17"/>
+                                                        <rect key="frame" x="86" y="0.0" width="90" height="17"/>
                                                         <textFieldCell key="cell" lineBreakMode="clipping" alignment="left" title="Creation date:" id="uRT-zZ-gH2">
                                                             <font key="font" usesAppearanceFont="YES"/>
                                                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -937,19 +925,19 @@
                                                     <real value="3.4028234663852886e+38"/>
                                                 </customSpacing>
                                             </stackView>
-                                            <stackView distribution="fill" orientation="horizontal" alignment="top" spacing="4" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="etI-4E-RW2">
-                                                <rect key="frame" x="0.0" y="21" width="164" height="17"/>
+                                            <stackView distribution="fill" orientation="horizontal" alignment="top" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="etI-4E-RW2">
+                                                <rect key="frame" x="0.0" y="21" width="174" height="17"/>
                                                 <subviews>
                                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="shg-0J-hdM">
-                                                        <rect key="frame" x="-2" y="0.0" width="78" height="17"/>
+                                                        <rect key="frame" x="-2" y="0.0" width="84" height="17"/>
                                                         <textFieldCell key="cell" lineBreakMode="clipping" title="Description:" id="teg-RD-qtv">
-                                                            <font key="font" usesAppearanceFont="YES"/>
-                                                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                                            <font key="font" metaFont="systemBold"/>
+                                                            <color key="textColor" name="secondaryLabelColor" catalog="System" colorSpace="catalog"/>
                                                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                                         </textFieldCell>
                                                     </textField>
                                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="hNi-AI-9dt">
-                                                        <rect key="frame" x="76" y="0.0" width="90" height="17"/>
+                                                        <rect key="frame" x="86" y="0.0" width="90" height="17"/>
                                                         <textFieldCell key="cell" lineBreakMode="clipping" alignment="left" title="Creation date:" id="OMK-3e-ASp">
                                                             <font key="font" usesAppearanceFont="YES"/>
                                                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -966,19 +954,19 @@
                                                     <real value="3.4028234663852886e+38"/>
                                                 </customSpacing>
                                             </stackView>
-                                            <stackView distribution="fill" orientation="horizontal" alignment="top" spacing="4" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="fUJ-7v-nU8">
-                                                <rect key="frame" x="0.0" y="0.0" width="156" height="17"/>
+                                            <stackView distribution="fill" orientation="horizontal" alignment="top" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="fUJ-7v-nU8">
+                                                <rect key="frame" x="0.0" y="0.0" width="165" height="17"/>
                                                 <subviews>
                                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Wfk-oj-6WW">
-                                                        <rect key="frame" x="-2" y="0.0" width="70" height="17"/>
+                                                        <rect key="frame" x="-2" y="0.0" width="75" height="17"/>
                                                         <textFieldCell key="cell" lineBreakMode="clipping" title="Public key:" id="etM-vx-PiR">
-                                                            <font key="font" usesAppearanceFont="YES"/>
-                                                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                                            <font key="font" metaFont="systemBold"/>
+                                                            <color key="textColor" name="secondaryLabelColor" catalog="System" colorSpace="catalog"/>
                                                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                                         </textFieldCell>
                                                     </textField>
                                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="bZw-Ic-SXT">
-                                                        <rect key="frame" x="68" y="0.0" width="90" height="17"/>
+                                                        <rect key="frame" x="77" y="0.0" width="90" height="17"/>
                                                         <textFieldCell key="cell" lineBreakMode="clipping" alignment="left" title="Creation date:" id="m8L-7p-ktQ">
                                                             <font key="font" usesAppearanceFont="YES"/>
                                                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -1015,7 +1003,7 @@
                                         <rect key="frame" x="154" y="117" width="80" height="19"/>
                                         <textFieldCell key="cell" lineBreakMode="clipping" title="Keyname" id="L97-yA-Flg">
                                             <font key="font" metaFont="systemBold" size="17"/>
-                                            <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                            <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
                                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                         </textFieldCell>
                                     </textField>
@@ -1164,15 +1152,15 @@
                                 <rect key="frame" x="0.0" y="479" width="599" height="44"/>
                                 <subviews>
                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="svK-hr-1RN">
-                                        <rect key="frame" x="34" y="14" width="116" height="17"/>
+                                        <rect key="frame" x="34" y="14" width="125" height="17"/>
                                         <textFieldCell key="cell" lineBreakMode="clipping" title="Websocket status:" id="wDr-0P-7kH">
-                                            <font key="font" usesAppearanceFont="YES"/>
+                                            <font key="font" metaFont="systemBold"/>
                                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                         </textFieldCell>
                                     </textField>
                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="xB6-5F-DG9">
-                                        <rect key="frame" x="154" y="14" width="37" height="17"/>
+                                        <rect key="frame" x="163" y="14" width="37" height="17"/>
                                         <textFieldCell key="cell" lineBreakMode="clipping" title="Label" id="Mex-e3-d8i">
                                             <font key="font" metaFont="system"/>
                                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>

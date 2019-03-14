@@ -38,7 +38,7 @@ using namespace keychain_app;
                                              object:nil];
     window.titlebarAppearsTransparent = YES;
     //window.titleVisibility = NSWindowTitleHidden;
-    window.backgroundColor = [NSColor whiteColor];
+//    window.backgroundColor = [NSColor whiteColor];
     [window center];
     return [super initWithWindow:window];
 }
@@ -60,28 +60,33 @@ using namespace keychain_app;
     });
 }
     
-- (id)tableView:(NSTableView *)aTableView objectValueForTableColumn:(NSTableColumn *)aTableColumn row:(NSInteger)rowIndex
-    {
-        auto& keyfiles = keyfile_singleton::instance();
-        auto& index = keyfiles.random_access_index();
-        auto it = index.begin() + rowIndex;
-        auto key = *(it);
-        NSString *aString;
+- (id)tableView:(NSTableView *)aTableView objectValueForTableColumn:(NSTableColumn *)aTableColumn row:(NSInteger)rowIndex {
+    auto& keyfiles = keyfile_singleton::instance();
+    auto& index = keyfiles.random_access_index();
+    auto it = index.begin() + rowIndex;
+    auto key = *(it);
+    NSString *aString;
 
-        if ([[aTableColumn identifier] isEqualToString:@"key1"]) {
-            aString = [NSString stringWithUTF8String:key.keyname.c_str()];
-        } else if ([[aTableColumn identifier] isEqualToString:@"key2"]) {
-            aString = [NSString stringWithUTF8String:key.public_key().hex().c_str()];
-        } else if ([[aTableColumn identifier] isEqualToString:@"key3"]) {
-            auto seconds = key.creation_time.time_since_epoch().to_seconds();
-            NSDate *createTime = [NSDate dateWithTimeIntervalSince1970:seconds];
-            NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
-            [formatter setDateFormat:@"MMM dd, YYYY, HH:mm:ss"];
-            NSString *stringFromDate = [formatter stringFromDate:createTime];
-            aString = stringFromDate;
-        }
-        return aString;
+    if ([[aTableColumn identifier] isEqualToString:@"key1"]) {
+        aString = [NSString stringWithUTF8String:key.keyname.c_str()];
+    } else if ([[aTableColumn identifier] isEqualToString:@"key2"]) {
+        aString = [self getSubstrStr:[NSString stringWithUTF8String:key.public_key().hex().c_str()]];
+    } else if ([[aTableColumn identifier] isEqualToString:@"key3"]) {
+        auto seconds = key.creation_time.time_since_epoch().to_seconds();
+        NSDate *createTime = [NSDate dateWithTimeIntervalSince1970:seconds];
+        NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+        [formatter setDateFormat:@"MMM dd, YYYY, HH:mm:ss"];
+        NSString *stringFromDate = [formatter stringFromDate:createTime];
+        aString = stringFromDate;
     }
+    return aString;
+}
+
+- (NSString *) getSubstrStr:(NSString*) str {
+    NSString *substring = [str substringToIndex:32];
+    NSString *substringLast = [str substringFromIndex:str.length-8];
+    return [NSString stringWithFormat:@"%@<...>%@", substring, substringLast];
+}
     
     // TableView Datasource method implementation
 - (NSInteger)numberOfRowsInTableView:(NSTableView *)tableView
@@ -92,7 +97,7 @@ using namespace keychain_app;
     }
     
 - (void)runModal {
-    [LogoView setLogoViewForWindow:self.window];
+    [LogoView setLogoViewForWindow:self.window withTitle:@"Select key"];
     [self createTableView];
     [self setupCancelButton];
     [self setupOkButton];
@@ -109,7 +114,7 @@ using namespace keychain_app;
     TableView *tableView = [[TableView alloc] initWithFrame:scrollView.bounds];
     tableView.rowSizeStyle = NSTableViewRowSizeStyleLarge;
     tableView.backgroundColor = [NSColor clearColor];
-    tableView.appearance = [NSAppearance appearanceNamed:NSAppearanceNameAqua];
+//    tableView.appearance = [NSAppearance appearanceNamed:NSAppearanceNameAqua];
     
     NSTableColumn *tCol;
     
@@ -127,6 +132,7 @@ using namespace keychain_app;
     [cell setFont: [NSFont systemFontOfSize:18]];
     [[tCol headerCell] setStringValue:@"Public key"];
     tCol.editable = false;
+    [tCol setWidth:480];
     [[tCol dataCell] setVerticalCentering:YES];
     [tableView addTableColumn:tCol];
     
@@ -134,7 +140,7 @@ using namespace keychain_app;
     cell = [tCol dataCell];
     [cell setFont: [NSFont systemFontOfSize:18]];
     [[tCol headerCell] setStringValue:@"Date"];
-    [tCol setWidth:100];
+    [tCol setWidth:250];
     tCol.editable = false;
     [[tCol dataCell] setVerticalCentering:YES];
     [tableView addTableColumn:tCol];
@@ -147,8 +153,8 @@ using namespace keychain_app;
     tableView.selectionHighlightStyle = NSTableViewSelectionHighlightStyleRegular;
 //    [tableView setSelectionHighlightStyle:NSTableViewSelectionHighlightStyleNone];
     [tableView setAutoresizesSubviews:YES];
-    
-    scrollView.appearance = [NSAppearance appearanceNamed:NSAppearanceNameAqua];
+
+//    scrollView.appearance = [NSAppearance appearanceNamed:NSAppearanceNameAqua];
     [scrollView setHasVerticalScroller:YES];
     [scrollView setHasHorizontalScroller:NO];
     scrollView.horizontalScrollElasticity = NSScrollElasticityNone;

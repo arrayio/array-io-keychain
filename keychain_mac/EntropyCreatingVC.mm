@@ -45,7 +45,7 @@
                                              object:nil];
     window.titlebarAppearsTransparent = YES;
     //window.titleVisibility = NSWindowTitleHidden;
-    window.backgroundColor = [NSColor whiteColor];
+//    window.backgroundColor = [NSColor whiteColor];
     [window center];
     return [super initWithWindow:window];
 }
@@ -85,8 +85,8 @@
         [self.window.contentView addSubview:firstSceneView];
         
         NSTextField *label = [NSTextField labelWithString:@"We use entropy as the first step to protecting your keys. Please make as much noise as you possibly can and move your mouse vigorously."];
-        label.appearance = [NSAppearance appearanceNamed:NSAppearanceNameAqua];
-        label.textColor = [HexToRgbColor colorWithHexColorString:@"4f4e4e"];
+//        label.appearance = [NSAppearance appearanceNamed:NSAppearanceNameAqua];
+//        label.textColor = [HexToRgbColor colorWithHexColorString:@"4f4e4e"];
         label.font = [NSFont systemFontOfSize:16];
         label.frame = NSMakeRect(64, self.window.frame.size.height - 200, self.window.frame.size.width - 128, 54);
         label.lineBreakMode = NSLineBreakByWordWrapping;
@@ -95,8 +95,8 @@
         [firstSceneView addSubview:label];
         
         NSTextField *label2 = [NSTextField labelWithString:@"We hope you have fun while we collect entropy data to confuse anyone who might want to access your keys."];
-        label2.appearance = [NSAppearance appearanceNamed:NSAppearanceNameAqua];
-        label2.textColor = [HexToRgbColor colorWithHexColorString:@"4f4e4e"];
+//        label2.appearance = [NSAppearance appearanceNamed:NSAppearanceNameAqua];
+//        label2.textColor = [HexToRgbColor colorWithHexColorString:@"4f4e4e"];
         label2.font = [NSFont systemFontOfSize:16];
         label2.frame = NSMakeRect(64, 30, self.window.frame.size.width - 128, 54);
         label2.lineBreakMode = NSLineBreakByWordWrapping;
@@ -105,8 +105,8 @@
         [firstSceneView addSubview:label2];
         
         NSTextField *label3 = [NSTextField labelWithString:@"Entropy generation..."];
-        label3.appearance = [NSAppearance appearanceNamed:NSAppearanceNameAqua];
-        label3.textColor = [HexToRgbColor colorWithHexColorString:@"4f4e4e"];
+//        label3.appearance = [NSAppearance appearanceNamed:NSAppearanceNameAqua];
+//        label3.textColor = [HexToRgbColor colorWithHexColorString:@"4f4e4e"];
         label3.font = [NSFont systemFontOfSize:14];
         label3.frame = NSMakeRect(64, 180, self.window.frame.size.width - 128, 54);
         label3.lineBreakMode = NSLineBreakByWordWrapping;
@@ -144,8 +144,8 @@
         [self.window.contentView addSubview:secondSceneView];
         
         NSTextField *label = [NSTextField labelWithString:@"Congratulations!\nYour keys are protected with entropy.\n\nMemorize the seed displayed below. You will need it to restore your keys!\n\nThis message will self-destruct in 3 minutes and the seed will not be shown again for security reasons."];
-        label.appearance = [NSAppearance appearanceNamed:NSAppearanceNameAqua];
-        label.textColor = [HexToRgbColor colorWithHexColorString:@"4f4e4e"];
+//        label.appearance = [NSAppearance appearanceNamed:NSAppearanceNameAqua];
+//        label.textColor = [HexToRgbColor colorWithHexColorString:@"4f4e4e"];
         label.font = [NSFont systemFontOfSize:16];
         label.frame = NSMakeRect(64, self.window.frame.size.height - 350, self.window.frame.size.width - 128, 200);
         label.lineBreakMode = NSLineBreakByWordWrapping;
@@ -159,7 +159,7 @@
         auto seed = keyfiles.seed_phrase(value);
         
         __block NSTextField *label2 = [NSTextField labelWithString:[NSString stringWithUTF8String:seed.c_str()]];
-        label2.appearance = [NSAppearance appearanceNamed:NSAppearanceNameAqua];
+//        label2.appearance = [NSAppearance appearanceNamed:NSAppearanceNameAqua];
         label2.textColor = [NSColor redColor];
         label2.font = [NSFont systemFontOfSize:27];
         label2.frame = NSMakeRect(32, 30, self.window.frame.size.width - 64, 100);
@@ -169,9 +169,9 @@
         [secondSceneView addSubview:label2];
         
         NSTextField *label3 = [NSTextField labelWithString:@"180 seconds"];
-        label3.appearance = [NSAppearance appearanceNamed:NSAppearanceNameAqua];
-        label3.textColor = [NSColor blackColor];
-        label3.font = [NSFont systemFontOfSize:20];
+//        label3.appearance = [NSAppearance appearanceNamed:NSAppearanceNameAqua];
+//        label3.textColor = [NSColor blackColor];
+        label3.font = [NSFont boldSystemFontOfSize:22];
         label3.frame = NSMakeRect(64, 160, self.window.frame.size.width - 128, 54);
         label3.lineBreakMode = NSLineBreakByWordWrapping;
         label3.alignment = NSTextAlignmentCenter;
@@ -225,8 +225,8 @@
         [self.window.contentView addSubview:thirdSceneView];
         
         NSTextField *label = [NSTextField labelWithString:@"Create key"];
-        label.appearance = [NSAppearance appearanceNamed:NSAppearanceNameAqua];
-        label.textColor = [HexToRgbColor colorWithHexColorString:@"000000"];
+//        label.appearance = [NSAppearance appearanceNamed:NSAppearanceNameAqua];
+//        label.textColor = [HexToRgbColor colorWithHexColorString:@"000000"];
         label.font = [NSFont systemFontOfSize:20];
         label.frame = NSMakeRect(64, self.window.frame.size.height - 200, self.window.frame.size.width - 128, 54);
         label.lineBreakMode = NSLineBreakByWordWrapping;
@@ -237,42 +237,42 @@
         /* Create Labels */
         
         NSTextField *nameLabel = [NSTextField labelWithString:@"Name"];
-        nameLabel.appearance = [NSAppearance appearanceNamed:NSAppearanceNameAqua];
+//        nameLabel.appearance = [NSAppearance appearanceNamed:NSAppearanceNameAqua];
         nameLabel.frame = NSMakeRect(22, 300, 130, 30);
         nameLabel.cell = [[VerticallyCenteredTextFieldCell alloc] initTextCell:@"Name"];
         nameLabel.cell.font = [NSFont systemFontOfSize:18];
         [thirdSceneView addSubview:nameLabel];
         
         NSTextField *descriptionLabel = [NSTextField labelWithString:@"Description"];
-        descriptionLabel.appearance = [NSAppearance appearanceNamed:NSAppearanceNameAqua];
+//        descriptionLabel.appearance = [NSAppearance appearanceNamed:NSAppearanceNameAqua];
         descriptionLabel.frame = NSMakeRect(22, 262, 130, 30);
         descriptionLabel.cell = [[VerticallyCenteredTextFieldCell alloc] initTextCell:@"Description"];
         descriptionLabel.cell.font = [NSFont systemFontOfSize:18];
         [thirdSceneView addSubview:descriptionLabel];
         
         NSTextField *encryptedLabel = [NSTextField labelWithString:@"Encrypted"];
-        encryptedLabel.appearance = [NSAppearance appearanceNamed:NSAppearanceNameAqua];
+//        encryptedLabel.appearance = [NSAppearance appearanceNamed:NSAppearanceNameAqua];
         encryptedLabel.frame = NSMakeRect(22, 224, 130, 30);
         encryptedLabel.cell = [[VerticallyCenteredTextFieldCell alloc] initTextCell:@"Encrypted"];
         encryptedLabel.cell.font = [NSFont systemFontOfSize:18];
         [thirdSceneView addSubview:encryptedLabel];
         
         NSTextField *cipherLabel = [NSTextField labelWithString:@"Cipher"];
-        cipherLabel.appearance = [NSAppearance appearanceNamed:NSAppearanceNameAqua];
+//        cipherLabel.appearance = [NSAppearance appearanceNamed:NSAppearanceNameAqua];
         cipherLabel.frame = NSMakeRect(22, 186, 130, 30);
         cipherLabel.cell = [[VerticallyCenteredTextFieldCell alloc] initTextCell:@"Cipher"];
         cipherLabel.cell.font = [NSFont systemFontOfSize:18];
         [thirdSceneView addSubview:cipherLabel];
         
         NSTextField *passwordLabel = [NSTextField labelWithString:@"Password"];
-        passwordLabel.appearance = [NSAppearance appearanceNamed:NSAppearanceNameAqua];
+//        passwordLabel.appearance = [NSAppearance appearanceNamed:NSAppearanceNameAqua];
         passwordLabel.frame = NSMakeRect(22, 148, 130, 30);
         passwordLabel.cell = [[VerticallyCenteredTextFieldCell alloc] initTextCell:@"Re-password"];
         passwordLabel.cell.font = [NSFont systemFontOfSize:18];
         [thirdSceneView addSubview:passwordLabel];
         
         NSTextField *rePasswordLabel = [NSTextField labelWithString:@"Re-password"];
-        rePasswordLabel.appearance = [NSAppearance appearanceNamed:NSAppearanceNameAqua];
+//        rePasswordLabel.appearance = [NSAppearance appearanceNamed:NSAppearanceNameAqua];
         rePasswordLabel.frame = NSMakeRect(22, 110, 130, 30);
         rePasswordLabel.cell = [[VerticallyCenteredTextFieldCell alloc] initTextCell:@"Re-password"];
         rePasswordLabel.cell.font = [NSFont systemFontOfSize:18];
@@ -284,28 +284,28 @@
         nameField.backgroundColor = [NSColor whiteColor];
         nameField.font = [NSFont systemFontOfSize:20];
         nameField.layer.cornerRadius = 4.0;
-        nameField.appearance = [NSAppearance appearanceNamed:NSAppearanceNameAqua];
+//        nameField.appearance = [NSAppearance appearanceNamed:NSAppearanceNameAqua];
         [thirdSceneView addSubview:nameField];
         
         descriptionField = [[NSTextField alloc] initWithFrame:CGRectMake(150, 262, self.window.frame.size.width - 180, 30)];
         descriptionField.backgroundColor = [NSColor whiteColor];
         descriptionField.font = [NSFont systemFontOfSize:20];
         descriptionField.layer.cornerRadius = 4.0;
-        descriptionField.appearance = [NSAppearance appearanceNamed:NSAppearanceNameAqua];
+//        descriptionField.appearance = [NSAppearance appearanceNamed:NSAppearanceNameAqua];
         [thirdSceneView addSubview:descriptionField];
         
         passwordField = [[NSSecureTextField alloc] initWithFrame:CGRectMake(150, 148, self.window.frame.size.width - 180, 30)];
         passwordField.backgroundColor = [NSColor whiteColor];
         passwordField.font = [NSFont systemFontOfSize:20];
         passwordField.layer.cornerRadius = 4.0;
-        passwordField.appearance = [NSAppearance appearanceNamed:NSAppearanceNameAqua];
+//        passwordField.appearance = [NSAppearance appearanceNamed:NSAppearanceNameAqua];
         [thirdSceneView addSubview:passwordField];
         
         rePasswordField = [[NSSecureTextField alloc] initWithFrame:CGRectMake(150, 110, self.window.frame.size.width - 180, 30)];
         rePasswordField.backgroundColor = [NSColor whiteColor];
         rePasswordField.font = [NSFont systemFontOfSize:20];
         rePasswordField.layer.cornerRadius = 4.0;
-        rePasswordField.appearance = [NSAppearance appearanceNamed:NSAppearanceNameAqua];
+//        rePasswordField.appearance = [NSAppearance appearanceNamed:NSAppearanceNameAqua];
         [thirdSceneView addSubview:rePasswordField];
         
         nameField.nextKeyView = descriptionField;

@@ -41,11 +41,11 @@ class ViewController: NSViewController, NSTableViewDelegate, NSTableViewDataSour
         self.transactionTableView.delegate = self
         self.transactionTableView.dataSource = self
         tableView.reloadData()
-        self.view.layer?.backgroundColor = NSColor(red: 242.0/255.0, green: 243.0/255.0, blue: 247.0/255.0, alpha: 1).cgColor
+//        self.view.layer?.backgroundColor = NSColor(red: 242.0/255.0, green: 243.0/255.0, blue: 247.0/255.0, alpha: 1).cgColor
         self.detailsView.wantsLayer = true
-        self.detailsView.layer?.backgroundColor = NSColor(red: 248.0/255.0, green: 248.0/255.0, blue: 250.0/255.0, alpha: 1).cgColor
+//        self.detailsView.layer?.backgroundColor = NSColor(red: 248.0/255.0, green: 248.0/255.0, blue: 250.0/255.0, alpha: 1).cgColor
         self.statusView.wantsLayer = true
-        self.statusView.layer?.backgroundColor = NSColor.white.cgColor
+//        self.statusView.layer?.backgroundColor = NSColor.white.cgColor
         
         NotificationCenter.default.addObserver(self, selector: #selector(reloadTableView), name: NSNotification.Name("reloadData"), object: nil)
         
@@ -150,7 +150,7 @@ class ViewController: NSViewController, NSTableViewDelegate, NSTableViewDataSour
     
     @objc func websocketStatus() {
         WebsocketChecker.checkForRunningWebsocketd { (isRunning) in
-            self.websocketStatusLabel.stringValue = isRunning ? "Running" : "Not started"
+            self.websocketStatusLabel.stringValue = isRunning ? "Is running" : "Not started"
             self.websocketStatusImage.image = isRunning ? #imageLiteral(resourceName: "working") : #imageLiteral(resourceName: "stoped")
         }
     }
@@ -183,7 +183,7 @@ class ViewController: NSViewController, NSTableViewDelegate, NSTableViewDataSour
         }
     }
     
-    func getSubstrStr(str: String) -> String{
+    func getSubstrStr(str: String) -> String {
         let index = str.index(str.startIndex, offsetBy: 32)
         let substring = str[..<index] // Hello
         

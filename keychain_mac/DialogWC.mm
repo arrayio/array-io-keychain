@@ -49,7 +49,7 @@ using keychain_app::secmod_commands::secmod_parser_f;
                                              object:nil];
     window.titlebarAppearsTransparent = YES;
     //window.titleVisibility = NSWindowTitleHidden;
-    window.backgroundColor = [NSColor whiteColor];
+//    window.backgroundColor = [NSColor whiteColor];
     [window center];
     return [super initWithWindow:window];
 }
@@ -217,7 +217,7 @@ using keychain_app::secmod_commands::secmod_parser_f;
     NSTableView *tableView = [[NSTableView alloc] initWithFrame:scrollView.bounds];
     tableView.rowSizeStyle = NSTableViewRowSizeStyleLarge;
     tableView.backgroundColor = [NSColor clearColor];
-    tableView.appearance = [NSAppearance appearanceNamed:NSAppearanceNameAqua];
+//    tableView.appearance = [NSAppearance appearanceNamed:NSAppearanceNameAqua];
 
     NSTableColumn *tCol;
     
@@ -247,7 +247,7 @@ using keychain_app::secmod_commands::secmod_parser_f;
     [tableView setSelectionHighlightStyle:NSTableViewSelectionHighlightStyleNone];
     [tableView setAutoresizesSubviews:YES];
     
-    scrollView.appearance = [NSAppearance appearanceNamed:NSAppearanceNameAqua];
+//    scrollView.appearance = [NSAppearance appearanceNamed:NSAppearanceNameAqua];
     [scrollView setHasVerticalScroller:YES];
     [scrollView setHasHorizontalScroller:NO];
     scrollView.horizontalScrollElasticity = NSScrollElasticityNone;
@@ -354,8 +354,8 @@ using keychain_app::secmod_commands::secmod_parser_f;
 
 - (void) setupTitleLabel:(NSString *)string {
     NSTextField *label = [NSTextField labelWithString:string];
-    label.appearance = [NSAppearance appearanceNamed:NSAppearanceNameAqua];
-    label.textColor = [HexToRgbColor colorWithHexColorString:@"4f4e4e"];
+//    label.appearance = [NSAppearance appearanceNamed:NSAppearanceNameAqua];
+//    label.textColor = [HexToRgbColor colorWithHexColorString:@"4f4e4e"];
     label.font = [NSFont systemFontOfSize:14];
     label.frame = NSMakeRect(190, self.window.frame.size.height - 90, self.window.frame.size.width - 231, 54);
     label.lineBreakMode = NSLineBreakByWordWrapping;
@@ -366,8 +366,8 @@ using keychain_app::secmod_commands::secmod_parser_f;
 
 - (void) setupLabelConfirmPassphrase {
     NSTextField *label = [NSTextField labelWithString:@"Passphrase"];
-    label.appearance = [NSAppearance appearanceNamed:NSAppearanceNameAqua];
-    label.textColor = [HexToRgbColor colorWithHexColorString:@"4f4e4e"];
+//    label.appearance = [NSAppearance appearanceNamed:NSAppearanceNameAqua];
+//    label.textColor = [HexToRgbColor colorWithHexColorString:@"4f4e4e"];
     label.font = [NSFont systemFontOfSize:18];
     label.frame = NSMakeRect(22, 147, 100, 30);
     [self.window.contentView addSubview:label];
@@ -375,8 +375,8 @@ using keychain_app::secmod_commands::secmod_parser_f;
 
 - (void) setupLabelPassphrase {
     NSTextField *label = [NSTextField labelWithString:(!self.unlockOnly && !self.isSignTransaction) ? @"Confirm" : @"Passphrase"];
-    label.appearance = [NSAppearance appearanceNamed:NSAppearanceNameAqua];
-    label.textColor = [HexToRgbColor colorWithHexColorString:@"4f4e4e"];
+//    label.appearance = [NSAppearance appearanceNamed:NSAppearanceNameAqua];
+//    label.textColor = [HexToRgbColor colorWithHexColorString:@"4f4e4e"];
     label.font = [NSFont systemFontOfSize:18];
     label.frame = NSMakeRect(22, 67, 100, 30);
     [self.window.contentView addSubview:label];
@@ -384,8 +384,8 @@ using keychain_app::secmod_commands::secmod_parser_f;
 
 - (void) setupBottomLabel:(NSString*) string {
     NSTextField *label = [NSTextField labelWithString:string];
-    label.appearance = [NSAppearance appearanceNamed:NSAppearanceNameAqua];
-    label.textColor = [HexToRgbColor colorWithHexColorString:@"4f4e4e"];
+//    label.appearance = [NSAppearance appearanceNamed:NSAppearanceNameAqua];
+//    label.textColor = [HexToRgbColor colorWithHexColorString:@"4f4e4e"];
     label.font = [NSFont systemFontOfSize:18];
     label.frame = NSMakeRect(22, 107, 100, 30);
     [self.window.contentView addSubview:label];
@@ -393,8 +393,8 @@ using keychain_app::secmod_commands::secmod_parser_f;
 
 - (void) setupFrom {
     NSTextField *label = [NSTextField labelWithString:@"From"];
-    label.appearance = [NSAppearance appearanceNamed:NSAppearanceNameAqua];
-    label.textColor = [HexToRgbColor colorWithHexColorString:@"4f4e4e"];
+//    label.appearance = [NSAppearance appearanceNamed:NSAppearanceNameAqua];
+//    label.textColor = [HexToRgbColor colorWithHexColorString:@"4f4e4e"];
     label.font = [NSFont systemFontOfSize:18];
     label.frame = NSMakeRect(22, 147, 100, 30);
     [self.window.contentView addSubview:label];
@@ -402,8 +402,8 @@ using keychain_app::secmod_commands::secmod_parser_f;
 
 - (void) setupTopLabel:(NSString *) string {
     NSTextField *label = [NSTextField labelWithString:string];
-    label.appearance = [NSAppearance appearanceNamed:NSAppearanceNameAqua];
-    label.textColor = [HexToRgbColor colorWithHexColorString:@"4f4e4e"];
+//    label.appearance = [NSAppearance appearanceNamed:NSAppearanceNameAqua];
+//    label.textColor = [HexToRgbColor colorWithHexColorString:@"4f4e4e"];
     label.font = [NSFont systemFontOfSize:18];
     label.frame = NSMakeRect(22, 187, 100, 30);
     [self.window.contentView addSubview:label];
@@ -411,8 +411,8 @@ using keychain_app::secmod_commands::secmod_parser_f;
 
 - (void) setupSwapAddress:(NSString *) string {
     NSTextField *label = [NSTextField labelWithString:string];
-    label.appearance = [NSAppearance appearanceNamed:NSAppearanceNameAqua];
-    label.textColor = [HexToRgbColor colorWithHexColorString:@"4f4e4e"];
+//    label.appearance = [NSAppearance appearanceNamed:NSAppearanceNameAqua];
+//    label.textColor = [HexToRgbColor colorWithHexColorString:@"4f4e4e"];
     label.font = [NSFont systemFontOfSize:18];
     label.frame = NSMakeRect(22, 262, 100, 30);
     [self.window.contentView addSubview:label];
@@ -420,8 +420,8 @@ using keychain_app::secmod_commands::secmod_parser_f;
 
 - (void) setupTextSwapAddress:(NSString*)string {
     NSTextField *label = [NSTextField labelWithString:[NSString stringWithFormat:@"%@", string]];
-    label.appearance = [NSAppearance appearanceNamed:NSAppearanceNameAqua];
-    label.textColor = [HexToRgbColor colorWithHexColorString:@"7b8da7"];
+//    label.appearance = [NSAppearance appearanceNamed:NSAppearanceNameAqua];
+//    label.textColor = [HexToRgbColor colorWithHexColorString:@"7b8da7"];
     label.font = [NSFont systemFontOfSize:18];
     label.frame = NSMakeRect(130, 262, self.window.frame.size.width - 150, 30);
     [self.window.contentView addSubview:label];
@@ -429,8 +429,8 @@ using keychain_app::secmod_commands::secmod_parser_f;
 
 - (void) setupSwapAdditional: (NSString *) string {
     NSTextField *label = [NSTextField labelWithString:[NSString stringWithFormat:@"%@", string]];
-    label.appearance = [NSAppearance appearanceNamed:NSAppearanceNameAqua];
-    label.textColor = [HexToRgbColor colorWithHexColorString:@"4f4e4e"];
+//    label.appearance = [NSAppearance appearanceNamed:NSAppearanceNameAqua];
+//    label.textColor = [HexToRgbColor colorWithHexColorString:@"4f4e4e"];
     label.font = [NSFont systemFontOfSize:18];
     label.frame = NSMakeRect(22, 302, 100, 30);
     [self.window.contentView addSubview:label];
@@ -438,8 +438,8 @@ using keychain_app::secmod_commands::secmod_parser_f;
 
 - (void) setupTextSwapAdditional:(NSString*)string {
     NSTextField *label = [NSTextField labelWithString:[NSString stringWithFormat:@"%@", string]];
-    label.appearance = [NSAppearance appearanceNamed:NSAppearanceNameAqua];
-    label.textColor = [HexToRgbColor colorWithHexColorString:@"7b8da7"];
+//    label.appearance = [NSAppearance appearanceNamed:NSAppearanceNameAqua];
+//    label.textColor = [HexToRgbColor colorWithHexColorString:@"7b8da7"];
     label.font = [NSFont systemFontOfSize:18];
     label.frame = NSMakeRect(130, 302, self.window.frame.size.width - 150, 30);
     [self.window.contentView addSubview:label];
@@ -447,8 +447,8 @@ using keychain_app::secmod_commands::secmod_parser_f;
 
 - (void) setupSwapAction {
     NSTextField *label = [NSTextField labelWithString:@"Action"];
-    label.appearance = [NSAppearance appearanceNamed:NSAppearanceNameAqua];
-    label.textColor = [HexToRgbColor colorWithHexColorString:@"4f4e4e"];
+//    label.appearance = [NSAppearance appearanceNamed:NSAppearanceNameAqua];
+//    label.textColor = [HexToRgbColor colorWithHexColorString:@"4f4e4e"];
     label.font = [NSFont systemFontOfSize:18];
     label.frame = NSMakeRect(22, 342, 100, 30);
     [self.window.contentView addSubview:label];
@@ -456,8 +456,8 @@ using keychain_app::secmod_commands::secmod_parser_f;
 
 - (void) setupTextSwapAction:(NSString*)string {
     NSTextField *label = [NSTextField labelWithString:[NSString stringWithFormat:@"%@", string]];
-    label.appearance = [NSAppearance appearanceNamed:NSAppearanceNameAqua];
-    label.textColor = [HexToRgbColor colorWithHexColorString:@"7b8da7"];
+//    label.appearance = [NSAppearance appearanceNamed:NSAppearanceNameAqua];
+//    label.textColor = [HexToRgbColor colorWithHexColorString:@"7b8da7"];
     label.font = [NSFont systemFontOfSize:18];
     label.frame = NSMakeRect(130, 342, self.window.frame.size.width - 150, 30);
     [self.window.contentView addSubview:label];
@@ -465,8 +465,8 @@ using keychain_app::secmod_commands::secmod_parser_f;
 
 - (void) setupTextBottomLabel:(NSString*)string {
     NSTextField *label = [NSTextField labelWithString:string];
-    label.appearance = [NSAppearance appearanceNamed:NSAppearanceNameAqua];
-    label.textColor = [HexToRgbColor colorWithHexColorString:@"7b8da7"];
+//    label.appearance = [NSAppearance appearanceNamed:NSAppearanceNameAqua];
+//    label.textColor = [HexToRgbColor colorWithHexColorString:@"7b8da7"];
     label.font = [NSFont systemFontOfSize:18];
     label.frame = NSMakeRect(130, 107, self.window.frame.size.width - 150, 30);
     [self.window.contentView addSubview:label];
@@ -474,8 +474,8 @@ using keychain_app::secmod_commands::secmod_parser_f;
 
 - (void) setupTextFrom:(NSString*)string {
     NSTextField *label = [NSTextField labelWithString:string];
-    label.appearance = [NSAppearance appearanceNamed:NSAppearanceNameAqua];
-    label.textColor = [HexToRgbColor colorWithHexColorString:@"7b8da7"];
+//    label.appearance = [NSAppearance appearanceNamed:NSAppearanceNameAqua];
+//    label.textColor = [HexToRgbColor colorWithHexColorString:@"7b8da7"];
     label.font = [NSFont systemFontOfSize:([string length] > 64) ? 12 : 18];
     label.frame = NSMakeRect(130, 147, self.window.frame.size.width - 150, 30);
     label.lineBreakMode = NSLineBreakByWordWrapping;
@@ -485,8 +485,8 @@ using keychain_app::secmod_commands::secmod_parser_f;
 
 - (void) setupTextTopLabel:(NSString*)string {
     NSTextField *label = [NSTextField labelWithString:string];
-    label.appearance = [NSAppearance appearanceNamed:NSAppearanceNameAqua];
-    label.textColor = [HexToRgbColor colorWithHexColorString:@"7b8da7"];
+//    label.appearance = [NSAppearance appearanceNamed:NSAppearanceNameAqua];
+//    label.textColor = [HexToRgbColor colorWithHexColorString:@"7b8da7"];
     label.font = [NSFont systemFontOfSize:18];
     label.frame = NSMakeRect(130, 187, self.window.frame.size.width - 150, 30);
     [self.window.contentView addSubview:label];
@@ -494,28 +494,28 @@ using keychain_app::secmod_commands::secmod_parser_f;
 
 - (void) setupPassField {
     pass = [[NSSecureTextField alloc] initWithFrame:CGRectMake(130, 70, self.window.frame.size.width - 155, 30)];
-    pass.backgroundColor = [NSColor whiteColor];
+//    pass.backgroundColor = [NSColor whiteColor];
     pass.font = [NSFont systemFontOfSize:20];
     pass.layer.cornerRadius = 4.0;
-    pass.appearance = [NSAppearance appearanceNamed:NSAppearanceNameAqua];
+//    pass.appearance = [NSAppearance appearanceNamed:NSAppearanceNameAqua];
 //    [pass.cell setAllowedInputSourceLocales:@[NSAllRomanInputSourcesLocaleIdentifier]];
     [self.window.contentView addSubview:pass];
 }
 
 - (void) setupPassConfirmField {
     passConfirm = [[NSSecureTextField alloc] initWithFrame:CGRectMake(130, 150, self.window.frame.size.width - 155, 30)];
-    passConfirm.backgroundColor = [NSColor whiteColor];
+//    passConfirm.backgroundColor = [NSColor whiteColor];
     passConfirm.font = [NSFont systemFontOfSize:20];
     passConfirm.layer.cornerRadius = 4.0;
     passConfirm.nextKeyView = pass;
-    passConfirm.appearance = [NSAppearance appearanceNamed:NSAppearanceNameAqua];
+//    passConfirm.appearance = [NSAppearance appearanceNamed:NSAppearanceNameAqua];
     [self.window.contentView addSubview:passConfirm];
 }
 
 - (void) setupRecommendationTextForPassword {
     NSTextField *label = [NSTextField labelWithString:@"* We recommend to use more than 13 characters, to combine lowercase and uppercase letters, digits and symbols for extra safety (a-z, A-Z, 0-9, @#$%*)"];
-    label.appearance = [NSAppearance appearanceNamed:NSAppearanceNameAqua];
-    label.textColor = [HexToRgbColor colorWithHexColorString:@"4f4e4e"];
+//    label.appearance = [NSAppearance appearanceNamed:NSAppearanceNameAqua];
+//    label.textColor = [HexToRgbColor colorWithHexColorString:@"4f4e4e"];
     label.font = [NSFont systemFontOfSize:12];
     label.frame = NSMakeRect(130, 104, 423, 45);
     label.lineBreakMode = NSLineBreakByWordWrapping;

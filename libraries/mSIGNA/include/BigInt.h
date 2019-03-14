@@ -104,7 +104,7 @@ public:
     const BigInt operator-(BN_ULONG rightOperand) const { return BigInt(*this) -= rightOperand; }
     const BigInt operator*(BN_ULONG rightOperand) const { return BigInt(*this) *= rightOperand; }
     const BigInt operator/(BN_ULONG rightOperand) const { return BigInt(*this) /= rightOperand; }
-    BN_LONG operator%(BN_ULONG rightOperand) const { return BN_mod_word(this->bn, rightOperand); }
+//    BN_LONG operator%(BN_ULONG rightOperand) const { return BN_mod_word(this->bn, rightOperand); }
 
     // Bitshift Operators
     BigInt& operator<<=(int rhs) { if (!BN_lshift(this->bn, this->bn, rhs)) throw std::runtime_error("BN_lshift error."); return *this; }
@@ -163,6 +163,7 @@ public:
     }
     void setDec(const std::string& dec) { BN_dec2bn(&this->bn, dec.c_str()); }
 
+/*
     std::string getInBase(unsigned int base, const char* alphabet) const
     {
         BigInt num = *this;
@@ -173,6 +174,7 @@ public:
         } while (!num.isZero());
         return inBase;
     }
+*/
 
     void setInBase(const std::string& inBase, unsigned int base, const char* alphabet)
     {

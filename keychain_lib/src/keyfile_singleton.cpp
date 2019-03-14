@@ -6,6 +6,8 @@
 #include "keyfile_singleton.hpp"
 #include <cryptopp/osrng.h>
 #include <cryptopp/hex.h>
+#include "hdkeys.h"
+#include "wordlist.hpp"
 
 using namespace keychain_app;
 
@@ -456,24 +458,48 @@ keyfile_format::keyfile_t keychain_app::create_new_keyfile(
   return keyfile;
 }
 
-dev::bytes keyfile_singleton::seed(dev::bytes& user_entropy)
+std::vector<std::string> keyfile_singleton::seed(dev::bytes& user_entropy)
 {
-    using namespace CryptoPP;
-    SecByteBlock key(32);
-    std::string k;
+    CryptoPP::SecByteBlock ent(16);
+    CryptoPP::OS_GenerateRandomBlock(false, ent, ent.size());
 
-    OS_GenerateRandomBlock(false, key, k.size());
+    auto sha256 = fc_light::sha256::hash( (const char *) ent.begin(), ent.SizeInBytes() );
+    char cs = *sha256.data()&0x0f;
 
-    HexEncoder hex(new StringSink(k));
-    hex.Put(key, key.size());
-    hex.MessageEnd();
+    std::vector<char> ent_cs(ent.begin(), ent.begin()+ent.SizeInBytes());
+    ent_cs.push_back(cs);
 
-    dev::bytes seed(32);
-    auto res = from_hex(k, seed.data(), seed.size());
-    seed.resize(res);
+    size_t ms_len = ent_cs.size()*8/11;
 
-    return seed;
+    std::vector<size_t> ms;
+    auto pbyte = ent_cs.data();
+    char bit = 0;
+    for (auto i=0; i<ms_len; i++ )
+    {
+      size_t res=0;
+      for(auto j=0; j<11; j++)
+      {
+        auto val = (*pbyte>>bit)&1;
+        res = res | (val<<j) ;
+        if (++bit==8)
+        {
+          ++pbyte;
+          bit = 0;
+        }
+      }
+      ms.push_back(res);
+    }
+    constexpr size_t wordlist_size =  sizeof(wordlist)/sizeof(wordlist[0]);
+    std::vector<std::string> mnemonics;
+    for(auto a : ms)
+    {
+      FC_LIGHT_ASSERT (a < wordlist_size);
+      mnemonics.push_back(wordlist[a]);
+    }
+
+    return mnemonics;
 }
+
 
 
 bool keychain_app::remove_unlock(const keyfile_format::keyfile_t& keyfile, get_password_f&& get_passwd)

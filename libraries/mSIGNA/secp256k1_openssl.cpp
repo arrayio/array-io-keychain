@@ -315,8 +315,7 @@ finish:
     if (point) EC_POINT_free(point);
 
     throw std::runtime_error(std::string("secp256k1_point::init() - ") + err);
-}
-
+}/*
 bytes_t CoinCrypto::secp256k1_sigToLowS(const bytes_t& signature)
 {
     const unsigned char* pvch = (const unsigned char*)&signature[0];
@@ -337,7 +336,7 @@ bytes_t CoinCrypto::secp256k1_sigToLowS(const bytes_t& signature)
         BN_clear_free(order);
         throw std::runtime_error("secp256k1_sigToLowS(): BN_bin2bn failed.");
     }
-    
+
     if (BN_cmp(sig->s, halforder) > 0) { BN_sub(sig->s, order, sig->s); }
 
     BN_clear_free(order);
@@ -350,6 +349,9 @@ bytes_t CoinCrypto::secp256k1_sigToLowS(const bytes_t& signature)
 
     return bytes_t(buffer, buffer + nSize);
 }
+*/
+
+
 
 // Signing function
 bytes_t CoinCrypto::secp256k1_sign(const secp256k1_key& key, const bytes_t& data)

@@ -321,7 +321,14 @@ struct keychain_command<command_te::select_key>: keychain_command_base
   using params_t = void;
   virtual std::string operator()(keychain_base* keychain, const fc_light::variant& params_variant, int id) const override
   {
-    auto public_key = *keychain->select_key();
+      auto& keyfiles = keyfile_singleton::instance();
+      auto it = keyfiles.begin();
+      if ( it==keyfiles.end() )
+      {
+          auto res = keychain->entropy();
+      }
+
+      auto public_key = *keychain->select_key();
     if(!public_key)
       FC_LIGHT_THROW_EXCEPTION(fc_light::public_key_not_selected, "");
     json_response response(to_hex(public_key.data(), public_key.size).c_str(), id);

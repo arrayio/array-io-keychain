@@ -12,10 +12,12 @@
 #include <boost/multi_index/mem_fun.hpp>
 #include <boost/multi_index/tag.hpp>
 #include <boost/multi_index/identity.hpp>
+#include <boost/filesystem.hpp>
 
 #include <fc_light/exception/exception.hpp>
 
 #include "keyfile_parser.hpp"
+#include "secmod_protocol.hpp"
 
 namespace keychain_app {
 
@@ -189,7 +191,7 @@ public:
 
 };
 
-using get_password_create_f = std::function<byte_seq_t(const std::string&)>; //NOTE: may incapsulate call to sec module or just return password string
+using get_password_create_f = std::function<keychain_app::byte_seq_t(const std::string&)>; //NOTE: may incapsulate call to sec module or just return password string
 
 keyfile_format::keyfile_t create_new_keyfile(
   const std::string& keyname,

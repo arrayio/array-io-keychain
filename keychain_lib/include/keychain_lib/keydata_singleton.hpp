@@ -13,7 +13,7 @@ struct keydata_singleton
 {
     static keydata_singleton& instance();
     std::string seed(dev::bytes& );
-    void create_masterkey(std::string&);
+    void create_masterkey(std::string&, std::string&);
     void create_privatekey();
 
 private:

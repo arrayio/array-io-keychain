@@ -17,6 +17,8 @@
 #include <boost/program_options.hpp>
 #include <keychain_lib/keychain_logger.hpp>
 
+#include <keychain_lib/keydata_singleton.hpp>
+
 //#include <boost/program_options/options_description.hpp>
 //#include <boost/program_options/option.hpp>
 
@@ -116,7 +118,15 @@ int cmd_parser::run(int argc, const char* const argv[])
   auto& keyfiles = keyfile_singleton::instance();
   auto it = keyfiles.begin();
   if ( it==keyfiles.end() )
-    auto res = keychain_ref.entropy();
+  {
+      auto res = keychain_ref.entropy();
+/*      auto& key_data = keydata_singleton::instance();
+      dev::bytes ue;
+      auto mnemonics = std::move(key_data.seed(ue));
+      std::string pass("blank");
+      key_data.create_masterkey(mnemonics,pass);
+      key_data.create_privatekey();*/
+  }
 
   keychain_invoke_f f = std::bind(&keychain_base::operator(), &keychain_ref, std::placeholders::_1);
   pipeline_parser pipe_line_parser_(std::move(f), fileno(stdin), fileno(stdout));

@@ -1,13 +1,14 @@
 //
 // Created by user on 3/15/19.
 //
-#include "keydata_singleton.hpp"
 #include <cryptopp/osrng.h>
 #include <cryptopp/hex.h>
 #include <cryptopp/pwdbased.h>
 #include "hdkeys.h"
-#include "wordlist.hpp"
+#include <wordlist.hpp>
 #include <fc_light/crypto/sha256.hpp>
+#include <keydata_singleton.hpp>
+#include <keyfile_singleton.hpp>
 
 using namespace keychain_app;
 
@@ -85,12 +86,22 @@ std::vector<char> keydata_singleton::pbkdf2(std::string const& _pass)
 }
 
 
-void keydata_singleton::create_masterkey(std::string& mnemonics)
+void keydata_singleton::create_masterkey(std::string& mnemonics, std::string& pass)
 {
     std::vector<char> key = std::move(pbkdf2(mnemonics));
     dev::Secret master_key(dev::FixedHash<32>((byte * const)key.data(),    dev::FixedHash<32>::ConstructFromPointerType::ConstructFromPointer));
     dev::Secret chain_code(dev::FixedHash<32>((byte * const)key.data()+32, dev::FixedHash<32>::ConstructFromPointerType::ConstructFromPointer));
 
+    auto & keyfiles = keyfile_singleton::instance();
+    keyfiles.create(std::bind(create_new_keyfile,
+                              "master_key", "master_key", true, keyfile_format::cipher_etype::aes256,
+                              keyfile_format::curve_etype::secp256k1,
+                              [&pass](const std::string& keyname)->byte_seq_t{
+                                  byte_seq_t res;
+                                  std::copy(pass.begin(), pass.end(), std::back_inserter(res));
+                                  return res;
+                              })
+    );
 }
 
 

@@ -94,6 +94,7 @@ enum struct sign_te {
 fc_light::variant create_secmod_signhex_cmd(const std::vector<unsigned char>& raw, blockchain_te blockchain, std::string from, int unlock_time, const std::string& keyname, bool no_password);
 fc_light::variant create_secmod_signhash_cmd(const std::string& raw, std::string from, const std::string& keyname, bool no_password);
 fc_light::variant create_secmod_unlock_cmd(const std::string& keyname, int unlock_time, bool no_password);
+std::string parse_trx(std::string&);
 
 class streambuf_derived : public std::basic_streambuf<char>
 {

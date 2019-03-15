@@ -685,7 +685,7 @@
         <scene sceneID="R2V-B0-nI4">
             <objects>
                 <windowController id="B8D-0N-5wS" sceneMemberID="viewController">
-                    <window key="window" title="KeyChain Installer v0.20" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" animationBehavior="default" id="IQv-IB-iLA">
+                    <window key="window" title="KeyChain Installer v0.22" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" animationBehavior="default" id="IQv-IB-iLA">
                         <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES"/>
                         <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
                         <rect key="contentRect" x="196" y="240" width="480" height="270"/>
@@ -798,7 +798,7 @@
                                 <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="logo" id="1EX-Jr-HRd"/>
                             </imageView>
                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="2J7-dJ-Rk4">
-                                <rect key="frame" x="177" y="141" width="97" height="27"/>
+                                <rect key="frame" x="175" y="141" width="100" height="27"/>
                                 <textFieldCell key="cell" lineBreakMode="clipping" alignment="center" title="KeyChain" id="s9x-D3-VjZ">
                                     <font key="font" metaFont="system" size="22"/>
                                     <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -850,7 +850,7 @@
                                 <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="logo" id="Kja-h5-Rhl"/>
                             </imageView>
                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="qCw-tT-n9B">
-                                <rect key="frame" x="177" y="141" width="97" height="27"/>
+                                <rect key="frame" x="175" y="141" width="100" height="27"/>
                                 <textFieldCell key="cell" lineBreakMode="clipping" alignment="center" title="KeyChain" id="Hhk-Pz-olf">
                                     <font key="font" metaFont="system" size="22"/>
                                     <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -913,7 +913,7 @@
                                 <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="logo" id="lZk-PF-nXj"/>
                             </imageView>
                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="tL8-Mo-Wgr">
-                                <rect key="frame" x="177" y="141" width="97" height="27"/>
+                                <rect key="frame" x="175" y="141" width="100" height="27"/>
                                 <textFieldCell key="cell" lineBreakMode="clipping" alignment="center" title="KeyChain" id="Bt7-Rc-9Pe">
                                     <font key="font" metaFont="system" size="22"/>
                                     <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -983,15 +983,15 @@
                             <scrollView appearanceType="aqua" borderType="none" horizontalLineScroll="10" horizontalPageScroll="10" verticalLineScroll="10" verticalPageScroll="10" hasHorizontalScroller="NO" translatesAutoresizingMaskIntoConstraints="NO" id="wDY-pX-uZw">
                                 <rect key="frame" x="20" y="85" width="410" height="195"/>
                                 <clipView key="contentView" drawsBackground="NO" copiesOnScroll="NO" id="4hi-xQ-vp4">
-                                    <rect key="frame" x="0.0" y="0.0" width="395" height="195"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="410" height="195"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <textView importsGraphics="NO" richText="NO" verticallyResizable="YES" baseWritingDirection="leftToRight" findStyle="bar" smartInsertDelete="YES" id="g3g-3i-3YG">
-                                            <rect key="frame" x="0.0" y="-33" width="395" height="457.5"/>
+                                            <rect key="frame" x="0.0" y="-35" width="410" height="425"/>
                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                             <color key="textColor" red="0.14118" green="0.16078000000000001" blue="0.18038999999999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
-                                            <size key="minSize" width="395" height="195"/>
+                                            <size key="minSize" width="410" height="195"/>
                                             <size key="maxSize" width="410" height="10000000"/>
                                             <attributedString key="textStorage">
                                                 <fragment>
@@ -1125,7 +1125,7 @@ Cg
                                     </subviews>
                                 </clipView>
                                 <scroller key="verticalScroller" wantsLayer="YES" verticalHuggingPriority="750" horizontal="NO" id="oFn-Wd-lk4">
-                                    <rect key="frame" x="395" y="0.0" width="15" height="195"/>
+                                    <rect key="frame" x="394" y="0.0" width="16" height="195"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                 </scroller>
                             </scrollView>

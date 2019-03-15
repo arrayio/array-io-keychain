@@ -35,7 +35,6 @@
 
 using namespace keychain_app;
 
-
 cmd_parser::cmd_parser()
 {
   //TODO: define program options
@@ -117,33 +116,7 @@ int cmd_parser::run(int argc, const char* const argv[])
   auto& keyfiles = keyfile_singleton::instance();
   auto it = keyfiles.begin();
   if ( it==keyfiles.end() )
-  {
     auto res = keychain_ref.entropy();
-    dev::bytes ue;
-    auto mnemonics = std::move(keyfiles.seed(ue));
-    std::string mnemonic_join;
-    for (auto& a : mnemonics)
-        mnemonic_join += a;
-
-    dev::bytes salt;
-    auto key = std::move(keyfiles.pbkdf2(mnemonic_join, salt, 2048, 64 ));
-
-    dev::Secret master_key(dev::FixedHash<32>((byte * const)key.data(),    dev::FixedHash<32>::ConstructFromPointerType::ConstructFromPointer));
-    dev::Secret chain_code(dev::FixedHash<32>((byte * const)key.data()+32, dev::FixedHash<32>::ConstructFromPointerType::ConstructFromPointer));
-    /*
-    std::string keyname = "master_key";
-    std::string pass = "blank";
-    keyfiles.create(std::bind(create_new_keyfile,
-                              keyname, keyname, true, keyfile_format::cipher_etype::aes256,
-                              keyfile_format::curve_etype::secp256k1,
-                              [&pass](const std::string& keyname)->byte_seq_t{
-                                  byte_seq_t res;
-                                  std::copy(pass.begin(), pass.end(), std::back_inserter(res));
-                                  return res;
-                              })
-);
-*/
-    }
 
   keychain_invoke_f f = std::bind(&keychain_base::operator(), &keychain_ref, std::placeholders::_1);
   pipeline_parser pipe_line_parser_(std::move(f), fileno(stdin), fileno(stdout));

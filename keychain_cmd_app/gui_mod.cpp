@@ -1,4 +1,4 @@
-//
+  //
 // Created by roman on 5/14/18.
 //
 
@@ -20,7 +20,6 @@ dev::Public gui_mod_dummy::select_key() const
     return dev::Public();
   return it->keyinfo.public_key;
 }
-
 
 bool gui_mod_dummy::entropy() const
 {

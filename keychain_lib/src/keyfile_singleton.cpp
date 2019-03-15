@@ -4,11 +4,6 @@
 
 #include "keychain_commands.hpp"
 #include "keyfile_singleton.hpp"
-#include <cryptopp/osrng.h>
-#include <cryptopp/hex.h>
-#include <cryptopp/pwdbased.h>
-#include "hdkeys.h"
-#include "wordlist.hpp"
 
 using namespace keychain_app;
 
@@ -458,67 +453,6 @@ keyfile_format::keyfile_t keychain_app::create_new_keyfile(
   keyfile.keyinfo.curve_type = curve;
   return keyfile;
 }
-
-std::vector<std::string> keyfile_singleton::seed(dev::bytes& user_entropy)
-{
-    CryptoPP::SecByteBlock ent(16);
-    CryptoPP::OS_GenerateRandomBlock(false, ent, ent.size());
-
-    auto sha256 = fc_light::sha256::hash( (const char *) ent.begin(), ent.SizeInBytes() );
-    char cs = *sha256.data()&0x0f;
-
-    std::vector<char> ent_cs(ent.begin(), ent.begin()+ent.SizeInBytes());
-    ent_cs.push_back(cs);
-
-    size_t ms_len = ent_cs.size()*8/11;
-
-    std::vector<size_t> ms;
-    auto pbyte = ent_cs.data();
-    char bit = 0;
-    for (auto i=0; i<ms_len; i++ )
-    {
-      size_t res=0;
-      for(auto j=0; j<11; j++)
-      {
-        auto val = (*pbyte>>bit)&1;
-        res = res | (val<<j) ;
-        if (++bit==8)
-        {
-          ++pbyte;
-          bit = 0;
-        }
-      }
-      ms.push_back(res);
-    }
-    constexpr size_t wordlist_size =  sizeof(wordlist)/sizeof(wordlist[0]);
-    std::vector<std::string> mnemonics;
-    for(auto a : ms)
-    {
-      FC_LIGHT_ASSERT (a < wordlist_size);
-      mnemonics.push_back(wordlist[a]);
-    }
-
-    return mnemonics;
-}
-
-std::vector<char> keyfile_singleton::pbkdf2(std::string const& _pass, dev::bytes const& _salt, unsigned _iterations, unsigned _dkLen)
-{
-    std::vector<char> ret(_dkLen);
-    if (CryptoPP::PKCS5_PBKDF2_HMAC<CryptoPP::SHA256>().DeriveKey(
-            (unsigned char *) ret.data(),
-            _dkLen,
-            0,
-            reinterpret_cast<byte const*>(_pass.data()),
-            _pass.size(),
-            _salt.data(),
-            _salt.size(),
-            _iterations
-    ) != _iterations)
-        FC_LIGHT_THROW_EXCEPTION(fc_light::internal_error_exception, "Key derivation failed.");
-
-    return ret;
-}
-
 
 bool keychain_app::remove_unlock(const keyfile_format::keyfile_t& keyfile, get_password_f&& get_passwd)
 {

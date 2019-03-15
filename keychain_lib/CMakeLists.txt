@@ -44,6 +44,7 @@ if( MSVC )
             "${OPENSSL_ROOT_DIR}/include"
             ${Boost_INCLUDE_DIR}
             "../libraries/sqlite"
+            "${CMAKE_SOURCE_DIR}/libraries/mSIGNA/include"
             )
 else ( MSVC )
     include_directories(
@@ -58,6 +59,7 @@ else ( MSVC )
             "/usr/include/libcxxabi"
             ${Boost_INCLUDE_DIR}
             "../libraries/sqlite"
+            "${CMAKE_SOURCE_DIR}/libraries/mSIGNA/include"
             )
 endif( MSVC )
 
@@ -67,6 +69,6 @@ file(GLOB KEYCHAIN_LIB_INCLUDE "./include/keychain_lib/*.hpp" )
 list(APPEND KEYCHAIN_LIB_SOURCES "${CMAKE_CURRENT_BINARY_DIR}/git_revision.cpp")
 
 add_library(keychain_common STATIC ${KEYCHAIN_LIB_SOURCES} ${KEYCHAIN_LIB_INCLUDE})
-target_link_libraries(keychain_common  kaitai_struct_cpp_stl_runtime sqlite3)
+target_link_libraries(keychain_common  kaitai_struct_cpp_stl_runtime sqlite3 cryptopp msigna)
 
 

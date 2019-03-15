@@ -218,7 +218,7 @@ struct json_error
 {
   json_error(int id_, fc_light::exception_code_te err_code, const std::string& msg_ = "",  const fc_light::variant& trace_ = fc_light::variant())
     : id(id_), error(err_code, msg_, trace_){}
-    
+
   int id;
   struct error_t
   {
@@ -289,9 +289,9 @@ struct keychain_command<command_te::about>: keychain_command_base
 {
   keychain_command() : keychain_command_base(command_te::list) {}
   virtual ~keychain_command() {}
-  
+
   using params_t = void;
-  
+
   virtual std::string operator()(keychain_base *keychain, const fc_light::variant &params_variant, int id) const override
   {
     json_response response(fc_light::variant(version_info::about()), id);
@@ -304,9 +304,9 @@ struct keychain_command<command_te::version>: keychain_command_base
 {
   keychain_command() : keychain_command_base(command_te::list) {}
   virtual ~keychain_command() {}
-  
+
   using params_t = void;
-  
+
   virtual std::string operator()(keychain_base *keychain, const fc_light::variant &params_variant, int id) const override
   {
     json_response response(fc_light::variant(version_info::version()), id);
@@ -351,7 +351,7 @@ struct keychain_command<command_te::sign_trx> : keychain_command_base
     int unlock_time;
   };
   using params_t = params;
-  
+
   virtual std::string operator()(keychain_base* keychain, const fc_light::variant& params_variant, int id) const override
   {
     params_t params;
@@ -380,7 +380,7 @@ struct keychain_command<command_te::sign_trx> : keychain_command_base
 
     if (!params.public_key)
       FC_LIGHT_THROW_EXCEPTION(fc_light::invalid_arg_exception, "public_key is not specified");
-  
+
     auto evaluate_from = [&params]()->std::string {
       switch (params.blockchain_type)
       {
@@ -396,16 +396,16 @@ struct keychain_command<command_te::sign_trx> : keychain_command_base
           pub_bin_key.insert(pub_bin_key.begin(), 4);
           auto sha256 = fc_light::sha256::hash( (const char*)pub_bin_key.data(), pub_bin_key.size() );
           auto ripemd160 = fc_light::ripemd160::hash( sha256 );
-      
+
           std::vector<char> keyhash(ripemd160.data(), ripemd160.data()+ripemd160.data_size());
           keyhash.insert(keyhash.begin(), 0);
-      
+
           sha256 = fc_light::sha256::hash( keyhash.data(), keyhash.size() );
           auto checksum = fc_light::sha256::hash( sha256.data(), sha256.data_size() );
-      
+
           std::vector<char> addr (checksum.data(), checksum.data()+4 );
           addr.insert(addr.begin(), keyhash.begin(), keyhash.end());
-      
+
           return fc_light::to_base58(addr.data(), addr.size());
         }
         default:

@@ -1,16 +1,20 @@
 PODS:
   - AHLaunchCtl (0.5.4)
+  - Starscream (3.0.6)
 
 DEPENDENCIES:
   - AHLaunchCtl
+  - Starscream (~> 3.0.2)
 
 SPEC REPOS:
   https://github.com/cocoapods/specs.git:
     - AHLaunchCtl
+    - Starscream
 
 SPEC CHECKSUMS:
   AHLaunchCtl: 696233a41a9b968e0683ce2cc1b8686ff25ca5c7
+  Starscream: ef3ece99d765eeccb67de105bfa143f929026cf5
 
-PODFILE CHECKSUM: 8342da28e8b0a8279c38b1bf58c7dd9137a9e052
+PODFILE CHECKSUM: 60a0fbcb4094fa4b08578c5ebbd013a42a232af0
 
 COCOAPODS: 1.5.3

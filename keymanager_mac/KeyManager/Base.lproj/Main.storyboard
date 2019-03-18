@@ -825,10 +825,10 @@
                                 </scroller>
                             </scrollView>
                             <customView hidden="YES" translatesAutoresizingMaskIntoConstraints="NO" id="pfj-bp-M9Q">
-                                <rect key="frame" x="205" y="335" width="394" height="144"/>
+                                <rect key="frame" x="205" y="308" width="394" height="171"/>
                                 <subviews>
                                     <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="vZA-5C-BdK">
-                                        <rect key="frame" x="20" y="8" width="128" height="128"/>
+                                        <rect key="frame" x="20" y="35" width="128" height="128"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="128" id="U5H-oJ-Xp5"/>
                                             <constraint firstAttribute="width" constant="128" id="cjO-oj-F6c"/>
@@ -836,7 +836,7 @@
                                         <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" id="1XA-8r-yrA"/>
                                     </imageView>
                                     <stackView distribution="equalSpacing" orientation="vertical" alignment="leading" spacing="4" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="jgB-3J-H0O">
-                                        <rect key="frame" x="156" y="8" width="230" height="101"/>
+                                        <rect key="frame" x="156" y="33" width="218" height="101"/>
                                         <subviews>
                                             <stackView distribution="fill" orientation="horizontal" alignment="top" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="BB4-pX-EX8">
                                                 <rect key="frame" x="0.0" y="84" width="186" height="17"/>
@@ -1000,34 +1000,69 @@
                                         </customSpacing>
                                     </stackView>
                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="vNI-vm-3L7">
-                                        <rect key="frame" x="154" y="117" width="80" height="19"/>
+                                        <rect key="frame" x="154" y="142" width="80" height="21"/>
                                         <textFieldCell key="cell" lineBreakMode="clipping" title="Keyname" id="L97-yA-Flg">
                                             <font key="font" metaFont="systemBold" size="17"/>
                                             <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
                                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                         </textFieldCell>
                                     </textField>
+                                    <customView translatesAutoresizingMaskIntoConstraints="NO" id="Ywq-ru-uwc">
+                                        <rect key="frame" x="20" y="0.0" width="354" height="25"/>
+                                        <subviews>
+                                            <stackView distribution="equalSpacing" orientation="horizontal" alignment="centerY" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="8MJ-pg-h0g">
+                                                <rect key="frame" x="0.0" y="0.0" width="354" height="25"/>
+                                                <subviews>
+                                                    <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="h03-Rc-cNC">
+                                                        <rect key="frame" x="134" y="-5" width="87" height="32"/>
+                                                        <buttonCell key="cell" type="push" title="Refresh" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="4pr-GI-cma">
+                                                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                                            <font key="font" metaFont="system"/>
+                                                        </buttonCell>
+                                                        <connections>
+                                                            <action selector="refreshTrxAction:" target="XfG-lQ-9wD" id="oKV-LT-xNr"/>
+                                                        </connections>
+                                                    </button>
+                                                </subviews>
+                                                <visibilityPriorities>
+                                                    <integer value="1000"/>
+                                                </visibilityPriorities>
+                                                <customSpacing>
+                                                    <real value="3.4028234663852886e+38"/>
+                                                </customSpacing>
+                                            </stackView>
+                                        </subviews>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="25" id="Afo-id-q74"/>
+                                            <constraint firstAttribute="bottom" secondItem="8MJ-pg-h0g" secondAttribute="bottom" id="BVt-nl-la6"/>
+                                            <constraint firstItem="8MJ-pg-h0g" firstAttribute="top" secondItem="Ywq-ru-uwc" secondAttribute="top" id="fi7-55-Lbo"/>
+                                            <constraint firstItem="8MJ-pg-h0g" firstAttribute="leading" secondItem="Ywq-ru-uwc" secondAttribute="leading" id="g9z-T5-NIw"/>
+                                            <constraint firstAttribute="trailing" secondItem="8MJ-pg-h0g" secondAttribute="trailing" id="pSb-eM-x5w"/>
+                                        </constraints>
+                                    </customView>
                                 </subviews>
                                 <constraints>
-                                    <constraint firstAttribute="trailing" secondItem="jgB-3J-H0O" secondAttribute="trailing" constant="8" id="4V2-NZ-HlS"/>
-                                    <constraint firstAttribute="bottom" secondItem="jgB-3J-H0O" secondAttribute="bottom" constant="8" id="6O1-BW-sbU"/>
+                                    <constraint firstAttribute="bottom" secondItem="Ywq-ru-uwc" secondAttribute="bottom" id="0xc-99-uMd"/>
+                                    <constraint firstAttribute="trailing" secondItem="jgB-3J-H0O" secondAttribute="trailing" constant="20" id="4V2-NZ-HlS"/>
+                                    <constraint firstAttribute="trailing" secondItem="Ywq-ru-uwc" secondAttribute="trailing" constant="20" id="A4c-oC-J9E"/>
                                     <constraint firstItem="vZA-5C-BdK" firstAttribute="leading" secondItem="pfj-bp-M9Q" secondAttribute="leading" constant="20" id="B6p-Dw-AMe"/>
                                     <constraint firstItem="jgB-3J-H0O" firstAttribute="leading" secondItem="vZA-5C-BdK" secondAttribute="trailing" constant="8" id="IOZ-ls-mXo"/>
+                                    <constraint firstItem="Ywq-ru-uwc" firstAttribute="leading" secondItem="pfj-bp-M9Q" secondAttribute="leading" constant="20" id="KNZ-BJ-lW1"/>
                                     <constraint firstItem="jgB-3J-H0O" firstAttribute="top" secondItem="vNI-vm-3L7" secondAttribute="bottom" constant="8" id="Qt3-c5-UGs"/>
-                                    <constraint firstAttribute="bottom" secondItem="vZA-5C-BdK" secondAttribute="bottom" constant="8" id="eo1-Aq-2eB"/>
+                                    <constraint firstItem="Ywq-ru-uwc" firstAttribute="top" secondItem="jgB-3J-H0O" secondAttribute="bottom" constant="8" id="bMP-wQ-MMf"/>
                                     <constraint firstItem="vZA-5C-BdK" firstAttribute="top" secondItem="pfj-bp-M9Q" secondAttribute="top" constant="8" id="hbr-sX-mNe"/>
                                     <constraint firstItem="vNI-vm-3L7" firstAttribute="top" secondItem="pfj-bp-M9Q" secondAttribute="top" constant="8" id="vFc-Hy-s1Q"/>
                                     <constraint firstItem="vNI-vm-3L7" firstAttribute="leading" secondItem="vZA-5C-BdK" secondAttribute="trailing" constant="8" id="z8G-xZ-2yI"/>
                                 </constraints>
                             </customView>
                             <scrollView borderType="none" autohidesScrollers="YES" horizontalLineScroll="19" horizontalPageScroll="10" verticalLineScroll="19" verticalPageScroll="10" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="pHq-yt-mpW">
-                                <rect key="frame" x="205" y="0.0" width="394" height="327"/>
+                                <rect key="frame" x="205" y="0.0" width="394" height="300"/>
                                 <clipView key="contentView" id="uGi-tC-ZLL">
-                                    <rect key="frame" x="0.0" y="0.0" width="394" height="312"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="394" height="300"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" columnReordering="NO" columnSelection="YES" multipleSelection="NO" autosaveColumns="NO" rowSizeStyle="automatic" headerView="wwF-jo-wvN" viewBased="YES" id="hWM-dR-Er0">
-                                            <rect key="frame" x="0.0" y="0.0" width="636" height="287"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="636" height="275"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <size key="intercellSpacing" width="3" height="2"/>
                                             <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
@@ -1136,7 +1171,7 @@
                                     </subviews>
                                 </clipView>
                                 <scroller key="horizontalScroller" wantsLayer="YES" verticalHuggingPriority="750" horizontal="YES" id="gDY-kK-H8b">
-                                    <rect key="frame" x="0.0" y="312" width="394" height="15"/>
+                                    <rect key="frame" x="0.0" y="284" width="394" height="16"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                 </scroller>
                                 <scroller key="verticalScroller" hidden="YES" wantsLayer="YES" verticalHuggingPriority="750" horizontal="NO" id="TCq-EG-pUt">
@@ -1219,6 +1254,7 @@
                         <outlet property="detailsView" destination="pfj-bp-M9Q" id="htY-DK-10d"/>
                         <outlet property="gravatarImage" destination="vZA-5C-BdK" id="WTt-qc-dE1"/>
                         <outlet property="keychainVersion" destination="S13-hS-lpm" id="D8i-tx-1n8"/>
+                        <outlet property="keynameLabel" destination="vNI-vm-3L7" id="bWy-xB-RKX"/>
                         <outlet property="publicKey" destination="m8L-7p-ktQ" id="A4E-Jj-EqT"/>
                         <outlet property="statusView" destination="Pyj-nE-jfm" id="DXQ-Vn-2Od"/>
                         <outlet property="tableView" destination="uZx-Fa-dul" id="cyH-DZ-jFL"/>

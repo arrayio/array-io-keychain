@@ -62,6 +62,7 @@ using namespace keychain_app;
     
 - (id)tableView:(NSTableView *)aTableView objectValueForTableColumn:(NSTableColumn *)aTableColumn row:(NSInteger)rowIndex {
     auto& keyfiles = keyfile_singleton::instance();
+    
     auto& index = keyfiles.random_access_index();
     auto it = index.begin() + rowIndex;
     auto key = *(it);

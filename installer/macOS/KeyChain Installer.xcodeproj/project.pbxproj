@@ -18,7 +18,6 @@
 		A7A912B621CCE12D00A7594E /* NotificationExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7E7F75F21A6B6C70021ED5E /* NotificationExtensions.swift */; };
 		A7A912B721CCF43A00A7594E /* Consts.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7E7F75921A6B4860021ED5E /* Consts.swift */; };
 		A7A912B821CCF8BD00A7594E /* AppleScriptManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7E7F75521A6B4520021ED5E /* AppleScriptManager.swift */; };
-		A7ADD44A223A97CF00D10C9C /* bin.tar.gz in Resources */ = {isa = PBXBuildFile; fileRef = A7ADD449223A97CF00D10C9C /* bin.tar.gz */; };
 		A7DF22B621CA7BA3008F2364 /* UnistallerManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7DF22B521CA7BA3008F2364 /* UnistallerManager.swift */; };
 		A7DF22B721CA7BA3008F2364 /* UnistallerManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7DF22B521CA7BA3008F2364 /* UnistallerManager.swift */; };
 		A7E7F73E21A6B0CE0021ED5E /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7E7F73D21A6B0CE0021ED5E /* AppDelegate.swift */; };
@@ -35,6 +34,7 @@
 		A7E7F75E21A6B4CC0021ED5E /* StringLocalize.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7E7F75D21A6B4CC0021ED5E /* StringLocalize.swift */; };
 		A7E7F76021A6B6C70021ED5E /* NotificationExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7E7F75F21A6B6C70021ED5E /* NotificationExtensions.swift */; };
 		A7EDE3B621AE99B400D912FC /* WelcomeVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7EDE3B521AE99B400D912FC /* WelcomeVC.swift */; };
+		A7FCA6A3223BBC5800A71971 /* bin.tar.gz in Resources */ = {isa = PBXBuildFile; fileRef = A7FCA6A2223BBC5800A71971 /* bin.tar.gz */; };
 		DA4E417DD788A5149CA75505 /* Pods_Keychain_Uninstaller.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A1FECE3906833024E5D5394D /* Pods_Keychain_Uninstaller.framework */; };
 /* End PBXBuildFile section */
 
@@ -51,7 +51,6 @@
 		A799116521C41AD500CB13B7 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		A799116721C41AD500CB13B7 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		A799116821C41AD500CB13B7 /* Keychain_Uninstaller.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Keychain_Uninstaller.entitlements; sourceTree = "<group>"; };
-		A7ADD449223A97CF00D10C9C /* bin.tar.gz */ = {isa = PBXFileReference; lastKnownFileType = archive.gzip; path = bin.tar.gz; sourceTree = "<group>"; };
 		A7DF22B521CA7BA3008F2364 /* UnistallerManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = UnistallerManager.swift; path = Common/UnistallerManager.swift; sourceTree = SOURCE_ROOT; };
 		A7E7F73A21A6B0CD0021ED5E /* KeyChain Installer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "KeyChain Installer.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		A7E7F73D21A6B0CE0021ED5E /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -70,6 +69,7 @@
 		A7E7F75D21A6B4CC0021ED5E /* StringLocalize.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StringLocalize.swift; sourceTree = "<group>"; };
 		A7E7F75F21A6B6C70021ED5E /* NotificationExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationExtensions.swift; sourceTree = "<group>"; };
 		A7EDE3B521AE99B400D912FC /* WelcomeVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WelcomeVC.swift; sourceTree = "<group>"; };
+		A7FCA6A2223BBC5800A71971 /* bin.tar.gz */ = {isa = PBXFileReference; lastKnownFileType = archive.gzip; path = bin.tar.gz; sourceTree = "<group>"; };
 		B54DFD96CC353D5979D05C6B /* Pods-Keychain Uninstaller.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Keychain Uninstaller.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Keychain Uninstaller/Pods-Keychain Uninstaller.debug.xcconfig"; sourceTree = "<group>"; };
 		D45CE400EF06130F590AA706 /* Pods_Keychain_Installer.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Keychain_Installer.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -167,8 +167,8 @@
 				A7E7F74121A6B0D10021ED5E /* Assets.xcassets */,
 				A7E7F74321A6B0D10021ED5E /* Main.storyboard */,
 				A7E7F74621A6B0D10021ED5E /* Info.plist */,
-				A7ADD449223A97CF00D10C9C /* bin.tar.gz */,
 				A7E7F74721A6B0D10021ED5E /* Keychain_Installer.entitlements */,
+				A7FCA6A2223BBC5800A71971 /* bin.tar.gz */,
 			);
 			path = "KeyChain Installer";
 			sourceTree = "<group>";
@@ -265,7 +265,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A7ADD44A223A97CF00D10C9C /* bin.tar.gz in Resources */,
+				A7FCA6A3223BBC5800A71971 /* bin.tar.gz in Resources */,
 				A7E7F74221A6B0D10021ED5E /* Assets.xcassets in Resources */,
 				A7E7F74521A6B0D10021ED5E /* Main.storyboard in Resources */,
 			);
@@ -299,11 +299,13 @@
 			);
 			inputPaths = (
 				"${SRCROOT}/Pods/Target Support Files/Pods-Keychain Uninstaller/Pods-Keychain Uninstaller-frameworks.sh",
-				"${BUILT_PRODUCTS_DIR}/AHLaunchCtl-macOS10.14/AHLaunchCtl.framework",
+				"${BUILT_PRODUCTS_DIR}/AHLaunchCtl/AHLaunchCtl.framework",
+				"${BUILT_PRODUCTS_DIR}/Starscream/Starscream.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/AHLaunchCtl.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Starscream.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -335,11 +337,13 @@
 			);
 			inputPaths = (
 				"${SRCROOT}/Pods/Target Support Files/Pods-Keychain Installer/Pods-Keychain Installer-frameworks.sh",
-				"${BUILT_PRODUCTS_DIR}/AHLaunchCtl-macOS10.10/AHLaunchCtl.framework",
+				"${BUILT_PRODUCTS_DIR}/AHLaunchCtl/AHLaunchCtl.framework",
+				"${BUILT_PRODUCTS_DIR}/Starscream/Starscream.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/AHLaunchCtl.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Starscream.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;

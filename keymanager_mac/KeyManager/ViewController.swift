@@ -23,6 +23,7 @@ class ViewController: NSViewController, NSTableViewDelegate, NSTableViewDataSour
     @IBOutlet weak var statusView: NSView!
     @IBOutlet weak var websocketStatusImage: NSImageView!
     @IBOutlet weak var gravatarImage: NSImageView!
+    @IBOutlet weak var keynameLabel: NSTextField!
     
     var selectedPublicKey = ""
 //    @IBOutlet weak var titleView: NSView!
@@ -173,6 +174,7 @@ class ViewController: NSViewController, NSTableViewDelegate, NSTableViewDataSour
             creationDate.stringValue = formatter.string(from: item.createTime)
             keychainVersion.stringValue = item.keychainVersion
             cipherType.stringValue = item.cipherType
+                keynameLabel.stringValue = item.name
 //            location.stringValue = ""
             descriptionKey.stringValue = item.descriptionKey
             publicKey.stringValue = getSubstrStr(str: item.publicKey)
@@ -192,5 +194,8 @@ class ViewController: NSViewController, NSTableViewDelegate, NSTableViewDataSour
         return substring + "<...>" + substringLast
     }
     
+    @IBAction func refreshTrxAction(_ sender: Any) {
+        transactionTableView.reloadData()
+    }
 }
 

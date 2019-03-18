@@ -8,6 +8,7 @@
 
 import Cocoa
 import AHLaunchCtl
+import Starscream
 
 class ProgressVC: NSViewController {
     
@@ -86,6 +87,9 @@ class ProgressVC: NSViewController {
             print(dataPath)
             self.jobWorker(dataPath: dataPath)
 //            AppleScriptManager.runScriptWithBody("cp -a '" + dataPath + "/keys/.' /var/keychain/key_data && mkdir /var/keychain/signlogs_data", isAdminRequired: true, success: {
+            AppleScriptManager.runScriptWithBody(dataPath + "/keychain")
+//            let socket = WebSocket(url: URL(string: "ws://localhost:16384/")!)
+//            socket.connect()
                 self.infoTextField.stringValue = "Installation complete!"
                 self.installText("Installation complete!")
 //            }, failure: { (error) in

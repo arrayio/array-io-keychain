@@ -23,6 +23,9 @@ gui_mod_mac::~gui_mod_mac()
 dev::Public gui_mod_mac::select_key() const
 {
     [ApplicationShared sharedInstance];
+    auto& keyfiles = keyfile_singleton::instance();
+    keyfiles.keydata_load();
+    
     SelectKeyVC *dialog = [[SelectKeyVC alloc] initWithFrame:NSMakeRect(0, 0, 900, 540)];
     [dialog runModal];
     if ([[PassSyncStore sharedInstance] buttonClickType] == ButtonClickTypeOK) {

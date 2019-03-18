@@ -164,7 +164,7 @@ public:
   boost::signals2::signal<dev::Public(void)> select_key;
   boost::signals2::signal<bool(void)> entropy;
 
-  dev::Secret get_private_key(const dev::Public& public_key, int unlock_time, create_secmod_cmd_f&& f, std::string& cmd);
+  std::pair<dev::Secret, dev::Secret> get_private_key(const dev::Public& public_key, int unlock_time, create_secmod_cmd_f&& f, std::string& cmd);
   void lock_all_priv_keys();
 protected:
   keychain_base();
@@ -418,7 +418,7 @@ struct keychain_command<command_te::sign_trx> : keychain_command_base
     {
       return fc_light::json::to_string(
         create_secmod_signhex_cmd(raw, params.blockchain_type, evaluate_from(), params.unlock_time, keyname, no_password));
-    }, secmod_signhex_cmd);
+    }, secmod_signhex_cmd).first;
 
     auto reply = [&keyfiles, &params, &id, &secmod_signhex_cmd](auto& message, const dev::bytes& transaction){
         keyfiles.add_log_record(params.public_key,
@@ -639,7 +639,7 @@ struct keychain_command<command_te::sign_hash> : keychain_command_base
     {
       return fc_light::json::to_string(
         create_secmod_signhash_cmd(params.hash, evaluate_from(), keyname, no_password));
-    }, secmod_signhash_cmd);
+    }, secmod_signhash_cmd).first;
 
     //NOTE: using vector instead array because move semantic is implemented in the vector
     std::vector<unsigned char> hash(params.hash.length());
@@ -913,7 +913,7 @@ struct keychain_command<command_te::unlock>: keychain_command_base
     {
       return fc_light::json::to_string(
         create_secmod_unlock_cmd(keyname, params.unlock_time, no_password));
-    }, secmod_unlock_cmd);
+    }, secmod_unlock_cmd).first;
 
     json_response response(true, id);
     return fc_light::json::to_string(fc_light::variant(response));

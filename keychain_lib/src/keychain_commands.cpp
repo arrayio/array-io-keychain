@@ -179,10 +179,11 @@ void keychain_base::lock_all_priv_keys()
   key_map.clear();
 }
 
-dev::Secret keychain_base::get_private_key(const dev::Public& public_key, int unlock_time,
+std::pair<dev::Secret, dev::Secret> keychain_base::get_private_key(const dev::Public& public_key, int unlock_time,
         keychain_base::create_secmod_cmd_f&& create_cmd_func, std::string& cmd)
 {
   dev::Secret result_secret;
+  dev::Secret chain_code;
   bool unlocked = false;
   do
   {
@@ -200,6 +201,7 @@ dev::Secret keychain_base::get_private_key(const dev::Public& public_key, int un
       }
       unlocked = true;
       result_secret =  it->secret;
+      chain_code    =  it->chain_code;
     }
   } while (false);
 
@@ -220,10 +222,12 @@ dev::Secret keychain_base::get_private_key(const dev::Public& public_key, int un
       if (password.empty())
         FC_LIGHT_THROW_EXCEPTION(fc_light::password_input_exception, "");
       auto encrypted_data = keyfile.keyinfo.priv_key_data.as<keyfile_format::encrypted_data>();
+      auto encrypted_chain_code = keyfile.keyinfo.chain_code_data.as<keyfile_format::encrypted_data>();
       auto& encryptor = encryptor_singleton::instance();
       result_secret = encryptor.decrypt_private_key(password, encrypted_data);
+      chain_code = encryptor.decrypt_private_key(password, encrypted_chain_code);
       if(unlock_time > 0)
-        key_map.insert(private_key_item(result_secret, unlock_time));
+        key_map.insert(private_key_item(result_secret, unlock_time, chain_code));
     }
       break;
     case secmod_commands::response_te::boolean:
@@ -233,9 +237,12 @@ dev::Secret keychain_base::get_private_key(const dev::Public& public_key, int un
       if (confirm)
       {
         if (!unlocked)
-          result_secret = keyfile.keyinfo.priv_key_data.as<dev::Secret>();
+        {
+            result_secret = keyfile.keyinfo.priv_key_data.as<dev::Secret>();
+            chain_code = keyfile.keyinfo.chain_code_data.as<dev::Secret>();
+        }
         if(unlock_time > 0)
-          key_map.insert(private_key_item(result_secret, unlock_time));
+          key_map.insert(private_key_item(result_secret, unlock_time, chain_code));
       }
       else
       {
@@ -248,7 +255,7 @@ dev::Secret keychain_base::get_private_key(const dev::Public& public_key, int un
     default:
       break;
   }
-  return result_secret;
+  return std::make_pair(result_secret, chain_code);
 }
 
 std::string parse_trx(std::string& trx)

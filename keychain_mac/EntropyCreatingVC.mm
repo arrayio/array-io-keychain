@@ -10,6 +10,7 @@
 #import "HexToRgbColor.h"
 #import "SYFlatButton.h"
 #include <keychain_lib/keychain.hpp>
+#include <keychain_lib/keydata_singleton.hpp>
 #include "PassSyncStore.h"
 #import "VerticallyCenteredTextFieldCell.h"
 #import "NSWindowController+extension.h"
@@ -155,10 +156,14 @@
         
         dev::bytes value = {0, 35, 35 ,38};
         
-        auto& keyfiles = keychain_app::keyfile_singleton::instance();
-        auto seed = keyfiles.seed_phrase(value);
+        auto& key_data = keychain_app::keydata_singleton::instance();
+        dev::bytes user_entropy;
+        auto mnemonics = key_data.seed(user_entropy);
         
-        __block NSTextField *label2 = [NSTextField labelWithString:[NSString stringWithUTF8String:seed.c_str()]];
+//        auto& keyfiles = keychain_app::keyfile_singleton::instance();
+//        auto seed = keyfiles.seed_phrase(value);
+        
+        __block NSTextField *label2 = [NSTextField labelWithString:[NSString stringWithUTF8String:mnemonics.c_str()]];
 //        label2.appearance = [NSAppearance appearanceNamed:NSAppearanceNameAqua];
         label2.textColor = [NSColor redColor];
         label2.font = [NSFont systemFontOfSize:27];

@@ -17,6 +17,8 @@
 #include <boost/program_options.hpp>
 #include <keychain_lib/keychain_logger.hpp>
 
+#include <keychain_lib/keydata_singleton.hpp>
+
 //#include <boost/program_options/options_description.hpp>
 //#include <boost/program_options/option.hpp>
 
@@ -34,7 +36,6 @@
 #endif
 
 using namespace keychain_app;
-
 
 cmd_parser::cmd_parser()
 {
@@ -118,18 +119,13 @@ int cmd_parser::run(int argc, const char* const argv[])
   auto it = keyfiles.begin();
   if ( it==keyfiles.end() )
   {
-    auto res = keychain_ref.entropy();
-    /*std::string keyname = "master_key";
-    std::string pass = "blank";
-    keyfiles.create(std::bind(create_new_keyfile,
-            keyname, keyname, true, keyfile_format::cipher_etype::aes256,
-            keyfile_format::curve_etype::secp256k1,
-            [&pass](const std::string& keyname)->byte_seq_t{
-      byte_seq_t res;
-      std::copy(pass.begin(), pass.end(), std::back_inserter(res));
-      return res;
-      })
-      );*/
+      auto res = keychain_ref.entropy();
+/*      auto& key_data = keydata_singleton::instance();
+      dev::bytes ue;
+      auto mnemonics = std::move(key_data.seed(ue));
+      std::string pass("blank");
+      key_data.create_masterkey(mnemonics,pass);
+      key_data.create_privatekey();*/
   }
 
   keychain_invoke_f f = std::bind(&keychain_base::operator(), &keychain_ref, std::placeholders::_1);

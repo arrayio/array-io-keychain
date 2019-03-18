@@ -251,6 +251,20 @@ dev::Secret keychain_base::get_private_key(const dev::Public& public_key, int un
   return result_secret;
 }
 
+std::string parse_trx(std::string& trx)
+{
+    namespace sm_cmd = keychain_app::secmod_commands;
+    std::vector<unsigned char> raw(trx.length());
+    auto res = keychain_app::from_hex(trx, raw.data(), raw.size());
+    raw.resize(res);
+
+    auto cmd = create_secmod_signhex_cmd(raw, blockchain_te::ethereum, "", 0, "", false);
+    auto params = cmd.as<secmod_commands::secmod_command>().params;
+    auto sing_trx_params = params.as<sm_cmd::secmod_event<secmod_commands::events_te::sign_trx>::params_t>();
+    auto trx_view = sing_trx_params.trx_view;
+    return fc_light::json::to_pretty_string(trx_view);
+}
+
 }
 
 using namespace keychain_app;

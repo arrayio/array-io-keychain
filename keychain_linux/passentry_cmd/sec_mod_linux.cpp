@@ -36,15 +36,19 @@ std::string sec_mod_linux::exec_cmd(const std::string& json_cmd) const
         case secmod_commands::events_te::sign_trx: {
             auto cmd = parser.params<secmod_commands::events_te::sign_trx>();
             no_pass = cmd.no_password;
+            break;
         }
         case secmod_commands::events_te::sign_hash: {
             auto cmd = parser.params<secmod_commands::events_te::sign_hash>();
             no_pass = cmd.no_password;
+            break;
         }
         case secmod_commands::events_te::unlock: {
             auto cmd = parser.params<secmod_commands::events_te::unlock>();
             no_pass = cmd.no_password;
-        }    }
+            break;
+        }
+    }
     if (no_pass)
     {
         response.etype = sm_cmd::response_te::boolean;

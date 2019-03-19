@@ -179,11 +179,11 @@ void keychain_base::lock_all_priv_keys()
   key_map.clear();
 }
 
-std::pair<dev::Secret, dev::Secret> keychain_base::get_private_key(const dev::Public& public_key, int unlock_time,
+std::pair<dev::Secret, dev::bytes> keychain_base::get_private_key(const dev::Public& public_key, int unlock_time,
         keychain_base::create_secmod_cmd_f&& create_cmd_func, std::string& cmd)
 {
   dev::Secret result_secret;
-  dev::Secret chain_code;
+  dev::bytes chain_code;
   bool unlocked = false;
   do
   {
@@ -225,7 +225,11 @@ std::pair<dev::Secret, dev::Secret> keychain_base::get_private_key(const dev::Pu
       auto encrypted_chain_code = keyfile.keyinfo.chain_code_data.as<keyfile_format::encrypted_data>();
       auto& encryptor = encryptor_singleton::instance();
       result_secret = encryptor.decrypt_private_key(password, encrypted_data);
-      chain_code = encryptor.decrypt_private_key(password, encrypted_chain_code);
+      if (encrypted_chain_code.enc_data != "")
+      {
+        auto secret = encryptor.decrypt_private_key(password, encrypted_chain_code);
+        chain_code.assign(secret.data(), secret.data()+32);
+      }
       if(unlock_time > 0)
         key_map.insert(private_key_item(result_secret, unlock_time, chain_code));
     }
@@ -239,7 +243,7 @@ std::pair<dev::Secret, dev::Secret> keychain_base::get_private_key(const dev::Pu
         if (!unlocked)
         {
             result_secret = keyfile.keyinfo.priv_key_data.as<dev::Secret>();
-            chain_code = keyfile.keyinfo.chain_code_data.as<dev::Secret>();
+            chain_code = keyfile.keyinfo.chain_code_data.as<dev::bytes>();
         }
         if(unlock_time > 0)
           key_map.insert(private_key_item(result_secret, unlock_time, chain_code));

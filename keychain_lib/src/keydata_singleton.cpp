@@ -90,7 +90,7 @@ void keydata_singleton::create_masterkey(std::string& mnemonics, std::string& pa
 {
     std::vector<char> key = std::move(pbkdf2(mnemonics));
     dev::Secret master_key(dev::FixedHash<32>((byte * const)key.data(),    dev::FixedHash<32>::ConstructFromPointerType::ConstructFromPointer));
-    dev::Secret chain_code(dev::FixedHash<32>((byte * const)key.data()+32, dev::FixedHash<32>::ConstructFromPointerType::ConstructFromPointer));
+    dev::bytes chain_code(key.begin()+32, key.end() );
 
     auto & keyfiles = keyfile_singleton::instance();
     keyfiles.create(std::bind(create_new_keyfile,
@@ -100,14 +100,32 @@ void keydata_singleton::create_masterkey(std::string& mnemonics, std::string& pa
                                   byte_seq_t res;
                                   std::copy(pass.begin(), pass.end(), std::back_inserter(res));
                                   return res;
-                              })
+                              },
+                              master_key,
+                              chain_code)
     );
+
+    bytes_t priv_key(master_key.data(), master_key.data()+32);
+    bytes_t ch_code(chain_code.data(), chain_code.data()+32);
+    Coin::HDKeychain hd(priv_key, ch_code);
+    auto child = hd.getChild(0x80000000|1);
+
+    keyfiles.create(std::bind(create_new_keyfile,
+                              "privat_key", "master_key", false, keyfile_format::cipher_etype::aes256,
+                              keyfile_format::curve_etype::secp256k1,
+                              [&pass](const std::string& keyname)->byte_seq_t{
+                                  byte_seq_t res;
+                                  std::copy(pass.begin(), pass.end(), std::back_inserter(res));
+                                  return res;
+                              },
+                              dev::Secret(child.privkey()),
+                              dev::bytes())
+                    );
 }
 
 
 void keydata_singleton::create_privatekey()
 {
-//    Coin::HDkeychain hd(bytes_t(master_key.begin(), master_key.end()), bytes_t(chain_code.begin(), chain_code.end()));
 /*
     std::string keyname = "";
     std::string pass = "blank";

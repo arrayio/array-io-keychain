@@ -164,7 +164,7 @@ public:
   boost::signals2::signal<dev::Public(void)> select_key;
   boost::signals2::signal<bool(void)> entropy;
 
-  std::pair<dev::Secret, dev::Secret> get_private_key(const dev::Public& public_key, int unlock_time, create_secmod_cmd_f&& f, std::string& cmd);
+  std::pair<dev::Secret, dev::bytes> get_private_key(const dev::Public& public_key, int unlock_time, create_secmod_cmd_f&& f, std::string& cmd);
   void lock_all_priv_keys();
 protected:
   keychain_base();

@@ -353,6 +353,7 @@ bytes_t CoinCrypto::secp256k1_sigToLowS(const bytes_t& signature)
 
 
 
+/*
 // Signing function
 bytes_t CoinCrypto::secp256k1_sign(const secp256k1_key& key, const bytes_t& data)
 {
@@ -363,7 +364,9 @@ bytes_t CoinCrypto::secp256k1_sign(const secp256k1_key& key, const bytes_t& data
     }
     return secp256k1_sigToLowS(bytes_t(signature, signature + nSize));
 }
+*/
 
+/*
 // Verification function
 bool CoinCrypto::secp256k1_verify(const secp256k1_key& key, const bytes_t& data, const bytes_t& signature, int flags)
 {
@@ -376,6 +379,7 @@ bool CoinCrypto::secp256k1_verify(const secp256k1_key& key, const bytes_t& data,
     if (rval == -1) throw std::runtime_error("secp256k1_verify(): ECDSA_verify error.");
     return (rval == 1);
 }
+*/
 
 bytes_t CoinCrypto::secp256k1_rfc6979_k(const secp256k1_key& key, const bytes_t& data)
 {
@@ -393,9 +397,10 @@ bytes_t CoinCrypto::secp256k1_rfc6979_k(const secp256k1_key& key, const bytes_t&
 }
 
 
+/*
 bytes_t CoinCrypto::secp256k1_sign_rfc6979(const secp256k1_key& key, const bytes_t& data)
 {
-    bytes_t k = secp256k1_rfc6979_k(key, data); 
+    bytes_t k = secp256k1_rfc6979_k(key, data);
     BIGNUM* bn = BN_bin2bn(&k[0], k.size(), NULL);
     if (!bn) throw std::runtime_error("secp256k1_sign_rfc6979() : BN_bin2bn failed for k.");
 
@@ -457,4 +462,5 @@ bytes_t CoinCrypto::secp256k1_sign_rfc6979(const secp256k1_key& key, const bytes
 
     return secp256k1_sigToLowS(bytes_t(signature, signature + nSize));
 }
-    
+*/
+

@@ -52,10 +52,10 @@ After you have installed [KeyChain](https://github.com/arrayio/array-io-keychain
 
 NB: If you launch KeyChain for the first time, you need to get a public key with the "select_key" command. You can save the public key to local storage. Then you will not need to use "select_key" command again.
 
-1. Install `web3override` library from this [source](https://www.npmjs.com/package/web3override).
+1. Install `keychain.js` library from this [source](https://www.npmjs.com/package/keychain.js).
 
 ```
-npm i --save web3override
+npm i --save keychain.js
 ```
 
 Require it 

@@ -406,8 +406,8 @@ keyfile_format::keyfile_t keychain_app::create_new_keyfile(
   keyfile_format::cipher_etype cipher,
   keyfile_format::curve_etype curve,
   get_password_create_f&& get_passwd,
-  dev::Secret& priv_key,
-  dev::bytes chain_code
+  dev::bytes& priv_key,
+  dev::bytes& chain_code
   )
 {
   keyfile_format::keyfile_t keyfile;
@@ -415,11 +415,13 @@ keyfile_format::keyfile_t keychain_app::create_new_keyfile(
   dev::Public pb_hex;
   dev::h256 hash;
   std::string filename;
+  auto priv_key_ = dev::Secret(dev::bytesConstRef(priv_key.data(), priv_key.size()));
+
   switch (curve)
   {
     case keyfile_format::curve_etype::secp256k1:
     {
-      auto keys = dev::KeyPair(priv_key);
+      auto keys = dev::KeyPair(priv_key_);
       pb_hex = keys.pub();
       hash = dev::ethash::sha3_ethash(keys.pub());
       filename    = hash.hex().substr(0,16);
@@ -440,7 +442,7 @@ keyfile_format::keyfile_t keychain_app::create_new_keyfile(
     if (passwd.empty())
       FC_LIGHT_THROW_EXCEPTION(fc_light::password_input_exception, "");
     auto& encryptor = encryptor_singleton::instance();
-    auto enc_priv_key_data = encryptor.encrypt_private_key(cipher, passwd, priv_key);
+    auto enc_priv_key_data = encryptor.encrypt_private_key(cipher, passwd, priv_key_);
     keyfile.keyinfo.priv_key_data = fc_light::variant(enc_priv_key_data);
 
     keyfile_format::encrypted_data enc_chain_code_data;

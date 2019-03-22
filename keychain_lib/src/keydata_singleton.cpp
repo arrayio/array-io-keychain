@@ -8,7 +8,10 @@
 #include <wordlist.hpp>
 #include <fc_light/crypto/sha256.hpp>
 #include <keydata_singleton.hpp>
-#include <keyfile_singleton.hpp>
+#include <regex>
+#include <key_encryptor.hpp>
+#include "eth_types_conversion.hpp"
+#include "sql_singleton.hpp"
 
 using namespace keychain_app;
 
@@ -88,9 +91,12 @@ std::vector<char> keydata_singleton::pbkdf2(std::string const& _pass)
 
 void keydata_singleton::create_masterkey(std::string& mnemonics, std::string& pass)
 {
-    std::vector<char> key = std::move(pbkdf2(mnemonics));
-    dev::Secret master_key(dev::FixedHash<32>((byte * const)key.data(),    dev::FixedHash<32>::ConstructFromPointerType::ConstructFromPointer));
-    dev::bytes chain_code(key.begin()+32, key.end() );
+    std::regex re(" +");
+    std::string mnemonics_ = std::regex_replace(mnemonics, re, "");
+
+    std::vector<char> key = std::move(pbkdf2(mnemonics_));
+    dev::bytes priv_key(key.begin(), key.begin()+32);
+    dev::bytes chain_code(key.begin()+32, key.end());
 
     auto & keyfiles = keyfile_singleton::instance();
     keyfiles.create(std::bind(create_new_keyfile,
@@ -101,42 +107,88 @@ void keydata_singleton::create_masterkey(std::string& mnemonics, std::string& pa
                                   std::copy(pass.begin(), pass.end(), std::back_inserter(res));
                                   return res;
                               },
-                              master_key,
-                              chain_code)
-    );
-
-    bytes_t priv_key(master_key.data(), master_key.data()+32);
-    bytes_t ch_code(chain_code.data(), chain_code.data()+32);
-    Coin::HDKeychain hd(priv_key, ch_code);
-    auto child = hd.getChild(0x80000000|1);
-
-    keyfiles.create(std::bind(create_new_keyfile,
-                              "privat_key", "master_key", false, keyfile_format::cipher_etype::aes256,
-                              keyfile_format::curve_etype::secp256k1,
-                              [&pass](const std::string& keyname)->byte_seq_t{
-                                  byte_seq_t res;
-                                  std::copy(pass.begin(), pass.end(), std::back_inserter(res));
-                                  return res;
-                              },
-                              dev::Secret(child.privkey()),
-                              dev::bytes())
-                    );
+                              priv_key,
+                              chain_code
+                              ));
 }
 
-
-void keydata_singleton::create_privatekey()
+void keydata_singleton::derive_key(std::string& pass, fc_light::variant& params)
 {
-/*
-    std::string keyname = "";
-    std::string pass = "blank";
-    keyfiles.create(std::bind(create_new_keyfile,
-                              keyname, keyname, true, keyfile_format::cipher_etype::aes256,
-                              keyfile_format::curve_etype::secp256k1,
-                              [&pass](const std::string& keyname)->byte_seq_t{
-                                  byte_seq_t res;
-                                  std::copy(pass.begin(), pass.end(), std::back_inserter(res));
-                                  return res;
-                              })
-);
-*/
+    using namespace keydata;
+
+    auto password = [&pass](const std::string& keyname)->byte_seq_t{
+        byte_seq_t res;
+        std::copy(pass.begin(), pass.end(), std::back_inserter(res));
+        return res;
+    };
+
+    auto params_ = params.as<create_t>();
+    auto path = params_.path.as<path_levels_t>();
+
+    FC_LIGHT_ASSERT(path.root == "m");
+
+    auto & keyfiles = keyfile_singleton::instance();
+    auto secret = get_master_key(password);
+    dev::bytes priv_key(secret.first.data(), secret.first.data()+32);
+
+    Coin::HDKeychain hd(priv_key, secret.second);
+    boost::hana::for_each(  level_static_list,
+                     [&](auto a)
+                     {
+                         using a_type = decltype(a);
+                         constexpr auto level = static_cast<levels_te>(a_type::value);
+                         int value = 0;
+                         switch (level)
+                         {
+                             case(levels_te::purpose):      {value=path.purpose; break;}
+                             case(levels_te::coin_type):    {value=path.coin_type; break;}
+                             case(levels_te::change):       {value=path.change; break;}
+                             case(levels_te::address_index):{value=path.address_index;}
+                         }
+                         hd = hd.getChild(0x80000000|value);
+                         if (level == levels_te::address_index) {
+                             keyfiles.create(std::bind(create_new_keyfile,
+                                                       params_.keyname, params_.description, params_.encrypted,
+                                                       params_.cipher, params_.curve,
+                                                       password,
+                                                       hd.privkey(),
+                                                       hd.chain_code()
+                             ));
+                             auto& sql = sql_singleton::instance();
+                             sql.insert_path(params_.keyname, path);
+                         }
+                     });
 }
+
+
+std::pair<dev::Secret, dev::bytes> keydata_singleton::get_master_key( get_password_create_f&& get_passwd)
+{
+    dev::Secret priv_key;
+    dev::bytes chain_code;
+    std::string keyname= "master_key";
+
+    auto& keyfiles = keyfile_singleton::instance();
+    auto& keyfile = keyfiles[keyname];
+
+    if (keyfile.keyinfo.encrypted)
+    {
+        auto passwd = get_passwd(keyname);//operation canceled exception need to be thrown into get_password functor
+        auto encrypted_data = keyfile.keyinfo.priv_key_data.as<keyfile_format::encrypted_data>();
+        auto encrypted_chain_code = keyfile.keyinfo.chain_code_data.as<keyfile_format::encrypted_data>();
+        auto& encryptor = encryptor_singleton::instance();
+        priv_key = encryptor.decrypt_private_key(passwd, encrypted_data);
+        if (encrypted_chain_code.enc_data != "")
+        {
+            auto secret = encryptor.decrypt_private_key(passwd, encrypted_chain_code);
+            chain_code.assign(secret.data(), secret.data()+32);
+        }
+    }
+    else
+    {
+        priv_key = keyfile.keyinfo.priv_key_data.as<dev::Secret>();
+        chain_code = keyfile.keyinfo.chain_code_data.as<dev::bytes>();
+    }
+    return std::make_pair(priv_key, chain_code);
+}
+
+

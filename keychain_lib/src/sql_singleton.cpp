@@ -24,22 +24,36 @@ sql_singleton::sql_singleton()
             FC_LIGHT_THROW_EXCEPTION(fc_light::internal_error_exception,
                                      "Can not create sql directory, path = ${directory}", ("directory", sql_dir.string()));
     }
-    sqlite3_stmt * stmt;
-        const char * statement =   "create table if not exists signlog (public_key text not null, "
-                                   "trx text not null, sign_time text not null, blockchain_type text not null)";
     sql_dir += "/data.db";
     if  (sqlite3_open_v2(sql_dir.c_str(), &db, SQLITE_OPEN_FULLMUTEX|SQLITE_OPEN_READWRITE|SQLITE_OPEN_CREATE, 0)
             != SQLITE_OK )
         FC_LIGHT_THROW_EXCEPTION(fc_light::internal_error_exception, "sqlite3_open");
 
-    auto res = sqlite3_prepare_v2(db, statement, -1, &stmt, NULL);
-    if  ( res != SQLITE_OK )
+    const char * signlog =  "create table if not exists signlog (public_key text not null, "
+                                "trx text not null, sign_time text not null, blockchain_type text not null)";
+    const char * keypath =  "create table if not exists keypath (keyname text not null, root text not null, "
+                            "purpose integer not null, coin_type integer not null, "
+                            "account integer not null, change integer not null, "
+                            "address_index integer not null,"
+                            "UNIQUE(keyname, root, purpose, coin_type, account, change, address_index))";
+    execute(signlog);
+    execute(keypath);
+};
+
+
+void sql_singleton::execute(const char * statement)
+{
+    sqlite3_stmt * stmt;
+
+    if  ( sqlite3_prepare_v2(db, statement, -1, &stmt, NULL) != SQLITE_OK )
         FC_LIGHT_THROW_EXCEPTION(fc_light::internal_error_exception, "sqlite3_prepare_v2");
 
-    sqlite3_step(stmt);
+    if (sqlite3_step(stmt) != SQLITE_DONE)
+        FC_LIGHT_THROW_EXCEPTION(fc_light::internal_error_exception, "sqlite3_step");
+
     if  (sqlite3_finalize(stmt) != SQLITE_OK )
         FC_LIGHT_THROW_EXCEPTION(fc_light::internal_error_exception, "sqlite3_finalize");
-};
+}
 
 sql_singleton::~sql_singleton()
 {
@@ -58,8 +72,7 @@ const std::vector<keychain_app::keyfile_format::log_record> sql_singleton::selec
     std::vector<keychain_app::keyfile_format::log_record> records;
     const char * statement =   "select trx, sign_time, blockchain_type from signlog where public_key=?";
 
-    auto res = sqlite3_prepare_v2(db, statement, -1, &stmt, NULL);
-    if  ( res != SQLITE_OK )
+    if  ( sqlite3_prepare_v2(db, statement, -1, &stmt, NULL) != SQLITE_OK )
         FC_LIGHT_THROW_EXCEPTION(fc_light::internal_error_exception, "sqlite3_prepare_v2");
 
     std::string hex = pkey.hex();
@@ -67,8 +80,7 @@ const std::vector<keychain_app::keyfile_format::log_record> sql_singleton::selec
 
     while(true)
     {
-        res = sqlite3_step(stmt);
-        if (res == SQLITE_ROW)
+        if (sqlite3_step(stmt) == SQLITE_ROW)
         {
             std::string trx((const char *) sqlite3_column_text(stmt, 0));
             std::string time((const char *) sqlite3_column_text(stmt, 1));
@@ -103,17 +115,23 @@ int sql_singleton::insert_log(const dev::Public& pkey, const keychain_app::keyfi
                             " values('"+pkey.hex()+"', '"+
                             keychain_app::to_hex(record.transaction.data(), record.transaction.size())+"', '"+
                             time+"', '"+type+ "')";
+    execute(statement.c_str());
 
-    auto res = sqlite3_prepare_v2(db, statement.c_str(), -1, &stmt, NULL);
-    if  ( res != SQLITE_OK )
-        FC_LIGHT_THROW_EXCEPTION(fc_light::internal_error_exception, "sqlite3_prepare_v2");
+    return 0;
+}
 
-    res = sqlite3_step(stmt);
-    if (res != SQLITE_DONE)
-        FC_LIGHT_THROW_EXCEPTION(fc_light::internal_error_exception, "sqlite3_step");
 
-    if  (sqlite3_finalize(stmt) != SQLITE_OK )
-        FC_LIGHT_THROW_EXCEPTION(fc_light::internal_error_exception, "sqlite3_finalize");
-
+int sql_singleton::insert_path(const std::string& keyname, const keychain_app::keydata::path_levels_t&  path )
+{
+    sqlite3_stmt * stmt;
+    std::string statement = "insert or replace into keypath (keyname, root, purpose, coin_type, account, change, address_index )"
+                            " values('"+keyname+"', '"+
+                            path.root + "', '" +
+                            std::to_string(path.purpose)+"', '" +
+                            std::to_string(path.coin_type)+"', '"+
+                            std::to_string(path.account )+ "', '" +
+                            std::to_string(path.change)+"', '" +
+                            std::to_string(path.address_index)+ "')";
+    execute(statement.c_str());
     return 0;
 }

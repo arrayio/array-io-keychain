@@ -200,8 +200,8 @@ keyfile_format::keyfile_t create_new_keyfile(
   keyfile_format::cipher_etype cipher,
   keyfile_format::curve_etype curve,
   get_password_create_f&& get_passwd,
-  dev::Secret&,
-  dev::bytes
+  dev::bytes&,
+  dev::bytes&
 );
 
 using get_password_f = std::function<std::pair<byte_seq_t, bool>(const std::string&, bool no_password)>; //NOTE: may incapsulate call to sec module or just return password string

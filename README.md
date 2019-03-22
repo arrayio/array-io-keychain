@@ -69,7 +69,6 @@ const Module = require('web3override');
   const keyInstance = await Module.Keychain.create();
   const data = await keyInstance.selectKey();
   const key = data.result;
-  await keyInstance.term();
   web3.eth.accounts.signTransaction = Module.web3Override(web3).signTransaction;
 
   // now we use web3 with keychain

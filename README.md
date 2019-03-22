@@ -13,7 +13,7 @@
 
 <p align="center"><strong><a href="https://github.com/arrayio/array-io-keychain/releases/download/0.24/KeyChain.Installer.zip">» Download for macOS «</a> </strong></p>
 
-<p align="center"><strong><a href="https://avvrik.github.io/KeyChain/">» Documentation «</a></strong></p>
+<p align="center"><strong><a href="https://arrayio.github.io/KeyChain/">» Documentation «</a></strong></p>
 
 <p align="center"><strong><a href="https://keychain.array.io/">» Website «</a></strong></p>
 

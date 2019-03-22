@@ -60,16 +60,16 @@ npm i --save web3override
 
 Require it 
 ```javascript
-const Module = require('web3override'); 
+const { Keychain, web3Override } = require('keychain.js'); 
 ```
 
 2. Now use an overridden web3 function 
 
 ```javascript
-  const keyInstance = await Module.Keychain.create();
-  const data = await keyInstance.selectKey();
+  const keychain = await Keychain.create();
+  const data = await keychain.selectKey();
   const key = data.result;
-  web3.eth.accounts.signTransaction = Module.web3Override(web3).signTransaction;
+  web3.eth.accounts.signTransaction = web3Override(web3).signTransaction;
 
   // now we use web3 with keychain
   await web3.eth.accounts.signTransaction(transactionParams, key);

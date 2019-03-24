@@ -55,7 +55,7 @@ NB: If you launch KeyChain for the first time, you need to get a public key with
 1. Install `keychain.js` library from this [source](https://www.npmjs.com/package/keychain.js).
 
 ```
-npm i --save keychain.js
+npm i keychain.js
 ```
 
 Require it 

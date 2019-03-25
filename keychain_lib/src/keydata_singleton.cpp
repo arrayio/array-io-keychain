@@ -214,21 +214,27 @@ std::pair<dev::Secret, dev::bytes> keydata_singleton::get_master_key( get_passwo
     return std::make_pair(priv_key, chain_code);
 }
 
-void keydata_singleton::restore(std::ifstream& file, std::string& mnemonics, std::string& masterkey_pass)
+void keydata_singleton::restore(const char * filename, std::string& mnemonics, std::string& masterkey_pass)
 {
     using namespace keydata;
+
+    auto file = std::ifstream(filename);
+    if(!file.is_open())
+        FC_LIGHT_THROW_EXCEPTION(fc_light::internal_error_exception,
+                                 "Cannot open restore file ${filename}", ("filename", filename));
+
     auto& log = logger_singleton::instance();
-    BOOST_LOG_SEV(log.lg, info) << "restore keydata from backup";
+    BOOST_LOG_SEV(log.lg, info) << "restore keydata";
 
     const int buf_size = 1000;
     char buf[buf_size];
     std::vector<std::string> json;
     while(true) {
+        file.getline(buf, buf_size);
         if (file.eof() || !file.good())
             break;
-        file.getline(buf, buf_size);
         json.push_back(std::string(buf, buf_size));
-        BOOST_LOG_SEV(log.lg, info) << "bakup path: " << json.back();
+        BOOST_LOG_SEV(log.lg, info) << "restore path: " << json.back();
     }
 
     create_masterkey(mnemonics, masterkey_pass);
@@ -256,3 +262,12 @@ void keydata_singleton::restore(std::ifstream& file, std::string& mnemonics, std
     }
 }
 
+
+void keydata_singleton::backup(const char * filename)
+{
+    auto file = std::ofstream(filename);
+    if (!file.is_open())
+        FC_LIGHT_THROW_EXCEPTION(fc_light::internal_error_exception, "Cannot open backup file (${filename})", ("filename", filename));
+//    file << fc_light::json::to_pretty_string(keyfile_data) << std::endl;
+
+}

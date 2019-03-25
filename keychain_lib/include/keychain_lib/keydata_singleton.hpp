@@ -25,7 +25,8 @@ struct keydata_singleton
     std::string seed(dev::bytes& );
     void create_masterkey(std::string&, std::string&);
     void derive_key(std::string&, std::string& );
-    void restore(std::ifstream&, std::string&, std::string& );
+    void restore(const char *, std::string&, std::string& );
+    void backup(const char * );
 
 private:
     std::pair<dev::Secret, dev::bytes> get_master_key(get_password_create_f&& );

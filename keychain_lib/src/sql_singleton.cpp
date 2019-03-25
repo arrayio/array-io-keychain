@@ -90,8 +90,13 @@ const std::vector<keychain_app::keyfile_format::log_record> sql_singleton::selec
             rec.transaction.resize(trx.length());
             auto len = keychain_app::from_hex(trx, rec.transaction.data(), rec.transaction.size() );
             rec.transaction.resize(len);
-            rec.sign_time = fc_light::variant(time).as<fc_light::time_point>();
-            rec.blockchain_type = fc_light::variant(chain).as<keychain_app::blockchain_te>();
+            try {
+                rec.sign_time = fc_light::variant(time).as<fc_light::time_point>();
+                rec.blockchain_type = fc_light::variant(chain).as<keychain_app::blockchain_te>();
+            }
+            catch (const std::exception &e) {throw std::runtime_error(e.what());}
+            catch (const fc_light::exception &e) {throw std::runtime_error(e.what());}
+
             records.push_back(rec);
         }
         else break;
@@ -121,11 +126,18 @@ int sql_singleton::insert_log(const dev::Public& pkey, const keychain_app::keyfi
 }
 
 
-int sql_singleton::insert_path(const std::string& keyname, const keychain_app::keydata::path_levels_t&  path )
+int sql_singleton::insert_path(const keychain_app::keydata::backup_t&  backup )
 {
     sqlite3_stmt * stmt;
+    keychain_app::keydata::path_levels_t path;
+    try {
+        path = backup.params.as<keychain_app::keydata::path_levels_t>();
+    }
+    catch (const std::exception &e) {throw std::runtime_error(e.what());}
+    catch (const fc_light::exception &e) {throw std::runtime_error(e.what());}
+
     std::string statement = "insert or replace into keypath (keyname, root, purpose, coin_type, account, change, address_index )"
-                            " values('"+keyname+"', '"+
+                            " values('"+backup.keyname+"', '"+
                             path.root + "', '" +
                             std::to_string(path.purpose)+"', '" +
                             std::to_string(path.coin_type)+"', '"+

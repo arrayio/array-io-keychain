@@ -12,6 +12,7 @@
 #include <key_encryptor.hpp>
 #include "eth_types_conversion.hpp"
 #include "sql_singleton.hpp"
+#include "keychain_logger.hpp"
 
 using namespace keychain_app;
 
@@ -110,20 +111,31 @@ void keydata_singleton::create_masterkey(std::string& mnemonics, std::string& pa
                               priv_key,
                               chain_code
                               ));
+    auto& log = logger_singleton::instance();
+    BOOST_LOG_SEV(log.lg, info) << "create master key";
 }
 
-void keydata_singleton::derive_key(std::string& pass, fc_light::variant& params)
+void keydata_singleton::derive_key(std::string& masterkey_pass, std::string& json)
 {
     using namespace keydata;
+    auto& log = logger_singleton::instance();
 
-    auto password = [&pass](const std::string& keyname)->byte_seq_t{
+    auto password = [&masterkey_pass](const std::string& keyname)->byte_seq_t{
         byte_seq_t res;
-        std::copy(pass.begin(), pass.end(), std::back_inserter(res));
+        std::copy(masterkey_pass.begin(), masterkey_pass.end(), std::back_inserter(res));
         return res;
     };
 
-    auto params_ = params.as<create_t>();
-    auto path = params_.path.as<path_levels_t>();
+    auto params = fc_light::json::from_string(json);
+    create_t params_;
+    path_levels_t path;
+    try {
+        params_ = params.as<create_t>();
+        path = params_.path.as<path_levels_t>();
+    }
+    catch (const std::exception &e) {throw std::runtime_error(e.what());}
+    catch (const fc_light::exception &e) {throw std::runtime_error(e.what());}
+
 
     FC_LIGHT_ASSERT(path.root == "m");
 
@@ -155,7 +167,10 @@ void keydata_singleton::derive_key(std::string& pass, fc_light::variant& params)
                                                        hd.chain_code()
                              ));
                              auto& sql = sql_singleton::instance();
-                             sql.insert_path(params_.keyname, path);
+                             backup_t backup(params_.keyname, params_.path);
+                             sql.insert_path(backup);
+//                             auto json = fc_light::json::to_string(backup);
+//                             BOOST_LOG_SEV(log.lg, info) << "derive key: " << json;
                          }
                      });
 }
@@ -173,22 +188,71 @@ std::pair<dev::Secret, dev::bytes> keydata_singleton::get_master_key( get_passwo
     if (keyfile.keyinfo.encrypted)
     {
         auto passwd = get_passwd(keyname);//operation canceled exception need to be thrown into get_password functor
-        auto encrypted_data = keyfile.keyinfo.priv_key_data.as<keyfile_format::encrypted_data>();
-        auto encrypted_chain_code = keyfile.keyinfo.chain_code_data.as<keyfile_format::encrypted_data>();
-        auto& encryptor = encryptor_singleton::instance();
-        priv_key = encryptor.decrypt_private_key(passwd, encrypted_data);
-        if (encrypted_chain_code.enc_data != "")
-        {
-            auto secret = encryptor.decrypt_private_key(passwd, encrypted_chain_code);
-            chain_code.assign(secret.data(), secret.data()+32);
+        try {
+            auto encrypted_data = keyfile.keyinfo.priv_key_data.as<keyfile_format::encrypted_data>();
+            auto encrypted_chain_code = keyfile.keyinfo.chain_code_data.as<keyfile_format::encrypted_data>();
+            auto& encryptor = encryptor_singleton::instance();
+            priv_key = encryptor.decrypt_private_key(passwd, encrypted_data);
+            if (encrypted_chain_code.enc_data != "")
+            {
+                auto secret = encryptor.decrypt_private_key(passwd, encrypted_chain_code);
+                chain_code.assign(secret.data(), secret.data()+32);
+            }
         }
+        catch (const std::exception &e) {throw std::runtime_error(e.what());}
+        catch (const fc_light::exception &e) {throw std::runtime_error(e.what());}
     }
     else
     {
-        priv_key = keyfile.keyinfo.priv_key_data.as<dev::Secret>();
-        chain_code = keyfile.keyinfo.chain_code_data.as<dev::bytes>();
+        try {
+            priv_key = keyfile.keyinfo.priv_key_data.as<dev::Secret>();
+            chain_code = keyfile.keyinfo.chain_code_data.as<dev::bytes>();
+        }
+        catch (const std::exception &e) {throw std::runtime_error(e.what());}
+        catch (const fc_light::exception &e) {throw std::runtime_error(e.what());}
     }
     return std::make_pair(priv_key, chain_code);
 }
 
+void keydata_singleton::restore(std::ifstream& file, std::string& mnemonics, std::string& masterkey_pass)
+{
+    using namespace keydata;
+    auto& log = logger_singleton::instance();
+    BOOST_LOG_SEV(log.lg, info) << "restore keydata from backup";
+
+    const int buf_size = 1000;
+    char buf[buf_size];
+    std::vector<std::string> json;
+    while(true) {
+        if (file.eof() || !file.good())
+            break;
+        file.getline(buf, buf_size);
+        json.push_back(std::string(buf, buf_size));
+        BOOST_LOG_SEV(log.lg, info) << "bakup path: " << json.back();
+    }
+
+    create_masterkey(mnemonics, masterkey_pass);
+
+    for (auto &a: json)
+    {
+        auto variant  = fc_light::json::from_string(a);
+        backup_t backup;
+        try {
+            backup = variant.as<backup_t>();
+        }
+        catch (const std::exception &e) {throw std::runtime_error(e.what());}
+        catch (const fc_light::exception &e) {throw std::runtime_error(e.what());}
+
+        create_t params;
+        params.keyname = backup.keyname;
+        params.description = "";
+        params.encrypted = false;
+        params.cipher = keyfile_format::cipher_etype::aes256;
+        params.curve = keyfile_format::curve_etype::secp256k1;
+        params.path = backup.params;
+
+        auto params_json = fc_light::json::to_string(params);
+        derive_key(masterkey_pass, params_json);
+    }
+}
 

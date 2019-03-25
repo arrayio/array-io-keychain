@@ -141,11 +141,12 @@ int cmd_parser::run(int argc, const char* const argv[])
       cmd.curve = keyfile_format::curve_etype::secp256k1;
       cmd.password = pass;
       cmd.path = fc_light::variant(path);
-      auto variant = fc_light::variant(cmd);
+//      auto variant = fc_light::variant(cmd);
+      auto json = fc_light::json::to_string(fc_light::variant(cmd));
 
       auto mnemonics = std::move(key_data.seed(ue));
       key_data.create_masterkey(mnemonics,pass);
-      key_data.derive_key(pass, variant);
+      key_data.derive_key(pass, json);
   }
 
   keychain_invoke_f f = std::bind(&keychain_base::operator(), &keychain_ref, std::placeholders::_1);

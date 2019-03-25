@@ -24,10 +24,11 @@ struct keydata_singleton
     static keydata_singleton& instance();
     std::string seed(dev::bytes& );
     void create_masterkey(std::string&, std::string&);
-    std::pair<dev::Secret, dev::bytes> get_master_key(get_password_create_f&& );
-    void derive_key(std::string&, fc_light::variant& );
+    void derive_key(std::string&, std::string& );
+    void restore(std::ifstream&, std::string&, std::string& );
 
 private:
+    std::pair<dev::Secret, dev::bytes> get_master_key(get_password_create_f&& );
     keydata_singleton(){}
     ~keydata_singleton(){}
     std::vector<char> pbkdf2(std::string const& _pass);
@@ -38,12 +39,23 @@ namespace keydata
 
 struct path_levels_t
 {
+    path_levels_t(){}
+
     std::string root;
     int purpose;
     int coin_type;
     int account;
     int change;
     int address_index;
+};
+
+
+struct backup_t
+{
+    backup_t(){}
+    backup_t(std::string &keyname_, fc_light::variant params_): keyname(keyname_), params(params_){}
+    std::string keyname;
+    fc_light::variant params;
 };
 
 enum struct levels_te
@@ -60,6 +72,7 @@ enum struct levels_te
 
 struct create_t
 {
+    create_t(){};
     std::string keyname;
     std::string description;
     bool encrypted;
@@ -92,6 +105,7 @@ FC_LIGHT_REFLECT_ENUM(
 
 FC_LIGHT_REFLECT(keychain_app::keydata::path_levels_t, (root)(purpose)(coin_type)(account)(change)(address_index))
 FC_LIGHT_REFLECT(keychain_app::keydata::create_t,  (keyname)(description)(encrypted)(cipher)(curve)(password)(path))
+FC_LIGHT_REFLECT(keychain_app::keydata::backup_t,  (keyname)(params))
 
 
 #endif //KEYCHAINAPP_KEYDATA_SINGLETON_HPP

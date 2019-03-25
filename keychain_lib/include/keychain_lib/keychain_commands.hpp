@@ -164,7 +164,7 @@ public:
   boost::signals2::signal<dev::Public(void)> select_key;
   boost::signals2::signal<bool(void)> entropy;
 
-  std::pair<dev::Secret, dev::bytes> get_private_key(const dev::Public& public_key, int unlock_time, create_secmod_cmd_f&& f, std::string& cmd);
+  dev::Secret get_private_key(const dev::Public& public_key, int unlock_time, create_secmod_cmd_f&& f, std::string& cmd);
   void lock_all_priv_keys();
 protected:
   keychain_base();
@@ -188,8 +188,8 @@ fc_light::variant open_keyfile(const char_t* filename)
   while(true)
   {
     fin.getline(pbuf, std::distance(it, read_buf.end()));
-    if (fin.eof() || !fin.good())
-        break;
+        if (fin.eof() || !fin.good())
+            break;
     pbuf += fin.gcount() - 1;
     it += fin.gcount() - 1;
     read_count += fin.gcount() - 1;
@@ -418,7 +418,7 @@ struct keychain_command<command_te::sign_trx> : keychain_command_base
     {
       return fc_light::json::to_string(
         create_secmod_signhex_cmd(raw, params.blockchain_type, evaluate_from(), params.unlock_time, keyname, no_password));
-    }, secmod_signhex_cmd).first;
+    }, secmod_signhex_cmd);
 
     auto reply = [&keyfiles, &params, &id, &secmod_signhex_cmd](auto& message, const dev::bytes& transaction){
         keyfiles.add_log_record(params.public_key,
@@ -639,7 +639,7 @@ struct keychain_command<command_te::sign_hash> : keychain_command_base
     {
       return fc_light::json::to_string(
         create_secmod_signhash_cmd(params.hash, evaluate_from(), keyname, no_password));
-    }, secmod_signhash_cmd).first;
+    }, secmod_signhash_cmd);
 
     //NOTE: using vector instead array because move semantic is implemented in the vector
     std::vector<unsigned char> hash(params.hash.length());
@@ -913,7 +913,7 @@ struct keychain_command<command_te::unlock>: keychain_command_base
     {
       return fc_light::json::to_string(
         create_secmod_unlock_cmd(keyname, params.unlock_time, no_password));
-    }, secmod_unlock_cmd).first;
+    }, secmod_unlock_cmd);
 
     json_response response(true, id);
     return fc_light::json::to_string(fc_light::variant(response));

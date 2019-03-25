@@ -179,7 +179,7 @@ void keychain_base::lock_all_priv_keys()
   key_map.clear();
 }
 
-std::pair<dev::Secret, dev::bytes> keychain_base::get_private_key(const dev::Public& public_key, int unlock_time,
+dev::Secret keychain_base::get_private_key(const dev::Public& public_key, int unlock_time,
         keychain_base::create_secmod_cmd_f&& create_cmd_func, std::string& cmd)
 {
   dev::Secret result_secret;
@@ -259,7 +259,7 @@ std::pair<dev::Secret, dev::bytes> keychain_base::get_private_key(const dev::Pub
     default:
       break;
   }
-  return std::make_pair(result_secret, chain_code);
+  return result_secret;
 }
 
 std::string parse_trx(std::string& trx)

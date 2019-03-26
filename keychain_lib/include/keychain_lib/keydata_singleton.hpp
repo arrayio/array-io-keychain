@@ -54,9 +54,9 @@ struct path_levels_t
 struct backup_t
 {
     backup_t(){}
-    backup_t(std::string &keyname_, fc_light::variant params_): keyname(keyname_), params(params_){}
+    backup_t(std::string &keyname_, fc_light::variant path_): keyname(keyname_), path(path_){}
     std::string keyname;
-    fc_light::variant params;
+    fc_light::variant path;
 };
 
 enum struct levels_te
@@ -106,7 +106,7 @@ FC_LIGHT_REFLECT_ENUM(
 
 FC_LIGHT_REFLECT(keychain_app::keydata::path_levels_t, (root)(purpose)(coin_type)(account)(change)(address_index))
 FC_LIGHT_REFLECT(keychain_app::keydata::create_t,  (keyname)(description)(encrypted)(cipher)(curve)(password)(path))
-FC_LIGHT_REFLECT(keychain_app::keydata::backup_t,  (keyname)(params))
+FC_LIGHT_REFLECT(keychain_app::keydata::backup_t,  (keyname)(path))
 
 
 #endif //KEYCHAINAPP_KEYDATA_SINGLETON_HPP

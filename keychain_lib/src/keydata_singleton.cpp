@@ -169,8 +169,8 @@ void keydata_singleton::derive_key(std::string& masterkey_pass, std::string& jso
                              auto& sql = sql_singleton::instance();
                              backup_t backup(params_.keyname, params_.path);
                              sql.insert_path(backup);
-//                             auto json = fc_light::json::to_string(backup);
-//                             BOOST_LOG_SEV(log.lg, info) << "derive key: " << json;
+                             auto json = fc_light::json::to_string(backup);
+                             BOOST_LOG_SEV(log.lg, info) << "derive key: " << json;
                          }
                      });
 }
@@ -255,7 +255,7 @@ void keydata_singleton::restore(const char * filename, std::string& mnemonics, s
         params.encrypted = false;
         params.cipher = keyfile_format::cipher_etype::aes256;
         params.curve = keyfile_format::curve_etype::secp256k1;
-        params.path = backup.params;
+        params.path = backup.path;
 
         auto params_json = fc_light::json::to_string(params);
         derive_key(masterkey_pass, params_json);
@@ -268,6 +268,14 @@ void keydata_singleton::backup(const char * filename)
     auto file = std::ofstream(filename);
     if (!file.is_open())
         FC_LIGHT_THROW_EXCEPTION(fc_light::internal_error_exception, "Cannot open backup file (${filename})", ("filename", filename));
-//    file << fc_light::json::to_pretty_string(keyfile_data) << std::endl;
+
+    auto& log = logger_singleton::instance();
+    BOOST_LOG_SEV(log.lg, info) << "backup keydata";
+
+    auto& sql = sql_singleton::instance();
+    auto backup_list = std::move(sql.select_path());
+    for (auto& a : backup_list)
+        file << fc_light::json::to_pretty_string(a) << std::endl;
+
 
 }

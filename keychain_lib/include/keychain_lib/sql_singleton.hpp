@@ -9,12 +9,16 @@
 #include "keyfile_singleton.hpp"
 #include "keydata_singleton.hpp"
 
+namespace keychain_app
+{
+
 struct sql_singleton
 {
     static sql_singleton& instance();
-    const std::vector<keychain_app::keyfile_format::log_record> select_log(const dev::Public& );
-    int insert_log(const dev::Public&, const keychain_app::keyfile_format::log_record& );
-    int insert_path(const keychain_app::keydata::backup_t&);
+    const std::vector<keyfile_format::log_record> select_log(const dev::Public& );
+    int insert_log(const dev::Public&, const keyfile_format::log_record& );
+    int insert_path(const keydata::backup_t&);
+    const std::vector<keydata::backup_t> select_path();
 
 private:
     sql_singleton();
@@ -22,5 +26,7 @@ private:
     void execute(const char *);
     sqlite3 * db;
 };
+
+}
 
 #endif //KEYCHAINAPP_SQL_SINGLETON_HPP

@@ -338,6 +338,9 @@
   }
 
   function buttonLeave(button) {
+    if ("#" + button.dataset.hash === window.location.hash) {
+      return;
+    }
     button.classList.remove('btn_transform');
     const oppositeElement = getOppositeElementId(button);
     oppositeElement.classList.remove('btn_transform');
@@ -356,8 +359,11 @@
         document.getElementsByClassName('page-active')[0].classList.remove('page-active');
       }
       el.classList.add('page-active');
-      // const button = document.querySelector('.btn-command[data-hash=' + hash + ']');
-      // buttonEnter(document.getElementById(hash));
+      document.querySelectorAll('.btn_transform').forEach(function(button) {
+        button.classList.remove('btn_transform')
+      });
+      const button = document.querySelector('[data-hash=' + hash + '][data-left="1"]');
+      buttonEnter(button);
 
       const request = fieldsToJson();
       document.getElementById('request').value = JSON.stringify(request, undefined, 2);

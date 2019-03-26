@@ -18,9 +18,10 @@ namespace keychain_app {
 
 struct private_key_item
 {
-  private_key_item(const dev::Secret& secret, int unlock_duration);
+  private_key_item(const dev::Secret& secret, int unlock_duration, const dev::bytes& chain_code);
   dev::Public public_key() const;
   dev::Secret secret;
+  dev::bytes chain_code;
   std::chrono::system_clock::time_point unlock_time_point;
   int unlock_duration;
 };

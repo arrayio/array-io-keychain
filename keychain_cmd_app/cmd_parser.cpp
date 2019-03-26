@@ -115,39 +115,12 @@ int cmd_parser::run(int argc, const char* const argv[])
   sec_mod->connect(keychain_ref);
   gui_mod->connect(keychain_ref);
 
+
   auto& keyfiles = keyfile_singleton::instance();
   auto it = keyfiles.begin();
   if ( it==keyfiles.end() )
-  {
-      auto res = keychain_ref.entropy();
-      auto& key_data = keydata_singleton::instance();
-      dev::bytes ue;
+    auto res = keychain_ref.entropy();
 
-      std::string pass("blank");
-//      std::string level("{\"root\": \"m\",\"purpose\": 0, \"coin_type\": 0, \"account\": 0, \"change\": 0, \"address_index\": 0}");
-      keydata::path_levels_t path;
-      path.root="m";
-      path.purpose=0;
-      path.coin_type=0;
-      path.account=0;
-      path.change=0;
-      path.address_index=0;
-
-      keydata::create_t cmd;
-      cmd.keyname = "superkey";
-      cmd.description = "";
-      cmd.encrypted = false;
-      cmd.cipher = keyfile_format::cipher_etype::aes256;
-      cmd.curve = keyfile_format::curve_etype::secp256k1;
-      cmd.password = pass;
-      cmd.path = fc_light::variant(path);
-//      auto variant = fc_light::variant(cmd);
-      auto json = fc_light::json::to_string(fc_light::variant(cmd));
-
-      auto mnemonics = std::move(key_data.seed(ue));
-      key_data.create_masterkey(mnemonics,pass);
-      key_data.derive_key(pass, json);
-  }
 
   keychain_invoke_f f = std::bind(&keychain_base::operator(), &keychain_ref, std::placeholders::_1);
   pipeline_parser pipe_line_parser_(std::move(f), fileno(stdin), fileno(stdout));

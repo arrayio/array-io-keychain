@@ -16,13 +16,7 @@
 
 using namespace keychain_app;
 
-keydata_singleton& keydata_singleton::instance()
-{
-    static keydata_singleton instance;
-    return instance;
-}
-
-std::string keydata_singleton::seed(dev::bytes& user_entropy)
+std::string keydata::seed(dev::bytes& user_entropy)
 {
     CryptoPP::SecByteBlock ent(16);
     CryptoPP::OS_GenerateRandomBlock(false, ent, ent.size());
@@ -68,7 +62,7 @@ std::string keydata_singleton::seed(dev::bytes& user_entropy)
 }
 
 
-std::vector<char> keydata_singleton::pbkdf2(std::string const& _pass)
+std::vector<char> keydata::pbkdf2(std::string const& _pass)
 {
     unsigned _iterations = 2048;
     unsigned _dkLen = 64;
@@ -90,7 +84,7 @@ std::vector<char> keydata_singleton::pbkdf2(std::string const& _pass)
 }
 
 
-void keydata_singleton::create_masterkey(std::string& mnemonics, std::string& pass)
+void keydata::derive_masterkey(std::string& mnemonics, std::string& pass)
 {
     std::regex re(" +");
     std::string mnemonics_ = std::regex_replace(mnemonics, re, "");
@@ -115,7 +109,7 @@ void keydata_singleton::create_masterkey(std::string& mnemonics, std::string& pa
     BOOST_LOG_SEV(log.lg, info) << "create master key";
 }
 
-void keydata_singleton::derive_key(std::string& masterkey_pass, std::string& json)
+void keydata::derive_key(std::string& masterkey_pass, std::string& json)
 {
     using namespace keydata;
     auto& log = logger_singleton::instance();
@@ -176,7 +170,7 @@ void keydata_singleton::derive_key(std::string& masterkey_pass, std::string& jso
 }
 
 
-std::pair<dev::Secret, dev::bytes> keydata_singleton::get_master_key( get_password_create_f&& get_passwd)
+std::pair<dev::Secret, dev::bytes> keydata::get_master_key( get_password_create_f&& get_passwd)
 {
     dev::Secret priv_key;
     dev::bytes chain_code;
@@ -214,7 +208,8 @@ std::pair<dev::Secret, dev::bytes> keydata_singleton::get_master_key( get_passwo
     return std::make_pair(priv_key, chain_code);
 }
 
-void keydata_singleton::restore(const char * filename, std::string& mnemonics, std::string& masterkey_pass)
+
+void keydata::restore(const char * filename, std::string& mnemonics, std::string& masterkey_pass)
 {
     using namespace keydata;
 
@@ -237,7 +232,7 @@ void keydata_singleton::restore(const char * filename, std::string& mnemonics, s
         BOOST_LOG_SEV(log.lg, info) << "restore path: " << json.back();
     }
 
-    create_masterkey(mnemonics, masterkey_pass);
+    derive_masterkey(mnemonics, masterkey_pass);
 
     for (auto &a: json)
     {
@@ -263,7 +258,7 @@ void keydata_singleton::restore(const char * filename, std::string& mnemonics, s
 }
 
 
-void keydata_singleton::backup(const char * filename)
+void keydata::backup(const char * filename)
 {
     auto file = std::ofstream(filename);
     if (!file.is_open())
@@ -275,7 +270,5 @@ void keydata_singleton::backup(const char * filename)
     auto& sql = sql_singleton::instance();
     auto backup_list = std::move(sql.select_path());
     for (auto& a : backup_list)
-        file << fc_light::json::to_pretty_string(a) << std::endl;
-
-
+        file << fc_light::json::to_string(a) << std::endl;
 }

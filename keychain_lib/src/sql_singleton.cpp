@@ -115,7 +115,7 @@ const std::vector<keydata::backup_t> sql_singleton::select_path()
 {
     sqlite3_stmt * stmt;
     std::vector<keydata::backup_t> records;
-    const char * statement =   "select keyname, root, purpose, coin_type, account, change, address_index";
+    const char * statement =   "select keyname, root, purpose, coin_type, account, change, address_index from keypath";
 
     if  ( sqlite3_prepare_v2(db, statement, -1, &stmt, NULL) != SQLITE_OK )
         FC_LIGHT_THROW_EXCEPTION(fc_light::internal_error_exception, "sqlite3_prepare_v2");

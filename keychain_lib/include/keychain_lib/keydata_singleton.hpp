@@ -16,27 +16,19 @@
 #include <boost/hana/size.hpp>
 #include "keyfile_singleton.hpp"
 
-
 namespace keychain_app {
-
-struct keydata_singleton
-{
-    static keydata_singleton& instance();
-    std::string seed(dev::bytes& );
-    void create_masterkey(std::string&, std::string&);
-    void derive_key(std::string&, std::string& );
-    void restore(const char *, std::string&, std::string& );
-    void backup(const char * );
-
-private:
-    std::pair<dev::Secret, dev::bytes> get_master_key(get_password_create_f&& );
-    keydata_singleton(){}
-    ~keydata_singleton(){}
-    std::vector<char> pbkdf2(std::string const& _pass);
-};
 
 namespace keydata
 {
+
+std::string seed(dev::bytes& );
+void derive_masterkey(std::string&, std::string&);
+void derive_key(std::string&, std::string& );
+void restore(const char *, std::string&, std::string& );
+void backup(const char * );
+std::pair<dev::Secret, dev::bytes> get_master_key(get_password_create_f&& );
+std::vector<char> pbkdf2(std::string const& _pass);
+
 
 struct path_levels_t
 {
@@ -49,7 +41,6 @@ struct path_levels_t
     int change;
     int address_index;
 };
-
 
 struct backup_t
 {
@@ -107,6 +98,5 @@ FC_LIGHT_REFLECT_ENUM(
 FC_LIGHT_REFLECT(keychain_app::keydata::path_levels_t, (root)(purpose)(coin_type)(account)(change)(address_index))
 FC_LIGHT_REFLECT(keychain_app::keydata::create_t,  (keyname)(description)(encrypted)(cipher)(curve)(password)(path))
 FC_LIGHT_REFLECT(keychain_app::keydata::backup_t,  (keyname)(path))
-
 
 #endif //KEYCHAINAPP_KEYDATA_SINGLETON_HPP

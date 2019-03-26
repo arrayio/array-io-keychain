@@ -228,7 +228,7 @@ void keydata::restore(const char * filename, std::string& mnemonics, std::string
         file.getline(buf, buf_size);
         if (file.eof() || !file.good())
             break;
-        json.push_back(std::string(buf, buf_size));
+        json.push_back(std::string(buf, file.gcount()-1));
         BOOST_LOG_SEV(log.lg, info) << "restore path: " << json.back();
     }
 

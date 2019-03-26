@@ -152,10 +152,12 @@ std::list<std::string> pass_entry_term::parse_device_file()
     const int buf_size = 1000;
     char buf[buf_size];
 
-    while(!f_dev.eof())
+    while(true)
     {
         f_dev.getline(buf, buf_size);
-        std::string line(buf);
+        if (f_dev.eof() || !f_dev.good())
+            break;
+        std::string line(buf, f_dev.gcount()-1);
         std::regex rx("H: Handlers=.*kbd.* event[0-9]+");
         std::regex_match(line.begin(), line.end(), rx);
         if (std::regex_search(line.begin(), line.end(), rx) )

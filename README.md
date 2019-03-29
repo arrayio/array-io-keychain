@@ -74,7 +74,11 @@ const transactionParams = {
 web3.eth.accounts.signTransaction = keychainWeb3.signTransaction.bind(web3);
 const keychain = new Keychain();
 keychain.selectKey()
-  .then(publicKey => web3.eth.accounts.signTransaction(transactionParams, publicKey));
+  .then(publicKey => web3.eth.accounts.signTransaction(transactionParams, publicKey))
+  .then(result => {
+    console.log('result.rawTransaction:', result.rawTransaction);
+    console.log('Send signed transaction with web3.eth.sendSignedTransaction(result.rawTransaction)')
+  });
 ```
 
 `signTransaction` with KeyChain in action

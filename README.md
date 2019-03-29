@@ -79,7 +79,7 @@ keychain.selectKey()
 
 `signTransaction` with KeyChain in action
 
-![keychain2](https://user-images.githubusercontent.com/34011337/52135027-f79f5200-2655-11e9-9718-6d47355fc0fb.gif)
+![signETH](https://user-images.githubusercontent.com/2520008/55244335-1125da00-5252-11e9-971e-c7edfb208c4c.gif)
 
 ## Companies using KeyChain
 

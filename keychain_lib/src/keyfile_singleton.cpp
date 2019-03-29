@@ -228,6 +228,12 @@ const keyfile_format::keyfile_t& keyfile_singleton::operator[](const keyfile_sin
   } while (true);
 }
 
+int keyfile_singleton::count(const keyfile_singleton::second_key_type& key)
+{
+    auto count = m_keydata_map.get<1>().count(key);
+    return count;
+}
+
 const keyfile_format::keyfile_t& keyfile_singleton::operator[](const keyfile_singleton::second_key_type& key)
 {
   bool stop = false;
@@ -270,6 +276,27 @@ bool keyfile_singleton::is_exist(const keyfile_singleton::prim_key_type& key) co
   auto it = m_keydata_map.find(key);
   return it != m_keydata_map.end();
 }
+
+
+bool keyfile_singleton::is_exist(const keyfile_singleton::second_key_type& key)
+{
+  bool stop = false;
+  do {
+    auto &second_index = m_keydata_map.get<1>();
+    auto it = second_index.find(key);
+    if (it == second_index.end())
+    {
+      if(stop)
+        return false;
+      keydata_load();
+      stop = true;
+    }
+    else
+      return true;
+  } while(true);
+
+}
+
 
 void keyfile_singleton::flush_keyfile(const keyfile_singleton::prim_key_type& key) const
 {

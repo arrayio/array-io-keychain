@@ -22,10 +22,10 @@ namespace keydata
 {
 
 std::string seed(dev::bytes& );
-void derive_masterkey(std::string&, std::string&);
-void derive_key(std::string&, std::string& );
-void restore(const char *, std::string&, std::string& );
-void backup(const char * );
+bool derive_masterkey(std::string&, std::string&);
+bool derive_key(std::string&, std::string& );
+int restore(const char *, std::string&, std::string& );
+int backup(const char * );
 std::pair<dev::Secret, dev::bytes> get_master_key(get_password_create_f&& );
 std::vector<char> pbkdf2(std::string const& _pass);
 

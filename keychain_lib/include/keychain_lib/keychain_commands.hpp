@@ -54,7 +54,7 @@
 
 #include "version_info.hpp"
 #include <arpa/inet.h>
-
+#include "keydata_singleton.hpp"
 
 #ifdef __linux__
 #  define KEY_DEFAULT_PATH  "/var/keychain"
@@ -241,7 +241,7 @@ enum struct command_te {
   version,
   sign_trx,
   sign_hash,
- //   create,
+    create,
     select_key,
   import_cmd,
   export_cmd,
@@ -252,6 +252,7 @@ enum struct command_te {
   list,
   public_key,
   set_unlock_time,
+  backup,
   last
 };
 
@@ -830,11 +831,41 @@ struct keychain_command<command_te::seed>: keychain_command_base
 {
     keychain_command(): keychain_command_base(command_te::seed){}
     virtual ~keychain_command(){}
-    struct params {std::string entropy;};
-    using  params_t = params;
     virtual std::string operator()(keychain_base* keychain, const fc_light::variant& params_variant, int id) const override
     {
         FC_LIGHT_THROW_EXCEPTION(fc_light::command_depreciated, "");
+
+/*
+        dev::bytes ue;
+        auto seed = keydata::seed(ue);
+        std::string filename ("/var/keychain/seed");
+        std::ofstream file(filename);
+        if (!file.is_open())
+            FC_LIGHT_THROW_EXCEPTION(fc_light::internal_error_exception, filename);
+        file << seed << std::endl;
+
+        std::string pass("blank");
+        auto res = keydata::derive_masterkey(seed, pass);
+        if (res)
+        {
+            keydata::create_t params;
+            try
+            {
+                params = params_variant.as<keydata::create_t>();
+            }
+            FC_LIGHT_CAPTURE_TYPECHANGE_AND_RETHROW (fc_light::invalid_arg_exception, error, "cannot parse command params")
+            auto json = fc_light::json::to_string(params);
+            keydata::derive_key(pass, json);
+            json_response response(seed.c_str(), 0);
+            return fc_light::json::to_string(response);
+        }
+        else
+        {
+            json_response response("error to derive master_key", 0);
+            return fc_light::json::to_string(response);
+        }
+*/
+
     }
 };
 
@@ -844,11 +875,76 @@ struct keychain_command<command_te::restore>: keychain_command_base
 {
     keychain_command(): keychain_command_base(command_te::restore){}
     virtual ~keychain_command(){}
-    struct params {std::string seed;};
+    struct params {std::string filename; std::string seed;};
     using  params_t = params;
     virtual std::string operator()(keychain_base* keychain, const fc_light::variant& params_variant, int id) const override
     {
         FC_LIGHT_THROW_EXCEPTION(fc_light::command_depreciated, "");
+/*
+        params_t params;
+        try
+        {
+            params = params_variant.as<params_t>();
+        }
+        FC_LIGHT_CAPTURE_TYPECHANGE_AND_RETHROW (fc_light::invalid_arg_exception, error, "cannot parse command params")
+        std::string pass("blank");
+        auto count = keydata::restore(params.filename.c_str(), params.seed, pass);
+
+        json_response response(std::to_string(count)+" keys are restored", 0);
+        return fc_light::json::to_string(response);
+*/
+    }
+};
+
+
+template<>
+struct keychain_command<command_te::backup>: keychain_command_base
+{
+    keychain_command(): keychain_command_base(command_te::backup){}
+    virtual ~keychain_command(){}
+    struct params {std::string filename;};
+    using  params_t = params;
+    virtual std::string operator()(keychain_base* keychain, const fc_light::variant& params_variant, int id) const override
+    {
+        FC_LIGHT_THROW_EXCEPTION(fc_light::command_depreciated, "");
+/*
+        params_t params;
+        try
+        {
+            params = params_variant.as<params_t>();
+        }
+        FC_LIGHT_CAPTURE_TYPECHANGE_AND_RETHROW (fc_light::invalid_arg_exception, error, "cannot parse command params")
+        auto count = keydata::backup(params.filename.c_str());
+
+        json_response response("backup "+std::to_string(count)+" keys", 0);
+        return fc_light::json::to_string(response);
+*/
+    }
+};
+
+
+template<>
+struct keychain_command<command_te::create>: keychain_command_base
+{
+    keychain_command(): keychain_command_base(command_te::create){}
+    virtual ~keychain_command(){}
+    virtual std::string operator()(keychain_base* keychain, const fc_light::variant& params_variant, int id) const override
+    {
+        FC_LIGHT_THROW_EXCEPTION(fc_light::command_depreciated, "");
+/*
+        keydata::create_t params;
+        try
+        {
+            params = params_variant.as<keydata::create_t>();
+        }
+        FC_LIGHT_CAPTURE_TYPECHANGE_AND_RETHROW (fc_light::invalid_arg_exception, error, "cannot parse command params")
+        std::string pass = "blank";
+        auto json = fc_light::json::to_string(params);
+        auto res = keydata::derive_key(pass, json);
+
+        json_response response(res?"done":"error", 0);
+        return fc_light::json::to_string(response);
+*/
     }
 };
 
@@ -939,7 +1035,7 @@ FC_LIGHT_REFLECT_ENUM(
   (version)
   (sign_trx)
   (sign_hash)
-  //        (create)
+//          (create)
   (select_key)
   (import_cmd)
   (export_cmd)
@@ -950,6 +1046,7 @@ FC_LIGHT_REFLECT_ENUM(
   (list)
   (public_key)
   (set_unlock_time)
+  (backup)
   (last)
 )
 
@@ -959,8 +1056,8 @@ FC_LIGHT_REFLECT(keychain_app::keychain_command<keychain_app::command_te::sign_h
 FC_LIGHT_REFLECT(keychain_app::keychain_command<keychain_app::command_te::public_key>::params_t, (keyname))
 FC_LIGHT_REFLECT(keychain_app::keychain_command<keychain_app::command_te::set_unlock_time>::params_t, (seconds))
 FC_LIGHT_REFLECT(keychain_app::keychain_command<keychain_app::command_te::unlock>::params_t, (public_key)(unlock_time))
-FC_LIGHT_REFLECT(keychain_app::keychain_command<keychain_app::command_te::seed>::params_t, (entropy))
-FC_LIGHT_REFLECT(keychain_app::keychain_command<keychain_app::command_te::restore>::params_t, (seed))
+FC_LIGHT_REFLECT(keychain_app::keychain_command<keychain_app::command_te::backup>::params_t, (filename))
+FC_LIGHT_REFLECT(keychain_app::keychain_command<keychain_app::command_te::restore>::params_t, (filename) (seed))
 FC_LIGHT_REFLECT(keychain_app::keychain_command_common, (command)(id)(params))
 FC_LIGHT_REFLECT(keychain_app::json_response, (id)(result))
 FC_LIGHT_REFLECT(keychain_app::json_error::error_t, (code)(name)(message)(trace))

@@ -206,7 +206,8 @@ const keyfile_format::keyfile_t& keyfile_singleton::operator[](size_t index)
       keydata_load();
       bool stop = true;
     }
-    return ra_ind[index];
+    else
+      return ra_ind[index];
   } while (true);
 }
 
@@ -222,7 +223,8 @@ const keyfile_format::keyfile_t& keyfile_singleton::operator[](const keyfile_sin
       keydata_load();
       stop = true;
     }
-    return *it;
+    else
+      return *it;
   } while (true);
 }
 
@@ -240,7 +242,8 @@ const keyfile_format::keyfile_t& keyfile_singleton::operator[](const keyfile_sin
       keydata_load();
       stop = true;
     }
-    return *it;
+    else
+      return *it;
   } while(true);
 }
 
@@ -402,21 +405,25 @@ keyfile_format::keyfile_t keychain_app::create_new_keyfile(
   bool encrypted,
   keyfile_format::cipher_etype cipher,
   keyfile_format::curve_etype curve,
-  get_password_create_f&& get_passwd)
+  get_password_create_f&& get_passwd,
+  dev::bytes& priv_key,
+  dev::bytes& chain_code
+  )
 {
   keyfile_format::keyfile_t keyfile;
-  dev::Secret priv_key;
+//  dev::Secret priv_key;
   dev::Public pb_hex;
   dev::h256 hash;
   std::string filename;
+  auto priv_key_ = dev::Secret(dev::bytesConstRef(priv_key.data(), priv_key.size()));
+
   switch (curve)
   {
     case keyfile_format::curve_etype::secp256k1:
     {
-      auto keys = dev::KeyPair::create();
+      auto keys = dev::KeyPair(priv_key_);
       pb_hex = keys.pub();
       hash = dev::ethash::sha3_ethash(keys.pub());
-      priv_key = keys.secret();
       filename    = hash.hex().substr(0,16);
       filename += ".json";
     }
@@ -435,12 +442,27 @@ keyfile_format::keyfile_t keychain_app::create_new_keyfile(
     if (passwd.empty())
       FC_LIGHT_THROW_EXCEPTION(fc_light::password_input_exception, "");
     auto& encryptor = encryptor_singleton::instance();
-    auto enc_data = encryptor.encrypt_private_key(cipher, passwd, priv_key);
-    keyfile.keyinfo.priv_key_data = fc_light::variant(enc_data);
+    auto enc_priv_key_data = encryptor.encrypt_private_key(cipher, passwd, priv_key_);
+    keyfile.keyinfo.priv_key_data = fc_light::variant(enc_priv_key_data);
+
+    keyfile_format::encrypted_data enc_chain_code_data;
+    if (chain_code.size())
+    {
+      dev::Secret chain_(dev::FixedHash<32>((byte * const)chain_code.data(), dev::FixedHash<32>::ConstructFromPointerType::ConstructFromPointer));
+      enc_chain_code_data = encryptor.encrypt_private_key(cipher, passwd, chain_);
+    }
+    else
+    {
+      enc_chain_code_data.cipher_type = keyfile_format::cipher_etype::unknown;
+      enc_chain_code_data.iv = "";
+      enc_chain_code_data.enc_data = "";
+    }
+    keyfile.keyinfo.chain_code_data = fc_light::variant(enc_chain_code_data);
     keyfile.keyinfo.encrypted = true;
   }
   else{
     keyfile.keyinfo.priv_key_data = fc_light::variant(priv_key);
+    keyfile.keyinfo.chain_code_data = fc_light::variant(chain_code);
     keyfile.keyinfo.encrypted = false;
   }
   

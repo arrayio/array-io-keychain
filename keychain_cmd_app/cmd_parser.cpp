@@ -115,18 +115,12 @@ int cmd_parser::run(int argc, const char* const argv[])
   sec_mod->connect(keychain_ref);
   gui_mod->connect(keychain_ref);
 
+
   auto& keyfiles = keyfile_singleton::instance();
   auto it = keyfiles.begin();
   if ( it==keyfiles.end() )
-  {
-      auto res = keychain_ref.entropy();
-/*      auto& key_data = keydata_singleton::instance();
-      dev::bytes ue;
-      auto mnemonics = std::move(key_data.seed(ue));
-      std::string pass("blank");
-      key_data.create_masterkey(mnemonics,pass);
-      key_data.create_privatekey();*/
-  }
+    auto res = keychain_ref.entropy();
+
 
   keychain_invoke_f f = std::bind(&keychain_base::operator(), &keychain_ref, std::placeholders::_1);
   pipeline_parser pipe_line_parser_(std::move(f), fileno(stdin), fileno(stdout));

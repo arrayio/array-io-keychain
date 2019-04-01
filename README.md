@@ -55,30 +55,26 @@ NB: If you launch KeyChain for the first time, you need to get a public key with
 1. Install `keychain.js` library from this [source](https://www.npmjs.com/package/keychain.js).
 
 ```
-npm i keychain.js
+npm install keychain.js
 ```
 
 2. Now use an overridden web3 function 
 
 ```javascript
-const { Keychain, keychainWeb3 } = require('keychain.js');
+const { Keychain, KeychainWeb3 } = require('keychain.js');
 const Web3 = require('web3');
-const API_KEY = 'https://ropsten.infura.io/v3/YOUR_ID';
-const web3 = new Web3(new Web3.providers.HttpProvider(API_KEY));
+const API_URL = 'YOUR_API_URL'; // https://ropsten.infura.io/v3/046804e3dd3240b09834531326f310cf
+const web3 = new Web3(API_URL);
 const transactionParams = {
   to: '0xE8899BA12578d60e4D0683a596EDaCbC85eC18CC',
   value: 100,
   gas: 21000
 };
-// now we are using web3 with keychain
-web3.eth.accounts.signTransaction = keychainWeb3.signTransaction.bind(web3);
 const keychain = new Keychain();
+const keychainWeb3 = new KeychainWeb3(keychain, web3);
 keychain.selectKey()
-  .then(publicKey => web3.eth.accounts.signTransaction(transactionParams, publicKey))
-  .then(result => {
-    console.log('result.rawTransaction:', result.rawTransaction);
-    console.log('Send signed transaction with web3.eth.sendSignedTransaction(result.rawTransaction)')
-  });
+  .then(publicKey => keychainWeb3.signTransaction(transactionParams, publicKey))
+  .then(result => web3.eth.sendSignedTransaction(result.rawTransaction));
 ```
 
 `signTransaction` with KeyChain in action

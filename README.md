@@ -64,7 +64,7 @@ npm install keychain.js
 const { Keychain, KeychainWeb3 } = require('keychain.js');
 const Web3 = require('web3');
 const web3 = new Web3('YOUR_API_URL'); // https://ropsten.infura.io/v3/046804e3dd3240b09834531326f310cf
-const transactionParams = {
+const tx = {
   to: '0xE8899BA12578d60e4D0683a596EDaCbC85eC18CC',
   value: 100,
   gas: 21000
@@ -72,7 +72,7 @@ const transactionParams = {
 const keychain = new Keychain();
 const keychainWeb3 = new KeychainWeb3(keychain, web3);
 keychain.selectKey()
-  .then(publicKey => keychainWeb3.signTransaction(transactionParams, publicKey))
+  .then(publicKey => keychainWeb3.signTransaction(tx, publicKey))
   .then(result => web3.eth.sendSignedTransaction(result.rawTransaction));
 ```
 

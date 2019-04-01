@@ -77,7 +77,8 @@
         </div>
       </div>
     </div>
-    <script src="https://cdn.jsdelivr.net/npm/keychain.js@0.0.5/dist/keychain.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/keychain.js@0.0.6/dist/keychain.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/keychain.js@0.0.6/dist/keychainWeb3.min.js"></script>
     <script src="https://cdn.jsdelivr.net/gh/ethereum/web3.js@1.0.0-beta.36/dist/web3.min.js" integrity="sha256-nWBTbvxhJgjslRyuAKJHK+XcZPlCnmIAAMixz6EefVk=" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/gh/ethereumjs/browser-builds/dist/ethereumjs-tx/ethereumjs-tx-1.3.3.min.js"></script>
 
@@ -86,7 +87,6 @@
 
       window.onload = function () {
         let web3;
-        const { Keychain, keychainWeb3 } = keychainjs;
         const keychain = new Keychain();
         keychain.ws.onclose = function() {
           document.body.style.backgroundColor = null;
@@ -102,7 +102,8 @@
         document.getElementById('btn_SIGN').addEventListener('click', function() {
           document.getElementById('etherscanLink').innerHTML = '';
           const endpoint = document.getElementById('input-endpoint').value;
-          web3 = new Web3(new Web3.providers.HttpProvider(endpoint));
+          web3 = new Web3(endpoint);
+          const keychainWeb3 = new KeychainWeb3(keychain, web3);
           const toAddress = document.getElementById('input-to-address').value;
           const tx = { to: toAddress, value: 100, gas: 21000 };
           log(`Transaction to sign: ${JSON.stringify(tx)}`);
@@ -110,7 +111,7 @@
           keychain.method({ command: 'select_key' }).then (publicKey => {
             log(`Selected key: ${publicKey}`);
             log(`Signing the transaction with KeyChain`);
-            return keychainWeb3.signTransaction.bind(web3)(tx, publicKey);
+            return keychainWeb3.signTransaction(tx, publicKey);
           }).then( result => {
             log(`Result: ${JSON.stringify(result)}`);
             const rawHex = result.rawTransaction;

@@ -188,8 +188,8 @@ fc_light::variant open_keyfile(const char_t* filename)
   while(true)
   {
     fin.getline(pbuf, std::distance(it, read_buf.end()));
-    if (fin.eof() || !fin.good())
-        break;
+        if (fin.eof() || !fin.good())
+            break;
     pbuf += fin.gcount() - 1;
     it += fin.gcount() - 1;
     read_count += fin.gcount() - 1;
@@ -834,15 +834,7 @@ struct keychain_command<command_te::seed>: keychain_command_base
     using  params_t = params;
     virtual std::string operator()(keychain_base* keychain, const fc_light::variant& params_variant, int id) const override
     {
-        auto param = params_variant.as<params_t>();
-        std::vector<unsigned char> entropy;
-        entropy.resize(param.entropy.length());
-        auto res = from_hex(param.entropy, entropy.data(), entropy.size());
-        entropy.resize(res);
-        //TODO: need to impl
-        std::string seed_phrase  = "witch collapse practice feed shame open despair creek road again ice least";
-        json_response response(seed_phrase, id);
-        return fc_light::json::to_string(fc_light::variant(response));
+        FC_LIGHT_THROW_EXCEPTION(fc_light::command_depreciated, "");
     }
 };
 
@@ -856,11 +848,7 @@ struct keychain_command<command_te::restore>: keychain_command_base
     using  params_t = params;
     virtual std::string operator()(keychain_base* keychain, const fc_light::variant& params_variant, int id) const override
     {
-        auto param = params_variant.as<params_t>();
-        //TODO: need to impl
-        std::string private_key  = "5fda7b741910b05738c5e0ca8961cf7a9c2f3afe8dfcae8d57df5f01690f2a02";
-        json_response response(private_key, id);
-        return fc_light::json::to_string(fc_light::variant(response));
+        FC_LIGHT_THROW_EXCEPTION(fc_light::command_depreciated, "");
     }
 };
 

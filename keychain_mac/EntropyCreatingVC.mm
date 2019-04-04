@@ -14,16 +14,21 @@
 #include "PassSyncStore.h"
 #import "VerticallyCenteredTextFieldCell.h"
 #import "NSWindowController+extension.h"
+//#include "keydata_singleton.hpp"
 
 @interface EntropyCreatingVC () {
+    NSView *zeroSceneView;
     NSView *firstSceneView;
     NSView *secondSceneView;
     NSView *thirdSceneView;
+    NSView *fourthSceneView;
     NSTimer *timerSecond;
     NSTextField *nameField;
     NSTextField *descriptionField;
     NSSecureTextField *passwordField;
     NSSecureTextField *rePasswordField;
+    std::string seed;
+    std::string masterPassword;
 }
 
 @end
@@ -78,6 +83,10 @@
     [[NSApplication sharedApplication] runModalForWindow:self.window];
     
     [self.window setFrame:NSMakeRect(0, 0, 575, 500) display:true];
+}
+
+- (NSView *) getZeroView {
+    if (!zeroS)
 }
 
 - (NSView *) getFirstView {
@@ -156,10 +165,10 @@
         
         dev::bytes value = {0, 35, 35 ,38};
         
-        auto& key_data = keychain_app::keydata_singleton::instance();
+//        auto& key_data = keychain_app::keydata_singleton::instance();
         dev::bytes user_entropy;
-        auto mnemonics = key_data.seed(user_entropy);
-        
+        auto mnemonics = keychain_app::keydata::seed(user_entropy);
+        seed = mnemonics;
 //        auto& keyfiles = keychain_app::keyfile_singleton::instance();
 //        auto seed = keyfiles.seed_phrase(value);
         
@@ -229,7 +238,7 @@
         thirdSceneView = [[NSView alloc] initWithFrame:NSMakeRect(0, 0, self.window.frame.size.width, 400)];
         [self.window.contentView addSubview:thirdSceneView];
         
-        NSTextField *label = [NSTextField labelWithString:@"Create key"];
+        NSTextField *label = [NSTextField labelWithString:@"Create Master key"];
 //        label.appearance = [NSAppearance appearanceNamed:NSAppearanceNameAqua];
 //        label.textColor = [HexToRgbColor colorWithHexColorString:@"000000"];
         label.font = [NSFont systemFontOfSize:20];
@@ -240,39 +249,39 @@
         [thirdSceneView addSubview:label];
         
         /* Create Labels */
-        
-        NSTextField *nameLabel = [NSTextField labelWithString:@"Name"];
-//        nameLabel.appearance = [NSAppearance appearanceNamed:NSAppearanceNameAqua];
-        nameLabel.frame = NSMakeRect(22, 300, 130, 30);
-        nameLabel.cell = [[VerticallyCenteredTextFieldCell alloc] initTextCell:@"Name"];
-        nameLabel.cell.font = [NSFont systemFontOfSize:18];
-        [thirdSceneView addSubview:nameLabel];
-        
-        NSTextField *descriptionLabel = [NSTextField labelWithString:@"Description"];
-//        descriptionLabel.appearance = [NSAppearance appearanceNamed:NSAppearanceNameAqua];
-        descriptionLabel.frame = NSMakeRect(22, 262, 130, 30);
-        descriptionLabel.cell = [[VerticallyCenteredTextFieldCell alloc] initTextCell:@"Description"];
-        descriptionLabel.cell.font = [NSFont systemFontOfSize:18];
-        [thirdSceneView addSubview:descriptionLabel];
-        
-        NSTextField *encryptedLabel = [NSTextField labelWithString:@"Encrypted"];
-//        encryptedLabel.appearance = [NSAppearance appearanceNamed:NSAppearanceNameAqua];
-        encryptedLabel.frame = NSMakeRect(22, 224, 130, 30);
-        encryptedLabel.cell = [[VerticallyCenteredTextFieldCell alloc] initTextCell:@"Encrypted"];
-        encryptedLabel.cell.font = [NSFont systemFontOfSize:18];
-        [thirdSceneView addSubview:encryptedLabel];
-        
-        NSTextField *cipherLabel = [NSTextField labelWithString:@"Cipher"];
-//        cipherLabel.appearance = [NSAppearance appearanceNamed:NSAppearanceNameAqua];
-        cipherLabel.frame = NSMakeRect(22, 186, 130, 30);
-        cipherLabel.cell = [[VerticallyCenteredTextFieldCell alloc] initTextCell:@"Cipher"];
-        cipherLabel.cell.font = [NSFont systemFontOfSize:18];
-        [thirdSceneView addSubview:cipherLabel];
+//
+//        NSTextField *nameLabel = [NSTextField labelWithString:@"Name"];
+////        nameLabel.appearance = [NSAppearance appearanceNamed:NSAppearanceNameAqua];
+//        nameLabel.frame = NSMakeRect(22, 300, 130, 30);
+//        nameLabel.cell = [[VerticallyCenteredTextFieldCell alloc] initTextCell:@"Name"];
+//        nameLabel.cell.font = [NSFont systemFontOfSize:18];
+//        [thirdSceneView addSubview:nameLabel];
+//
+//        NSTextField *descriptionLabel = [NSTextField labelWithString:@"Description"];
+////        descriptionLabel.appearance = [NSAppearance appearanceNamed:NSAppearanceNameAqua];
+//        descriptionLabel.frame = NSMakeRect(22, 262, 130, 30);
+//        descriptionLabel.cell = [[VerticallyCenteredTextFieldCell alloc] initTextCell:@"Description"];
+//        descriptionLabel.cell.font = [NSFont systemFontOfSize:18];
+//        [thirdSceneView addSubview:descriptionLabel];
+//
+//        NSTextField *encryptedLabel = [NSTextField labelWithString:@"Encrypted"];
+////        encryptedLabel.appearance = [NSAppearance appearanceNamed:NSAppearanceNameAqua];
+//        encryptedLabel.frame = NSMakeRect(22, 224, 130, 30);
+//        encryptedLabel.cell = [[VerticallyCenteredTextFieldCell alloc] initTextCell:@"Encrypted"];
+//        encryptedLabel.cell.font = [NSFont systemFontOfSize:18];
+//        [thirdSceneView addSubview:encryptedLabel];
+//
+//        NSTextField *cipherLabel = [NSTextField labelWithString:@"Cipher"];
+////        cipherLabel.appearance = [NSAppearance appearanceNamed:NSAppearanceNameAqua];
+//        cipherLabel.frame = NSMakeRect(22, 186, 130, 30);
+//        cipherLabel.cell = [[VerticallyCenteredTextFieldCell alloc] initTextCell:@"Cipher"];
+//        cipherLabel.cell.font = [NSFont systemFontOfSize:18];
+//        [thirdSceneView addSubview:cipherLabel];
         
         NSTextField *passwordLabel = [NSTextField labelWithString:@"Password"];
 //        passwordLabel.appearance = [NSAppearance appearanceNamed:NSAppearanceNameAqua];
         passwordLabel.frame = NSMakeRect(22, 148, 130, 30);
-        passwordLabel.cell = [[VerticallyCenteredTextFieldCell alloc] initTextCell:@"Re-password"];
+        passwordLabel.cell = [[VerticallyCenteredTextFieldCell alloc] initTextCell:@"Password"];
         passwordLabel.cell.font = [NSFont systemFontOfSize:18];
         [thirdSceneView addSubview:passwordLabel];
         
@@ -284,20 +293,20 @@
         [thirdSceneView addSubview:rePasswordLabel];
         
         /* Create fields */
-        
-        nameField = [[NSTextField alloc] initWithFrame:CGRectMake(150, 300, self.window.frame.size.width - 180, 30)];
-        nameField.backgroundColor = [NSColor whiteColor];
-        nameField.font = [NSFont systemFontOfSize:20];
-        nameField.layer.cornerRadius = 4.0;
-//        nameField.appearance = [NSAppearance appearanceNamed:NSAppearanceNameAqua];
-        [thirdSceneView addSubview:nameField];
-        
-        descriptionField = [[NSTextField alloc] initWithFrame:CGRectMake(150, 262, self.window.frame.size.width - 180, 30)];
-        descriptionField.backgroundColor = [NSColor whiteColor];
-        descriptionField.font = [NSFont systemFontOfSize:20];
-        descriptionField.layer.cornerRadius = 4.0;
-//        descriptionField.appearance = [NSAppearance appearanceNamed:NSAppearanceNameAqua];
-        [thirdSceneView addSubview:descriptionField];
+//
+//        nameField = [[NSTextField alloc] initWithFrame:CGRectMake(150, 300, self.window.frame.size.width - 180, 30)];
+//        nameField.backgroundColor = [NSColor whiteColor];
+//        nameField.font = [NSFont systemFontOfSize:20];
+//        nameField.layer.cornerRadius = 4.0;
+////        nameField.appearance = [NSAppearance appearanceNamed:NSAppearanceNameAqua];
+//        [thirdSceneView addSubview:nameField];
+//
+//        descriptionField = [[NSTextField alloc] initWithFrame:CGRectMake(150, 262, self.window.frame.size.width - 180, 30)];
+//        descriptionField.backgroundColor = [NSColor whiteColor];
+//        descriptionField.font = [NSFont systemFontOfSize:20];
+//        descriptionField.layer.cornerRadius = 4.0;
+////        descriptionField.appearance = [NSAppearance appearanceNamed:NSAppearanceNameAqua];
+//        [thirdSceneView addSubview:descriptionField];
         
         passwordField = [[NSSecureTextField alloc] initWithFrame:CGRectMake(150, 148, self.window.frame.size.width - 180, 30)];
         passwordField.backgroundColor = [NSColor whiteColor];
@@ -313,15 +322,16 @@
 //        rePasswordField.appearance = [NSAppearance appearanceNamed:NSAppearanceNameAqua];
         [thirdSceneView addSubview:rePasswordField];
         
-        nameField.nextKeyView = descriptionField;
-        descriptionField.nextKeyView = passwordField;
+//        nameField.nextKeyView = descriptionField;
+//        descriptionField.nextKeyView = passwordField;
         passwordField.nextKeyView = rePasswordField;
-        
+        rePasswordField.nextKeyView = passwordField;
+
         /* Create buttons */
         
         SYFlatButton *button = [[SYFlatButton alloc] initWithFrame:NSMakeRect(self.window.frame.size.width - 125, 20, 100, 35)];
         button.target = self;
-        button.action = @selector(createKey);
+        button.action = @selector(createMasterKey);
         button.title = @"CREATE";
         button.titleNormalColor = [NSColor whiteColor];
         button.momentary = YES;
@@ -342,6 +352,125 @@
     return thirdSceneView;
 }
 
+- (NSView *) getFourthView {
+    if (!fourthSceneView) {
+        fourthSceneView = [[NSView alloc] initWithFrame:NSMakeRect(0, 0, self.window.frame.size.width, 400)];
+        [self.window.contentView addSubview:fourthSceneView];
+        
+        NSTextField *label = [NSTextField labelWithString:@"Create key"];
+        //        label.appearance = [NSAppearance appearanceNamed:NSAppearanceNameAqua];
+        //        label.textColor = [HexToRgbColor colorWithHexColorString:@"000000"];
+        label.font = [NSFont systemFontOfSize:20];
+        label.frame = NSMakeRect(64, self.window.frame.size.height - 200, self.window.frame.size.width - 128, 54);
+        label.lineBreakMode = NSLineBreakByWordWrapping;
+        label.alignment = NSTextAlignmentCenter;
+        [label setContentCompressionResistancePriority:250 forOrientation:NSLayoutConstraintOrientationHorizontal];
+        [fourthSceneView addSubview:label];
+        
+        /* Create Labels */
+        
+        NSTextField *nameLabel = [NSTextField labelWithString:@"Name"];
+        //        nameLabel.appearance = [NSAppearance appearanceNamed:NSAppearanceNameAqua];
+        nameLabel.frame = NSMakeRect(22, 300, 130, 30);
+        nameLabel.cell = [[VerticallyCenteredTextFieldCell alloc] initTextCell:@"Name"];
+        nameLabel.cell.font = [NSFont systemFontOfSize:18];
+        [fourthSceneView addSubview:nameLabel];
+        
+        NSTextField *descriptionLabel = [NSTextField labelWithString:@"Description"];
+        //        descriptionLabel.appearance = [NSAppearance appearanceNamed:NSAppearanceNameAqua];
+        descriptionLabel.frame = NSMakeRect(22, 262, 130, 30);
+        descriptionLabel.cell = [[VerticallyCenteredTextFieldCell alloc] initTextCell:@"Description"];
+        descriptionLabel.cell.font = [NSFont systemFontOfSize:18];
+        [fourthSceneView addSubview:descriptionLabel];
+        
+        NSTextField *encryptedLabel = [NSTextField labelWithString:@"Encrypted"];
+        //        encryptedLabel.appearance = [NSAppearance appearanceNamed:NSAppearanceNameAqua];
+        encryptedLabel.frame = NSMakeRect(22, 224, 130, 30);
+        encryptedLabel.cell = [[VerticallyCenteredTextFieldCell alloc] initTextCell:@"Encrypted"];
+        encryptedLabel.cell.font = [NSFont systemFontOfSize:18];
+        [fourthSceneView addSubview:encryptedLabel];
+        
+        NSTextField *cipherLabel = [NSTextField labelWithString:@"Cipher"];
+        //        cipherLabel.appearance = [NSAppearance appearanceNamed:NSAppearanceNameAqua];
+        cipherLabel.frame = NSMakeRect(22, 186, 130, 30);
+        cipherLabel.cell = [[VerticallyCenteredTextFieldCell alloc] initTextCell:@"Cipher"];
+        cipherLabel.cell.font = [NSFont systemFontOfSize:18];
+        [fourthSceneView addSubview:cipherLabel];
+        
+        NSTextField *passwordLabel = [NSTextField labelWithString:@"Password"];
+        //        passwordLabel.appearance = [NSAppearance appearanceNamed:NSAppearanceNameAqua];
+        passwordLabel.frame = NSMakeRect(22, 148, 130, 30);
+        passwordLabel.cell = [[VerticallyCenteredTextFieldCell alloc] initTextCell:@"Password"];
+        passwordLabel.cell.font = [NSFont systemFontOfSize:18];
+        [fourthSceneView addSubview:passwordLabel];
+        
+        NSTextField *rePasswordLabel = [NSTextField labelWithString:@"Re-password"];
+        //        rePasswordLabel.appearance = [NSAppearance appearanceNamed:NSAppearanceNameAqua];
+        rePasswordLabel.frame = NSMakeRect(22, 110, 130, 30);
+        rePasswordLabel.cell = [[VerticallyCenteredTextFieldCell alloc] initTextCell:@"Re-password"];
+        rePasswordLabel.cell.font = [NSFont systemFontOfSize:18];
+        [fourthSceneView addSubview:rePasswordLabel];
+        
+        /* Create fields */
+        
+        nameField = [[NSTextField alloc] initWithFrame:CGRectMake(150, 300, self.window.frame.size.width - 180, 30)];
+        nameField.backgroundColor = [NSColor whiteColor];
+        nameField.font = [NSFont systemFontOfSize:20];
+        nameField.layer.cornerRadius = 4.0;
+        //        nameField.appearance = [NSAppearance appearanceNamed:NSAppearanceNameAqua];
+        [fourthSceneView addSubview:nameField];
+        
+        descriptionField = [[NSTextField alloc] initWithFrame:CGRectMake(150, 262, self.window.frame.size.width - 180, 30)];
+        descriptionField.backgroundColor = [NSColor whiteColor];
+        descriptionField.font = [NSFont systemFontOfSize:20];
+        descriptionField.layer.cornerRadius = 4.0;
+        //        descriptionField.appearance = [NSAppearance appearanceNamed:NSAppearanceNameAqua];
+        [fourthSceneView addSubview:descriptionField];
+        
+        passwordField = [[NSSecureTextField alloc] initWithFrame:CGRectMake(150, 148, self.window.frame.size.width - 180, 30)];
+        passwordField.backgroundColor = [NSColor whiteColor];
+        passwordField.font = [NSFont systemFontOfSize:20];
+        passwordField.layer.cornerRadius = 4.0;
+        //        passwordField.appearance = [NSAppearance appearanceNamed:NSAppearanceNameAqua];
+        [fourthSceneView addSubview:passwordField];
+        
+        rePasswordField = [[NSSecureTextField alloc] initWithFrame:CGRectMake(150, 110, self.window.frame.size.width - 180, 30)];
+        rePasswordField.backgroundColor = [NSColor whiteColor];
+        rePasswordField.font = [NSFont systemFontOfSize:20];
+        rePasswordField.layer.cornerRadius = 4.0;
+        //        rePasswordField.appearance = [NSAppearance appearanceNamed:NSAppearanceNameAqua];
+        [fourthSceneView addSubview:rePasswordField];
+        
+        nameField.nextKeyView = descriptionField;
+        descriptionField.nextKeyView = passwordField;
+        passwordField.nextKeyView = rePasswordField;
+        
+        /* Create buttons */
+        
+        SYFlatButton *button = [[SYFlatButton alloc] initWithFrame:NSMakeRect(self.window.frame.size.width - 125, 20, 100, 35)];
+        button.target = self;
+        button.action = @selector(createKey);
+        button.title = @"CREATE";
+        button.titleNormalColor = [NSColor whiteColor];
+        button.momentary = YES;
+        button.cornerRadius = 4.0;
+        button.backgroundNormalColor = [HexToRgbColor colorWithHexColorString:@"4686FF"];
+        [fourthSceneView addSubview:button];
+        
+        SYFlatButton *buttonCancelResume = [[SYFlatButton alloc] initWithFrame:NSMakeRect(self.window.frame.size.width - 245, 20, 100, 35)];
+        buttonCancelResume.target = self;
+        buttonCancelResume.action = @selector(closeButtonClick);
+        buttonCancelResume.title = @"CANCEL";
+        buttonCancelResume.backgroundNormalColor = [NSColor whiteColor];
+        buttonCancelResume.titleNormalColor = [HexToRgbColor colorWithHexColorString:@"939497"];
+        buttonCancelResume.cornerRadius = 4;
+        buttonCancelResume.momentary = YES;
+        [fourthSceneView addSubview:buttonCancelResume];
+        
+    }
+    return fourthSceneView;
+}
+
 - (void) pauseResumeButton {
     [timerSecond invalidate];
 }
@@ -354,19 +483,57 @@
 //    [self.window close];
 }
 
+- (void) createMasterKey {
+    if ([passwordField.stringValue isEqualToString:rePasswordField.stringValue] && ![passwordField.stringValue isEqualToString:@""]) {
+        masterPassword = std::string([passwordField.stringValue UTF8String]);
+        keychain_app::keydata::derive_masterkey(seed, masterPassword);
+        
+        [[self getFirstView] setHidden:true];
+        [[self getSecondView] setHidden:true];
+        [[self getThirdView] setHidden:true];
+        [[self getFourthView] setHidden:false];
+    } else {
+        [self showAlertWithTitle:@"Error" andText:@"Passwords must match and not be empty" withCompletion:nil];
+    }
+}
+
 - (void) createKey {
     if (![nameField.stringValue isEqualToString:@""]) {
         if ([passwordField.stringValue isEqualToString:rePasswordField.stringValue] && ![passwordField.stringValue isEqualToString:@""]) {
-            auto pass = [passwordField.stringValue UTF8String];
-            //    typedef typename decltype(pass)::print_type print;
+            std::string passWordKey = [passwordField.stringValue UTF8String];
+            keychain_app::keydata::path_levels_t path;
+            path.root="m";
+            path.purpose=44;
+            path.coin_type=0;
+            path.account=0;
+            path.change=0;
+            path.address_index=0;
             
-            auto& keyfiles = keychain_app::keyfile_singleton::instance();
+            keychain_app::keydata::create_t cmd;
+            cmd.keyname = [nameField.stringValue UTF8String];
+            cmd.description = [descriptionField.stringValue UTF8String];
+            cmd.encrypted = true;
+            cmd.cipher = keychain_app::keyfile_format::cipher_etype::aes256;
+            cmd.curve = keychain_app::keyfile_format::curve_etype::secp256k1;
+            cmd.password = passWordKey;
+            cmd.path = fc_light::variant(path);
             
-            keyfiles.create(std::bind(&keychain_app::create_new_keyfile, [nameField.stringValue UTF8String], [descriptionField.stringValue UTF8String], true, keychain_app::keyfile_format::cipher_etype::aes256, keychain_app::keyfile_format::curve_etype::secp256k1, [&pass](const std::string& keyname) {
-                std::vector<char> result;
-                std::copy(pass, pass + strlen(pass), std::back_inserter(result));
-                return result;
-            }));
+            auto json = fc_light::json::to_string(cmd);
+            
+//            NSString *json = [NSString stringWithFormat:@"{\"keyname\":\"%@\", \"description\":\"%@\",\"encrypted\":true,\"cipher\":\"aes256\",\"curve\":\"secp256k1\",\"password\":\"%@\",\"path\":{\"root\":\"m\",\"purpose\"0,\"coin_type\":0,\"account\":0,\"change\":0,\"address_index\":0}}",nameField.stringValue,descriptionField.stringValue,passwordField.stringValue];
+//            json = [json stringByReplacingOccurrencesOfString:@"" withString:@""];
+//            std::string jsonString = json;
+            keychain_app::keydata::derive_key(masterPassword, json);
+//            auto pass = [passwordField.stringValue UTF8String];
+//            //    typedef typename decltype(pass)::print_type print;
+//
+//            auto& keyfiles = keychain_app::keyfile_singleton::instance();
+//
+//            keyfiles.create(std::bind(&keychain_app::create_new_keyfile, [nameField.stringValue UTF8String], [descriptionField.stringValue UTF8String], true, keychain_app::keyfile_format::cipher_etype::aes256, keychain_app::keyfile_format::curve_etype::secp256k1, [&pass](const std::string& keyname) {
+//                std::vector<char> result;
+//                std::copy(pass, pass + strlen(pass), std::back_inserter(result));
+//                return result;
+//            }));
             [self showAlertWithTitle:@"Congratulations" andText:@"Your first key was created successfully." withCompletion:^{
                 [[PassSyncStore sharedInstance] setButtonClickType: ButtonClickTypeOK];
                 [self.window close];

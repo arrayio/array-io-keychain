@@ -13,7 +13,7 @@
 
 <p align="center"><strong><a href="https://github.com/arrayio/array-io-keychain/releases/download/0.24/KeyChain.Installer.zip">» Download for macOS «</a> </strong></p>
 
-<p align="center"><strong><a href="https://avvrik.github.io/KeyChain/">» Documentation «</a></strong></p>
+<p align="center"><strong><a href="https://arrayio.github.io/KeyChain/">» Documentation «</a></strong></p>
 
 <p align="center"><strong><a href="https://keychain.array.io/">» Website «</a></strong></p>
 
@@ -52,25 +52,24 @@ After you have installed [KeyChain](https://github.com/arrayio/array-io-keychain
 
 NB: If you launch KeyChain for the first time, you need to get a public key with the "select_key" command. You can save the public key to local storage. Then you will not need to use "select_key" command again.
 
-1. Install `web3override` library from this [source](https://www.npmjs.com/package/web3override).
+1. Install `keychain.js` library from this [source](https://www.npmjs.com/package/keychain.js).
 
 ```
-npm i --save web3override
+npm i keychain.js
 ```
 
 Require it 
 ```javascript
-const Module = require('web3override'); 
+const { Keychain, web3Override } = require('keychain.js'); 
 ```
 
 2. Now use an overridden web3 function 
 
 ```javascript
-  const keyInstance = await Module.Keychain.create();
-  const data = await keyInstance.selectKey();
+  const keychain = await Keychain.create();
+  const data = await keychain.selectKey();
   const key = data.result;
-  await keyInstance.term();
-  web3.eth.accounts.signTransaction = Module.web3Override(web3).signTransaction;
+  web3.eth.accounts.signTransaction = web3Override(web3).signTransaction;
 
   // now we use web3 with keychain
   await web3.eth.accounts.signTransaction(transactionParams, key);

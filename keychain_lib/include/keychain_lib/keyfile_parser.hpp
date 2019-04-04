@@ -61,6 +61,7 @@ struct keyfile_t {
     curve_etype curve_type;
     fc_light::variant priv_key_data;//either std::string or encrypted_data
     dev::Public public_key;
+    fc_light::variant chain_code_data; //either std::string or encrypted_data
   } keyinfo;
 };
 
@@ -93,7 +94,7 @@ FC_LIGHT_REFLECT_ENUM(keychain_app::keyfile_format::curve_etype, (unknown)(secp2
 FC_LIGHT_REFLECT(keychain_app::keyfile_format::log_record, (transaction)(sign_time)(blockchain_type))
 FC_LIGHT_REFLECT(keychain_app::keyfile_format::signlog_file_t, (filetype)(public_key)(sign_events))
 FC_LIGHT_REFLECT(keychain_app::keyfile_format::encrypted_data, (cipher_type)(iv)(enc_data))
-FC_LIGHT_REFLECT(keychain_app::keyfile_format::keyfile_t::keyinfo_t, (encrypted)(curve_type)(priv_key_data)(public_key))
+FC_LIGHT_REFLECT(keychain_app::keyfile_format::keyfile_t::keyinfo_t, (encrypted)(curve_type)(priv_key_data)(public_key)(chain_code_data))
 FC_LIGHT_REFLECT(keychain_app::keyfile_format::keyfile_t, (filetype)(keyname)(description)(keychain_version)(creation_time)(keyinfo))
 
 #endif //KEYCHAINAPP_KEY_FILE_PARSER_HPP

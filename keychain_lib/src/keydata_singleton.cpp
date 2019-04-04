@@ -84,8 +84,16 @@ std::vector<char> keydata::pbkdf2(std::string const& _pass)
 }
 
 
-void keydata::derive_masterkey(std::string& mnemonics, std::string& pass)
+bool keydata::derive_masterkey(std::string& mnemonics, std::string& pass)
 {
+    auto& log = logger_singleton::instance();
+    auto& keyfiles = keyfile_singleton::instance();
+    if (keyfiles.is_exist("master_key"))
+    {
+        BOOST_LOG_SEV(log.lg, info) << "error create master_key: master_key already exist";
+        return false;
+    }
+
     std::regex re(" +");
     std::string mnemonics_ = std::regex_replace(mnemonics, re, "");
 
@@ -93,8 +101,7 @@ void keydata::derive_masterkey(std::string& mnemonics, std::string& pass)
     dev::bytes priv_key(key.begin(), key.begin()+32);
     dev::bytes chain_code(key.begin()+32, key.end());
 
-    auto & keyfiles = keyfile_singleton::instance();
-    keyfiles.create(std::bind(create_new_keyfile,
+    auto res = keyfiles.create(std::bind(create_new_keyfile,
                               "master_key", "master_key", true, keyfile_format::cipher_etype::aes256,
                               keyfile_format::curve_etype::secp256k1,
                               [&pass](const std::string& keyname)->byte_seq_t{
@@ -105,14 +112,32 @@ void keydata::derive_masterkey(std::string& mnemonics, std::string& pass)
                               priv_key,
                               chain_code
                               ));
-    auto& log = logger_singleton::instance();
-    BOOST_LOG_SEV(log.lg, info) << "create master key";
+    if (res)
+        BOOST_LOG_SEV(log.lg, info) << "create master key";
+    else
+        BOOST_LOG_SEV(log.lg, info) << "error to create master key";
+
+    return res;
 }
 
-void keydata::derive_key(std::string& masterkey_pass, std::string& json)
+bool keydata::derive_key(std::string& masterkey_pass, std::string& json)
 {
     using namespace keydata;
     auto& log = logger_singleton::instance();
+    bool res = false;
+
+    auto& keyfiles = keyfile_singleton::instance();
+    auto count = keyfiles.count("master_key");
+    if (count >1)
+    {
+        {BOOST_LOG_SEV(log.lg, info) << "error derive keys:  master key is not the only one" ;}
+        return false;
+    }
+    else if (count <1)
+    {
+        {BOOST_LOG_SEV(log.lg, info) << "error derive keys:  master key not found" ;}
+        return false;
+    }
 
     auto password = [&masterkey_pass](const std::string& keyname)->byte_seq_t{
         byte_seq_t res;
@@ -130,10 +155,14 @@ void keydata::derive_key(std::string& masterkey_pass, std::string& json)
     catch (const std::exception &e) {throw std::runtime_error(e.what());}
     catch (const fc_light::exception &e) {throw std::runtime_error(e.what());}
 
+    if (params_.keyname == "master_key")
+    {
+        BOOST_LOG_SEV(log.lg, info) << "keyname \"master_key\"is not may be used for private key";
+        return false;
+    }
 
     FC_LIGHT_ASSERT(path.root == "m");
 
-    auto & keyfiles = keyfile_singleton::instance();
     auto secret = get_master_key(password);
     dev::bytes priv_key(secret.first.data(), secret.first.data()+32);
 
@@ -153,7 +182,7 @@ void keydata::derive_key(std::string& masterkey_pass, std::string& json)
                          }
                          hd = hd.getChild(0x80000000|value);
                          if (level == levels_te::address_index) {
-                             keyfiles.create(std::bind(create_new_keyfile,
+                             res = keyfiles.create(std::bind(create_new_keyfile,
                                                        params_.keyname, params_.description, params_.encrypted,
                                                        params_.cipher, params_.curve,
                                                        password,
@@ -164,9 +193,13 @@ void keydata::derive_key(std::string& masterkey_pass, std::string& json)
                              backup_t backup(params_.keyname, params_.path);
                              sql.insert_path(backup);
                              auto json = fc_light::json::to_string(backup);
-                             BOOST_LOG_SEV(log.lg, info) << "derive key: " << json;
+                             if (res)
+                                {BOOST_LOG_SEV(log.lg, info) << "derive key: " << json;}
+                             else
+                                {BOOST_LOG_SEV(log.lg, info) << "error to derive key: " << json;}
                          }
                      });
+    return res;
 }
 
 
@@ -209,16 +242,24 @@ std::pair<dev::Secret, dev::bytes> keydata::get_master_key( get_password_create_
 }
 
 
-void keydata::restore(const char * filename, std::string& mnemonics, std::string& masterkey_pass)
+int keydata::restore(const char * filename, std::string& mnemonics, std::string& masterkey_pass)
 {
     using namespace keydata;
 
+    auto& log = logger_singleton::instance();
+    auto& keyfiles = keyfile_singleton::instance();
+    if (keyfiles.is_exist("master_key"))
+    {
+        BOOST_LOG_SEV(log.lg, info) << "error restore: master_key already exist";
+        return false;
+    }
+
+    int count = 0;
     auto file = std::ifstream(filename);
     if(!file.is_open())
         FC_LIGHT_THROW_EXCEPTION(fc_light::internal_error_exception,
                                  "Cannot open restore file ${filename}", ("filename", filename));
 
-    auto& log = logger_singleton::instance();
     BOOST_LOG_SEV(log.lg, info) << "restore keydata";
 
     const int buf_size = 1000;
@@ -232,7 +273,12 @@ void keydata::restore(const char * filename, std::string& mnemonics, std::string
         BOOST_LOG_SEV(log.lg, info) << "restore path: " << json.back();
     }
 
-    derive_masterkey(mnemonics, masterkey_pass);
+    auto res = derive_masterkey(mnemonics, masterkey_pass);
+    if (!res)
+    {
+        BOOST_LOG_SEV(log.lg, info) << "restore error ";
+        return count;
+    }
 
     for (auto &a: json)
     {
@@ -253,13 +299,16 @@ void keydata::restore(const char * filename, std::string& mnemonics, std::string
         params.path = backup.path;
 
         auto params_json = fc_light::json::to_string(params);
-        derive_key(masterkey_pass, params_json);
+        if (derive_key(masterkey_pass, params_json))
+            count++;
     }
+    return count;
 }
 
 
-void keydata::backup(const char * filename)
+int keydata::backup(const char * filename)
 {
+    int count = 0;
     auto file = std::ofstream(filename);
     if (!file.is_open())
         FC_LIGHT_THROW_EXCEPTION(fc_light::internal_error_exception, "Cannot open backup file (${filename})", ("filename", filename));
@@ -270,5 +319,13 @@ void keydata::backup(const char * filename)
     auto& sql = sql_singleton::instance();
     auto backup_list = std::move(sql.select_path());
     for (auto& a : backup_list)
-        file << fc_light::json::to_string(a) << std::endl;
+    {
+        auto json = fc_light::json::to_string(a);
+        BOOST_LOG_SEV(log.lg, info) << json;
+        file << json << std::endl;
+        count++;
+    }
+    BOOST_LOG_SEV(log.lg, info) << "backup "+std::to_string(count)+" keys";
+
+    return count;
 }

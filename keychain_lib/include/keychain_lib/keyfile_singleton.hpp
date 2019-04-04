@@ -184,10 +184,13 @@ public:
   void update(keyfile_format::keyfile_t&& keyfile);
   
   bool is_exist(const prim_key_type& key) const;
+  bool is_exist(const second_key_type& key);
   void flush_keyfile(const prim_key_type& key) const;
   void flush_keyfile(const second_key_type& key) const;
 //  void flush_logrecords(const prim_key_type& key) const;
   void flush_all() const;
+  int count(const keyfile_singleton::second_key_type& );
+
 
 };
 

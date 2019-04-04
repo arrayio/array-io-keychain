@@ -319,17 +319,14 @@
 </div>
 
 
-<script src="keychain.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/keychain.js@0.0.6/dist/keychain.min.js"></script>
 <script src="https://cdn.jsdelivr.net/gh/ethereumjs/browser-builds/dist/ethereumjs-tx/ethereumjs-tx-1.3.3.min.js"></script>
 <script>
-  const keychain = new WS('ws://localhost:16384/');
-
-  keychain.ws.onopen = function() {
-    keychain.command({command: 'version'}, function(data) {
-      document.getElementById('version').innerText = data.result ? data.result : '';
-    });
-    onHash(true);
-  };
+  const keychain = new Keychain();
+  keychain.command({command: 'version'}, function(data) {
+    document.getElementById('version').innerText = data.result ? data.result : '';
+  });
+  onHash(true);
   keychain.ws.onclose = function() {
     document.getElementById('error').style.display = 'block';
   };

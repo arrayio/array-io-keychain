@@ -9,7 +9,7 @@
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[![Tweet](https://img.shields.io/twitter/url/http/shields.io.svg?style=social)](https://twitter.com/intent/tweet?text=A%20good,%20solid%20app%20to%20keep%20your%20keys%20safe.&url=https://keychain.array.io/&via=ProjectArray&hashtags=cybersecurity,private,cryptography,blockchain,app) [![Contributions welcome](https://img.shields.io/badge/contributions-welcome-orange.svg)](https://github.com/arrayio/array-io-keychain#contributing-to-the-project)
-[![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/arrayio/array-io-keychain/blob/master/LICENSE.md) [![npm version](https://badge.fury.io/js/web3override.svg)](https://badge.fury.io/js/web3override) 
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/arrayio/array-io-keychain/blob/master/LICENSE.md) [![npm version](https://badge.fury.io/js/keychain.js.svg)](https://badge.fury.io/js/keychain.js) 
 
 <p align="center"><strong><a href="https://github.com/arrayio/array-io-keychain/releases/download/0.24/KeyChain.Installer.zip">» Download for macOS «</a> </strong></p>
 
@@ -55,29 +55,30 @@ NB: If you launch KeyChain for the first time, you need to get a public key with
 1. Install `keychain.js` library from this [source](https://www.npmjs.com/package/keychain.js).
 
 ```
-npm i keychain.js
-```
-
-Require it 
-```javascript
-const { Keychain, web3Override } = require('keychain.js'); 
+npm install keychain.js
 ```
 
 2. Now use an overridden web3 function 
 
 ```javascript
-  const keychain = await Keychain.create();
-  const data = await keychain.selectKey();
-  const key = data.result;
-  web3.eth.accounts.signTransaction = web3Override(web3).signTransaction;
-
-  // now we use web3 with keychain
-  await web3.eth.accounts.signTransaction(transactionParams, key);
+const { Keychain, KeychainWeb3 } = require('keychain.js');
+const Web3 = require('web3');
+const web3 = new Web3('YOUR_API_URL'); // https://ropsten.infura.io/v3/046804e3dd3240b09834531326f310cf
+const tx = {
+  to: '0xE8899BA12578d60e4D0683a596EDaCbC85eC18CC',
+  value: 100,
+  gas: 21000
+};
+const keychain = new Keychain();
+const keychainWeb3 = new KeychainWeb3(keychain, web3);
+keychain.selectKey()
+  .then(publicKey => keychainWeb3.signTransaction(tx, publicKey))
+  .then(result => web3.eth.sendSignedTransaction(result.rawTransaction));
 ```
 
-`signTransaction` with Keychain in action
+`signTransaction` with KeyChain in action
 
-![keychain2](https://user-images.githubusercontent.com/34011337/52135027-f79f5200-2655-11e9-9718-6d47355fc0fb.gif)
+![signETH](https://user-images.githubusercontent.com/2520008/55244335-1125da00-5252-11e9-971e-c7edfb208c4c.gif)
 
 ## Companies using KeyChain
 

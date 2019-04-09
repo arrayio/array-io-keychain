@@ -34,18 +34,47 @@ using namespace keychain_app;
     return key;
 }
 
-- (void) createKeyWithName:(NSString* )keyname description:(NSString*)keyDescription encrypted:(BOOL)encrypted password:(NSString *) password cipher:(NSString *) cipher {
+- (void) createKeyWithName:(NSString* )keyname description:(NSString*)keyDescription encrypted:(BOOL)encrypted password:(NSString *) password cipher:(NSString *) cipher masterKey:(NSString *) masterKey blockchain:(int) blockhain {
     
     auto pass = [password UTF8String];
 //    typedef typename decltype(pass)::print_type print;
+        
+    std::string passWordKey = pass;
+    keychain_app::keydata::path_levels_t path;
+    path.root="m";
+    path.purpose=44;
+    path.coin_type=blockhain;
+    path.account=0;
+    path.change=0;
+    path.address_index = int([self getKeyfilesCount]);
     
-    auto& keyfiles = keyfile_singleton::instance();
+    keychain_app::keydata::create_t cmd;
+    cmd.keyname = [keyname UTF8String];
+    cmd.description = [keyDescription UTF8String];
+    cmd.encrypted = encrypted;
+    cmd.cipher = keychain_app::keyfile_format::cipher_etype::aes256;
+    cmd.curve = keychain_app::keyfile_format::curve_etype::secp256k1;
+    cmd.password = passWordKey;
+    cmd.path = fc_light::variant(path);
     
-    keyfiles.create(std::bind(&create_new_keyfile, [keyname UTF8String], [keyDescription UTF8String], encrypted, keyfile_format::cipher_etype::aes256, keyfile_format::curve_etype::secp256k1, [&pass](const std::string& keyname) {
-        std::vector<char> result;
-        std::copy(pass, pass + strlen(pass), std::back_inserter(result));
-        return result;
-    }));
+    auto json = fc_light::json::to_string(cmd);
+    std::string mk = [masterKey UTF8String];
+    keychain_app::keydata::derive_key(mk, json);
+//    keyfiles.create(std::bind(&create_new_keyfile, [keyname UTF8String], [keyDescription UTF8String], encrypted, keyfile_format::cipher_etype::aes256, keyfile_format::curve_etype::secp256k1, [&pass](const std::string& keyname) {
+//        std::vector<char> result;
+//        std::copy(pass, pass + strlen(pass), std::back_inserter(result));
+//        return result;
+//    }));
+}
+
+- (void) backup:(NSString *) path {
+    keychain_app::keydata::backup([path UTF8String]);
+}
+
+- (void) restore:(NSString *) path seed:(NSString *)seed pass:(NSString *) pass {
+    std::string s = [seed UTF8String];
+    std::string p = [pass UTF8String];
+    keychain_app::keydata::restore([path UTF8String], s, p);
 }
 
 - (void) reloadData {

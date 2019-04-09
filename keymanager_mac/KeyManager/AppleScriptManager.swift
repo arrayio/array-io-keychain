@@ -8,12 +8,12 @@
 
 import Foundation
 
-class AppleScriptManager {
+@objc class AppleScriptManager: NSObject {
     
     /// Function for call apple script (execute shell commands)
     ///
     /// - Returns: return success or failure block
-    static func runScriptWithBody(_ body: String, isAdminRequired: Bool = false, success: @escaping()  -> Void = {}, failure: @escaping(_ error: NSDictionary) -> Void = {error in }) {
+    @objc static func runScriptWithBody(_ body: String, isAdminRequired: Bool = false, success: @escaping()  -> Void = {}, failure: @escaping(_ error: NSDictionary) -> Void = {error in }) {
 //        let script = NSAppleScript(source: "do shell script \"" + body + "\"")
 //        var errorInfo: NSDictionary?
 //        script?.executeAndReturnError(&errorInfo)
@@ -29,7 +29,7 @@ class AppleScriptManager {
         }
     }
     
-    static func runScriptWithBodyWithReturnString(_ body: String, isAdminRequired: Bool = false, success: @escaping(_ result: String)  -> Void = {_ in }, failure: @escaping(_ error: NSDictionary) -> Void = {error in }) {
+    @objc static func runScriptWithBodyWithReturnString(_ body: String, isAdminRequired: Bool = false, success: @escaping(_ result: String)  -> Void = {_ in }, failure: @escaping(_ error: NSDictionary) -> Void = {error in }) {
         let script = NSAppleScript(source: "do shell script \"" + body + "\"" + (isAdminRequired ? " with administrator privileges" : ""))
         var errorInfo: NSDictionary?
         let result = script?.executeAndReturnError(&errorInfo)

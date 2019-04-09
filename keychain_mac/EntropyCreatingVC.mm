@@ -14,10 +14,12 @@
 #include "PassSyncStore.h"
 #import "VerticallyCenteredTextFieldCell.h"
 #import "NSWindowController+extension.h"
+#import "FileManager.h"
 //#include "keydata_singleton.hpp"
 
 @interface EntropyCreatingVC () {
     NSView *zeroSceneView;
+    NSView *restoreSceneView;
     NSView *firstSceneView;
     NSView *secondSceneView;
     NSView *thirdSceneView;
@@ -26,9 +28,11 @@
     NSTextField *nameField;
     NSTextField *descriptionField;
     NSSecureTextField *passwordField;
+    NSTextField *seedField;
     NSSecureTextField *rePasswordField;
     std::string seed;
     std::string masterPassword;
+    NSString *restorePath;
 }
 
 @end
@@ -67,6 +71,7 @@
 }
 
 - (void)windowWillClose:(NSNotification *)notification {
+    NSLog(@"windowWillClose");
     [NSApp setActivationPolicy:NSApplicationActivationPolicyProhibited];
     dispatch_async(dispatch_get_main_queue(), ^{
         [NSApp stopModal];
@@ -75,7 +80,7 @@
 
 - (void)runModal {
     [LogoView setLogoViewForWindow:self.window withTitle:@"Protecting your keys with entropy"];
-    [[self getFirstView] setHidden:false];
+    [[self getZeroView] setHidden:false];
 //    [self setupLogoView];
 //    [self createTableView];
 //    [self setupCancelButton];
@@ -86,7 +91,105 @@
 }
 
 - (NSView *) getZeroView {
-    if (!zeroS)
+    if (!zeroSceneView) {
+        zeroSceneView = [[NSView alloc] initWithFrame:NSMakeRect(0, 0, self.window.frame.size.width, 400)];
+        [self.window.contentView addSubview:zeroSceneView];
+        
+        NSTextField *label = [NSTextField labelWithString:@"Welcome to Keychain!"];
+        //        label.appearance = [NSAppearance appearanceNamed:NSAppearanceNameAqua];
+        //        label.textColor = [HexToRgbColor colorWithHexColorString:@"4f4e4e"];
+        label.font = [NSFont systemFontOfSize:16];
+        label.frame = NSMakeRect(64, self.window.frame.size.height - 200, self.window.frame.size.width - 128, 54);
+        label.lineBreakMode = NSLineBreakByWordWrapping;
+        label.alignment = NSTextAlignmentCenter;
+        [label setContentCompressionResistancePriority:250 forOrientation:NSLayoutConstraintOrientationHorizontal];
+        [zeroSceneView addSubview:label];
+        
+        SYFlatButton *button = [[SYFlatButton alloc] initWithFrame:NSMakeRect(self.window.frame.size.width - 125, 20, 100, 35)];
+        button.target = self;
+        button.action = @selector(nextFirstButtonClick);
+        button.title = @"CREATE";
+        button.titleNormalColor = [NSColor whiteColor];
+        button.momentary = YES;
+        button.cornerRadius = 4.0;
+        button.backgroundNormalColor = [HexToRgbColor colorWithHexColorString:@"4686FF"];
+        [zeroSceneView addSubview:button];
+        
+        __block SYFlatButton *buttonPauseResume = [[SYFlatButton alloc] initWithFrame:NSMakeRect(self.window.frame.size.width - 245, 20, 100, 35)];
+        buttonPauseResume.target = self;
+        buttonPauseResume.action = @selector(restoreButton);
+        buttonPauseResume.title = @"RESTORE";
+        buttonPauseResume.backgroundNormalColor = [NSColor whiteColor];
+        buttonPauseResume.titleNormalColor = [HexToRgbColor colorWithHexColorString:@"939497"];
+        buttonPauseResume.cornerRadius = 4;
+        buttonPauseResume.momentary = YES;
+        [zeroSceneView addSubview:buttonPauseResume];
+    }
+    return zeroSceneView;
+}
+
+- (NSView *) getRestoreView {
+    if (!restoreSceneView) {
+        restoreSceneView = [[NSView alloc] initWithFrame:NSMakeRect(0, 0, self.window.frame.size.width, 400)];
+        [self.window.contentView addSubview:restoreSceneView];
+        
+        NSTextField *label = [NSTextField labelWithString:@"Enter security credentials."];
+        label.font = [NSFont systemFontOfSize:16];
+        label.frame = NSMakeRect(64, self.window.frame.size.height - 200, self.window.frame.size.width - 128, 54);
+        label.lineBreakMode = NSLineBreakByWordWrapping;
+        label.alignment = NSTextAlignmentCenter;
+        [label setContentCompressionResistancePriority:250 forOrientation:NSLayoutConstraintOrientationHorizontal];
+        [restoreSceneView addSubview:label];
+        
+        NSTextField *descriptionLabel = [NSTextField labelWithString:@"Seed"];
+        //        descriptionLabel.appearance = [NSAppearance appearanceNamed:NSAppearanceNameAqua];
+        descriptionLabel.frame = NSMakeRect(22, 262, 130, 30);
+        descriptionLabel.cell = [[VerticallyCenteredTextFieldCell alloc] initTextCell:@"Seed"];
+        descriptionLabel.cell.font = [NSFont systemFontOfSize:18];
+        [restoreSceneView addSubview:descriptionLabel];
+        
+        NSTextField *passwordLabel = [NSTextField labelWithString:@"Password MK"];
+        //        passwordLabel.appearance = [NSAppearance appearanceNamed:NSAppearanceNameAqua];
+        passwordLabel.frame = NSMakeRect(22, 148, 130, 30);
+        passwordLabel.cell = [[VerticallyCenteredTextFieldCell alloc] initTextCell:@"Password MK"];
+        passwordLabel.cell.font = [NSFont systemFontOfSize:18];
+        [restoreSceneView addSubview:passwordLabel];
+        
+        seedField = [[NSTextField alloc] initWithFrame:CGRectMake(150, 262, self.window.frame.size.width - 180, 30)];
+        seedField.backgroundColor = [NSColor whiteColor];
+        seedField.font = [NSFont systemFontOfSize:20];
+        seedField.layer.cornerRadius = 4.0;
+        //        descriptionField.appearance = [NSAppearance appearanceNamed:NSAppearanceNameAqua];
+        [restoreSceneView addSubview:seedField];
+        
+        passwordField = [[NSSecureTextField alloc] initWithFrame:CGRectMake(150, 148, self.window.frame.size.width - 180, 30)];
+        passwordField.backgroundColor = [NSColor whiteColor];
+        passwordField.font = [NSFont systemFontOfSize:20];
+        passwordField.layer.cornerRadius = 4.0;
+        //        passwordField.appearance = [NSAppearance appearanceNamed:NSAppearanceNameAqua];
+        [restoreSceneView addSubview:passwordField];
+
+        SYFlatButton *button = [[SYFlatButton alloc] initWithFrame:NSMakeRect(self.window.frame.size.width - 125, 20, 100, 35)];
+        button.target = self;
+        button.action = @selector(restoreFinal);
+        button.title = @"RESTORE";
+        button.titleNormalColor = [NSColor whiteColor];
+        button.momentary = YES;
+        button.cornerRadius = 4.0;
+        button.backgroundNormalColor = [HexToRgbColor colorWithHexColorString:@"4686FF"];
+        [zeroSceneView addSubview:button];
+        
+        __block SYFlatButton *buttonPauseResume = [[SYFlatButton alloc] initWithFrame:NSMakeRect(self.window.frame.size.width - 245, 20, 100, 35)];
+        buttonPauseResume.target = self;
+        buttonPauseResume.action = @selector(backButton);
+        buttonPauseResume.title = @"BACK";
+        buttonPauseResume.backgroundNormalColor = [NSColor whiteColor];
+        buttonPauseResume.titleNormalColor = [HexToRgbColor colorWithHexColorString:@"939497"];
+        buttonPauseResume.cornerRadius = 4;
+        buttonPauseResume.momentary = YES;
+        [zeroSceneView addSubview:buttonPauseResume];
+    }
+    return restoreSceneView;
 }
 
 - (NSView *) getFirstView {
@@ -473,6 +576,95 @@
 
 - (void) pauseResumeButton {
     [timerSecond invalidate];
+}
+
+- (void) restoreFinal {
+    std::string seed = [seedField.stringValue UTF8String];
+    std::string pass = [passwordField.stringValue UTF8String];
+    keychain_app::keydata::restore([restorePath UTF8String], seed, pass);
+}
+
+- (void) backButton {
+    [[self getRestoreView] setHidden:true];
+    [[self getZeroView] setHidden:false];
+}
+
+- (void) restoreButton {
+    NSWorkspace *workspace = [NSWorkspace sharedWorkspace];
+    NSURL *url = [NSURL fileURLWithPath:[workspace fullPathForApplication:[NSString stringWithFormat:@"%@/KeyManager.app", FileManager.getWorkDirectoryPath]]];
+    //Handle url==nil
+    NSError *error = nil;
+    NSArray *arguments = [NSArray arrayWithObjects:@"RESTORE", nil];
+    [workspace launchApplicationAtURL:url options:0 configuration:[NSDictionary dictionaryWithObject:arguments forKey:NSWorkspaceLaunchConfigurationArguments] error:&error];
+    
+//    [[NSWorkspace sharedWorkspace] launchApplication:[NSString stringWithFormat:@"%@/KeyManager.app", FileManager.getWorkDirectoryPath]];
+    [[PassSyncStore sharedInstance] setButtonClickType: ButtonClickTypeCancel];
+    [self.window close];
+//    NSSavePanel *panel = [NSSavePanel savePanel];
+//    NSOpenPanel *dialog = [NSOpenPanel openPanel];
+//    dialog.title = @"Choose directory";
+//    dialog.showsResizeIndicator    = true;
+//    dialog.showsHiddenFiles        = false;
+//    dialog.canChooseDirectories    = false;
+//    dialog.canCreateDirectories    = true;
+//    dialog.canChooseFiles          = true;
+//    dialog.allowsMultipleSelection = false;
+////    EntropyCreatingVC *dialogVC = [[EntropyCreatingVC alloc] initWithFrame:NSMakeRect(0, 0, 700, 540)];
+////    [dialogVC.window orderFront:self];
+////    [self.window orderOut:self];
+////    NSWindowController *window = [[NSWindowController alloc] initWithWindowNibName:@"MainWindow"];
+////    [window showWindow:nil];
+////    [window.window makeKeyAndOrderFront:self];
+////    [window.window makeMainWindow];
+//
+////    [dialog beginSheet:dialogVC.window completionHandler:nil];
+//
+//    [dialog beginSheetModalForWindow:self.window completionHandler:^(NSModalResponse result) {
+//        if (result == NSModalResponseOK) {
+//            [[PassSyncStore sharedInstance] setButtonClickType:ButtonClickTypeCancel];
+//            [[PassSyncStore sharedInstance] setIsRestore:true];
+//            [[PassSyncStore sharedInstance] setButtonSelectFileType:ButtonClickTypeOK];
+//            [self.window close];
+////            [NSApp setActivationPolicy:NSApplicationActivationPolicyProhibited];
+////            dispatch_async(dispatch_get_main_queue(), ^{
+////                [NSApp stopModal];
+////            });
+//        } else {
+//            [[PassSyncStore sharedInstance] setButtonClickType:ButtonClickTypeCancel];
+//            [[PassSyncStore sharedInstance] setIsRestore:true];
+//            [[PassSyncStore sharedInstance] setButtonSelectFileType:ButtonClickTypeCancel];
+//            NSLog(@"windowClose");
+//            [self.window close];
+//////            [NSApp setActivationPolicy:NSApplicationActivationPolicyProhibited];
+////            dispatch_async(dispatch_get_main_queue(), ^{
+////                [NSApp stopModal];
+////            });
+//        }
+//    }];
+//    [self.window close];
+
+//
+//    if (dialog.runModal == NSModalResponseOK) {
+//        NSURL *result = dialog.URL;
+//        if (result != nil) {
+//            [[self getRestoreView] setHidden:false];
+//            [[self getZeroView] setHidden:true];
+//            restorePath = [result.path stringByReplacingOccurrencesOfString:@"file://" withString:@""];
+////            std::string seed = "";
+////            std::string pass = "";
+////            keychain_app::keydata::restore([[result.path stringByReplacingOccurrencesOfString:@"file://" withString:@""] UTF8String], seed, pass);
+////            [[CPlusPlusBridger alloc] backup:[result.path stringByReplacingOccurrencesOfString:@"file://" withString:@""]];
+//        }
+//    }
+}
+
+- (void) nextFirstButtonClick {
+    [[self getZeroView] setHidden:true];
+    [[self getFirstView] setHidden:false];
+    [[self getSecondView] setHidden:true];
+    [[self getThirdView] setHidden:true];
+    //    [[PassSyncStore sharedInstance] setButtonClickType: ButtonClickTypeOK];
+    //    [self.window close];
 }
 
 - (void) nextButtonClick {

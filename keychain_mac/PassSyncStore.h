@@ -20,6 +20,9 @@ typedef enum {
 @property (atomic, strong) NSString *pass;
 @property dev::Public public_key;
 @property ButtonClickType buttonClickType;
+@property BOOL isRestore;
+@property ButtonClickType buttonSelectFileType;
+@property NSString *selectedFilePath;
 
 + (instancetype)sharedInstance;
 

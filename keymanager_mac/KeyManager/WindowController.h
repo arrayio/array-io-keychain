@@ -11,9 +11,12 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @interface WindowController : NSWindowController
+@property (weak) IBOutlet NSToolbarItem *restoreButton;
 - (IBAction)createKeyAction:(id)sender;
 @property (weak) IBOutlet NSToolbarItem *removeKeyItem;
 - (IBAction)removeKeyAction:(id)sender;
+- (IBAction)backupAction:(id)sender;
+- (IBAction)restoreAction:(id)sender;
 
 @end
 

@@ -16,6 +16,7 @@ class CreateKeyVC: NSViewController {
     @IBOutlet weak var passwordTextField: NSSecureTextField!
     @IBOutlet weak var rePasswordTextField: NSSecureTextField!
     @IBOutlet weak var passwordView: NSView!
+    @IBOutlet weak var masterKeyField: NSSecureTextField!
     
     var isEncrypted = true
     
@@ -30,11 +31,20 @@ class CreateKeyVC: NSViewController {
     
     @IBAction func createAction(_ sender: Any) {
         if nameTextField.stringValue != "" {
+            var blockchain = 0
+            switch cipherPopUpButton.indexOfSelectedItem {
+            case 0:
+                blockchain = 0
+            case 1:
+                blockchain = 60
+            case 2:
+                blockchain = 2
+            default:
+                blockchain = 1
+            }
             if isEncrypted {
                 if passwordTextField.stringValue == rePasswordTextField.stringValue && passwordTextField.stringValue != "" {
-                    CPlusPlusBridger().createKey(withName: nameTextField.stringValue, description: descriptionTextField.stringValue, encrypted: isEncrypted, password: passwordTextField.stringValue, cipher: "")
-                    self.dismiss(self)
-                    NotificationCenter.default.post(name: Notification.Name(rawValue: "reloadData"), object: nil)
+                    CPlusPlusBridger().createKey(withName: nameTextField.stringValue, description: descriptionTextField.stringValue, encrypted: isEncrypted, password: passwordTextField.stringValue, cipher: "", masterKey: masterKeyField.stringValue, blockchain: Int32(blockchain))
                     print("send")
                 } else {
                     let alert = NSAlert()
@@ -44,7 +54,12 @@ class CreateKeyVC: NSViewController {
                     alert.addButton(withTitle: "OK")
                     alert.beginSheetModal(for: self.view.window!, completionHandler: nil)
                 }
+            } else {
+                CPlusPlusBridger().createKey(withName: nameTextField.stringValue, description: descriptionTextField.stringValue, encrypted: isEncrypted, password: "", cipher: "", masterKey: masterKeyField.stringValue, blockchain: Int32(blockchain))
+
             }
+            self.dismiss(self)
+            NotificationCenter.default.post(name: Notification.Name(rawValue: "reloadData"), object: nil)
         } else {
             let alert = NSAlert()
             alert.icon = NSImage()

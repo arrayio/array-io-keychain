@@ -16,9 +16,11 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (NSInteger) getKeyfilesCount;
 - (Key *) getKeyById:(NSInteger) indexRow;
-- (void) createKeyWithName:(NSString* )keyname description:(NSString*)keyDescription encrypted:(BOOL)encrypted password:(NSString *) password cipher:(NSString *) cipher;
+- (void) createKeyWithName:(NSString* )keyname description:(NSString*)keyDescription encrypted:(BOOL)encrypted password:(NSString *) password cipher:(NSString *) cipher masterKey:(NSString *) masterKey blockchain:(int) blockhain;
 - (void) reloadData;
 - (NSMutableArray <Log *>*) getTransactionLogForPublicKey:(NSString *) publicKey;
+- (void) backup:(NSString *) path;
+- (void) restore:(NSString *) path seed:(NSString *)seed pass:(NSString *) pass;
 
 @end
 

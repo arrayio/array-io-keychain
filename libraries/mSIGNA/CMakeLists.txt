@@ -11,7 +11,8 @@ if (NOT MSVC)
     endif()
 endif()
 
-include_directories("${CMAKE_SOURCE_DIR}/libraries/mSIGNA/include")
+include_directories("${CMAKE_SOURCE_DIR}/libraries/mSIGNA/include"
+        "${OPENSSL_ROOT_DIR}/include")
 
 file(GLOB MSIGNA_HEADERS "./include/*.h")
 file(GLOB MSIGNA_SOURCES "*.cpp" )

@@ -565,6 +565,12 @@ struct keychain_command<command_te::sign_trx> : keychain_command_base
                 s_length++;
                 s.insert(0, "00");
             }
+            auto pub_key = dev::toPublic(private_key);
+            std::string prefix;
+            if (pub_key[dev::Public::size-1]%2)
+                prefix = "03";  // y - odd
+            else
+                prefix = "02"; // y - even
             // script_len + signature DER-encoded + pub_key
             ss  << std::setw(2) << ((int) script_len)
                 << std::setw(2) << ((int) pushdata_sig)
@@ -578,7 +584,7 @@ struct keychain_command<command_te::sign_trx> : keychain_command_base
                 << s
                 << std::setw(2) << ((int) sig_hash_code)
                 << std::setw(2) << ((int) pushdata_pubkey)
-                << "03"+ dev::toPublic(private_key).hex().substr(0,64);
+                << prefix+ pub_key.hex().substr(0,64);
             trx += ss.str();
             trx += a.end_of_vin;
         }

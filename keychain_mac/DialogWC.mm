@@ -13,9 +13,9 @@
 #include <stdio.h>
 #include <limits.h>
 #import "FileManager.h"
-#import "keychain-Swift.h"
 #import "MiddleAlignedTextFieldCell.h"
 #import "LogoView.h"
+#import "ImageButton.h"
 
 using namespace keychain_app;
 
@@ -313,7 +313,7 @@ using keychain_app::secmod_commands::secmod_parser_f;
 - (void) redlockButtonClicked {
     NSString *string = @"";
     if (self.unlockTime > 0) {
-        string = [NSString stringWithFormat:@"%@Experimental function \"unlock key\" will be activated once you enter the passphrase.\nDuring this time operations with the unlocked key will be executed without user confirmation.", string];
+        string = [NSString stringWithFormat:@"%@Experimental function \"unlock key\" will be activated once you enter the password.\nDuring this time operations with the unlocked key will be executed without user confirmation.", string];
     }
     if (!self.isJson && !self.unlockOnly) {
         string = [NSString stringWithFormat:@"%@%@KeyChain can provide only hex view of the transaction without additional information, such as address, amount, and any other detail.\nConfim the transaction only if you trust the app requesting the signature.", string, ([string isEqualToString:@""]) ? @"" : @"\n\n"];
@@ -365,7 +365,7 @@ using keychain_app::secmod_commands::secmod_parser_f;
 }
 
 - (void) setupLabelConfirmPassphrase {
-    NSTextField *label = [NSTextField labelWithString:@"Passphrase"];
+    NSTextField *label = [NSTextField labelWithString:@"Password"];
 //    label.appearance = [NSAppearance appearanceNamed:NSAppearanceNameAqua];
 //    label.textColor = [HexToRgbColor colorWithHexColorString:@"4f4e4e"];
     label.font = [NSFont systemFontOfSize:18];
@@ -374,7 +374,7 @@ using keychain_app::secmod_commands::secmod_parser_f;
 }
 
 - (void) setupLabelPassphrase {
-    NSTextField *label = [NSTextField labelWithString:(!self.unlockOnly && !self.isSignTransaction) ? @"Confirm" : @"Passphrase"];
+    NSTextField *label = [NSTextField labelWithString:(!self.unlockOnly && !self.isSignTransaction) ? @"Confirm" : @"Password"];
 //    label.appearance = [NSAppearance appearanceNamed:NSAppearanceNameAqua];
 //    label.textColor = [HexToRgbColor colorWithHexColorString:@"4f4e4e"];
     label.font = [NSFont systemFontOfSize:18];

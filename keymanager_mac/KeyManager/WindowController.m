@@ -43,7 +43,7 @@
                     [_restoreButton setEnabled:false];
                 }
             } else {
-                [AppleScriptManager runScriptWithBody:[[[NSBundle mainBundle] bundlePath] stringByReplacingOccurrencesOfString:@"KeyManager.app" withString:@"keychain"] isAdminRequired:false success:^{
+                [AppleScriptManager runScriptWithBody:[[[NSBundle mainBundle] bundlePath] stringByReplacingOccurrencesOfString:@"KeyManager.app" withString:@"keychain&"] isAdminRequired:false success:^{
                     
                 } failure:^(NSDictionary * _Nonnull d) {
                     NSLog(@"%@", d);
@@ -69,7 +69,7 @@
 //                alert.messageText = [NSString stringWithFormat:@"param = %@", d];
 //                [alert beginSheetModalForWindow:self.window completionHandler:nil];
 //            }];
-            [AppleScriptManager runScriptWithBody:[[[NSBundle mainBundle] bundlePath] stringByReplacingOccurrencesOfString:@"KeyManager.app" withString:@"keychain"] isAdminRequired:false success:^{
+            [AppleScriptManager runScriptWithBody:[[[NSBundle mainBundle] bundlePath] stringByReplacingOccurrencesOfString:@"KeyManager.app" withString:@"keychain&"] isAdminRequired:false success:^{
                 
             } failure:^(NSDictionary * _Nonnull d) {
                 NSLog(@"%@", d);
@@ -77,7 +77,7 @@
 //                alert.messageText = [NSString stringWithFormat:@"param = %@", d];
 //                [alert beginSheetModalForWindow:self.window completionHandler:nil];
             }];
-            [[NSApplication sharedApplication] terminate:self];
+//            [[NSApplication sharedApplication] terminate:self];
         }
 //        NSLog(@"param = %@", [[NSUserDefaults standardUserDefaults] valueForKey:@"Param"]);
 //        NSAlert *alert = [NSAlert new];

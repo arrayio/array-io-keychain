@@ -732,7 +732,7 @@
             }];
             
         } else {
-            [self showAlertWithTitle:@"Error" andText:@"Passphrases must match and not be empty" withCompletion:nil];
+            [self showAlertWithTitle:@"Error" andText:@"Passwords must match and not be empty" withCompletion:nil];
         }
     } else {
         [self showAlertWithTitle:@"Error" andText:@"Keyname must not be empty" withCompletion:nil];

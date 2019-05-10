@@ -28,7 +28,7 @@ import Cocoa
     
     @IBAction func cancelAction(_ sender: Any) {
         if needCancelSpecial {
-            AppleScriptManager.runScriptWithBody(Bundle.main.bundlePath.replacingOccurrences(of: "KeyManager.app", with: "keychain"))
+            AppleScriptManager.runScriptWithBody(Bundle.main.bundlePath.replacingOccurrences(of: "KeyManager.app", with: "keychain&"))
             NSApplication.shared.terminate(self)
         }
         self.dismiss(self)
